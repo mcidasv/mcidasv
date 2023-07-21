@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="8.0.4" transformSequenceNumber="8">
+<install4j version="10.0.6" transformSequenceNumber="10">
   <directoryPresets config="/home/luser/work/install4j/install4j/University of Wisconsin-Madison.pfx" />
   <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="https://www.ssec.wisc.edu/mcidas" version="1.9beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="1.8" javaMaxVersion="11" allowBetaVM="true">
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="Default installation directory for McIDAS-V." />
-      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="Directory containing IDV JAR files." />
-      <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" />
+      <variable name="SRCDIR" value="${compiler:BASEDIR}/IDV/lib" description="Directory containing IDV JAR files." />
+      <variable name="MCVDIR" value="${compiler:BASEDIR}/mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" />
       <variable name="ADDEDIR" value="${compiler:MCVDIR}/lib/build/adde" description="Directory containing the local ADDE server ZIP files." />
       <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" />
       <variable name="IDV_VERSION" value="5.7" />
       <variable name="sys.ext.timestampUrl" value="http://timestamp.digicert.com" />
-      <variable name="WINDOWS_CERT_PATH" value="${compiler:sys.install4jHome}/../signing/University of Wisconsin-Madison.pfx" />
-      <variable name="MACOS_CERT_PATH" value="${compiler:sys.install4jHome}/../signing/UW-Madison Shared Apps Developer ID Application 20260204.p12" />
+      <variable name="WINDOWS_CERT_PATH" value="${compiler:BASEDIR}/signing/University of Wisconsin-Madison.pfx" />
+      <variable name="MACOS_CERT_PATH" value="${compiler:BASEDIR}/signing/UW-Madison Shared Apps Developer ID Application 20260204.p12" />
+      <variable name="BASEDIR" value="/home/mcidasv" description="When building custom installers, you'll probably need to change this value to the following:&#xA;/Users/jbeavers/work/install4j" />
     </variables>
-    <codeSigning macEnabled="true" macPkcs12File="${compiler:MACOS_CERT_PATH}" windowsEnabled="true" windowsPkcs12File="${compiler:WINDOWS_CERT_PATH}" />
+    <codeSigning macEnabled="true" macPkcs12File="${compiler:MACOS_CERT_PATH}" windowsEnabled="true" windowsPkcs12File="${compiler:WINDOWS_CERT_PATH}" macNotarize="true" appleId="jebeavers@wisc.edu">
+      <macAdditionalBinaries>
+        <entry>*.dylib</entry>
+        <entry>*.so</entry>
+        <entry>*.jnilib</entry>
+        <entry>*aget</entry>
+        <entry>*adir</entry>
+        <entry>*serv</entry>
+        <entry>*servl</entry>
+        <entry>jre.tar.gz</entry>
+      </macAdditionalBinaries>
+      <macSearchedJars>
+        <entry>jna-*</entry>
+        <entry>swt-*</entry>
+        <entry>ncIdv-*</entry>
+      </macSearchedJars>
+    </codeSigning>
     <jreBundles>
       <modules />
     </jreBundles>
@@ -209,7 +226,6 @@
           <archive location="mcidasv.jar" failOnError="false" />
         </classPath>
       </java>
-      <macStaticAssociationActions mode="selected" />
       <iconImageFiles>
         <file path="${compiler:MCVDIR}/release/icons/mcidasv_16x16.png" />
         <file path="${compiler:MCVDIR}/release/icons/mcidasv_32x32.png" />
@@ -248,11 +264,19 @@
             <group id="8996" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup">
               <serializedBean>
                 <property name="backgroundColor">
-                  <object class="java.awt.Color">
-                    <int>255</int>
-                    <int>255</int>
-                    <int>255</int>
-                    <int>255</int>
+                  <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                    <object class="java.awt.Color">
+                      <int>255</int>
+                      <int>255</int>
+                      <int>255</int>
+                      <int>255</int>
+                    </object>
+                    <object class="java.awt.Color">
+                      <int>49</int>
+                      <int>52</int>
+                      <int>53</int>
+                      <int>255</int>
+                    </object>
                   </object>
                 </property>
                 <property name="imageAnchor" type="enum" class="com.install4j.api.beans.Anchor" value="NORTHEAST" />
@@ -319,11 +343,19 @@ Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php
                 <group id="8989" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup">
                   <serializedBean>
                     <property name="imageEdgeBackgroundColor">
-                      <object class="java.awt.Color">
-                        <int>25</int>
-                        <int>143</int>
-                        <int>220</int>
-                        <int>255</int>
+                      <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                        <object class="java.awt.Color">
+                          <int>25</int>
+                          <int>143</int>
+                          <int>220</int>
+                          <int>255</int>
+                        </object>
+                        <object class="java.awt.Color">
+                          <int>0</int>
+                          <int>74</int>
+                          <int>151</int>
+                          <int>255</int>
+                        </object>
                       </object>
                     </property>
                     <property name="imageFile">
@@ -1104,11 +1136,19 @@ return true;
             <group id="8996" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup">
               <serializedBean>
                 <property name="backgroundColor">
-                  <object class="java.awt.Color">
-                    <int>255</int>
-                    <int>255</int>
-                    <int>255</int>
-                    <int>255</int>
+                  <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                    <object class="java.awt.Color">
+                      <int>255</int>
+                      <int>255</int>
+                      <int>255</int>
+                      <int>255</int>
+                    </object>
+                    <object class="java.awt.Color">
+                      <int>49</int>
+                      <int>52</int>
+                      <int>53</int>
+                      <int>255</int>
+                    </object>
                   </object>
                 </property>
                 <property name="imageAnchor" type="enum" class="com.install4j.api.beans.Anchor" value="NORTHEAST" />
@@ -1212,11 +1252,19 @@ return console.askYesNo(message, true);
           <group id="8989" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup" useExternalParametrization="true" externalParametrizationName="Customize banner image" externalParametrizationMode="include">
             <serializedBean>
               <property name="backgroundColor">
-                <object class="java.awt.Color">
-                  <int>255</int>
-                  <int>255</int>
-                  <int>255</int>
-                  <int>255</int>
+                <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                  <object class="java.awt.Color">
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                  </object>
+                  <object class="java.awt.Color">
+                    <int>49</int>
+                    <int>52</int>
+                    <int>53</int>
+                    <int>255</int>
+                  </object>
                 </object>
               </property>
               <property name="borderSides">
@@ -1225,11 +1273,19 @@ return console.askYesNo(message, true);
                 </object>
               </property>
               <property name="imageEdgeBackgroundColor">
-                <object class="java.awt.Color">
-                  <int>25</int>
-                  <int>143</int>
-                  <int>220</int>
-                  <int>255</int>
+                <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                  <object class="java.awt.Color">
+                    <int>25</int>
+                    <int>143</int>
+                    <int>220</int>
+                    <int>255</int>
+                  </object>
+                  <object class="java.awt.Color">
+                    <int>0</int>
+                    <int>74</int>
+                    <int>151</int>
+                    <int>255</int>
+                  </object>
                 </object>
               </property>
               <property name="imageEdgeBorder" type="boolean" value="true" />
@@ -1283,11 +1339,19 @@ return console.askYesNo(message, true);
               <group id="8996" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup" useExternalParametrization="true" externalParametrizationName="Customize title bar" externalParametrizationMode="include">
                 <serializedBean>
                   <property name="backgroundColor">
-                    <object class="java.awt.Color">
-                      <int>255</int>
-                      <int>255</int>
-                      <int>255</int>
-                      <int>255</int>
+                    <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                      <object class="java.awt.Color">
+                        <int>255</int>
+                        <int>255</int>
+                        <int>255</int>
+                        <int>255</int>
+                      </object>
+                      <object class="java.awt.Color">
+                        <int>49</int>
+                        <int>52</int>
+                        <int>53</int>
+                        <int>255</int>
+                      </object>
                     </object>
                   </property>
                   <property name="borderSides">
@@ -1444,7 +1508,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_352.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/linux-amd64-1.8.0_352.tar.gz" manualJreEntry="true" />
     </unixInstaller>
     <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
@@ -1471,6 +1535,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
+      <jreBundle jreBundleSource="none" />
     </unixInstaller>
     <macosFolder name="Mac OS X" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" signLaunchers="true">
       <excludedComponents>
@@ -1495,9 +1560,9 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-1.8.0_352.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/macos-amd64-1.8.0_372_unpacked.tar.gz" manualJreEntry="true" />
     </macosFolder>
-    <windows name="Windows 32-bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32">
+    <windows name="Windows 32-bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" architecture="32">
       <excludedComponents>
         <component id="66" />
         <component id="3653" />
@@ -1522,9 +1587,9 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_352.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/windows-x86-1.8.0_352.tar.gz" manualJreEntry="true" />
     </windows>
-    <windows name="Windows 64-bit" id="7720" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
+    <windows name="Windows 64-bit" id="7720" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" architecture="64">
       <excludedComponents>
         <component id="66" />
         <component id="3653" />
@@ -1549,7 +1614,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_352.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/windows-amd64-1.8.0_352.tar.gz" manualJreEntry="true" />
     </windows>
     <unixInstaller name="Linux 64-bit (Java 11)" id="9022" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
@@ -1574,9 +1639,9 @@ return console.askYesNo(message, true);
         <entry filesetId="7414" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-11.0.6.tar.gz" manualJreEntry="true" />
+      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/linux-amd64-11.0.6.tar.gz" manualJreEntry="true" />
     </unixInstaller>
-    <windows name="Windows 64-bit (Java 11)" id="9055" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
+    <windows name="Windows 64-bit (Java 11)" id="9055" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" architecture="64">
       <excludedComponents>
         <component id="66" />
         <component id="3653" />
@@ -1601,7 +1666,7 @@ return console.askYesNo(message, true);
         <entry filesetId="7414" />
         <entry filesetId="9156" />
       </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-11.0.6.tar.gz" manualJreEntry="true" />
+      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/windows-amd64-11.0.6.tar.gz" manualJreEntry="true" />
     </windows>
     <macosFolder name="macOS (Java 11)" id="9060" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
@@ -1624,10 +1689,10 @@ return console.askYesNo(message, true);
         <entry filesetId="7414" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-11.0.6.tar.gz" manualJreEntry="true" />
+      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/macosx-amd64-11.0.6.tar.gz" manualJreEntry="true" />
     </macosFolder>
   </mediaSets>
-  <buildIds>
-    <mediaSet refId="7720" />
+  <buildIds buildAll="false">
+    <mediaSet refId="12" />
   </buildIds>
 </install4j>

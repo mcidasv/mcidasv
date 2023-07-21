@@ -1,0 +1,31 @@
+# Variables to set for the mcv_install4j build script.
+# You'll want this file to be ~/.config/mcidasv_install4j/install4j.env
+
+# JDK to use to build installers
+export JAVA_HOME="/Users/username/jdks/zulu8.70.0.23-ca-fx-jdk8.0.372-macosx_x64"
+
+# Path to where Ant was extracted (note: not where the "ant" executable is; the parent directory!)
+export ANT_HOME="/Users/username/jdks/apache-ant-1.10.13"
+
+# Install4J directory that contains the "bin" and "media" subdirectories
+export INSTALL4J_DIR="/Applications/install4j.app/Contents/Resources/app"
+
+export MCIDASV_REPO="/Users/username/work/install4j/mcidasv"
+
+# Directory where the code signing certs live
+export CERT_DIR="/Users/username/work/install4j/signing"
+
+# Name of the file within $CERT_DIR containing the Windows code signing cert password.
+export WINDOWS_CERT_PASS_FILENAME="windows_cert.txt"
+
+# Name of the file within $CERT_DIR containing the macOS code signing cert password.
+# Should not contain any new line characters!
+export MACOS_CERT_PASS_FILENAME="macos_cert.txt"
+
+# Name of the file within $CERT_DIR containing the notarization password.
+# Should not contain any new line characters!
+export MACOS_NOTARIZE_PASS_FILENAME="notarization_pass.txt"
+
+# Directory where the signed and notarized should end up
+export MEDIA_DIR="/Users/username/work/install4j/media"
+

@@ -30,4 +30,5 @@ build/*
 *.pfx
 *.p12
 signing/*
+*.env
 

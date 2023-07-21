@@ -159,12 +159,15 @@
 
       Linux example:
           ant -Dwindows.keystore=$(cat SOME_FILE_CONTAINING_PASSWORD.txt) \
-              -Dmacos.keystore=$(cat ANOTHER_FILE_CONTAINING_MACOS_PASS.txt) \
-              dist installers
+              dist installers_normal
+      macOS example:
+          ant -Dmacos.keystore=$(cat ANOTHER_FILE_CONTAINING_MACOS_CERT_PASS.txt) \
+              -Dnotarization.password=$(cat YET_ANOTHER_FILE_WITH_NOTARIZATION_PASS.txt) \
+              dist installers_macos
     -->
     <property name="windows.keystore" value="DUMMY VALUE" />
     <property name="macos.keystore" value="DUMMY VALUE" />
-
+    <property name="notarization.password" value="DUMMY VALUE" />
 
     <!-- VisAD Properties -->
     <!-- visad.texturemax is a workaround for the bizarro problem detailed at
@@ -1550,14 +1553,42 @@
               failonerror="false" />
     </target>
 
-    <!-- Make the installers with install4j -->
-    <target name="installers" depends="installer_custom_code" description="Make the installers with install4j">
+    <!-- Make the Windows and Linux installers with install4j -->
+    <target name="installers_normal" depends="installer_custom_code" description="Make the installers with install4j">
         <!-- see comment attached to the "windows.keystore" property for usage info -->
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
             <arg value="-D" />
             <arg value="IDV_VERSION=${idv.version}" />
             <arg value="--win-keystore-password=${windows.keystore}" />
+            <arg value="--build-ids=8,7720,7557,9055,9022" />
+            <arg value="mcidasv.install4j" />
+        </exec>
+    </target>
+    
+    <!--
+      Because Apple demands things be done their way, we have to specifically
+      build macOS installers on macOS machines due to signing and notarization
+      requirements.
+      
+      See the comment near the macos.keystore property definition for usage
+      information.
+    -->
+    <target name="installers_macos" depends="installer_custom_code" description="Separate installer task for building on macOS machines">
+        <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
+            <arg value="-D" />
+            <arg value="IDV_VERSION=${idv.version}" />
             <arg value="--mac-keystore-password=${macos.keystore}" />
+            <!--
+              The notarization account is unfortunately my (Jon's) email
+              address, so for now this process is regrettably associated with
+              me rather than MUG. This was a limitation imposed by having to
+              go through DoIT.
+              
+              This email address can be found in the install4j configuration
+              file.
+            -->
+            <arg value="--apple-id-password=${notarization.password}" />
+            <arg value="--build-ids=12" />
             <arg value="mcidasv.install4j" />
         </exec>
     </target>

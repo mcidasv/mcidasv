@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$HOME/.config/mcidasv_install4j/install4j.env"
+
+export INSTALL4J_INTERNAL_MEDIA="$INSTALL4J_DIR/media"
+
+# Set up PATH.
+export PATH="$ANT_HOME/bin:$JAVA_HOME/bin:$PATH"
+
+pushd "$MCIDASV_REPO" || exit
+
+# Update repo
+ant gitupdate
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    ant -Dwindows.keystore="$(cat "$CERT_DIR/$WINDOWS_CERT_PASS_FILENAME")" \
+    -Dinstall4j.dir="$INSTALL4J_DIR" \
+    dist \
+    installers_normal
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # Build, sign, and notarize.
+    # Seems to take about 6 minutes to run on dufus.
+    ant -Dmacos.keystore="$(cat "$CERT_DIR/$MACOS_CERT_PASS_FILENAME")" \
+        -Dnotarization.password="$(cat "$CERT_DIR/$MACOS_NOTARIZE_PASS_FILENAME")" \
+        -Dinstall4j.dir="$INSTALL4J_DIR" \
+        dist \
+        installers_macos
+
+    # Move the installer DMGs somewhere more accessible.
+    pushd "$INSTALL4J_INTERNAL_MEDIA" || exit
+    for installer in *.dmg; do
+        #mv "$installer" "$MEDIA_DIR/"
+        scp "$installer" mcidasv:~/install4j/media/
+    done
+    popd || exit
+else
+    echo "Unknown operation system!"
+    exit
+fi
+
+popd || exit
