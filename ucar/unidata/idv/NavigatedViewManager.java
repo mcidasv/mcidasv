@@ -6,22 +6,22 @@
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
  * http://www.ssec.wisc.edu/mcidas
- * 
+ *
  * All Rights Reserved
- * 
+ *
  * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * McIDAS-V is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
@@ -83,11 +83,11 @@ import org.slf4j.LoggerFactory;
  * @author IDV development team
  */
 public abstract class NavigatedViewManager extends ViewManager {
-    
+
     /** Logging object. */
-    private static final Logger logger = 
+    private static final Logger logger =
         LoggerFactory.getLogger(NavigatedViewManager.class);
-    
+
     /** Action command to  pan down */
     public static final String CMD_NAV_DOWN = "cmd.nav.down";
 
@@ -159,9 +159,12 @@ public abstract class NavigatedViewManager extends ViewManager {
     public static final String SHARE_RUBBERBAND = "NavigatedViewManager.SHARE_RUBBERBAND";
 
     /** Defines the perspective view for sharing state. */
-    public static final String SHARE_TOGGLEPERSPECTIVE = 
-        "NavigatedViewManager.SHARE_TOGGLEPERSPECTIVE";
-    
+    public static final String SHARE_TOGGLEPERSPECTIVE =
+            "NavigatedViewManager.SHARE_TOGGLEPERSPECTIVE";
+
+    /** Defines the name of the auto-rotate attribute used with state sharing. */
+    public static final String SHARE_AUTOROTATE = "NavigatedViewManager.SHARE_AUTOROTATE";
+
     /** How far do we zoom on a zoom in or out */
     public static final double ZOOM_FACTOR =
         NavigatedDisplayToolBar.ZOOM_FACTOR;
@@ -488,9 +491,8 @@ public abstract class NavigatedViewManager extends ViewManager {
      */
     protected ViewpointControl getViewpointControl() {
         if (viewpointControl == null) {
-            ViewpointControl tmp =
-                new ViewpointControl(getNavigatedDisplay()) {
-                public void changePerspectiveView(boolean v) {
+            ViewpointControl tmp = new ViewpointControl(getNavigatedDisplay()) {
+                @Override public void changePerspectiveView(boolean v) {
                     if (viewpointControl == null) {
                         return;
                     }
@@ -499,8 +501,7 @@ public abstract class NavigatedViewManager extends ViewManager {
                     perspectiveViewChanged(v);
                     doShare(SHARE_TOGGLEPERSPECTIVE, v);
                 }
-                protected void applyVerticalRange(VertScaleInfo transfer)
-                        throws Exception {
+                @Override protected void applyVerticalRange(VertScaleInfo transfer) throws Exception {
                     if (viewpointControl == null) {
                         return;
                     }
@@ -508,9 +509,30 @@ public abstract class NavigatedViewManager extends ViewManager {
                     super.applyVerticalRange(transfer);
                     verticalRangeChanged();
                 }
+
+                /**
+                 * Overridden to allow use of the {@code ViewManager} boolean property management
+                 * as well as the IDV's state sharing.
+                 *
+                 * @param v {@code true} to enable auto-rotation.
+                 */
+                @Override public void changeAutoRotate(boolean v) {
+                    if (viewpointControl == null) {
+                        return;
+                    }
+
+                    // make sure to do all the normal ViewpointControl#changeAutoRotate(boolean)
+                    // behavior.
+                    super.changeAutoRotate(v);
+
+                    // change the PREF_AUTOROTATE value in the ViewManager.
+                    setBp(MapViewManager.PREF_AUTOROTATE, v);
+
+                    // share with anything else that may be listening.
+                    doShare(SHARE_AUTOROTATE, v);
+                }
             };
 
-            // System.err.println("making viewpoint control " +getPerspectiveView());
             tmp.setPerspectiveView(getPerspectiveView());
             viewpointControl = tmp;
         }
@@ -657,7 +679,12 @@ public abstract class NavigatedViewManager extends ViewManager {
         if ((inputEvent instanceof MouseEvent)
                 && (eventId == DisplayEvent.MOUSE_PRESSED)) {
             mousePressedTime = System.currentTimeMillis();
-            getViewpointControl().setAutoRotate(false);
+
+            // slightly better way of allowing users to click the display to disable auto-rotate
+            if (getViewpointControl().getAutoRotate()) {
+                getViewpointControl().changeAutoRotate(false);
+            }
+
             startMoveMatrix = getProjectionControl().getMatrix();
 
             MouseEvent mouseEvent = (MouseEvent) inputEvent;

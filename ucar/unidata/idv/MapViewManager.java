@@ -200,7 +200,7 @@ public class MapViewManager extends NavigatedViewManager {
     public static final String PREF_SHOWPIP = "View.ShowPip";
 
     /** Preference for progressive resolution */
-    public static final String PREF_USE_PROGRESSIVE_RESOLUTION = 
+    public static final String PREF_USE_PROGRESSIVE_RESOLUTION =
     	"View.UseProgressiveResolution";
 
     /** label for progressive resolution/disclosure/whatever we call it */
@@ -316,6 +316,9 @@ public class MapViewManager extends NavigatedViewManager {
 
     /** use default globe background flag */
     private boolean defaultGlobeBackground = false;
+
+    /** Whether auto-rotation should be toggled automatically after initialization completes. */
+    private boolean defaultAutoRotate = false;
 
     /** initial display projection zoom */
     private double displayProjectionZoom = 0;
@@ -612,7 +615,6 @@ public class MapViewManager extends NavigatedViewManager {
         Trace.call2("MapViewManager.init checkDefaultMap");
 
         if (useGlobeDisplay) {
-            //            if(!hasBooleanProperty(PREF_SHOWGLOBEBACKGROUND)) {
             initializeBooleanProperty(
                 new BooleanProperty(
                     PREF_SHOWGLOBEBACKGROUND, "Show Globe Background",
@@ -620,10 +622,15 @@ public class MapViewManager extends NavigatedViewManager {
             //            }
         }
 
+        initializeBooleanProperty(
+                new BooleanProperty(
+                        PREF_AUTOROTATE, "Auto-rotate",
+                        "Toggle auto-rotation", defaultAutoRotate));
 
-
-
-
+        if (defaultAutoRotate && !getViewpointControl().getAutoRotate()) {
+            // the changeAutoRotate method is overridden in NavigatedViewManager's getViewpointControl.
+            getViewpointControl().changeAutoRotate(defaultAutoRotate);
+        }
     }
 
 
@@ -1402,7 +1409,7 @@ public class MapViewManager extends NavigatedViewManager {
         final JCheckBox logoVizBox = new JCheckBox(
            "Show Logo in View",
            stateManager.getPreferenceOrProperty(
-           PREF_LOGO_VISIBILITY, 
+           PREF_LOGO_VISIBILITY,
            true)
         );
         final JTextField logoField =
@@ -3391,7 +3398,9 @@ public class MapViewManager extends NavigatedViewManager {
      * @param value The value
      */
     public void setAutoRotate(boolean value) {
+        defaultAutoRotate = value;
         setBp(PREF_AUTOROTATE, value);
+        doShare("NavigatedViewManager.SHARE_AUTOROTATE", value);
     }
 
     /**
