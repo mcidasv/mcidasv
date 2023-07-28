@@ -1608,7 +1608,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 	MultiSpectralData msd = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
                 		"RadianceEarth", "RadianceEarth", "SuomiNPP", "OMPS");
-                	msd.setInitialWavenumber(0);
+			// TJJ Jul 2023 - below numbers are just a first guess to get OMPS from J2 working
+                        msd.setInitialWavenumber(85);
+			float[] ompsRange = new float[2];
+			ompsRange[0] = 0;
+			ompsRange[1] = 400;
+			msd.setDataRange(ompsRange);
                 	multiSpectralData.add(msd);
                 } 
                 if (pIdx == 0) {

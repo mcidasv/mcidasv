@@ -236,7 +236,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return new_spectrum;
   }
 
-  protected void setDataRange(float[] range) {
+  public void setDataRange(float[] range) {
     dataRange = range;
   }
 
