@@ -71,7 +71,7 @@ Run Install4J and build the installer packages.
 
 Nightlies
 ---------
-A cron job that builds the "nightly" target runs daily at 4am:
+A cron job that builds the "nightly" target runs daily at 4:00 AM:
 
     ant nightly
     
