@@ -41,6 +41,7 @@ import org.jcodec.common.VideoCodecMeta;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.model.ColorSpace;
 import org.jcodec.common.model.Picture;
+import org.jcodec.common.model.Rational;
 import org.jcodec.scale.ColorUtil;
 import org.jcodec.scale.Transform;
 import org.slf4j.Logger;
@@ -2415,13 +2416,27 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     //    logger.trace("IMG WRAPPER: path: {}", img.getPath());
                     //}
 
-                    SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int) Math.ceil(displayRate));
+                    SequenceEncoder enc =
+                            SequenceEncoder.createWithFps(
+                                    NIOUtils.writableChannel(output),
+                                    new Rational(30, 1));
+//                                    new Rational((int) Math.ceil(displayRate), 1));
+//                    SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int) Math.ceil(displayRate));
                     List<String> imageList = ImageWrapper.makeFileList(images);
                     for (String image : imageList) {
+                        Picture p = null;
                         if (image.endsWith(".jpg")) {
-                            enc.encodeNativeFrame(decodeJPG(new File(image), ColorSpace.RGB));
+                            p = decodeJPG(new File(image), ColorSpace.RGB);
                         } else if (image.endsWith(".png")) {
-                            enc.encodeNativeFrame(decodePNG(new File(image), ColorSpace.RGB));
+                            p = decodePNG(new File(image), ColorSpace.RGB);
+                        }
+                        for (int ii = 0; ii < 30; ii++) {
+                            enc.encodeNativeFrame(p);
+//                            if (image.endsWith(".jpg")) {
+//                                enc.encodeNativeFrame(decodeJPG(new File(image), ColorSpace.RGB));
+//                            } else if (image.endsWith(".png")) {
+//                                enc.encodeNativeFrame(decodePNG(new File(image), ColorSpace.RGB));
+//                            }
                         }
                     }
                     enc.finish();

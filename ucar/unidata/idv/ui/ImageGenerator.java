@@ -4365,9 +4365,12 @@ public class ImageGenerator extends IdvManager {
                         imageFile = new File(getImageFileName(loopFilename));
                     }
                     viewManager.writeImage(imageFile, true, false);
-                } else if ((newFonts && headless)
-                           || ((loopFilename != null) && ViewManager.isVectorGraphicsFile(loopFilename)))
-                {
+//                } else if ((newFonts && headless)
+//                           || ((loopFilename != null) && ViewManager.isVectorGraphicsFile(loopFilename)))
+//                {
+                } else if ((loopFilename != null)
+                        && ViewManager.isVectorGraphicsFile(
+                        loopFilename)) {
                     VectorGraphicsRenderer vectorRenderer =
                             new VectorGraphicsRenderer(viewManager);
                     vectorRenderer.renderTo(loopFilename);

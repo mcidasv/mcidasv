@@ -106,6 +106,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
@@ -1540,6 +1541,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * that allows derived classes to do any further initialization.
      */
     public void initDone() {}
+
+    public void forceUpdateList() {
+        List vms = getViewManagers();
+        for (Object o : vms) {
+            ViewManager vm = (ViewManager)o;
+            vm.updateDisplayList();
+        }
+    }
 
     /**
      * Add a property change listener.
@@ -4073,6 +4082,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             } catch (VisADException ve) {
                 logException("Setting display list data", ve);
             } catch (RemoteException re) {}
+        }
+        if (McIDASV.getStaticMcv().getArgsManager().isScriptingMode()) {
+            forceUpdateList();
         }
     }
 
