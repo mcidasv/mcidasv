@@ -35,11 +35,10 @@ import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Arrays;
+import java.util.EventListener;
 import java.util.Objects;
 
 import javax.swing.Icon;
@@ -111,6 +110,8 @@ public class MenuScroller {
         }
         return result;
     }
+
+
 
     private int computeScrollCount(int startIndex) {
         int result = 15;
@@ -401,18 +402,6 @@ public class MenuScroller {
         refreshMenu();
     }
 
-    /**
-     * Ensures that the {@code dispose} method of this MenuScroller is
-     * called when there are no more refrences to it.
-     *
-     * @exception  Throwable if an error occurs.
-     * @see MenuScroller#dispose()
-     */
-    @Override protected void finalize() throws Throwable {
-        dispose();
-        super.finalize();
-    }
-
     public void setParent(JComponent parent) {
         this.parent = parent;
     }
@@ -420,17 +409,12 @@ public class MenuScroller {
     private void refreshMenu() {
         if ((menuItems != null) && (menuItems.length > 0)) {
 
-            int allItemsHeight = 0;
-            for (Component item : menuItems) {
-                allItemsHeight += item.getPreferredSize().height;
-            }
-
+            int allItemsHeight = Arrays.stream(menuItems).mapToInt(item -> item.getPreferredSize().height).sum();
             int allowedHeight = getMaxDimensionOnScreen(parent, menu).height - parent.getInsets().top;
-
             boolean mustScroll = allItemsHeight > allowedHeight;
 
             if (mustScroll) {
-                firstIndex = Math.max(topFixedCount, firstIndex);
+                firstIndex = Math.min(menuItems.length-1, Math.max(topFixedCount, firstIndex));
                 int scrollCount = computeScrollCount(firstIndex);
                 firstIndex = Math.min(menuItems.length - scrollCount, firstIndex);
 
@@ -477,13 +461,14 @@ public class MenuScroller {
         }
 
         @Override public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-//            restoreMenuItems();
-            setMenuItems();
+            // this does the menu.removeAll() that makes it possible to reuse the scroller buttons.
+            restoreMenuItems();
+            //setMenuItems();
         }
 
 
         @Override public void popupMenuCanceled(PopupMenuEvent e) {
-//            restoreMenuItems();
+            //restoreMenuItems();
             setMenuItems();
         }
 
@@ -502,29 +487,10 @@ public class MenuScroller {
 
     private class MenuScrollTimer extends Timer {
         public MenuScrollTimer(final int increment, int interval) {
-            // software developers hate this one weird trick of a compiler bug
-            // workaround:
-            // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8006684
-            //
-            // super(interval, e -> {
-            //     firstIndex += increment;
-            //     refreshMenu();
-            // });
-            super(interval, new TimerListener(increment));
-        }
-    }
-
-    // see the comment in the MenuScrollTimer constructor
-    private class TimerListener implements ActionListener {
-        private int increment;
-
-        public TimerListener(int increment) {
-            this.increment = increment;
-        }
-
-        @Override public void actionPerformed(ActionEvent e) {
-            firstIndex += increment;
-            refreshMenu();
+            super(interval, e -> {
+                firstIndex += increment;
+                refreshMenu();
+            });
         }
     }
 
