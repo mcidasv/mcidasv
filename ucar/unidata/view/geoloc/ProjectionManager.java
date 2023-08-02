@@ -1074,8 +1074,15 @@ public class ProjectionManager implements ActionListener {
                     + editProjection);
                 return;
             }
-            setProjFromDialog(projClass, editProjection);
-            ProjectionRect mapArea = mapEditPanel.getSelectedRegion();
+            if ((nameTF.getText()==null || nameTF.getText().isEmpty()) ||
+                    ((editProjection.getName()==null) || editProjection.getName().isEmpty())){
+                JOptionPane.showMessageDialog(
+                        this,
+                        "The name cannot be blank");
+            } else {
+                setProjFromDialog(projClass, editProjection);
+            }
+                ProjectionRect mapArea = mapEditPanel.getSelectedRegion();
             if (mapArea == null) {
                 mapArea = mapEditPanel.getMapArea();
             }
@@ -1096,7 +1103,11 @@ public class ProjectionManager implements ActionListener {
             }
 
             if (ProjectionManager.this.contains(newProj.getName())) {
-                projTable.replaceProjection(newProj);
+                if(newProj.getName()==null || newProj.getName().isEmpty()){
+                    JOptionPane.showMessageDialog(this, "The name cannot be blank");
+                } else {
+                    projTable.replaceProjection(newProj);
+                }
             } else {
                 projTable.addProjection(newProj);
             }
