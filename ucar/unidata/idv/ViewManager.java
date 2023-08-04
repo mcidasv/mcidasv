@@ -619,16 +619,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
     List aliases = new ArrayList();
 
     /** for making timelines component */
-    private Object TIMELINES_MUTEX = new Object();
+    private final Object TIMELINES_MUTEX = new Object();
 
     /** mutext for the display list */
-    private Object MUTEX_DISPLAYLIST = new Object();
+    private final Object MUTEX_DISPLAYLIST = new Object();
 
     /** a mutex for accessing the display master */
-    private Object MASTER_MUTEX = new Object();
+    private final Object MASTER_MUTEX = new Object();
 
     /** Just in case this synchs the legend filling */
-    private Object LEGENDMUTEX = new Object();
+    private final Object LEGENDMUTEX = new Object();
 
     /** flag for using the image panel */
     boolean usingImagePanel = false;
