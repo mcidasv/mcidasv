@@ -2415,28 +2415,13 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     //for (ImageWrapper img : images) {
                     //    logger.trace("IMG WRAPPER: path: {}", img.getPath());
                     //}
-
-                    SequenceEncoder enc =
-                            SequenceEncoder.createWithFps(
-                                    NIOUtils.writableChannel(output),
-                                    new Rational(30, 1));
-//                                    new Rational((int) Math.ceil(displayRate), 1));
-//                    SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int) Math.ceil(displayRate));
+                    SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int) Math.ceil(displayRate));
                     List<String> imageList = ImageWrapper.makeFileList(images);
                     for (String image : imageList) {
-                        Picture p = null;
                         if (image.endsWith(".jpg")) {
-                            p = decodeJPG(new File(image), ColorSpace.RGB);
+                            enc.encodeNativeFrame(decodeJPG(new File(image), ColorSpace.RGB));
                         } else if (image.endsWith(".png")) {
-                            p = decodePNG(new File(image), ColorSpace.RGB);
-                        }
-                        for (int ii = 0; ii < 30; ii++) {
-                            enc.encodeNativeFrame(p);
-//                            if (image.endsWith(".jpg")) {
-//                                enc.encodeNativeFrame(decodeJPG(new File(image), ColorSpace.RGB));
-//                            } else if (image.endsWith(".png")) {
-//                                enc.encodeNativeFrame(decodePNG(new File(image), ColorSpace.RGB));
-//                            }
+                            enc.encodeNativeFrame(decodePNG(new File(image), ColorSpace.RGB));
                         }
                     }
                     enc.finish();
