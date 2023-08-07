@@ -318,10 +318,19 @@ public class DataManager {
 
 
         for (String visadProp : visadProperties) {
-            System.setProperty(visadProp,
-                               dataContext.getIdv().getStateManager()
-                               .getPreferenceOrProperty(visadProp,
-                                       "false"));
+            // TJJ Aug 2023
+            // new font rendering is the only VisAD prop that defaults True right now
+            if (visadProp.equals("visad.newfontrendering")) {
+                System.setProperty(visadProp,
+                        dataContext.getIdv().getStateManager()
+                                .getPreferenceOrProperty(visadProp,
+                                        "true"));
+            } else {
+                System.setProperty(visadProp,
+                        dataContext.getIdv().getStateManager()
+                                .getPreferenceOrProperty(visadProp,
+                                        "false"));
+            }
         }
 
         SampledSet.setCacheSizeThreshold(
