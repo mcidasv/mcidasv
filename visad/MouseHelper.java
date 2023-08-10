@@ -232,7 +232,7 @@ public class MouseHelper
       return;
     }
 
-    Canvas3D c = ((DisplayRendererJ3D)getDisplayRenderer()).getCanvas();
+//    Canvas3D c = ((DisplayRendererJ3D)getDisplayRenderer()).getCanvas();
     MouseEvent mouse_event = (MouseEvent) event;
 
     int event_id = event.getID();
@@ -350,13 +350,22 @@ public class MouseHelper
       boolean cursor_off = enableFunctions((MouseEvent) event);
 
       if (event_id == MouseEvent.MOUSE_PRESSED) {
+
+        double canvasXScale = 1.0;
+        double canvasYScale = 1.0;
+        if (getDisplayRenderer() instanceof DisplayRendererJ3D) {
+          Canvas3D c = ((DisplayRendererJ3D)getDisplayRenderer()).getCanvas();
+          canvasXScale = c.getXscale();
+          canvasYScale = c.getYscale();
+        }
+
         mouse_event =
           new MouseEvent((Component)mouse_event.getSource(),
                          mouse_event.getID(),
                          mouse_event.getWhen(),
                          mouse_event.getModifiers(),
-                         (int)(mouse_event.getX() * c.getXscale()),
-                         (int)(mouse_event.getY() * c.getYscale()),
+                         (int)(mouse_event.getX() * canvasXScale),
+                         (int)(mouse_event.getY() * canvasYScale),
                          mouse_event.getXOnScreen(),
                          mouse_event.getYOnScreen(),
                          mouse_event.getClickCount(),

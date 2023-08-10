@@ -474,9 +474,13 @@ public class DisplayEvent extends VisADEvent {
     int xx = ((input_event == null) || !(input_event instanceof MouseEvent))
              ? -1
              : ((MouseEvent) input_event).getX();
-    Canvas3D c =
-      ((DisplayRendererJ3D)((DisplayImpl)display).getDisplayRenderer()).getCanvas();
-    return xx * (int)c.getXscale();
+    double scale = 1.0;
+    if (((DisplayImpl)display).getDisplayRenderer() instanceof DisplayRendererJ3D) {
+      Canvas3D c =
+              ((DisplayRendererJ3D) ((DisplayImpl) display).getDisplayRenderer()).getCanvas();
+      scale = c.getXscale();
+    }
+    return xx * (int)scale;
   }
 
   private void printcoords() {
@@ -486,10 +490,16 @@ public class DisplayEvent extends VisADEvent {
     int yy = ((input_event == null) || !(input_event instanceof MouseEvent))
              ? -1
              : ((MouseEvent) input_event).getY();
-    Canvas3D c =
-      ((DisplayRendererJ3D)((DisplayImpl)display).getDisplayRenderer()).getCanvas();
-    int new_x = xx * (int)c.getXscale();
-    int new_y = yy * (int)c.getYscale();
+    double xscale = 1.0;
+    double yscale = 1.0;
+    if (((DisplayImpl)display).getDisplayRenderer() instanceof DisplayRendererJ3D) {
+      Canvas3D c =
+              ((DisplayRendererJ3D) ((DisplayImpl) display).getDisplayRenderer()).getCanvas();
+      xscale = c.getXscale();
+      yscale = c.getYscale();
+    }
+    int new_x = xx * (int)xscale;
+    int new_y = yy * (int)yscale;
     logger.trace("orig: {} {}; new: {} {}", xx, yy, new_x, new_y);
   }
 
@@ -504,9 +514,13 @@ public class DisplayEvent extends VisADEvent {
     int yy = ((input_event == null) || !(input_event instanceof MouseEvent))
            ? -1
            : ((MouseEvent) input_event).getY();
-    Canvas3D c =
-      ((DisplayRendererJ3D)((DisplayImpl)display).getDisplayRenderer()).getCanvas();
-    return yy * (int)c.getYscale();
+    double scale = 1.0;
+    if (((DisplayImpl)display).getDisplayRenderer() instanceof DisplayRendererJ3D) {
+      Canvas3D c =
+              ((DisplayRendererJ3D) ((DisplayImpl) display).getDisplayRenderer()).getCanvas();
+      scale = c.getYscale();
+    }
+    return yy * (int)scale;
   }
 
   /**
