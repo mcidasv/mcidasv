@@ -2615,14 +2615,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
 
     /**
-     * The time changed
-     */
-    /**
      * Called when the animation timestep changes.
+     *
+     * <p>In interactive McIDAS-V sessions, this will be a no-op. Non-interactive sessions
+     * will call {@link #updateDisplayList()} to force the display list change.</p>
      */
     protected void animationTimeChanged() {
-        logger.trace("called");
-        SwingUtilities.invokeLater(this::updateDisplayList);
+        if (McIDASV.getStaticMcv().getArgsManager().isScriptingMode()) {
+            SwingUtilities.invokeLater(this::updateDisplayList);
+        }
     }
 
     /**
