@@ -486,7 +486,7 @@ def VIIRSEdrTrueColorRGB(M5, M4, M3):
     red = rescale(M5, 0, 1, 0, 255)
     grn = rescale(M4, 0, 1, 0, 255)
     blu = rescale(M3, 0, 1, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Natural Color RGB (M-band)
@@ -497,7 +497,7 @@ def VIIRSEdrNaturalColorRGB(M10, M7, M5):
     red = rescale(M10, 0, 1, 0, 255)
     grn = rescale(M7, 0, 1, 0, 255)
     blu = rescale(M5, 0, 1, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 #VIIRS EDR Dust RGB
@@ -509,7 +509,7 @@ def VIIRSEdrDustRGB(M14, M15, M16):
     red = rescale(M16-M15,  -6.7, 2.6, 0, 255)
     grn = 255*(rescale(M15-M14, -0.5, 20, 0, 1)**(1/2.5))
     blu = rescale(M15, 261.2, 288.7, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Night Microphysics RGB
@@ -521,7 +521,7 @@ def VIIRSEdrNightMicrophysicsRGB(M12, M15, M16):
     red = rescale(M16-M15, -6.7, 2.6, 0, 255)
     grn = rescale(M15-M12, -3.1, 5.2, 0, 255)
     blu = rescale(M15, 243.55, 292.65, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS Edr Day Fire RGB
@@ -533,7 +533,7 @@ def VIIRSEdrDayFireRGB(I4, I2, I1):
     red = 255*(rescale(I4, 273.15, 333.15, 0, 1)**(1/.4))
     grn = rescale(I2, 0, 1, 0, 255)
     blu = rescale(I1, 0, 1, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Fire Temperature RGB
@@ -545,7 +545,7 @@ def VIIRSEdrFireTemperatureRGB(M12, M11, M10):
     red = 255*(rescale(M12, 273.15, 343.15, 0, 1)**(1/.4))
     grn = rescale(M11, 0, 1, 0, 255)
     blu = rescale(M10, 0, 0.75, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 # VIIRS EDR Natural Color RGB (I-band)
 def VIIRSEdrNaturalColorIRGB(I3, I2, I1):
@@ -555,7 +555,7 @@ def VIIRSEdrNaturalColorIRGB(I3, I2, I1):
     red = rescale(I3, 0, 1, 0, 255)
     grn = rescale(I2, 0, 1, 0, 255)
     blu = rescale(I1, 0, 1, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Day Cloud Type RGB
@@ -566,7 +566,7 @@ def VIIRSEdrCloudTypeRGB(M9, M5, M10):
     red = 255*(rescale(M9, 0, .10, 0, 1)**(1/0.66))
     grn = rescale(M5, 0, 0.78, 0, 255)
     blu = rescale(M10, 0, 0.59, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Snowmelt RGB
@@ -578,7 +578,7 @@ def VIIRSEdrSnowmeltRGB(M10, M8, M5):
     red = rescale(M10, 0, 1, 0, 255)
     grn = rescale(M8, 0, 1, 0, 255)
     blu = rescale(M5, 0, 1, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 # VIIRS EDR Sea Spray RGB
 def VIIRSEdrSeaSprayRGB(I1, I2, I4, I5):
@@ -589,7 +589,7 @@ def VIIRSEdrSeaSprayRGB(I1, I2, I4, I5):
     red = rescale(sub(I4, I5), 0, 10, 0, 255)
     grn = 255*(rescale(I2, 0.01, 0.20, 0, 1)**(1/.6))
     blu = 255*(rescale(I1, 0.02, 0.25, 0, 1)**(1/.6))
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Ash RGB
@@ -601,7 +601,7 @@ def VIIRSEdrAshRGB(M14, M15, M16):
     red = rescale(M16-M15, -6.7, 2.6, 0, 255)
     grn = rescale(M15-M14, -6.0, 6.3, 0, 255)
     blu = rescale(M15, 243.6, 302.4, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Day Cloud Phase Distinction M-Band RGB
@@ -613,7 +613,7 @@ def VIIRSEdrDayCloudPhaseMRGB(M5, M10, M15):
     red = rescale(M15, 280.65, 219.65, 0, 255)
     grn = rescale(M5, 0, 0.78, 0, 255)
     blu = rescale(M10, 0.01, 0.59, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Day Cloud Phase Distinction I-Band RGB
@@ -625,7 +625,7 @@ def VIIRSEdrDayCloudPhaseIRGB(I1, I3, I5):
     red = rescale(I5, 280.65, 219.65, 0, 255)
     grn = rescale(I1, 0, 0.78, 0, 255)
     blu = rescale(I3, 0.01, 0.59, 0, 255)
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Day Snow-Fog M-Band RGB
@@ -637,7 +637,7 @@ def VIIRSEdrDaySnowFogMRGB(M7, M10, M12, M15):
     red = 255*(rescale(M7, 0, 1, 0, 1)**(1/1.7))
     grn = 255*(rescale(M10, 0, 0.7, 0, 1)**(1/1.7))
     blu = 255*(rescale(M12-M15, 0, 30, 0, 1)**(1/1.7))
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR Day Snow-Fog I-Band RGB
@@ -649,7 +649,7 @@ def VIIRSEdrDaySnowFogIRGB(I2, I3, I4, I5):
     red = 255*(rescale(I2, 0, 1, 0, 1)**(1/1.7))
     grn = 255*(rescale(I3, 0, 0.7, 0, 1)**(1/1.7))
     blu = 255*(rescale(I4-I5, 0, 30, 0, 1)**(1/1.7))
-    return combineRGB(red, grn, blu)
+    return mycombineRGB(red, grn, blu)
 
 
 # VIIRS EDR NDVI
