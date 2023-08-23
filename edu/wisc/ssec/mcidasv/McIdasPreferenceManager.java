@@ -1048,21 +1048,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         };
         JPanel layerListPanel = makePrefPanel(layerListObjects, widgets, getStore());
 
-        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        JLabel labelLabel = new JLabel("Layer Label Rendering: ");
-
-        // String labelTypeValue = getStore().get(PREF_LABEL_RENDERING, DisplayControlImpl.WEIGHTED_AVERAGE);
-        boolean layerLabelState = Boolean.parseBoolean(System.getProperty(PROP_HIQ_FONT_RENDERING, "true"));
-        JRadioButton labelJava = new JRadioButton("Java", layerLabelState);
-        labelJava.setToolTipText("Supports most fonts");
-
-        JRadioButton labelVisAD = new JRadioButton("Legacy VisAD", !(layerLabelState));
-        labelVisAD.setToolTipText("Legacy VisAD Hershey Font");
-
-        GuiUtils.buttonGroup(labelJava, labelVisAD);
-        labelPanel.add(labelLabel);
-        labelPanel.add(labelJava);
-        labelPanel.add(labelVisAD);
         JPanel fontPanel = GuiUtils.vbox(
                 GuiUtils.hbox(
                         McVGuiUtils.makeLabelRight("Font:", Width.ONEHALF),
@@ -1074,8 +1059,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                         GuiUtils.left(dlColPanel),
                         GAP_RELATED
                 ),
-                layerListPanel,
-                labelPanel
+                layerListPanel
         );
 
         fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
@@ -1308,11 +1292,12 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                              logoScaleSlider.getValue() / 10f);
                 theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
                 theStore.put(MapViewManager.PREF_GLOBEBACKGROUND, globeBg[0].getBackground());
-//                theStore.put(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, )
+
                 ViewManager.setHighlightBorder(border[0].getBackground());
                 EventBus.publish("McvPreference.ProgRez", theStore.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false));
 
-                boolean hiqLabelState = labelJava.isSelected();
+                // TJJ Aug 2023 - we decided High Quality only going forward
+                boolean hiqLabelState = true;
                 theStore.put(PROP_HIQ_FONT_RENDERING, hiqLabelState);
                 System.setProperty(PROP_HIQ_FONT_RENDERING, Boolean.toString(hiqLabelState));
 
