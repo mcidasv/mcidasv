@@ -250,6 +250,8 @@ _formats = {
     "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
     "Sectorized CMI":                                          AddeFormat.SCMI,
     "SCMI":                                                    AddeFormat.SCMI,
+    "MSG Native Format":                                       AddeFormat.MSG_NATIVE,
+    "MSGS":                                                    AddeFormat.MSG_NATIVE,
 }
 
 _human_units_to_adde = {
@@ -800,6 +802,7 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
             =========================================================  ============
             "AMSR-E Rain Product"                                      "AMRR"
             "AMSR-E L 1b"                                              "AMSR"
+            "GINI"                                                     "GINI"
             "LRIT GOES-9"                                              "FSDX_G9"
             "LRIT GOES-10"                                             "FSDX_G10"
             "LRIT GOES-11"                                             "FSDX_G11"
@@ -823,13 +826,13 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
             "NOAA AVHRR L 1b"                                          "LV1B_NOAA"
             "SSMI"                                                     "SMIN"
             "TRMM"                                                     "TMIN"
-            "GINI"                                                     "GINI"
             The following servers are not supported on Windows
+            "GOES ABI"                                                 "ABIN"
             "Himawari-8"                                               "WARI"
             "HimawariCast"                                             "WARC"
             "INSAT-3D Imager"                                          "INSAT3D_IMAGER"
             "INSAT-3D Sounder"                                         "INSAT3D_SOUNDER"
-            "GOES ABI"                                                 "ABIN"
+            "MSG Native Format"                                        "MSGS"
             "Sectorized CMI"                                           "SCMI"
             "VIIRS SDR Day/Night Band"                                 "VIIRSD"
             "VIIRS SDR I-Band"                                         "VIIRSI"
