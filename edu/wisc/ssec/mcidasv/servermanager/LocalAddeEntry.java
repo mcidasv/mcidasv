@@ -94,7 +94,7 @@ public class LocalAddeEntry implements AddeEntry {
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
         ABIN, AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4,  
-        MOD8, MODR, MSGT, MTST, SCMI, SMIN, TMIN, MD, INDS, INDI, WARC, WARI, VIIR, INVALID
+        MOD8, MODR, MSGS, MSGT, MTST, SCMI, SMIN, TMIN, MD, INDS, INDI, WARC, WARI, VIIR, INVALID
     }
 
     /**
@@ -145,6 +145,7 @@ public class LocalAddeEntry implements AddeEntry {
         MODIS_L2_MODR(ServerName.MODR, "MODIS MOD R - Corrected Reflectance", "MODIS Level 2 (Corrected Reflectance)"),
         MSG_HRIT_FD(ServerName.MSGT, "MSG HRIT FD", "MSG HRIT (Full Disk)"),
         MSG_HRIT_HRV(ServerName.MSGT, "MSG HRIT HRV", "MSG HRIT (High Resolution Visible)"),
+        MSG_NATIVE(ServerName.MSGS, "MSG Native Format", "MSG Native Format (*.nat) data"),
         MTSAT_HRIT(ServerName.MTST, "MTSAT HRIT"),
         NOAA_AVHRR_L1B(ServerName.LV1B, "NOAA AVHRR L 1b", "NOAA AVHRR Level 1b"),
         SCMI(ServerName.SCMI, "SCMI", "Sectorized CMI"),
