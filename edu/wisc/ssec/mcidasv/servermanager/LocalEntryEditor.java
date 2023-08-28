@@ -112,6 +112,7 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.MODIS_L2_MODR,
             AddeFormat.MSG_HRIT_FD,
             AddeFormat.MSG_HRIT_HRV,
+            AddeFormat.MSG_NATIVE,
             AddeFormat.MTSAT_HRIT,
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SCMI,
@@ -224,6 +225,7 @@ public class LocalEntryEditor extends JDialog {
             formats.removeElement(AddeFormat.VIIRSD);
             formats.removeElement(AddeFormat.VIIREI);
             formats.removeElement(AddeFormat.VIIREM);
+            formats.removeElement(AddeFormat.MSGS);
         }
 
         formatComboBox.setModel(formats);
