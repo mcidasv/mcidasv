@@ -225,7 +225,7 @@ public class LocalEntryEditor extends JDialog {
             formats.removeElement(AddeFormat.VIIRSD);
             formats.removeElement(AddeFormat.VIIREI);
             formats.removeElement(AddeFormat.VIIREM);
-            formats.removeElement(AddeFormat.MSGS);
+            formats.removeElement(AddeFormat.MSG_NATIVE);
         }
 
         formatComboBox.setModel(formats);
