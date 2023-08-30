@@ -3177,7 +3177,8 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
 
   public static boolean useNewFontRendering() {
     String useNewFontRendering = 
-        System.getProperty(McIdasPreferenceManager.PROP_HIQ_FONT_RENDERING, "false");
+        System.getProperty(McIdasPreferenceManager.PROP_HIQ_FONT_RENDERING, "true");
+
     String isOffScreen = 
         System.getProperty(McIdasPreferenceManager.PROP_IS_OFFSCREEN, "false");
     boolean isHeadless = GraphicsEnvironment.isHeadless();

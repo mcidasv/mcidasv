@@ -4354,10 +4354,6 @@ public class ImageGenerator extends IdvManager {
                     }
                 }
                 String loopFilename = applyMacrosFilename(fname);
-                String useNewFontRendering =
-                        System.getProperty(McIdasPreferenceManager.PROP_HIQ_FONT_RENDERING, "false");
-                boolean newFonts = Boolean.parseBoolean(useNewFontRendering);
-                boolean headless = getIdv().getArgsManager().getIsOffScreen();
 
                 if (scriptingNode == null) {
                     File imageFile = null;

@@ -29,6 +29,7 @@
 package ucar.unidata.data;
 
 
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import org.apache.http.auth.InvalidCredentialsException;
 
 import org.slf4j.Logger;
@@ -313,18 +314,14 @@ public class DataManager {
             "visad.data.arraycache.upperthreshold",
             "visad.data.arraycache.usedatacachemanager",
             "visad.contourFillSingleValueAsTexture",
-            "visad.newfontrendering",
+            McIdasPreferenceManager.PROP_HIQ_FONT_RENDERING
         };
-
 
         for (String visadProp : visadProperties) {
             // TJJ Aug 2023
-            // new font rendering is the only VisAD prop that defaults True right now
-            if (visadProp.equals("visad.newfontrendering")) {
-                System.setProperty(visadProp,
-                        dataContext.getIdv().getStateManager()
-                                .getPreferenceOrProperty(visadProp,
-                                        "true"));
+            // new font rendering is the only VisAD prop that is always True right now
+            if (visadProp.equals(McIdasPreferenceManager.PROP_HIQ_FONT_RENDERING)) {
+                System.setProperty(visadProp, "true");
             } else {
                 System.setProperty(visadProp,
                         dataContext.getIdv().getStateManager()
