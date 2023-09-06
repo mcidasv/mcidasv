@@ -215,7 +215,8 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
 //        System.out.println("new fonts: "+Boolean.parseBoolean(System.getProperty(PROP_HIQ_FONT_RENDERING, "false")));
 //        System.out.println("shouldWarn: "+shouldWarn);
 //        System.out.println("props:\n"+System.getProperties());
-        return shouldWarn;
+//        return shouldWarn;
+        return false;
     }
 
 }

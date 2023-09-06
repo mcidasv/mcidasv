@@ -95,25 +95,7 @@ import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.TextDisplayable;
-import visad.ConstantMap;
-import visad.ControlEvent;
-import visad.ControlListener;
-import visad.CoordinateSystem;
-import visad.Data;
-import visad.DateTime;
-import visad.Display;
-import visad.DisplayEvent;
-import visad.DisplayImpl;
-import visad.DisplayListener;
-import visad.DisplayRenderer;
-import visad.FieldImpl;
-import visad.GraphicsModeControl;
-import visad.KeyboardBehavior;
-import visad.ProjectionControl;
-import visad.Real;
-import visad.Set;
-import visad.Text;
-import visad.VisADException;
+import visad.*;
 import visad.bom.annotations.ImageJ3D;
 import visad.bom.annotations.ScreenAnnotatorJ3D;
 import visad.java2d.GraphicsModeControlJ2D;
@@ -158,6 +140,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.print.PrinterJob;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -165,6 +149,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -2804,6 +2791,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     private void updateDisplayListBackground() {
 
+        activityTest("test 1");
+
         try {
             synchronized (MUTEX_DISPLAYLIST) {
                 if ( !hasDisplayMaster()) {
@@ -2896,16 +2885,60 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     Font f = getDisplayListFont();
                     logger.trace("control: {} attempting to draw label: '{}'", control, label);
                     int[] tuple = centerString(g2, bounds, label, f, (filtered.size() - 1) - i);
-                    int midpoint = tuple[0];
-                    int labelHeight = tuple[1];
+                    // int midpoint = tuple[0];
+                    // int labelHeight = tuple[1];
+
+                    // try image observer technique
+                    ImageUtils.waitOnImage(off_Image);
+
+                    // if image observer doesn't work, see if hasSomething
+                    // detects the problem. if it does, loop until hasSomething
+                    // detects data.
+
                     ImageJ3D g2dTest = new ImageJ3D(off_Image, ImageJ3D.TOP_LEFT, 0, 0, zval, 1.0f);
                     displayLister.add(g2dTest);
                 }
                 displayLister.draw();
+
             }
         } catch (Exception exp) {
             logException("Setting display list", exp);
         }
+        activityTest("Test 2");
+    }
+
+    private void activityTest(String prefix) {
+        boolean cursorCount = idv.getIdvUIManager().getWaitCursorCount() > 0;
+        boolean actionCount = ActionImpl.getTaskCount() > 0;
+        boolean dataActive = DataSourceImpl.getOutstandingGetDataCalls() > 0;
+        boolean j3dActive = anyJava3dThreadsActive();
+        logger.trace("{}: cursorWaits={} actionTasks={} dataActive={} j3dActive={}", prefix, cursorCount, actionCount, dataActive, j3dActive);
+    }
+
+    private static boolean anyJava3dThreadsActive() {
+        long[] ids = ManagementFactory.getThreadMXBean().getAllThreadIds();
+
+        for(int i = 0; i < ids.length; ++i) {
+            ThreadInfo info = ManagementFactory.getThreadMXBean().getThreadInfo(ids[i], Integer.MAX_VALUE);
+            if (info != null && info.getThreadState() == Thread.State.RUNNABLE && info.getThreadName().indexOf("J3D") >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean imageHasSomething(BufferedImage image) {
+        DataBuffer buffer = image.getRaster().getDataBuffer();
+        ColorModel model = image.getColorModel();
+        boolean hasSomething = false;
+        for (int i = 0; i < buffer.getSize(); i++) {
+            int rgb = model.getRGB(buffer.getElem(i));
+            if (model.getRGB(buffer.getElem(i)) != -16777216) {
+                hasSomething = true;
+                break;
+            }
+        }
+        return hasSomething;
     }
 
     public int[] centerString(Graphics g, Rectangle r, String s,
