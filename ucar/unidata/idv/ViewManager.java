@@ -2790,7 +2790,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private ScreenAnnotatorJ3D displayLister = null;
 
     private void updateDisplayListBackground() {
-
+        activityTest("test 0");
+        Misc.sleepSeconds(2);
         activityTest("test 1");
 
         try {
@@ -2903,7 +2904,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 //                            logger.trace("never did get a layer label for '{}'", label);
 //                        }
 //                    }
-                    Misc.sleepSeconds(2);
+
 
 
 
