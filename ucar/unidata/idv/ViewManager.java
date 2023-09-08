@@ -2889,7 +2889,23 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     // int labelHeight = tuple[1];
 
                     // try image observer technique
-                    ImageUtils.waitOnImage(off_Image);
+//                    ImageUtils.waitOnImage(off_Image);
+//                    boolean success = false;
+//                    if (!imageHasSomething(off_Image)) {
+//                        for (int j = 0; j < 10; j++) {
+//                            tuple = centerString(g2, bounds, label, f, (filtered.size() - 1) - i);
+//                            if (imageHasSomething(off_Image)) {
+//                                success = true;
+//                                break;
+//                            }
+//                        }
+//                        if (!success) {
+//                            logger.trace("never did get a layer label for '{}'", label);
+//                        }
+//                    }
+                    Misc.sleepSeconds(2);
+
+
 
                     // if image observer doesn't work, see if hasSomething
                     // detects the problem. if it does, loop until hasSomething
@@ -2916,15 +2932,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
 
     private static boolean anyJava3dThreadsActive() {
-        long[] ids = ManagementFactory.getThreadMXBean().getAllThreadIds();
-
-        for(int i = 0; i < ids.length; ++i) {
-            ThreadInfo info = ManagementFactory.getThreadMXBean().getThreadInfo(ids[i], Integer.MAX_VALUE);
-            if (info != null && info.getThreadState() == Thread.State.RUNNABLE && info.getThreadName().indexOf("J3D") >= 0) {
-                return true;
-            }
-        }
-        return false;
+        ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
+        return Arrays.stream(mxBean.getAllThreadIds())
+                .mapToObj(id -> mxBean.getThreadInfo(id, Integer.MAX_VALUE))
+                .anyMatch(info -> info != null
+                               && info.getThreadState() == Thread.State.RUNNABLE
+                               && info.getThreadName().contains("J3D"));
     }
 
     private static boolean imageHasSomething(BufferedImage image) {
@@ -2932,7 +2945,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         ColorModel model = image.getColorModel();
         boolean hasSomething = false;
         for (int i = 0; i < buffer.getSize(); i++) {
-            int rgb = model.getRGB(buffer.getElem(i));
             if (model.getRGB(buffer.getElem(i)) != -16777216) {
                 hasSomething = true;
                 break;
