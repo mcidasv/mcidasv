@@ -12489,8 +12489,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     protected String getDefaultDisplayListTemplatePoint() {
         return (getShortParamName() != null)  // haveData
-                ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME +
-                " at " + PlanViewControl.MACRO_LEVEL + " - " + MACRO_TIMESTAMP
+                ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME + " - " + MACRO_TIMESTAMP
                 : MACRO_DISPLAYNAME;
     }
 
@@ -12528,8 +12527,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
                     pref = pref + (haveData ? ".data" : ".nodata");
                     return legendLabelTemplate = getStore().get(pref, (haveData
-                            ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME + " at "
-                            + PlanViewControl.MACRO_LEVEL + " - " +
+                            ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME + " - " +
                             MACRO_DISPLAYNAME : MACRO_DISPLAYNAME));
                 }
             }
