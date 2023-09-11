@@ -3007,6 +3007,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 logger.trace("wait cycles for j3dactive to become false: {}", waitCycles);
             }
             updateDisplayListBackground();
+            // temporary!
+            System.gc();
 
         } else {
             updateDisplayListForeground();
