@@ -2790,9 +2790,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private ScreenAnnotatorJ3D displayLister = null;
 
     private void updateDisplayListBackground() {
-        activityTest("test 0");
-        Misc.sleepSeconds(2);
-        activityTest("test 1");
+        String capProp = System.getProperty("mcidasv.bgcap", "4");
+        logger.trace("capProp: {}", capProp);
+
+        if ("1".equals(capProp)) {
+            logger.trace("inserting 2 second pause between updateDisplayList calls");
+            activityTest("test 0");
+            Misc.sleepSeconds(2);
+            activityTest("test 1");
+        }
 
         try {
             synchronized (MUTEX_DISPLAYLIST) {
@@ -2890,27 +2896,25 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     // int labelHeight = tuple[1];
 
                     // try image observer technique
-//                    ImageUtils.waitOnImage(off_Image);
-//                    boolean success = false;
-//                    if (!imageHasSomething(off_Image)) {
-//                        for (int j = 0; j < 10; j++) {
-//                            tuple = centerString(g2, bounds, label, f, (filtered.size() - 1) - i);
-//                            if (imageHasSomething(off_Image)) {
-//                                success = true;
-//                                break;
-//                            }
-//                        }
-//                        if (!success) {
-//                            logger.trace("never did get a layer label for '{}'", label);
-//                        }
-//                    }
-
-
-
-
-                    // if image observer doesn't work, see if hasSomething
-                    // detects the problem. if it does, loop until hasSomething
-                    // detects data.
+                    if ("3".equals(capProp)) {
+                        logger.trace("using waitOnImage (aka image observer)");
+                        ImageUtils.waitOnImage(off_Image);
+                    }
+                    if ("4".equals(capProp)) {
+                        boolean success = false;
+                        if (!imageHasSomething(off_Image)) {
+                            for (int j = 0; j < 10; j++) {
+                                tuple = centerString(g2, bounds, label, f, (filtered.size() - 1) - i);
+                                if (imageHasSomething(off_Image)) {
+                                    success = true;
+                                    break;
+                                }
+                            }
+                            if (!success) {
+                                logger.trace("never did get a layer label for '{}'", label);
+                            }
+                        }
+                    }
 
                     ImageJ3D g2dTest = new ImageJ3D(off_Image, ImageJ3D.TOP_LEFT, 0, 0, zval, 1.0f);
                     displayLister.add(g2dTest);
@@ -2993,7 +2997,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void updateDisplayList() {
         logger.trace("isScriptingMode: {}", McIDASV.getStaticMcv().getArgsManager().isScriptingMode());
         if (McIDASV.getStaticMcv().getArgsManager().isScriptingMode()) {
+            String capProp = System.getProperty("mcidasv.bgcap", "4");
+            if ("2".equals(capProp)) {
+                int waitCycles = 0;
+                while (anyJava3dThreadsActive()) {
+                    Misc.sleep(1000);
+                    waitCycles++;
+                }
+                logger.trace("wait cycles for j3dactive to become false: {}", waitCycles);
+            }
             updateDisplayListBackground();
+
         } else {
             updateDisplayListForeground();
         }
