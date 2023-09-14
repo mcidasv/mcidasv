@@ -152,12 +152,22 @@ IF EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" CALL "%MCV_USERPATH%\runMcV-Prefs.bat
 SET ENABLE_3D=true
 IF %USE_3DSTUFF%==0 SET ENABLE_3D=false
 
-REM temp: toggles the CMS collector
-IF "%USE_CMSGC%"=="1" (
-SET GC_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
-) ELSE (
-SET GC_ARGS=
+echo %MCV_PARAMS% | findstr /C:" -script ">nul && (
+    SET BACKGROUND=1
+) || (
+    set BACKGROUND=0
 )
+
+REM toggles the CMS collector (CMS collector goes away in Java 14)
+IF "%USE_CMSGC%"=="1" GOTO setgcargs
+IF "%BACKGROUND%"=="1" GOTO setgcargs
+GOTO nogcargs
+:setgcargs
+SET GC_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
+GOTO donegcargs
+:nogcargs
+SET GC_ARGS=
+:donegcargs
 
 REM temp?: toggles the visad.java3d.geometryByRef property
 IF "%USE_GEOBYREF%"=="0" (
