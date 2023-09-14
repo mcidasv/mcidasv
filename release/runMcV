@@ -212,12 +212,18 @@ else
     USE_LAYOUT_BUNDLE=""
 fi
 
-# TEMP!: toggles the CMS collector
+# toggles the CMS collector
 if [ "${USE_CMSGC}" = "1" ]; then
     GC_ARGS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
 else
     GC_ARGS=""
 fi
+
+TMP_ARGS="$*"
+if [[ "$TMP_ARGS" == *"-script "* ]]; then
+    GC_ARGS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+fi
+
 
 # TEMP?: toggles the visad.java3d.geometryByRef property
 if [ "${USE_GEOBYREF}" = "0" ]; then
