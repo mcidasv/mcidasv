@@ -2790,16 +2790,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private ScreenAnnotatorJ3D displayLister = null;
 
     private void updateDisplayListBackground() {
-        String capProp = System.getProperty("mcidasv.bgcap", "4");
-        logger.trace("capProp: {}", capProp);
-
-        if ("1".equals(capProp)) {
-            logger.trace("inserting 2 second pause between updateDisplayList calls");
-            activityTest("test 0");
-            Misc.sleepSeconds(2);
-            activityTest("test 1");
-        }
-
         try {
             synchronized (MUTEX_DISPLAYLIST) {
                 if ( !hasDisplayMaster()) {
@@ -2895,26 +2885,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     // int midpoint = tuple[0];
                     // int labelHeight = tuple[1];
 
-                    // try image observer technique
-                    if ("3".equals(capProp)) {
-                        logger.trace("using waitOnImage (aka image observer)");
-                        ImageUtils.waitOnImage(off_Image);
-                    }
-                    if ("4".equals(capProp)) {
-                        boolean success = false;
-                        if (!imageHasSomething(off_Image)) {
-                            for (int j = 0; j < 10; j++) {
-                                tuple = centerString(g2, bounds, label, f, (filtered.size() - 1) - i);
-                                if (imageHasSomething(off_Image)) {
-                                    success = true;
-                                    break;
-                                }
-                            }
-                            if (!success) {
-                                logger.trace("never did get a layer label for '{}'", label);
-                            }
-                        }
-                    }
+                    logger.trace("using waitOnImage (aka image observer)");
+                    ImageUtils.waitOnImage(off_Image);
 
                     ImageJ3D g2dTest = new ImageJ3D(off_Image, ImageJ3D.TOP_LEFT, 0, 0, zval, 1.0f);
                     displayLister.add(g2dTest);
@@ -2925,37 +2897,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } catch (Exception exp) {
             logException("Setting display list", exp);
         }
-        activityTest("Test 2");
-    }
-
-    private void activityTest(String prefix) {
-        boolean cursorCount = idv.getIdvUIManager().getWaitCursorCount() > 0;
-        boolean actionCount = ActionImpl.getTaskCount() > 0;
-        boolean dataActive = DataSourceImpl.getOutstandingGetDataCalls() > 0;
-        boolean j3dActive = anyJava3dThreadsActive();
-        logger.trace("{}: cursorWaits={} actionTasks={} dataActive={} j3dActive={}", prefix, cursorCount, actionCount, dataActive, j3dActive);
-    }
-
-    private static boolean anyJava3dThreadsActive() {
-        ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
-        return Arrays.stream(mxBean.getAllThreadIds())
-                .mapToObj(id -> mxBean.getThreadInfo(id, Integer.MAX_VALUE))
-                .anyMatch(info -> info != null
-                               && info.getThreadState() == Thread.State.RUNNABLE
-                               && info.getThreadName().contains("J3D"));
-    }
-
-    private static boolean imageHasSomething(BufferedImage image) {
-        DataBuffer buffer = image.getRaster().getDataBuffer();
-        ColorModel model = image.getColorModel();
-        boolean hasSomething = false;
-        for (int i = 0; i < buffer.getSize(); i++) {
-            if (model.getRGB(buffer.getElem(i)) != -16777216) {
-                hasSomething = true;
-                break;
-            }
-        }
-        return hasSomething;
     }
 
     public int[] centerString(Graphics g, Rectangle r, String s,
@@ -2997,17 +2938,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void updateDisplayList() {
         logger.trace("isScriptingMode: {}", McIDASV.getStaticMcv().getArgsManager().isScriptingMode());
         if (McIDASV.getStaticMcv().getArgsManager().isScriptingMode()) {
-            String capProp = System.getProperty("mcidasv.bgcap", "4");
-            if ("2".equals(capProp)) {
-                int waitCycles = 0;
-                while (anyJava3dThreadsActive()) {
-                    Misc.sleep(1000);
-                    waitCycles++;
-                }
-                logger.trace("wait cycles for j3dactive to become false: {}", waitCycles);
-            }
             updateDisplayListBackground();
-            // temporary!
+            // maybe not so temporary :(
             System.gc();
 
         } else {
