@@ -3,7 +3,7 @@
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
          "http://java.sun.com/javase/technologies/desktop/javahelp/toc_1_0.dtd">
 <toc version="1.0">
-<tocitem text="McIDAS-V User's Guide, Version 1.9beta1" target="idv.toc">
+<tocitem text="McIDAS-V User's Guide, Version 1.9" target="idv.toc">
 <tocitem text="What is McIDAS-V?" target="idv.mcidasv"/>
 <tocitem text="Overview" target="idv.page_overview">
     <tocitem text="Release Notes" target="idv.releasenotes"/>
