@@ -742,7 +742,7 @@ public class DataTree extends DataSourceHolder {
      * @return The new DataTreeNode
      */
     public DataTreeNode createTreeNode(String label, Object data) {
-        DataTreeNode node = new DataTreeNode(this, label, data);
+        DataTreeNode node = new DataTreeNode(this, label.trim(), data);
         dataToTreeNode.put(data, node);
         return node;
     }
