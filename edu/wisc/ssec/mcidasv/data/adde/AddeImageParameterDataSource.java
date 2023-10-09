@@ -1647,7 +1647,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      */
     
     @Override public void setDataSelection(DataSelection s) {
-        GeoSelection tmp = s.getGeoSelection();
+
+        GeoSelection tmp = null;
+        if (s != null) {
+            tmp = s.getGeoSelection();
+        }
         if (tmp != null && this.laLoSel != null) {
             GeoLocationInfo bbox = tmp.getBoundingBox();
             GeoLocationInfo laloBbox = this.laLoSel.getGeoLocationInfo();
@@ -1658,12 +1662,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         super.setDataSelection(s);
 
         if (this.laLoSel != null) {
-//            logger.trace("putting selection for choice={} s={}", this.laLoSel.getDataChoice(), s);
             this.putSelForChoice(this.laLoSel.getDataChoice(), s);
         } else {
             logger.trace("laLoSel is null; s={}", s);
         }
-        logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
+
     }
     
     /**
