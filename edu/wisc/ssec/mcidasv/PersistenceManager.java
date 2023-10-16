@@ -614,7 +614,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             }
             if (ok[1] && ok[2]) { // replace session [opt=3]
                 removeAll = true;
-                shouldMerge = true;
+                shouldMerge = false;
                 mergeLayers = false;
             }
 
