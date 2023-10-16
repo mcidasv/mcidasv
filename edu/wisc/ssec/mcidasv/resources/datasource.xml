@@ -68,5 +68,15 @@
       value="/auxdata/ui/icons/3D.gif"/>
     <property name="selected_control" value="planviewcontour"/>
   </datasource>
+
+  <datasource
+    id="DODS.GRID,OPENDAP.GRID"
+    factory="ucar.unidata.data.grid.GeoGridDataSource"
+    patterns="http://.*/dods/.*$,dods://.*$,http://.*/dodsC/.*$,http://.*/opendap/.*$,.*entry.das$"
+    label="Grids from an OPeNDAP server">
+    <property
+      name="icon"
+      value="/auxdata/ui/icons/3D.gif"/>
+  </datasource>
  
 </datasources>
