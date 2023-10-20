@@ -1731,9 +1731,19 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         setDataSelection(dataSelection);
 
+        // assuming the Double.NaN bbox is easy to replace with
+        // an actual bbox, the getGeoSelection(createIfNeeded=true) should
+        // probably populate the geoselection with the Double.NaN bbox.
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         if (geoSelection == null) {
             return null;
+        }
+
+        GeoLocationInfo selectionBox = geoSelection.getBoundingBox();
+        if (selectionBox == null) {
+            logger.info("MCV3088: incoming dataselection has null bounding box, replacing with default! dataChoice: '{}', dataSelection: {}", dataChoice.getName(), dataSelection);
+            selectionBox = new GeoLocationInfo(Double.NaN, Double.NaN, Double.NaN, Double.NaN);
+            geoSelection.setBoundingBox(selectionBox);
         }
 
         boolean validState = geoSelection.getHasValidState();
