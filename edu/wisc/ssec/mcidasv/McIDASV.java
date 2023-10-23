@@ -46,7 +46,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.rmi.RemoteException;
 
 import java.security.Security;
 import java.util.Collections;
@@ -71,7 +70,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.AddeURLStreamHandler;
@@ -2033,7 +2031,9 @@ public class McIDASV extends IntegratedDataViewer {
      * Disable directory monitoring.
      */
     public void stopWatchService() {
-        watchService.stop();
+        if (watchService != null) {
+            watchService.stop();
+        }
     }
     
     /**
