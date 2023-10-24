@@ -295,7 +295,21 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-question">
       <h4>Q. How do I change which maps are displayed by default?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> By default, there are three maps that are displayed: 'North &amp; Central America', 'World Political Boundaries', and 'World Coastlines'. Other system maps are included with the <a href="controls/MapDisplayControl.html">Map Controls</a>, and their visibilities can be toggled on and off. Additional maps are contained in plugins that can be found under the Maps category in the <a href="tools/Plugins.html">Plugin Manager</a>. Users can add their own shapefile maps through the <strong>Edit -&gt; Add Your Own Map</strong> menu item in the <strong>Layer Controls</strong> of the Default Background Maps. To set a new group of maps as the default, use the <strong>File -&gt; Default Maps -&gt; Save as the Default Map Set</strong> menu item. This creates a maps.xml file in the McIDAS-V directory that includes which map layers are displayed, as well as different display settings including the line thickness, style, and color. Once the default map is saved, this will be used any time a new tab or window is created, and it will be persisted between sessions. To remove a default map setting that has been saved, use the <strong>File -&gt; Default Maps -&gt; Remove Local Map Defaults</strong> menu item. Removing the default map set requires a restart of McIDAS-V to take effect.</div>
+    <div class="faq-answer"><strong>A.</strong> By default, there are three maps that are displayed: 'North &amp; Central America', 'World Political Boundaries', and 'World Coastlines'. Other system maps are included with the <a href="controls/MapDisplayControl.html">Map Controls</a>, and their visibilities can be toggled on and off. Additional maps are contained in plugins that can be found under the Maps category in the <a href="tools/Plugins.html">Plugin Manager</a>. Users can add their own shapefile maps through the <strong>Edit -&gt; Add Your Own Map</strong> menu item in the <strong>Layer Controls</strong> of the Default Background Maps. To set a new group of maps as the default, use the <strong>File -&gt; Default Maps -&gt; Save as the Default Map Set</strong> menu item. This creates a maps.xml file in the McIDAS-V directory that includes which map layers are displayed, as well as different display settings including the line thickness, style, and color. Once the default map is saved, this will be used any time a new tab or window is created, and it will be persisted between sessions. To remove a default map setting that has been saved, use the <strong>File -&gt; Default Maps -&gt; Remove Local Map Defaults</strong> menu item. Removing the default map set requires a restart of McIDAS-V to take effect.</div></div>
+  <div class="faq-category"> <a name="macIcon" id="macIcon"></a>
+      <div class="faq-question">
+      <h4>Q. What do I do if McIDAS-V will not start from an icon on macOS?</h4>
+    </div>
+    <div class="faq-answer">
+      <strong>A.</strong> The likely cause of this problem is that /bin/sh has been disallowed to control Terminal.app.  This is an issue because the McIDAS-V launcher relies on using the Terminal to launch runMcV.  Here are steps that can be followed to resolve this issue:
+      <ol>
+        <li>Open the macOS System Preferences.</li>
+        <li>Click on <em><strong>Privacy &amp; Security</strong></em>.</li>
+        <li> In the <em><strong>Privacy</strong></em> section, select the <em><strong>Automation</strong></em> entry.</li>
+        <li>Enable the <em><strong>Terminal</strong></em> sub-entry. There may be a prompt for an administrator password.</li>
+        <li>Try the icon again to run McIDAS-V.</li>
+      </ol>
+    </div>
 </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
