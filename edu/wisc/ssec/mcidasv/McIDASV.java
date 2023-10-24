@@ -90,8 +90,6 @@ import org.python.util.PythonInterpreter;
 import org.w3c.dom.Element;
 
 import ucar.nc2.NetcdfFile;
-import ucar.unidata.data.GeoLocationInfo;
-import ucar.unidata.data.GeoSelection;
 import visad.VisADException;
 
 import ucar.unidata.data.DataManager;
@@ -1814,8 +1812,6 @@ public class McIDASV extends IntegratedDataViewer {
          Platform.setImplicitExit(false);
         
         try {
-            GeoSelection.setDefaultBoundingBox(new GeoLocationInfo(Double.NaN, Double.NaN, Double.NaN, Double.NaN));
-
             applyArgs(args);
             
             SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.WARN);

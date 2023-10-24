@@ -1814,7 +1814,7 @@ public class GeoGridDataSource extends GridDataSource {
                         levelRange, yRange, xRange);
             }
         } catch (InvalidRangeException ire) {
-            throw new IllegalArgumentException("Invalid range:" + ire);
+            throw new IllegalArgumentException("Invalid range:" + ire, ire);
         }
 
         // check to see if user wants to be warned about download size
