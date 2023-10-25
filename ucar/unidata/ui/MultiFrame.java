@@ -477,12 +477,8 @@ public class MultiFrame {
         if (theFrame != null) {
             if (bounds != null) {
                 logger.trace("positionAndFit: bounds={}, frame={}", bounds, theFrame);
-                SwingUtilities.invokeLater(new Runnable() { 
-                    public void run() {
-                        getComponent().setLocation(bounds.x, bounds.y);
-                        getComponent().setSize(bounds.width, bounds.height);
-                    }
-                });
+                getComponent().setLocation(bounds.x, bounds.y);
+                getComponent().setSize(bounds.width, bounds.height);
             }
         } else if (internalFrame != null) {
             logger.trace("internalFrame: bounds={}", bounds);
