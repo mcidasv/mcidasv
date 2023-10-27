@@ -21,7 +21,9 @@ def geolocate(ip=None):
         { 'lat': 43.0761, 'lon': -89.4104 }
     """
     from urllib2 import urlopen
-    ip = ip or _myip()
-    url = urlopen('https://mcidas.ssec.wisc.edu/geoip/latlon.php')
+    if not ip:
+        url = urlopen('https://mcidas.ssec.wisc.edu/geoip/latlon.php')
+    else:
+        url = urlopen('https://mcidas.ssec.wisc.edu/geoip/latlon.php?ip='+ip)
     result = url.read()
     return dict(zip(['lat', 'lon'], map(float, result.split())))
