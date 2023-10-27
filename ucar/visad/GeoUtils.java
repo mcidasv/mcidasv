@@ -21,7 +21,10 @@
 package ucar.visad;
 
 
-import org.w3c.dom.Element;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.util.GuiUtils;
@@ -30,7 +33,6 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.xml.XmlUtil;
 
 import visad.LinearLatLonSet;
 import visad.Real;
@@ -41,7 +43,6 @@ import visad.VisADException;
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonPoint;
-
 
 import java.rmi.RemoteException;
 
@@ -182,7 +183,7 @@ public class GeoUtils {
         }
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(GeoUtils.class);
     /**
      * Look up the location of the given address
      *
@@ -262,28 +263,18 @@ public class GeoUtils {
                         tmp = StringUtil.replace(address, " ", "+");
                     }
 
-                    // changed to Google 12/2013...
-                    String url =
-                        "http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&address="
-                        + tmp;
-
+                    // changed to OSM as of October 2023
+                    String url = "https://nominatim.openstreetmap.org/search?format=json&q="+tmp;
                     String result = IOUtil.readContents(url, GeoUtils.class);
-
                     if ((master != null) && (master[0] != timestamp)) {
                         return null;
                     }
 
-                    // descend from the root...just in case...
-                    Element root = XmlUtil.getRoot(result);
-                    Element locele = XmlUtil.findDescendantFromPath(root,
-                                         "result.geometry.location");
-                    Element latNode = XmlUtil.findDescendant(locele, "lat");
-                    Element lonNode = XmlUtil.findDescendant(locele, "lng");
-
-                    if ((latNode != null) && (lonNode != null)) {
-                        latString = XmlUtil.getChildText(latNode);
-                        lonString = XmlUtil.getChildText(lonNode);
-                    }
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode node = mapper.readTree(result).get(0);
+                    latString = node.get("lat").toString();
+                    lonString = node.get("lon").toString();
+                    logger.trace("OSM: lat: {}, lon: {}, result: '{}'", latString, lonString, result);
                 } catch (Exception exc) {}
             }
 
