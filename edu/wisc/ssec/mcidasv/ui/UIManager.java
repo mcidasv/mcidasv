@@ -622,37 +622,33 @@ public class UIManager extends IdvUIManager implements ActionListener {
      *      boolean)
      */
     @Override public void unpersistWindowInfo(List windows,
-            List newViewManagers, boolean okToMerge, boolean fromCollab,
-            boolean didRemoveAll) 
-        {
-            if (newViewManagers == null) {
-                newViewManagers = new ArrayList<>();
-            }
-
-            // keep track of the "old" state if the user wants to remove things.
-            boolean mergeLayers = ((PersistenceManager)getPersistenceManager()).getMergeBundledLayers();
-            List<IdvComponentHolder> holdersBefore = new ArrayList<>();
-            List<IdvWindow> windowsBefore = new ArrayList<>();
-            if (didRemoveAll) {
-                holdersBefore.addAll(McVGuiUtils.getAllComponentHolders());
-                windowsBefore.addAll(McVGuiUtils.getAllDisplayWindows());
-            }
-
-            for (WindowInfo info : (List<WindowInfo>)windows) {
-                newViewManagers.removeAll(info.getViewManagers());
-                makeBundledDisplays(info, okToMerge, mergeLayers, fromCollab);
-
-                if (mergeLayers) {
-                    holdersBefore.addAll(McVGuiUtils.getComponentHolders(info));
-                }
-            }
-//            System.err.println("holdersBefore="+holdersBefore);
-            // no reason to kill the displays if there aren't any windows in the
-            // bundle!
-            if ((mergeLayers) || (didRemoveAll && !windows.isEmpty())) {
-                killOldDisplays(holdersBefore, windowsBefore, (okToMerge || mergeLayers));
-            }
+        List newViewManagers, boolean okToMerge, boolean fromCollab,
+        boolean didRemoveAll)
+    {
+        if (newViewManagers == null) {
+            newViewManagers = new ArrayList<>();
         }
+
+        // keep track of the "old" state if the user wants to remove things.
+        boolean mergeLayers = ((PersistenceManager)getPersistenceManager()).getMergeBundledLayers();
+        List<IdvComponentHolder> holdersBefore = new ArrayList<>();
+        List<IdvWindow> windowsBefore = new ArrayList<>();
+        if (didRemoveAll) {
+            holdersBefore.addAll(McVGuiUtils.getAllComponentHolders());
+            windowsBefore.addAll(McVGuiUtils.getAllDisplayWindows());
+        }
+
+        // no reason to kill the displays if there aren't any windows in the
+        // bundle!
+        if ((mergeLayers) || (didRemoveAll && !windows.isEmpty())) {
+            killOldDisplays(holdersBefore, windowsBefore, (okToMerge || mergeLayers));
+        }
+
+        for (WindowInfo info : (List<WindowInfo>)windows) {
+            newViewManagers.removeAll(info.getViewManagers());
+            makeBundledDisplays(info, okToMerge, mergeLayers, fromCollab);
+        }
+    }
 
     /**
      * Removes data and displays that existed prior to loading a bundle.
