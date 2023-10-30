@@ -492,14 +492,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
             IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V",
                 Constants.BLANK_COMP_GROUP, skinRoot, false, null);
 
-            // make the new window the same size as the old and center the 
-            // *top* of the window over the drop point.
-            int height = window.getBounds().height;
-            int width = window.getBounds().width;
-            int startX = drop.x - (width / 2);
-
-            w.setBounds(new Rectangle(startX, drop.y, width, height));
-
             // be sure to add the dragged component holder to the new window.
             ComponentGroup newGroup = w.getComponentGroups().get(0);
 
@@ -511,9 +503,19 @@ public class DraggableTabbedPane extends JTabbedPane implements
                 vm.setWindow(w);
             }
 
+            // make the new window the same size as the old and center the
+            // *top* of the window over the drop point.
+            int height = window.getBounds().height;
+            int width = window.getBounds().width;
+            int startX = drop.x - (width / 2);
+
             // let there be a window
-            w.pack();
-            w.setVisible(true);
+            SwingUtilities.invokeLater(() -> {
+                w.setBounds(new Rectangle(startX, drop.y, width, height));
+                w.pack();
+                w.setVisible(true);
+            });
+
 //            GuiUtils.toFront(w.getWindow());
 //            logger.trace("active window: {} new window: {}", Integer
 //                .toHexString
