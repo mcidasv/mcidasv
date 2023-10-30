@@ -256,6 +256,7 @@ public class GeoUtils {
                 }
             }
 
+            String result = null;
             if ((latString == null) || (lonString == null)) {
                 try {
                     String tmp = address;
@@ -265,16 +266,15 @@ public class GeoUtils {
 
                     // changed to OSM as of October 2023
                     String url = "https://nominatim.openstreetmap.org/search?format=json&q="+tmp;
-                    String result = IOUtil.readContents(url, GeoUtils.class);
+                    result = IOUtil.readContents(url, GeoUtils.class);
                     if ((master != null) && (master[0] != timestamp)) {
                         return null;
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode node = mapper.readTree(result).get(0);
-                    latString = node.get("lat").toString();
-                    lonString = node.get("lon").toString();
-                    logger.trace("OSM: lat: {}, lon: {}, result: '{}'", latString, lonString, result);
+                    latString = node.get("lat").asText("NaN");
+                    lonString = node.get("lon").asText("NaN");
                 } catch (Exception exc) {}
             }
 
@@ -359,7 +359,7 @@ public class GeoUtils {
                     new EarthLocationTuple(new Real(RealType.Latitude, lat),
                                            new Real(RealType.Longitude, lon),
                                            new Real(RealType.Altitude, 0.0));
-
+                logger.trace("OSM: lat: {}, lon: {}, tuple: {}, result: '{}'", latString, lonString, el, result);
                 lastAddress = address;
                 addresses.remove(address);
                 addresses.add(0, address);
