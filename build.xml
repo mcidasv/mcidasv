@@ -258,7 +258,6 @@
     <fileset id="mcv.libs" dir="${dist.dir}">
 <!--
         <include name="jansi-${jansi.version}.jar" />
-        <include name="orange-extensions-1.1-SNAPSHOT.jar" />
 -->
         <include name="flatlaf-${flatlaf.version}.jar" />
         <include name="flatlaf-extras-${flatlaf.version}.jar" />
@@ -979,8 +978,6 @@
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
       <jvmarg value="-Xdock:icon=../release/icons/mcidasv.icns" if:set="build.macos" />
-      <sysproperty key="apple.awt.application.appearance" value="system" />
-      <sysproperty key="sun.java2d.metal" value="true" />
       <sysproperty key="sun.java2d.uiScale" value="${uiscale}" if:set="uiscale"/>
       <sysproperty key="loglevel" value="${run.log.level}" />
       <sysproperty key="mcv.userpath" value="${userpath.dir}" />
