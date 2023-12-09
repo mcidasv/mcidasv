@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -72,8 +73,6 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
-import edu.wisc.ssec.mcidasv.util.trie.CharSequenceKeyAnalyzer;
-import edu.wisc.ssec.mcidasv.util.trie.PatriciaTrie;
 
 /**
  * McIDAS-V ADDE server manager. This class is essentially the
@@ -150,7 +149,7 @@ public class EntryStore {
     private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
 
     /** The ADDE servers known to McIDAS-V. */
-    private final PatriciaTrie<String, AddeEntry> trie;
+    private final PatriciaTrie<AddeEntry> trie;
 
     /** {@literal "Root"} local server directory. */
     private final String ADDE_DIRECTORY;
@@ -198,7 +197,7 @@ public class EntryStore {
         requireNonNull(rscManager);
 
         this.idvStore = store;
-        this.trie = new PatriciaTrie<>(new CharSequenceKeyAnalyzer());
+        this.trie = new PatriciaTrie<>();
         this.ADDE_DIRECTORY = getAddeRootDirectory();
         this.ADDE_BIN = ADDE_DIRECTORY + File.separator + "bin";
         this.ADDE_DATA = ADDE_DIRECTORY + File.separator + "data";
@@ -285,7 +284,7 @@ public class EntryStore {
      * @param newEntries Cannot be {@code null}.
      */
     private static void putEntries(
-        final PatriciaTrie<String, AddeEntry> trie,
+        final PatriciaTrie<AddeEntry> trie,
         final Collection<? extends AddeEntry> newEntries)
     {
         requireNonNull(trie);
@@ -605,7 +604,7 @@ public class EntryStore {
 
         Set<String> groups = newLinkedHashSet(trie.size());
         groups.addAll(
-            trie.getPrefixedBy(address + '!').values().stream()
+            trie.prefixMap(address + '!').values().stream()
                 .filter(e -> e.getAddress().equals(address) && (e.getEntryType() == type))
                 .map(AddeEntry::getGroup)
                 .collect(Collectors.toList()));
@@ -626,8 +625,7 @@ public class EntryStore {
      */
     public List<AddeEntry> searchWithPrefix(final String prefix) {
         requireNonNull(prefix);
-
-        return arrList(trie.getPrefixedBy(prefix).values());
+        return arrList(trie.prefixMap(prefix).values());
     }
 
     /**
@@ -676,7 +674,7 @@ public class EntryStore {
         requireNonNull(address);
 
         Set<String> groups = newLinkedHashSet(trie.size());
-        groups.addAll(trie.getPrefixedBy(address + '!').values().stream()
+        groups.addAll(trie.prefixMap(address + '!').values().stream()
                           .map(AddeEntry::getGroup)
                           .collect(Collectors.toList()));
         return groups;
@@ -695,7 +693,7 @@ public class EntryStore {
     public Set<EntryType> getTypes(final String address, final String group) {
         Set<EntryType> types = newLinkedHashSet(trie.size());
         types.addAll(
-            trie.getPrefixedBy(address + '!' + group + '!').values().stream()
+            trie.prefixMap(address + '!' + group + '!').values().stream()
                 .map(AddeEntry::getEntryType)
                 .collect(Collectors.toList()));
         return types;
@@ -725,7 +723,7 @@ public class EntryStore {
                                         EntryType type)
     {
         Collection<AddeEntry> entries =
-            trie.getPrefixedBy(address+'!'+group+'!'+type.name()).values();
+            trie.prefixMap(address+'!'+group+'!'+type.name()).values();
         for (AddeEntry entry : entries) {
             if (!isInvalidEntry(entry)) {
                 return entry.getAccount();
@@ -808,7 +806,7 @@ public class EntryStore {
      */
     public Set<LocalAddeEntry> getLocalEntries() {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
-        locals.addAll(trie.getPrefixedBy("localhost").values().stream()
+        locals.addAll(trie.prefixMap("localhost").values().stream()
                           .filter(e -> e instanceof LocalAddeEntry)
                           .map(e -> (LocalAddeEntry) e)
                           .collect(Collectors.toList()));
@@ -860,7 +858,7 @@ public class EntryStore {
         final boolean getTemporaryEntries)
     {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
-        trie.getPrefixedBy("localhost").values().stream()
+        trie.prefixMap("localhost").values().stream()
             .filter(e -> e instanceof LocalAddeEntry)
             .forEach(e -> {
                 LocalAddeEntry local = (LocalAddeEntry)e;
@@ -1056,7 +1054,7 @@ public class EntryStore {
     {
         Set<AddeServer.Group> idvGroups = newLinkedHashSet(trie.size());
         String typeStr = type.name();
-        for (AddeEntry e : trie.getPrefixedBy(server).values()) {
+        for (AddeEntry e : trie.prefixMap(server).values()) {
             if (e == RemoteAddeEntry.INVALID_ENTRY) {
                 continue;
             }
