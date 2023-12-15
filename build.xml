@@ -191,8 +191,8 @@
     <!-- Compiler options -->
     <property name="debug.flag" value="true" />
     <property name="deprecation.flag" value="false" />
-    <property name="source.ver" value="1.8" />
-    <property name="target.ver" value="1.8" />
+    <property name="source.ver" value="21" />
+    <property name="target.ver" value="21" />
 
     <!-- Which warnings to show, use javac -X for help -->
     <property name="xlint" value="deprecation" />
@@ -232,8 +232,8 @@
     <property name="jsattrack.version" value="4.2.3" />
     <property name="commons-httpclient.version" value="3.1" />
     <property name="jcodec.version" value="0.2.6-SNAPSHOT" />
-    <property name="idv.version" value="6.0u2" />
-    <property name="ncidv.version" value="5.4.1" />
+    <property name="idv.version" value="6.2u2" />
+    <property name="ncidv.version" value="5.5.3" />
     <property name="visad.version" value="2.0-SNAPSHOT" />
     <property name="flatlaf.version" value="3.2.5" />
     <property name="batik.version" value="1.17" />
