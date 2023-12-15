@@ -1646,7 +1646,7 @@
         <javac fork="true"
                srcdir="${release.dir}/install4j-custom-code"
                destdir="${dist.dir}/install4j-custom-code"
-               source="1.7"
+               source="21"
                deprecation="${deprecation.flag}"
                includeantruntime="false">
             <compilerarg value="-Xlint:-options" />
