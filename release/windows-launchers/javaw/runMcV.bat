@@ -290,24 +290,23 @@ IF EXIST "..\jre\bin\client\classes.jsa" (
 @echo *** notice: using class data sharing
 )
 
-set MCV_EXTPATH=-Djava.ext.dirs="jre\lib\ext"
-set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
+set JPMS_MONSTROSITY=--add-exports java.base/jdk.internal.loader=ALL-UNNAMED --add-exports java.desktop/sun.awt=ALL-UNNAMED --add-exports java.desktop/sun.swing=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/javax.security.auth.x500=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.security.cert=ALL-UNNAMED --add-opens java.base/java.security.spec=ALL-UNNAMED --add-opens java.base/javax.net=ALL-UNNAMED --add-opens java.base/javax.net.ssl=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-opens java.base/java.nio.charset=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens java.base/sun.util.calendar=ALL-UNNAMED --add-opens java.security.jgss/org.ietf.jgss=ALL-UNNAMED --add-opens java.desktop/java.awt=ALL-UNNAMED --add-opens java.desktop/java.awt.geom=ALL-UNNAMED --add-opens java.desktop/javax.swing=ALL-UNNAMED --add-opens java.desktop/javax.swing.plaf=ALL-UNNAMED --add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-opens java.desktop/javax.accessibility=ALL-UNNAMED --add-opens java.desktop/sun.java2d.opengl=ALL-UNNAMED --add-opens java.naming/javax.naming.ldap=ALL-UNNAMED --add-opens java.sql/java.sql=ALL-UNNAMED
 
 @echo Command line: "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
 
 IF DEFINED MCV_UNWELCOME_WINDOW (
     IF "%WAIT_FOR_EXIT%"=="1" (
-        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JPMS_MONSTROSITY% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
         GOTO cleanup
     ) ELSE (
-        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JPMS_MONSTROSITY% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
     )
 ) ELSE (
     IF "%WAIT_FOR_EXIT%"=="1" (
-        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JPMS_MONSTROSITY% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
         GOTO cleanup
     ) ELSE (
-        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JPMS_MONSTROSITY% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dmcidasv.darkmode=%DARK_MODE% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
     )
 )
 

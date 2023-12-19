@@ -168,7 +168,7 @@ fi
 
 # Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
-  JAVA_HOME="$dirname/.install4j/jre.bundle/Contents/Home/jre"
+  JAVA_HOME="$dirname/.install4j/jre.bundle/Contents/Home"
 fi
 
 # Look for java
@@ -281,17 +281,16 @@ LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
 
-# restrict java.ext.dirs and java.library.path to the JRE
-if [ -n "${JAVA_HOME}" ]; then
-  MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
-  MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
-else
-  echo "Warning: Please consider setting JAVA_HOME."
-  MCV_EXTDIR=""
-  MCV_LIBPATH=""
+if [ `uname -s` = "Linux" ]; then
+  JPMS_MONSTROSITY="--add-exports java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED"
+elif [ `uname -s` = "Darwin" ]; then
+  JPMS_MONSTROSITY="--add-exports java.desktop/com.apple.eawt=ALL-UNNAMED"
 fi
 
-JAVA_FLAGS="$MACOS_DOCK_ARGS -Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dmcidasv.darkmode=$DARK_MODE -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"
+# TODO(jon): you absolutely cannot allow this BS to continue. FIX IT.
+JPMS_MONSTROSITY="${JPMS_MONSTROSITY} --add-exports java.base/jdk.internal.loader=ALL-UNNAMED --add-exports java.desktop/sun.awt=ALL-UNNAMED --add-exports java.desktop/sun.swing=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/javax.security.auth.x500=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.security.cert=ALL-UNNAMED --add-opens java.base/java.security.spec=ALL-UNNAMED --add-opens java.base/javax.net=ALL-UNNAMED --add-opens java.base/javax.net.ssl=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-opens java.base/java.nio.charset=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens java.base/sun.util.calendar=ALL-UNNAMED --add-opens java.security.jgss/org.ietf.jgss=ALL-UNNAMED --add-opens java.desktop/java.awt=ALL-UNNAMED --add-opens java.desktop/java.awt.geom=ALL-UNNAMED --add-opens java.desktop/javax.swing=ALL-UNNAMED --add-opens java.desktop/javax.swing.plaf=ALL-UNNAMED --add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-opens java.desktop/javax.accessibility=ALL-UNNAMED --add-opens java.desktop/sun.java2d.opengl=ALL-UNNAMED --add-opens java.naming/javax.naming.ldap=ALL-UNNAMED --add-opens java.sql/java.sql=ALL-UNNAMED"
+
+JAVA_FLAGS="$MACOS_DOCK_ARGS -Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JPMS_MONSTROSITY} ${JVM_ARGS} -Dmcidasv.darkmode=$DARK_MODE -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"
 
 # should mcv show the welcome window prior to starting
@@ -307,5 +306,12 @@ MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${USE_LAYOUT_BUNDLE} ${DEF
 
 # Run it
 EXEC_CMD="\"$JAVA_BIN\" $JAVA_FLAGS -jar $MCV_JAR $MCV_FLAGS $MCV_PARAMS"
-echo "${EXEC_CMD}"
+#echo "${EXEC_CMD}"
+echo "Launching McIDAS-V 2.0beta1 with ${HEAP_SIZE} of memory..."
+# might be nicer if it was like the following
+#   Launching McIDAS-V 2.0beta1 with the following options:
+#.      * Maximum memory usage: 6G
+#.      * Userpath: blah blah
+#.      * Dark mode enabled.
+# etc!
 eval "${EXEC_CMD}"
