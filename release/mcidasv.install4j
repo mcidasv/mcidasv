@@ -67,10 +67,8 @@
       <fileset name="Windows mcvexe file set" id="8603" />
       <fileset name="Windows javaw file set" id="8605" />
       <fileset name="Linux ADDE" id="7408" />
-      <fileset name="OS X ADDE" id="7404" />
+      <fileset name="macOS ADDE" id="7404" />
       <fileset name="Windows ADDE" id="7406" />
-      <fileset name="Solaris Intel ADDE" id="7410" />
-      <fileset name="Solaris SPARC ADDE" id="7414" />
       <fileset name="UNIX file set (Java 9+)" id="9156" />
       <fileset name="Windows javaw file set (Java 9+)" id="9158" />
     </filesets>
@@ -82,8 +80,6 @@
       <root id="7409" fileset="7408" />
       <root id="7405" fileset="7404" />
       <root id="7407" fileset="7406" />
-      <root id="7411" fileset="7410" />
-      <root id="7415" fileset="7414" />
       <root id="9157" fileset="9156" />
       <root id="9159" fileset="9158" />
     </roots>
@@ -97,8 +93,6 @@
       <mountPoint id="7416" root="7409" />
       <mountPoint id="7417" root="7405" />
       <mountPoint id="7469" root="7407" />
-      <mountPoint id="7467" root="7411" />
-      <mountPoint id="7468" root="7415" />
       <mountPoint id="9160" root="9157" />
       <mountPoint id="9161" root="9159" />
     </mountPoints>
@@ -145,8 +139,6 @@
       <dirEntry mountPoint="7416" file="${compiler:ADDEDIR}/linux" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7417" file="${compiler:ADDEDIR}/macos-intel" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7469" file="${compiler:ADDEDIR}/windows" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
-      <fileEntry mountPoint="7467" file="${compiler:ADDEDIR}/adde-soli86.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7468" file="${compiler:ADDEDIR}/adde-solaris.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/jpms-launchers/unixlike/runMcV" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/runMcV-Config" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -883,42 +875,6 @@ return file.exists();</property>
                   </property>
                 </serializedBean>
                 <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
-              </action>
-              <action name="Solaris x86 ADDE" id="7536" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}</string>
-                    </object>
-                  </property>
-                  <property name="mode" type="string">755</property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>adde-soli86.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
-              </action>
-              <action name="Solaris SPARC ADDE" id="7538" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}</string>
-                    </object>
-                  </property>
-                  <property name="mode" type="string">755</property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>adde-solaris.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("sparc") &gt;= 0;</condition>
               </action>
               <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
