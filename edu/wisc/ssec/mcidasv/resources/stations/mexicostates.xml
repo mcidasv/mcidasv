@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stationtables>
+	<stationtable name="Mexico States" category="World">
+	<station name="Aguascalientes" lat="21.879" lon="-102.290" elev="0"/>
+	<station name="Baja California" lat="30.4" lon="-115.2" elev="0"/>
+	<station name="Baja California Sur" lat="26.0133" lon="-111.7" elev="0"/>
+	<station name="Campeche" lat="18.8" lon="-90.5" elev="0"/>
+	<station name="Chiapas" lat="16.750" lon="-92.633" elev="0"/>
+	<station name="Chihuahua" lat="28.7" lon="-106.4" elev="0"/>
+	<station name="Coahuila" lat="27.2" lon="-102.1" elev="0"/>
+	<station name="Colima" lat="19.1" lon="-103.9" elev="0"/>
+	<station name="Distrito Federal" lat="19.3" lon="-99.1" elev="0"/>
+	<station name="Durango" lat="24.7" lon="-104.9" elev="0"/>
+	<station name="Guanajuato" lat="20.9" lon="-101" elev="0"/>
+	<station name="Guerrero" lat="17.7" lon="-100" elev="0"/>
+	<station name="Hidalgo" lat="20.170" lon="-98.730" elev="0"/>
+	<station name="Jalisco" lat="20.4" lon="-103.5" elev="0"/>
+	<station name="Mexico" lat="19.4" lon="-99.7" elev="0"/>
+	<station name="Michoacan" lat="19.2" lon="-101.8" elev="0"/>
+	<station name="Morelos" lat="18.8" lon="-99.1" elev="0"/>
+	<station name="Nayarit" lat="21.8" lon="-104.9" elev="0"/>
+	<station name="Nuevo Leon" lat="25.3" lon="-99.7" elev="0"/>
+	<station name="Oaxaca" lat="16.9" lon="-96.6" elev="0"/>
+	<station name="Puebla" lat="18.7" lon="-98" elev="0"/>
+	<station name="Queretaro" lat="20.9" lon="-99.9" elev="0"/>
+	<station name="Quintana Roo" lat="19.7" lon="-88.2" elev="0"/>
+	<station name="San Luis Potosi" lat="22.3" lon="-100.4" elev="0"/>
+	<station name="Sinaloa" lat="24.4" lon="-107" elev="0"/>
+	<station name="Sonora" lat="29.7" lon="-110.7" elev="0"/>
+	<station name="Tabasco" lat="18.1" lon="-92.9" elev="0"/>
+	<station name="Tamaulipas" lat="24.4" lon="-98.8" elev="0"/>
+	<station name="Tlaxcala" lat="19.4" lon="-98.2" elev="0"/>
+	<station name="Veracruz" lat="19.7" lon="-96.9" elev="0"/>
+	<station name="Yucatan" lat="20.8" lon="-88.9" elev="0"/>
+	<station name="Zacatecas" lat="23.4" lon="-102.9" elev="0"/>
+	</stationtable>
+</stationtables>
