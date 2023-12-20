@@ -63,38 +63,29 @@
   <files>
     <filesets>
       <fileset name="UNIX file set" id="7334" />
-      <fileset name="OS X file set" id="7332" />
-      <fileset name="Windows mcvexe file set" id="8603" />
+      <fileset name="macOS file set" id="7332" />
       <fileset name="Windows javaw file set" id="8605" />
       <fileset name="Linux ADDE" id="7408" />
       <fileset name="macOS ADDE" id="7404" />
       <fileset name="Windows ADDE" id="7406" />
-      <fileset name="UNIX file set (Java 9+)" id="9156" />
-      <fileset name="Windows javaw file set (Java 9+)" id="9158" />
     </filesets>
     <roots>
       <root id="7335" fileset="7334" />
       <root id="7333" fileset="7332" />
-      <root id="8604" fileset="8603" />
       <root id="8606" fileset="8605" />
       <root id="7409" fileset="7408" />
       <root id="7405" fileset="7404" />
       <root id="7407" fileset="7406" />
-      <root id="9157" fileset="9156" />
-      <root id="9159" fileset="9158" />
     </roots>
     <mountPoints>
       <mountPoint id="8741" location="lib" />
       <mountPoint id="1" />
       <mountPoint id="7339" root="7335" />
       <mountPoint id="7338" root="7333" />
-      <mountPoint id="8607" root="8604" />
       <mountPoint id="8608" root="8606" />
       <mountPoint id="7416" root="7409" />
       <mountPoint id="7417" root="7405" />
       <mountPoint id="7469" root="7407" />
-      <mountPoint id="9160" root="9157" />
-      <mountPoint id="9161" root="9159" />
     </mountPoints>
     <entries>
       <dirEntry mountPoint="8741" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true">
@@ -120,14 +111,6 @@
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-java-check.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/windows-launchers/mcvexe/runMcV.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/posh-wrapper.bat" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/local-adde.ps1" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/windows-launchers/javaw/runMcV.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -139,21 +122,6 @@
       <dirEntry mountPoint="7416" file="${compiler:ADDEDIR}/linux" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7417" file="${compiler:ADDEDIR}/macos-intel" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7469" file="${compiler:ADDEDIR}/windows" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
-      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/jpms-launchers/unixlike/runMcV" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/runMcV-Config" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/create-jsa.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/j3dtest" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/jpms-launchers/windows/runMcV.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/jpms-launchers/windows/getmem.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/local-adde.ps1" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/posh-wrapper.bat" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
     </entries>
     <components>
       <component name="Base components" id="67" changeable="false">
@@ -318,42 +286,6 @@
           </screen>
         </startup>
         <screens>
-          <screen name="Java version warning" id="7945" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false">
-            <serializedBean>
-              <property name="subTitle" type="string">Java version warning</property>
-              <property name="title" type="string">Java</property>
-            </serializedBean>
-            <condition>import java.io.*;
-import java.lang.*;
-
-if (!(Util.isMacOS())) return false;
-
-float ver = 1.0f;
-try {
-    Process p = Runtime.getRuntime().exec("/usr/bin/java -version");
-    p.waitFor();
-    BufferedReader err = new BufferedReader(
-        new InputStreamReader(p.getErrorStream()));
-    String s = err.readLine();
-    int idx = s.indexOf('"') + 1;
-    s = s.substring(idx, idx+3);
-    ver = Float.valueOf(s);
-}
-catch (Exception e) {}
-return ver &lt; 1.6;</condition>
-            <formComponents>
-              <formComponent id="7946" beanClass="com.install4j.runtime.beans.formcomponents.MultilineHtmlLabelComponent">
-                <serializedBean>
-                  <property name="labelHtml" type="string">&lt;h1&gt;&lt;font color=red&gt;WARNING&lt;/font&gt;&lt;/h1&gt;
-&lt;p&gt;
-&lt;b&gt;McIDAS-V requires Java 1.6 or higher&lt;/b&gt;
-&lt;p&gt;
-It appears that your current default Java version does not meet this requirement.
-Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php?f=19&amp;t=209"&gt;this McIDAS-V forum thread&lt;/a&gt; for more information.</property>
-                </serializedBean>
-              </formComponent>
-            </formComponents>
-          </screen>
           <screen id="74" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" styleId="8988">
             <styleOverrides>
               <styleOverride name="Customize banner image" enabled="true">
@@ -546,7 +478,7 @@ return allowed;</validation>
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="OS X Options" id="4736" beanClass="com.install4j.runtime.beans.screens.FormScreen">
+          <screen name="macOS Prompt to create launcher apps" id="4736" beanClass="com.install4j.runtime.beans.screens.FormScreen">
             <serializedBean>
               <property name="subTitle" type="string">Which additional tasks should be performed?</property>
               <property name="title" type="string">Select Additional Tasks</property>
@@ -569,7 +501,7 @@ return allowed;</validation>
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="OS X Shortcut Directory" id="7727" beanClass="com.install4j.runtime.beans.screens.FormScreen">
+          <screen name="macOS Prompt to allow for custom path to launchers" id="7727" beanClass="com.install4j.runtime.beans.screens.FormScreen">
             <serializedBean>
               <property name="subTitle" type="string">Where should McIDAS-V create shortcuts to the application?</property>
               <property name="title" type="string">Select Directory for Shortcuts</property>
@@ -585,24 +517,6 @@ return allowed;</validation>
                 <serializedBean>
                   <property name="initialFile" type="string">/Applications</property>
                   <property name="variableName" type="string">macosShortcutDirectory</property>
-                </serializedBean>
-              </formComponent>
-            </formComponents>
-          </screen>
-          <screen name="Linux Options" id="7665" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false">
-            <serializedBean>
-              <property name="subTitle" type="string">Which version of Java3D should be installed?</property>
-              <property name="title" type="string">Select Java3D Version</property>
-            </serializedBean>
-            <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0 &amp;&amp; context.getMediaName().indexOf("64") &lt; 0;</condition>
-            <formComponents>
-              <formComponent id="7666" beanClass="com.install4j.runtime.beans.formcomponents.RadiobuttonsComponent">
-                <serializedBean>
-                  <property name="radioButtonLabels" type="array" elementType="string" length="2">
-                    <element index="0">1.5 (Recommended)</element>
-                    <element index="1">1.3 (For compatibility)</element>
-                  </property>
-                  <property name="variableName" type="string">java3DVersion</property>
                 </serializedBean>
               </formComponent>
             </formComponents>
@@ -715,42 +629,6 @@ return file.exists();</property>
                   <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
                 </serializedBean>
               </action>
-              <action name="OS X JOGL" id="4127" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install JOGL">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}/javaextdir</string>
-                    </object>
-                  </property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="triggerReboot" type="boolean" value="false" />
-                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>macos-java3d_jogl.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>context.getBooleanVariable("installJOGLAction")</condition>
-              </action>
-              <action name="Linux Java3D" id="7668" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install Java3D">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}/jre</string>
-                    </object>
-                  </property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="triggerReboot" type="boolean" value="false" />
-                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>j3d-132-linux-x86.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>context.getVariable("java3DVersion") != null &amp;&amp; (Integer)context.getVariable("java3DVersion") == 1</condition>
-              </action>
               <action id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" actionElevationType="elevated" errorMessage="Failed to create program group">
                 <serializedBean>
                   <property name="addUninstaller" type="boolean" value="true" />
@@ -787,7 +665,7 @@ return file.exists();</property>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
               </action>
-              <action name="OS X Apps" id="5346" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" failureStrategy="askQuit" errorMessage="Failed to create Application shortcuts">
+              <action name="Create macOS Launcher Apps" id="5346" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" failureStrategy="askQuit" errorMessage="Failed to create Application shortcuts">
                 <serializedBean>
                   <property name="destinationDirectory">
                     <object class="java.io.File">
@@ -805,7 +683,7 @@ return file.exists();</property>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
               </action>
-              <action name="OS X Apps" id="5173" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" failureStrategy="askQuit" errorMessage="Failed to create Application shortcuts">
+              <action name="Modify macOS launcher paths" id="5173" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" failureStrategy="askQuit" errorMessage="Failed to create Application shortcuts">
                 <serializedBean>
                   <property name="arguments" type="array" elementType="string" length="1">
                     <element index="0">${installer:sys.installationDir}</element>
@@ -822,113 +700,6 @@ return file.exists();</property>
                   </property>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
-              </action>
-              <action name="OS X JRE" id="8208" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>jre</string>
-                    </object>
-                  </property>
-                  <property name="dirMode" type="string">777</property>
-                  <property name="mode" type="string">777</property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>osxjre.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-              </action>
-              <action name="Linux x86 ADDE" id="7535" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}</string>
-                    </object>
-                  </property>
-                  <property name="mode" type="string">755</property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>adde-linux.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
-              </action>
-              <action name="OS X x86 ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}</string>
-                    </object>
-                  </property>
-                  <property name="mode" type="string">755</property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>adde-darwin.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
-              </action>
-              <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
-                <serializedBean>
-                  <property name="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}</string>
-                    </object>
-                  </property>
-                  <property name="mode" type="string">755</property>
-                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
-                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
-                  <property name="zipFile">
-                    <object class="java.io.File">
-                      <string>adde-windows.zip</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>return Util.isWindows();</condition>
-              </action>
-              <action name="Remove Unix temp files" id="7628" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" errorMessage="Failed to remove temporary files">
-                <serializedBean>
-                  <property name="arguments" type="array" elementType="string" length="1">
-                    <element index="0">${installer:sys.installationDir}</element>
-                  </property>
-                  <property name="executable">
-                    <object class="java.io.File">
-                      <string>remove-adde-zip.sh</string>
-                    </object>
-                  </property>
-                  <property name="workingDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>return !Util.isWindows();</condition>
-              </action>
-              <action name="Remove Windows temp files" id="7629" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" errorMessage="Failed to remove temporary files">
-                <serializedBean>
-                  <property name="arguments" type="array" elementType="string" length="1">
-                    <element index="0">${installer:sys.installationDir}</element>
-                  </property>
-                  <property name="executable">
-                    <object class="java.io.File">
-                      <string>remove-adde-zip.bat</string>
-                    </object>
-                  </property>
-                  <property name="workingDirectory">
-                    <object class="java.io.File">
-                      <string>${installer:sys.installationDir}</string>
-                    </object>
-                  </property>
-                </serializedBean>
-                <condition>return Util.isWindows();</condition>
               </action>
               <action name="Create classes.jsa on Windows" id="8258" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" errorMessage="Could not enable class data sharing">
                 <serializedBean>
@@ -1435,52 +1206,6 @@ return console.askYesNo(message, true);
     </styles>
   </installerGui>
   <mediaSets>
-    <macosFolder name="ZuluFX macOS (Java 21, amd64)" id="9060" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macos_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
-      <excludedComponents>
-        <component id="7274" />
-      </excludedComponents>
-      <excludedLaunchers>
-        <launcher id="844" />
-        <launcher id="1335" />
-        <launcher id="8420" />
-        <launcher id="8610" />
-        <launcher id="8851" />
-      </excludedLaunchers>
-      <exclude>
-        <entry filesetId="7334" />
-        <entry filesetId="8603" />
-        <entry filesetId="8605" />
-        <entry filesetId="7408" />
-        <entry filesetId="7406" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9158" />
-      </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/macos-amd64-21.0.1.tar.gz" manualJreEntry="true" />
-    </macosFolder>
-    <macosFolder name="ZuluFX macOS (Java 21, aarch64)" id="9610" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macos_arm_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
-      <excludedComponents>
-        <component id="7274" />
-      </excludedComponents>
-      <excludedLaunchers>
-        <launcher id="844" />
-        <launcher id="1335" />
-        <launcher id="8420" />
-        <launcher id="8610" />
-        <launcher id="8851" />
-      </excludedLaunchers>
-      <exclude>
-        <entry filesetId="7334" />
-        <entry filesetId="8603" />
-        <entry filesetId="8605" />
-        <entry filesetId="7408" />
-        <entry filesetId="7406" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9158" />
-      </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:BASEDIR}/jres/macos-aarch64-21.0.1.tar.gz" manualJreEntry="true" />
-    </macosFolder>
     <macosFolder name="JBR macOS (Java 21, aarch64)" id="9621" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macos_arm_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" architecture="aarch64">
       <excludedComponents>
         <component id="7274" />
