@@ -1733,7 +1733,7 @@
                    version="${version.internal}"
                    icon="${bundle.icon}"
                    mainclassname="edu.wisc.ssec.mcidasv.McIDASV"
-                   copyright="2023"
+                   copyright="2024"
                    debug="true"
                    applicationCategory="public.app-category.weather">
 
