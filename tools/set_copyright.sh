@@ -1,6 +1,4 @@
-#
-# $Id$
-#
+#!/usr/bin/env bash
 
 COPYRIGHT="../release/licenses/COPYRIGHT"
 HEADER="/tmp/copyright.header"
