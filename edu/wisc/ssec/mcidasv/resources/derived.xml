@@ -4475,4 +4475,36 @@
             <params categories="" p1="TEMP"/>
         </operands>
     </derived>
+    <!-- Bob - Inq 3122 - Feb 2024 - Adding formulas to calculate TEMP from L1b and RAD from L2 ABI CMIP netCDF files -->
+	<derived description="ABI Temp to Rad Bands 7 - 16" formula="abiTempToRad(data)" id="abiTempToRad" isdefault="false" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:dataxs"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:probe"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilled"/>
+        </categories>
+    </derived>
+	<derived description="ABI Rad To Temp Bands 7 - 16" formula="abiRadToTemp(data)" id="abiRadToTemp" isdefault="false" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:probe"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:dataxs"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontour"/>
+        </categories>
+    </derived>
+	<!-- End of Inq 3122 updates -->
 </derived_parameters>
