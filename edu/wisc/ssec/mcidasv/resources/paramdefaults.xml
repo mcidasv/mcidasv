@@ -370,4 +370,9 @@
   <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name="7.*echo.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
   <param ci_base="0.0" ci_interval="0.1" ci_max="2.0" ci_min="-2.0" ci_width="1" name="NDVI_average" range_max="1.0" range_min="-1.0" table="NDVI"/>
   <!-- end inq 3004 -->
+  
+  <!-- bob inq 3122 - Feb 2024 -->
+  <param name="abiTempToRad" table="Inverse Gray Scale"/>
+  <param ci_base="200.0" ci_interval="20.0" ci_max="340.0" ci_min="180.0" ci_width="1" name="abiRadToTemp" range_max="320.0" range_min="180.0" table="Inverse Gray Scale"/>
+  <!-- end inq 3122 -->
 </params>
