@@ -305,3 +305,33 @@ def ABINightFogDifference(b13T, b7T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_NightFogBTD.pdf
     # band13 temperature - band7 temperature
     return sub(b13T, b7T)
+
+# The two functions below are designed to work with ABI L1b and L2 CMIP files loaded
+# as gridded data sources to give temperature as a calibration for L1b and radiance
+# as a calibration for L2 CMIP data.
+
+def abiRadToTemp(data):
+    # Function to convert ABI L1b netCDF file radiance to temperature
+    # Valid only for bands 7 through 16
+    # Formula to calculate temberature from the NOAA ATBD:
+    # https://www.star.nesdis.noaa.gov/goesr/docs/ATBD/Imagery.pdf
+    # fk1/2 and bc1/2 values are extracted from the data then used in the function
+    fk1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk1').read()))
+    fk2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk2').read()))
+    bc1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc1').read()))
+    bc2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc2').read()))
+    T = ( fk2 / (log((fk1 /data) + 1)) - bc1 ) / bc2
+    return T
+
+def abiTempToRad(data):
+    # Function to convert ABI L2 CMIP netCDF file temperatue to radiance
+    # Valid only for bands 7 through 16
+    # Formula to calculate radiance from the NOAA ATBD:
+    # https://www.star.nesdis.noaa.gov/goesr/docs/ATBD/Imagery.pdf
+    # fk1/2 and bc1/2 values are extracted from the data then used in the function
+    fk1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk1').read()))
+    fk2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk2').read()))
+    bc1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc1').read()))
+    bc2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc2').read()))
+    R = fk1 / (exp (fk2 / (bc1 + (bc2 * data))) -1)
+    return R
