@@ -321,7 +321,8 @@ def abiRadToTemp(data):
     bc1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc1').read()))
     bc2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc2').read()))
     T = ( fk2 / (log((fk1 /data) + 1)) - bc1 ) / bc2
-    return T
+    Tnew = createNewUnit(T, 'K')
+    return Tnew
 
 def abiTempToRad(data):
     # Function to convert ABI L2 CMIP netCDF file temperatue to radiance
@@ -334,4 +335,5 @@ def abiTempToRad(data):
     bc1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc1').read()))
     bc2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc2').read()))
     R = fk1 / (exp (fk2 / (bc1 + (bc2 * data))) -1)
-    return R
+    Rnew = createNewUnit(R, 'mW/m^2/sr/cm-1')
+    return Rnew
