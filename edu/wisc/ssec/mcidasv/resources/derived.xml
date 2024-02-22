@@ -462,7 +462,7 @@
             <params categories="" p1="temp_6_2um_nom" p2="temp_7_3um_nom"/>
         </operands>
     </derived>
-    <derived description="ABI Split Window Difference" formula="ABISplitWindowDifference(D1[label=Band 15 Temperature], D2[label=Band 13 Temperature])" id="abisplitwindow" isdefault="true" isenduser="true" override="true">
+    <derived description="ABI Split Window Difference" formula="ABISplitWindowDifference(D1[label=Band 13 Temperature], D2[label=Band 15 Temperature])" id="abisplitwindow" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:imagedisplay"/>
@@ -481,12 +481,12 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band15_TEMP" p2="186_Band13_TEMP"/>
-            <params categories="" p1="188_Band15_TEMP" p2="188_Band13_TEMP"/>
-            <params categories="" p1="190_Band15_TEMP" p2="190_Band13_TEMP"/>
-            <params categories="" p1="192_Band15_TEMP" p2="192_Band13_TEMP"/>
-            <params categories="" p1="CMI_C15" p2="CMI_C13"/>
-            <params categories="" p1="temp_12_0um_nom" p2="temp_10_4um_nom"/>
+            <params categories="" p1="186_Band13_TEMP" p2="186_Band15_TEMP"/>
+            <params categories="" p1="188_Band13_TEMP" p2="188_Band15_TEMP"/>
+            <params categories="" p1="190_Band13_TEMP" p2="190_Band15_TEMP"/>
+            <params categories="" p1="192_Band13_TEMP" p2="192_Band15_TEMP"/>
+            <params categories="" p1="CMI_C13" p2="CMI_C15"/>
+            <params categories="" p1="temp_10_4um_nom" p2="temp_12_0um_nom"/>
         </operands>
     </derived>
     <derived description="ABI Airmass RGB" formula="ABIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="abiairmass" isdefault="true" isenduser="true" override="true">
