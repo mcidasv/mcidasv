@@ -295,10 +295,10 @@ def ABISplitCloudPhaseDifference(b14T, b11T):
     return sub(b14T, b11T)
 
 # Split Window Channel Difference
-def ABISplitWindowDifference(b15T, b13T):
-    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitWV_BTDiffv2.pdf
-    # band15 temperature - band13 temperature
-    return sub(b15T, b13T)
+def ABISplitWindowDifference(b13T, b15T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitWindowDifference.pdf
+    # band13 temperature - band15 temperature
+    return sub(b13T, b15T)
 
 # Night Fog Difference
 def ABINightFogDifference(b13T, b7T):
