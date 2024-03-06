@@ -302,7 +302,10 @@
   <paramgroup description="JPSS NDSI" name="JPSS_NDSI">
     <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
   </paramgroup>
-    <paramgroup description="JPSS EDR Day Fire RGB" name="JPSS_EDR_RGB_DayFire">
+  <paramgroup description="JPSS Normalized Burn Ratio" name="JPSS_SDR_NormBurnRatio">
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS EDR Day Fire RGB" name="JPSS_EDR_RGB_DayFire">
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
     <params p1="325_Band4_TEMP" p2="325_Band2_REF" p3="325_Band1_REF"/>
     <params p1="326_Band4_TEMP" p2="326_Band2_REF" p3="326_Band1_REF"/>
@@ -443,6 +446,14 @@
     <params p1="327_Band2_REF" p2="327_Band3_REF" p3="327_Band4_TEMP" p4="327_Band5_TEMP"/>
     <params p1="328_Band2_REF" p2="328_Band3_REF" p3="328_Band4_TEMP" p4="328_Band5_TEMP"/>
     <params p1="329_Band2_REF" p2="329_Band3_REF" p3="329_Band4_TEMP" p4="329_Band5_TEMP"/>
+  </paramgroup>
+  <paramgroup description="JPSS EDR Normalized Burn Ratio" name="JPSS_EDR_NormBurnRatio">
+    <params p1="VIIRS-I2-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance"/>
+    <params p1="325_Band2_REF" p2="325_Band3_REF"/>
+    <params p1="326_Band2_REF" p2="326_Band3_REF"/>
+    <params p1="327_Band2_REF" p2="327_Band3_REF"/>
+    <params p1="328_Band2_REF" p2="328_Band3_REF"/>
+    <params p1="329_Band2_REF" p2="329_Band3_REF"/>
   </paramgroup>
   <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
     <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>
