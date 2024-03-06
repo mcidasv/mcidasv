@@ -886,7 +886,7 @@
     </derived>
     <derived description="VIIRS SDR Day Fire RGB" formula="VIIRSDayFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="viirsdayfire" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -897,7 +897,7 @@
     </derived>
     <derived description="VIIRS SDR Dust RGB" formula="VIIRSDustRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsDust" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -908,7 +908,7 @@
     </derived>
     <derived description="VIIRS SDR Fire Temperature RGB" formula="VIIRSFireTemperatureRGB(D1[label=M12 Temperature], D2[label=M11 Reflectance], D3[label=M10 Reflectance])" id="viirsfiretemperature" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -919,7 +919,7 @@
     </derived>
     <derived description="VIIRS SDR Natural Color M-Band RGB" formula="VIIRSNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -930,7 +930,7 @@
     </derived>
     <derived description="VIIRS SDR Natural Color I-Band RGB" formula="VIIRSNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_Natural_Color_SVI_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -939,9 +939,9 @@
             <paramgroup categories="" name="JPSS_RGB_I_NaturalColor"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR NDVI" formula="VIIRSNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_NDVI" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR Normalized Difference Vegetation Index (NDVI)" formula="VIIRSNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_NDVI" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:imagedisplay"/>
             <category value="display:imagedisplayoverz"/>
             <category value="display:valuedisplay"/>
@@ -956,9 +956,9 @@
             <paramgroup categories="" name="JPSS_NDVI"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR NDSI" formula="VIIRSNDSI(D1[label=I1 Reflectance], D2[label=I3 Reflectance])" id="VIIRS_NDSI" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR Normalized Difference Snow Index (NDSI)" formula="VIIRSNDSI(D1[label=I1 Reflectance], D2[label=I3 Reflectance])" id="VIIRS_NDSI" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:valuedisplay"/>
             <category value="display:planviewcontourfilled"/>
             <category value="display:dataxs"/>
@@ -973,7 +973,7 @@
     </derived>
     <derived description="VIIRS SDR Nighttime Microphysics RGB" formula="VIIRSNightMicrophysicsRGB(D1[label=M12 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsNighttimeMicrophysics" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -984,7 +984,7 @@
     </derived>
     <derived description="VIIRS SDR True Color RGB" formula="VIIRSTrueColorRGB(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_M_RGB(M5, M4, M3)" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -995,7 +995,7 @@
     </derived>
     <derived description="VIIRS SDR Day Cloud Type RGB" formula="VIIRSCloudTypeRGB(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_Cloud_Type_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1006,7 +1006,7 @@
     </derived>
     <derived description="VIIRS SDR Snowmelt RGB" formula="VIIRSSnowmeltRGB(D1[label=M10 Reflectance], D2[label=M8 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Snowmelt_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1017,7 +1017,7 @@
     </derived>
     <derived description="VIIRS SDR Sea Spray RGB" formula="VIIRSSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_SDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1028,7 +1028,7 @@
     </derived>
     <derived description="VIIRS SDR Ash RGB" formula="VIIRSAshRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsAsh" isdefault="true" isenduser="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1039,7 +1039,7 @@
     </derived>
     <derived description="VIIRS SDR Day Cloud Phase Distinction M-Band RGB" formula="VIIRSDayCloudPhaseMRGB(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M15 Temperature])" id="VIIRS_SDR_DAY_CLOUD_PHASE_M_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1050,7 +1050,7 @@
      </derived>
     <derived description="VIIRS SDR Day Cloud Phase Distinction I-Band RGB" formula="VIIRSDayCloudPhaseIRGB(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=I5 Temperature])" id="VIIRS_SDR_DAY_CLOUD_PHASE_I_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1061,7 +1061,7 @@
     </derived>
     <derived description="VIIRS SDR Day Snow-Fog M-Band RGB" formula="VIIRSDaySnowFogMRGB(D1[label=M7 Reflectance], D2[label=M10 Reflectance], D3[label=M12 Temperature], D4[label=M15 Temperature])" id="VIIRS_SDR_DAY_SNOW_FOG_M_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1072,7 +1072,7 @@
     </derived>
     <derived description="VIIRS SDR Day Snow-Fog I-Band RGB" formula="VIIRSDaySnowFogIRGB(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_SDR_DAY_SNOW_FOG_I_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1081,10 +1081,66 @@
             <paramgroup categories="" name="JPSS_SDR_RGB_DaySnowFogI"/>
         </operands>
     </derived>
-    <!-- RMC inq 2982 Apr 2022 -->
-    <derived description="VIIRS EDR NDVI" formula="VIIRSEdrNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_EDR_NDVI" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR Burn Area Index" formula="VIIRSBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS SDR BAI" isdefault="true" isenduser="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_NDVI"/>
+        </operands>
+    </derived>
+	<derived description="VIIRS SDR Normalized Burn Ratio" formula="VIIRSNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBR" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_SDR_NormBurnRatio"/>
+        </operands>
+    </derived>
+	<derived description="VIIRS SDR Visible Atmospherically Resistant Index (VARI)" formula="VIIRSVARI(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_SDR_VARI" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_RGB_TrueColor"/>
+        </operands>
+    </derived>
+	<derived description="VIIRS SDR Normalized Difference Built-up Index (NDBI)" formula="VIIRSNDBI(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBI" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_SDR_NormBurnRatio"/>
+        </operands>
+    </derived>
+    <!-- RMC inq 2982 Apr 2022 -->
+    <derived description="VIIRS EDR Normalized Difference Vegetation Index (NDVI)" formula="VIIRSEdrNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_EDR_NDVI" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:planviewcontour"/>
             <category value="display:imagedisplay"/>
             <category value="display:planviewcontourfilled"/>
@@ -1100,7 +1156,7 @@
     </derived>
     <derived description="VIIRS EDR Natural Color M-Band RGB" formula="VIIRSEdrNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_EDR_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1111,7 +1167,7 @@
     </derived>
     <derived description="VIIRS EDR Dust RGB" formula="VIIRSEdrDustRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="VIIRS_EDR_DUST" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1120,9 +1176,9 @@
             <paramgroup name="JPSS_EDR_RGB_Dust"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR NDSI" formula="VIIRSEdrNDSI(D1[label=I1 Reflectance], D2[label=I3 Reflectance])" id="VIIRS_EDR_NDSI" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS EDR Normalized Difference Snow Index (NDSI)" formula="VIIRSEdrNDSI(D1[label=I1 Reflectance], D2[label=I3 Reflectance])" id="VIIRS_EDR_NDSI" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:planviewcolor"/>
             <category value="display:imagedisplay"/>
             <category value="display:planviewcontour"/>
@@ -1138,7 +1194,7 @@
     </derived>
     <derived description="VIIRS EDR True Color RGB" formula="VIIRSEdrTrueColorRGB(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_EDR_M_RGB(M5, M4, M3)" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1149,7 +1205,7 @@
     </derived>
     <derived description="VIIRS EDR Nighttime Microphysics RGB" formula="VIIRSEdrNightMicrophysicsRGB(D1[label=M12 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="VIIRS_EDR_Nighttime_Microphysics_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontroloverz"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
@@ -1160,7 +1216,7 @@
     </derived>
     <derived description="VIIRS EDR Day Fire RGB" formula="VIIRSEdrDayFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_EDR_DAY_FIRE_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1171,7 +1227,7 @@
     </derived>
     <derived description="VIIRS EDR Fire Temperature RGB" formula="VIIRSEdrFireTemperatureRGB(D1[label=M12 Temperature], D2[label=M11 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_EDR_FIRE_TEMPERATURE_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1182,7 +1238,7 @@
     </derived>
     <derived description="VIIRS EDR Natural Color I-Band RGB" formula="VIIRSEdrNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_EDR_Natural_Color_SVI_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1193,7 +1249,7 @@
     </derived>
     <derived description="VIIRS EDR Day Cloud Type RGB" formula="VIIRSEdrCloudTypeRGB(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_EDR_Cloud_Type_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1204,7 +1260,7 @@
     </derived>
     <derived description="VIIRS EDR Snowmelt RGB" formula="VIIRSEdrSnowmeltRGB(D1[label=M10 Reflectance], D2[label=M8 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_EDR_Snowmelt_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1215,7 +1271,7 @@
     </derived>
     <derived description="VIIRS EDR Sea Spray RGB" formula="VIIRSEdrSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
@@ -1225,7 +1281,7 @@
     </derived>
     <derived description="VIIRS EDR Ash RGB" formula="VIIRSEdrAshRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="VIIRS_EDR_ASH" isdefault="true" isenduser="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontroloverz"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
@@ -1236,7 +1292,7 @@
     </derived>
     <derived description="VIIRS EDR Day Cloud Phase Distinction M-Band RGB" formula="VIIRSEdrDayCloudPhaseMRGB(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M15 Temperature])" id="VIIRS_EDR_DAY_CLOUD_PHASE_M_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1247,7 +1303,7 @@
     </derived>
     <derived description="VIIRS EDR Day Cloud Phase Distinction I-Band RGB" formula="VIIRSEdrDayCloudPhaseIRGB(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=I5 Temperature])" id="VIIRS_EDR_DAY_CLOUD_PHASE_I_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1258,7 +1314,7 @@
     </derived>
     <derived description="VIIRS EDR Day Snow-Fog M-Band RGB" formula="VIIRSEdrDaySnowFogMRGB(D1[label=M7 Reflectance], D2[label=M10 Reflectance], D3[label=M12 Temperature], D4[label=M15 Temperature])" id="VIIRS_EDR_DAY_SNOW_FOG_M_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
@@ -1269,13 +1325,70 @@
     </derived>
     <derived description="VIIRS EDR Day Snow-Fog I-Band RGB" formula="VIIRSEdrDaySnowFogIRGB(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_DAY_SNOW_FOG_I_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
         </categories>
         <operands>
             <paramgroup name="JPSS_EDR_RGB_DayCloudSnowFogI"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR Burn Area Index" formula="VIIRSEdrBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS EDR BAI" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_EDR_NDVI"/>
+        </operands>
+     </derived>
+    <derived description="VIIRS EDR Normalized Burn Ratio" formula="VIIRSEdrNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNBR" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_EDR_NormBurnRatio"/>
+        </operands>
+    </derived>
+	<derived description="VIIRS EDR Visible Atmospherically Resistant Index (VARI)" formula="VIIRSEdrVARI(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_EDR_VARI" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcolor"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_EDR_RGB_TrueColor"/>
+        </operands>
+    </derived>
+	<derived description="VIIRS EDR Normalized Difference Built-up Index (NDBI)" formula="VIIRSEdrNDBI(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNDBI" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_EDR_NormBurnRatio"/>
         </operands>
     </derived>
     <!-- end inq 2982 -->
