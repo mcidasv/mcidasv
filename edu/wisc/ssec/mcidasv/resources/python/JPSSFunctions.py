@@ -472,7 +472,88 @@ def VIIRSNDSI(I1, I3):
 
     return package(inI1, ndsi)
 
-               
+
+# VIIRS SDR Burn Area Index
+def VIIRSBAI(I1, I2):
+    # I1 = 0.64um - visible Reflectance
+    # I2 = 0.865um - near IR Reflectance
+    
+    inI1 = I1
+    I1 = unpackage(I1)
+    inI2 = I2
+    I2 = unpackage(I2)
+    grd375 = makeGrid(I1, 375)
+    
+    VISG = MultiSpectralDataSource.swathToGrid(grd375, I1, 1.0)
+    NIRG = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
+    
+    bai =  1/((0.1 - NIRG)**2 + (0.06 - VISG)**2)
+    
+    return package(inI1, bai)
+
+
+# VIIRS SDR Normalized Burn Ratio
+def VIIRSNBR(I2, I3):
+    # I2 = 0.865um - near IR Reflectance
+    # I3 = 1.61um - shortwave IR Reflectance
+    inI2 = I2
+    
+    I2 = unpackage(I2)
+    inI3 = I3
+    I3 = unpackage(I3)
+    grd375 = makeGrid(I2, 375)
+    
+    NIRG = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
+    SIRG = MultiSpectralDataSource.swathToGrid(grd375, I3, 1.0)
+    nbr = (NIRG - SIRG) / (NIRG + SIRG)
+    
+    return package(inI2, nbr)
+
+
+# VIIRS SDR VARI
+def VIIRSVARI(M5, M4, M3):
+    # VARI = Visible Atmospherically Resistant Index
+    # Makes vegetation stand out from surrounding areas
+    # M5 = 0.672um reflectance = Red
+    # M4 = 0.555um reflectance = Grn
+    # M3 = 0.488um reflectance = Blu
+    
+    inM5 = M5
+    M5 = unpackage(M5)
+    inM4 = M4
+    M4 = unpackage(M4)
+    inM3 = M3
+    M3 = unpackage(M3)
+    grd750 = makeGrid(M5, 750)
+    
+    M5S = MultiSpectralDataSource.swathToGrid(grd750, M5, 1.0)
+    M4S = MultiSpectralDataSource.swathToGrid(grd750, M4, 1.0)
+    M3S = MultiSpectralDataSource.swathToGrid(grd750, M3, 1.0)
+    
+    vari = (M4S - M5S) / (M4S + M5S - M3S)
+    
+    return package(inM5, vari)
+
+
+# VIIRS SDR Normalized Difference Built-up Index
+def VIIRSNDBI(I2, I3):
+    # I2 = 0.865um - near IR Reflectance
+    # I3 = 1.61um - shortwave IR Reflectance
+    
+    inI2 = I2
+    I2 = unpackage(I2)
+    inI3 = I3
+    I3 = unpackage(I3)
+    grd375 = makeGrid(I2, 375)
+    
+    NIRG = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
+    SIRG = MultiSpectralDataSource.swathToGrid(grd375, I3, 1.0)
+    
+    ndbi = (SIRG - NIRG) / (SIRG + NIRG)
+    
+    return package(inI2, ndbi)
+
+
 # The below functions are for VIIRS Imagery EDR data.  EDR data
 # do not have bowtie deletion lines, so removal is not needed.
 
@@ -547,6 +628,7 @@ def VIIRSEdrFireTemperatureRGB(M12, M11, M10):
     blu = rescale(M10, 0, 0.75, 0, 255)
     return mycombineRGB(red, grn, blu)
 
+
 # VIIRS EDR Natural Color RGB (I-band)
 def VIIRSEdrNaturalColorIRGB(I3, I2, I1):
     # red = I3 (1.61um); 0 to 100 reflectance rescaled to 0 to 255; gamma 1.0
@@ -579,6 +661,7 @@ def VIIRSEdrSnowmeltRGB(M10, M8, M5):
     grn = rescale(M8, 0, 1, 0, 255)
     blu = rescale(M5, 0, 1, 0, 255)
     return mycombineRGB(red, grn, blu)
+
 
 # VIIRS EDR Sea Spray RGB
 def VIIRSEdrSeaSprayRGB(I1, I2, I4, I5):
@@ -664,3 +747,34 @@ def VIIRSEdrNDSI(I1, I3):
     # I1 = 0.64um - visible Reflectance
     # I3 = 1.61um - shortwave IR Reflectance
     return (I1-I3)/(I1+I3)
+
+
+# VIIRS EDR Burn Area Index
+def VIIRSEdrBAI(I1, I2):
+    # I1 = 0.64um - visible Reflectance
+    # I2 = 0.865um - near IR Reflectance
+    return 1/((0.1 - I2)**2 + (0.06 - I1)**2)
+
+
+# VIIRS EDR Normalized Burn Ratio
+def VIIRSEdrNBR(I2, I3):
+    # I2 = 0.865um - near IR Reflectance
+    # I3 = 1.61um - shortwave IR Reflectance
+    return (I2-I3) / (I2+I3)
+
+
+# VIIRS EDR VARI
+def VIIRSEdrVARI(M5, M4, M3):
+    # VARI = Visible Atmospherically Resistant Index
+    # Makes vegetation stand out from surrounding areas
+    # M5 = 0.672um reflectance = Red
+    # M4 = 0.555um reflectance = Grn
+    # M3 = 0.488um reflectance = Blu
+    return (M4 - M5) / (M4 + M5 - M3)
+
+
+# VIIRS EDR Normalized Difference Built-up Index
+def VIIRSEdrNDBI(I2, I3):
+    # I2 = 0.865um - near IR Reflectance
+    # I3 = 1.61um - shortwave IR Reflectance
+    return (I3-I2) / (I3+I2)
