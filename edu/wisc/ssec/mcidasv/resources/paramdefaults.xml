@@ -115,6 +115,10 @@
   <param ci_base="0.0" ci_interval="0.1" ci_max="2.0" ci_min="-2.0" ci_width="1" name="modis_ndvi" range_max="1.0" range_min="-1.0" table="NDVI"/>
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="0.0" ci_width="1" name="modis_ndsi" range_max="1.0" range_min="0.0" table="NDSI"/>
   <param ci_base="0.0" ci_interval="0.2" ci_max="1.2" ci_min="-1.2" ci_width="1" name="modis_ndwi" range_max="1.0" range_min="-1.0" table="NDVI"/>
+  <param name="modis_bai" range_max="500.0" range_min="0.0" table="Gray scale"/>
+  <param name="modis_ndbi" range_max="1.0" range_min="-1.0" table="Gray scale"/>
+  <param name="modis_vari" range_max="1.0" range_min="-1.0" table="Gray scale"/>
+  <param name="modis_nbr" range_max="1.0" range_min="-1.0" table="Gray scale"/>
   <!-- end inq 2876 -->
   
   <!-- bob inq 2670 - Feb 2020 -->
