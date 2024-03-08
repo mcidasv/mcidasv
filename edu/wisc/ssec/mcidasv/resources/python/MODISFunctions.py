@@ -61,23 +61,23 @@ def MODISEVI(b1R, b2R, b3R):
     return G * ((b2R - b1R)/(b2R + (C1 * b1R) - (C2 * b3R) + L))
 
 # MODIS True Color RGB
-def MODISTruColRGB(b1B, b4B, b3B):
-    # red = band1 BRIT
-    # grn = band4 BRIT
-    # blu = band3 BRIT
-    red = b1B
-    grn = b4B
-    blu = b3B
+def MODISTruColRGB(b1R, b4R, b3R):
+    # red = Band 1 Reflectance; 0 to 1 rescalled to 0 to 255
+    # grn = Band 4 Reflectance; 0 to 1 rescalled to 0 to 255
+    # blu = Band 3 Reflectance; 0 to 1 rescalled to 0 to 255
+    red = rescale(b1R, 0, 1, 0, 255)
+    grn = rescale(b4R, 0, 1, 0, 255)
+    blu = rescale(b3R, 0, 1, 0, 255)
     return combineRGB(red, grn, blu)
 
 # MODIS False Color RGB
-def MODISFalseColRGB(b7B, b2B, b1B):
-    # red = band7 BRIT
-    # grn = band2 BRIT
-    # blu = band1 BRIT
-    red = b7B
-    grn = b2B
-    blu = b1B
+def MODISFalseColRGB(b7R, b2R, b1R):
+    # red = Band 7 Reflectance; 0 to 1 rescalled to 0 to 255
+    # grn = Band 2 Reflectance; 0 to 1 rescalled to 0 to 255
+    # blu = Band 1 Reflectance; 0 to 1 rescalled to 0 to 255
+    red = rescale(b7R, 0, 1, 0, 255)
+    grn = rescale(b2R, 0, 1, 0, 255)
+    blu = rescale(b1R, 0, 1, 0, 255)
     return combineRGB(red, grn, blu)
 
 # MODIS Burn Area Index (BAI)
