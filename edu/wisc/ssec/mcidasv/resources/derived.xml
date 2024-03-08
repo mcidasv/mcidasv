@@ -1081,7 +1081,7 @@
             <paramgroup categories="" name="JPSS_SDR_RGB_DaySnowFogI"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Burn Area Index" formula="VIIRSBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS SDR BAI" isdefault="true" isenduser="true">
+    <derived description="VIIRS SDR Burn Area Index (BAI)" formula="VIIRSBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS SDR BAI" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:planviewcontour"/>
@@ -1095,7 +1095,7 @@
             <paramgroup name="JPSS_NDVI"/>
         </operands>
     </derived>
-	<derived description="VIIRS SDR Normalized Burn Ratio" formula="VIIRSNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBR" isdefault="true" isenduser="true">
+	<derived description="VIIRS SDR Normalized Burn Ratio (NBR)" formula="VIIRSNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBR" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:imagedisplay"/>
@@ -1334,7 +1334,7 @@
             <paramgroup name="JPSS_EDR_RGB_DayCloudSnowFogI"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Burn Area Index" formula="VIIRSEdrBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS EDR BAI" isdefault="true" isenduser="true">
+    <derived description="VIIRS EDR Burn Area Index (BAI)" formula="VIIRSEdrBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS EDR BAI" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:planviewcontourfilled"/>
@@ -1349,7 +1349,7 @@
             <paramgroup name="JPSS_EDR_NDVI"/>
         </operands>
      </derived>
-    <derived description="VIIRS EDR Normalized Burn Ratio" formula="VIIRSEdrNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNBR" isdefault="true" isenduser="true">
+    <derived description="VIIRS EDR Normalized Burn Ratio (NBR)" formula="VIIRSEdrNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNBR" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:planviewcontour"/>
