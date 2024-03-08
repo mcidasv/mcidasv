@@ -1591,7 +1591,7 @@
             <paramgroup name="MODIS_RGB_Airmass"/>
         </operands>
     </derived>
-    <derived description="MODIS NDVI" formula="MODISNDVI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance])" id="modis_ndvi" isdefault="true" isenduser="true" override="true">
+    <derived description="MODIS Normalized Difference Vegetation Index (NDVI)" formula="MODISNDVI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance])" id="modis_ndvi" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
@@ -1608,7 +1608,7 @@
             <paramgroup categories="" name="MODIS_NDVI"/>
         </operands>
     </derived>
-    <derived description="MODIS NDSI" formula="MODISNDSI(D1[label=Band 4 Reflectance], D2[label=Band 6 Reflectance])" id="modis_ndsi" isdefault="true" isenduser="true" override="true">
+    <derived description="MODIS Normalized Difference Snow Index (NDSI)" formula="MODISNDSI(D1[label=Band 4 Reflectance], D2[label=Band 6 Reflectance])" id="modis_ndsi" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
@@ -1625,7 +1625,7 @@
             <paramgroup categories="" name="MODIS_NDSI"/>
         </operands>
     </derived>
-    <derived description="MODIS NDWI" formula="MODISNDWI(D1[label=Band 2 Reflectance], D2[label=Band 4 Reflectance])" id="modis_ndwi" isdefault="true" isenduser="true" override="true">
+    <derived description="MODIS Normalized Difference Water Index (NDWI)" formula="MODISNDWI(D1[label=Band 2 Reflectance], D2[label=Band 4 Reflectance])" id="modis_ndwi" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:planviewcontourfilled"/>
@@ -1642,7 +1642,7 @@
             <paramgroup categories="" name="MODIS_NDWI"/>
         </operands>
     </derived>
-    <derived description="MODIS EVI" formula="MODISEVI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance], D3[label=Band 3 Reflectance])" id="modis_evi" isdefault="true" isenduser="true" override="true">
+    <derived description="MODIS Enhanced Vegetation Index (EVI)" formula="MODISEVI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance], D3[label=Band 3 Reflectance])" id="modis_evi" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
@@ -1683,6 +1683,70 @@
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_RGB_FalseColor"/>
+        </operands>
+    </derived>
+    <derived description="MODIS Normalized Difference Built-up Index (NDBI)" formula="MODISNDBI(D1[label=Band 2 Reflectance], D2[label=Band 6 Reflectance])" id="modis_ndbi" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MODIS Functions"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:dataxs"/>
+            <category value="display:planviewcontourfilled"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MODIS_NDBI"/>
+        </operands>
+    </derived>
+    <derived description="MODIS Normalized Burn Ratio (NBR)" formula="MODISNBR(D1[label=Band 2 Reflectance], D2[label=Band 6 Reflectance])" id="modis_nbr" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MODIS Functions"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands>
+            <paramgroup name="MODIS_NBR"/>
+        </operands>
+    </derived>
+    <derived description="MODIS Burn Area Index (BAI)" formula="MODISBAI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance])" id="modis_bai" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MODIS Functions"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:dataxs"/>
+        </categories>
+        <operands>
+            <paramgroup name="MODIS_BAI"/>
+        </operands>
+    </derived>
+    <derived description="MODIS Visible Atmospherically Resistant Index (VARI)" formula="MODISVARI(D1[label=Band 1 Reflectance], D2[label=Band 3 Reflectance], D3[label=Band 4 Reflectance])" id="modis_vari" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MODIS Functions"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:dataxs"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands>
+            <paramgroup name="MODIS_VARI"/>
         </operands>
     </derived>
     <derived description="CLAVRx Cloud Type RGB" formula="CLAVRxCloudTypeRGB(D1[label=1.378um Reflectance], D2[label=0.64um Reflectance], D3[label=1.61um Reflectance])" id="clavrxcloudtypergb" isdefault="true" isenduser="true">
