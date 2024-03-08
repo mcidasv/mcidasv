@@ -79,3 +79,30 @@ def MODISFalseColRGB(b7B, b2B, b1B):
     grn = b2B
     blu = b1B
     return combineRGB(red, grn, blu)
+
+# MODIS Burn Area Index (BAI)
+def MODISBAI(B1, B2):
+    # B1  = 0.6465um - red Reflectance
+    # B2 = 0.8567um  - near IR Reflectance
+    return 1/((0.1 -B1)**2 + (0.06 - B2)**2)
+
+# MODIS Normalized Burn Ratio (NDBI)
+def MODISNBR(B2, B6):
+    # B2 = 0.8567um - near IR Reflectance
+    # B6 = 1.61um   - shortwave IR Reflectance
+    return (B2-B6) / (B2+B6)
+
+# MODIS Visible Atmospherically Resistant Index (VARI)
+def MODISVARI(B1, B3, B4):
+    # VARI = Visible Atmospherically Resistant Index
+    # Makes vegetation stand out from surrounding areas
+    # B1 = red   = 0.6465um reflectance
+    # B4 = green = 0.5537um reflectance
+    # B3 = blue  = 0.4656um reflectance
+    return (B4-B1) / (B4+B1-B3)
+
+# MODIS Normalized Difference Built-up Index (NDBI)
+def MODISNDBI(B2, B6):
+    # B2 = 0.8567um - near IR Reflectance
+    # B6 = 1.61um   - shortwave IR Reflectance
+    return (B6-B2) / (B6+B2)
