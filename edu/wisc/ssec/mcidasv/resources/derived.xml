@@ -665,7 +665,7 @@
             <paramgroup name="ABI_RGB_CloudType"/>
         </operands>
     </derived>
-    <derived description="ABI Day Rocket Plume RGB" formula="ABIDayRocketRGB(D1[label=Band 2 Albedo], D2[label=Band 7 Temperature], D3[label=Band 8 Temperature])" id="abidayrocket" isdefault="true" isenduser="true">
+    <derived description="ABI Day Rocket Plume RGB" formula="ABIDayRocketRGB(D1[label=Band 2 Albedo], D2[label=Band 7 Temperature], D3[label=Band 8 Temperature])" id="abidayrocket" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:imagecontroloverz"/>
@@ -676,7 +676,7 @@
             <paramgroup categories="" name="ABI_RGB_DayRocketPlume"/>
         </operands>
     </derived>
-    <derived description="ABI Night Rocket Plume RGB" formula="ABINightRocketRGB(D1[label=Band 7 Temperature], D2[label=Band 8 Temperature], D3[label=Band 10 Temperature])" id="abinightrocket" isdefault="true" isenduser="true">
+    <derived description="ABI Night Rocket Plume RGB" formula="ABINightRocketRGB(D1[label=Band 7 Temperature], D2[label=Band 8 Temperature], D3[label=Band 10 Temperature])" id="abinightrocket" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:imagecontroloverz"/>
@@ -830,7 +830,7 @@
             <paramgroup name="AHI_RGB_SimpleWaterVapor"/>
         </operands>
     </derived>
-    <derived description="AHI Tropical Airmass RGB" formula="AHITropicalAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahitropicalairmass" isdefault="true" isenduser="true">
+    <derived description="AHI Tropical Airmass RGB" formula="AHITropicalAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahitropicalairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontroloverz"/>
@@ -852,7 +852,7 @@
             <paramgroup categories="" name="AHI_RGB_TrueColor"/>
         </operands>
     </derived>
-    <derived description="AHI SO2 RGB" formula="AHISO2RGB(D1[label=Band 9 Temperature], D2[label=Band 10 Temperature], D3[label=Band 11 Temperature], D4[label=Band 13 Temperature], D5[label=Band 14 Temperature])" id="ahiso2" isdefault="true" isenduser="true">
+    <derived description="AHI SO2 RGB" formula="AHISO2RGB(D1[label=Band 9 Temperature], D2[label=Band 10 Temperature], D3[label=Band 11 Temperature], D4[label=Band 13 Temperature], D5[label=Band 14 Temperature])" id="ahiso2" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontrol"/>
@@ -863,7 +863,7 @@
             <paramgroup categories="" name="AHI_RGB_SO2"/>
         </operands>
     </derived>
-    <derived description="AHI 24 Hour Microphysics RGB" formula="AHI24HrMicroRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 14 Temperature], D4[label=Band 15 Temperature])" id="ahi24hrmicro" isdefault="true" isenduser="true">
+    <derived description="AHI 24 Hour Microphysics RGB" formula="AHI24HrMicroRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 14 Temperature], D4[label=Band 15 Temperature])" id="ahi24hrmicro" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontroloverz"/>
@@ -1026,7 +1026,7 @@
             <paramgroup categories="" name="JPSS_RGB_SeaSpray"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Ash RGB" formula="VIIRSAshRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsAsh" isdefault="true" isenduser="true">
+    <derived description="VIIRS SDR Ash RGB" formula="VIIRSAshRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsAsh" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontrol"/>
@@ -1081,7 +1081,7 @@
             <paramgroup categories="" name="JPSS_SDR_RGB_DaySnowFogI"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Burn Area Index (BAI)" formula="VIIRSBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS SDR BAI" isdefault="true" isenduser="true">
+    <derived description="VIIRS SDR Burn Area Index (BAI)" formula="VIIRSBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS SDR BAI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:planviewcontour"/>
@@ -1095,7 +1095,7 @@
             <paramgroup name="JPSS_NDVI"/>
         </operands>
     </derived>
-	<derived description="VIIRS SDR Normalized Burn Ratio (NBR)" formula="VIIRSNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBR" isdefault="true" isenduser="true">
+	<derived description="VIIRS SDR Normalized Burn Ratio (NBR)" formula="VIIRSNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBR" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:imagedisplay"/>
@@ -1109,7 +1109,7 @@
             <paramgroup name="JPSS_SDR_NormBurnRatio"/>
         </operands>
     </derived>
-	<derived description="VIIRS SDR Visible Atmospherically Resistant Index (VARI)" formula="VIIRSVARI(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_SDR_VARI" isdefault="true" isenduser="true">
+	<derived description="VIIRS SDR Visible Atmospherically Resistant Index (VARI)" formula="VIIRSVARI(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_SDR_VARI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:planviewcontour"/>
@@ -1123,7 +1123,7 @@
             <paramgroup name="JPSS_RGB_TrueColor"/>
         </operands>
     </derived>
-	<derived description="VIIRS SDR Normalized Difference Built-up Index (NDBI)" formula="VIIRSNDBI(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBI" isdefault="true" isenduser="true">
+	<derived description="VIIRS SDR Normalized Difference Built-up Index (NDBI)" formula="VIIRSNDBI(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSSdrNBI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
             <category value="display:imagedisplay"/>
@@ -1279,7 +1279,7 @@
             <paramgroup name="JPSS_EDR_RGB_SeaSpray"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Ash RGB" formula="VIIRSEdrAshRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="VIIRS_EDR_ASH" isdefault="true" isenduser="true">
+    <derived description="VIIRS EDR Ash RGB" formula="VIIRSEdrAshRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="VIIRS_EDR_ASH" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontroloverz"/>
@@ -1334,7 +1334,7 @@
             <paramgroup name="JPSS_EDR_RGB_DayCloudSnowFogI"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Burn Area Index (BAI)" formula="VIIRSEdrBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS EDR BAI" isdefault="true" isenduser="true">
+    <derived description="VIIRS EDR Burn Area Index (BAI)" formula="VIIRSEdrBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS EDR BAI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:planviewcontourfilled"/>
@@ -1349,7 +1349,7 @@
             <paramgroup name="JPSS_EDR_NDVI"/>
         </operands>
      </derived>
-    <derived description="VIIRS EDR Normalized Burn Ratio (NBR)" formula="VIIRSEdrNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNBR" isdefault="true" isenduser="true">
+    <derived description="VIIRS EDR Normalized Burn Ratio (NBR)" formula="VIIRSEdrNBR(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNBR" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:planviewcontour"/>
@@ -1363,7 +1363,7 @@
             <paramgroup name="JPSS_EDR_NormBurnRatio"/>
         </operands>
     </derived>
-	<derived description="VIIRS EDR Visible Atmospherically Resistant Index (VARI)" formula="VIIRSEdrVARI(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_EDR_VARI" isdefault="true" isenduser="true">
+	<derived description="VIIRS EDR Visible Atmospherically Resistant Index (VARI)" formula="VIIRSEdrVARI(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_EDR_VARI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:imagedisplay"/>
@@ -1377,7 +1377,7 @@
             <paramgroup name="JPSS_EDR_RGB_TrueColor"/>
         </operands>
     </derived>
-	<derived description="VIIRS EDR Normalized Difference Built-up Index (NDBI)" formula="VIIRSEdrNDBI(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNDBI" isdefault="true" isenduser="true">
+	<derived description="VIIRS EDR Normalized Difference Built-up Index (NDBI)" formula="VIIRSEdrNDBI(D1[label=I2 Reflectance], D2[label=I3 Reflectance])" id="VIIRSEdrNDBI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-Indices"/>
             <category value="display:imagedisplayoverz"/>
@@ -1663,7 +1663,7 @@
         <categories/>
         <operands/>
     </derived>
-    <derived description="MODIS True Color RGB" formula="MODISTruColRGB(D1[label=Band 1 Brightness], D2[label=Band 4 Brightness], D3[label=Band 3 Brightness])" id="modistrucolrgb" isdefault="true" isenduser="true" override="true">
+    <derived description="MODIS True Color RGB" formula="MODISTruColRGB(D1[label=Band 1 Reflectance], D2[label=Band 4 Reflectance], D3[label=Band 3 Reflectance])" id="modistrucolrgb" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagecontroloverz"/>
@@ -1674,7 +1674,7 @@
             <paramgroup categories="" name="MODIS_RGB_TrueColor"/>
         </operands>
     </derived>
-    <derived description="MODIS False Color RGB" formula="MODISFalseColRGB(D1[label=Band 7 Brightness], D2[label=Band 2 Brightness], D3[label=Band 1 Brightness])" id="modisfalsecolrgb" isdefault="true" isenduser="true" override="true">
+    <derived description="MODIS False Color RGB" formula="MODISFalseColRGB(D1[label=Band 7 Reflectance], D2[label=Band 2 Reflectance], D3[label=Band 1 Reflectance])" id="modisfalsecolrgb" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagecontroloverz"/>
@@ -1685,7 +1685,7 @@
             <paramgroup categories="" name="MODIS_RGB_FalseColor"/>
         </operands>
     </derived>
-    <derived description="MODIS Normalized Difference Built-up Index (NDBI)" formula="MODISNDBI(D1[label=Band 2 Reflectance], D2[label=Band 6 Reflectance])" id="modis_ndbi" isdefault="true" isenduser="true">
+    <derived description="MODIS Normalized Difference Built-up Index (NDBI)" formula="MODISNDBI(D1[label=Band 2 Reflectance], D2[label=Band 6 Reflectance])" id="modis_ndbi" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:planviewcontour"/>
@@ -1701,7 +1701,7 @@
             <paramgroup categories="" name="MODIS_NDBI"/>
         </operands>
     </derived>
-    <derived description="MODIS Normalized Burn Ratio (NBR)" formula="MODISNBR(D1[label=Band 2 Reflectance], D2[label=Band 6 Reflectance])" id="modis_nbr" isdefault="true" isenduser="true">
+    <derived description="MODIS Normalized Burn Ratio (NBR)" formula="MODISNBR(D1[label=Band 2 Reflectance], D2[label=Band 6 Reflectance])" id="modis_nbr" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:planviewcontourfilled"/>
@@ -1717,7 +1717,7 @@
             <paramgroup name="MODIS_NBR"/>
         </operands>
     </derived>
-    <derived description="MODIS Burn Area Index (BAI)" formula="MODISBAI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance])" id="modis_bai" isdefault="true" isenduser="true">
+    <derived description="MODIS Burn Area Index (BAI)" formula="MODISBAI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance])" id="modis_bai" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:gridtablecontrol"/>
@@ -1733,7 +1733,7 @@
             <paramgroup name="MODIS_BAI"/>
         </operands>
     </derived>
-    <derived description="MODIS Visible Atmospherically Resistant Index (VARI)" formula="MODISVARI(D1[label=Band 1 Reflectance], D2[label=Band 3 Reflectance], D3[label=Band 4 Reflectance])" id="modis_vari" isdefault="true" isenduser="true">
+    <derived description="MODIS Visible Atmospherically Resistant Index (VARI)" formula="MODISVARI(D1[label=Band 1 Reflectance], D2[label=Band 3 Reflectance], D3[label=Band 4 Reflectance])" id="modis_vari" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:planviewcontourfilled"/>
@@ -1749,7 +1749,7 @@
             <paramgroup name="MODIS_VARI"/>
         </operands>
     </derived>
-    <derived description="CLAVRx Cloud Type RGB" formula="CLAVRxCloudTypeRGB(D1[label=1.378um Reflectance], D2[label=0.64um Reflectance], D3[label=1.61um Reflectance])" id="clavrxcloudtypergb" isdefault="true" isenduser="true">
+    <derived description="CLAVRx Cloud Type RGB" formula="CLAVRxCloudTypeRGB(D1[label=1.378um Reflectance], D2[label=0.64um Reflectance], D3[label=1.61um Reflectance])" id="clavrxcloudtypergb" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-CLAVRx Functions"/>
             <category value="display:imagecontrol"/>
@@ -4622,7 +4622,7 @@
     </derived>
     <!-- end inq 3052 -->
     <!-- Adding vertical min/max formulas - RMC - INQ 2973 - Jun 2021 -->
-    <derived description="Max over grid levels" formula="zmax(grid)" id="levels max" isdefault="false" isenduser="true">
+    <derived description="Max over grid levels" formula="zmax(grid)" id="levels max" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Grids"/>
             <category value="display:imagedisplay"/>
@@ -4633,7 +4633,7 @@
         </categories>
         <operands/>
     </derived>
-    <derived description="Min over grid levels" formula="zmin(grid)" id="levels min" isdefault="false" isenduser="true">
+    <derived description="Min over grid levels" formula="zmin(grid)" id="levels min" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Grids"/>
             <category value="display:planviewcolor"/>
@@ -4653,7 +4653,7 @@
         </operands>
     </derived>
     <!-- Bob - Inq 3122 - Feb 2024 - Adding formulas to calculate TEMP from L1b and RAD from L2 ABI CMIP netCDF files -->
-	<derived description="ABI Temp to Rad Bands 7 - 16" formula="abiTempToRad(data)" id="abiTempToRad" isdefault="false" isenduser="true">
+	<derived description="ABI Temp to Rad Bands 7 - 16" formula="abiTempToRad(data)" id="abiTempToRad" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:planviewcolor"/>
@@ -4668,7 +4668,7 @@
             <category value="display:planviewcontourfilled"/>
         </categories>
     </derived>
-	<derived description="ABI Rad To Temp Bands 7 - 16" formula="abiRadToTemp(data)" id="abiRadToTemp" isdefault="false" isenduser="true">
+	<derived description="ABI Rad To Temp Bands 7 - 16" formula="abiRadToTemp(data)" id="abiRadToTemp" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:gridtablecontrol"/>
