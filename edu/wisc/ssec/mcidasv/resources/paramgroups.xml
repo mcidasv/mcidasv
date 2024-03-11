@@ -564,74 +564,62 @@
   <paramgroup description="MODIS NDVI" name="MODIS_NDVI">
     <params p1="101_Band1_REF" p2="101_Band2_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1"/>
-    <params p1="MODIS_Grid_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_2D/Data_Fields/sur_refl_b02_1"/>
-    <params p1="MOD_Grid_250m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_250m_Surface_Reflectance/Data_Fields/sur_refl_b02"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_2"/>
+    <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b02*.*"/>
   </paramgroup>
   <paramgroup description="MODIS NDSI" name="MODIS_NDSI">
     <params p1="101_Band4_REF" p2="101_Band6_REF"/>
     <params p1="111_Band4_REF" p2="111_Band6_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_6"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b04" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b06"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b04_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b06_1"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_4" p2="MOD*.*Surface_Reflectance_Band_6"/>
+    <params p1="MOD*.*sur_refl_b04*.*" p2="MOD*.*sur_refl_b06*.*"/>
   </paramgroup>
   <paramgroup description="MODIS NDWI" name="MODIS_NDWI">
     <params p1="101_Band2_REF" p2="101_Band4_REF"/>
     <params p1="111_Band2_REF" p2="111_Band4_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b04"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b04_1"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_2" p2="MOD*.*Surface_Reflectance_Band_4"/>
+    <params p1="MOD*.*sur_refl_b02*.*" p2="MOD*.*sur_refl_b04*.*"/>
   </paramgroup>
   <paramgroup description="MODIS EVI" name="MODIS_EVI">
     <params p1="101_Band1_REF" p2="101_Band2_REF" p3="101_Band3_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF" p3="111_Band3_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2" p3="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_3"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02" p3="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b03"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1" p3="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b03_1"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_2" p3="MOD*.*Surface_Reflectance_Band_3"/>
+    <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b02*.*" p3="MOD*.*sur_refl_b03*.*"/>
   </paramgroup>
   <paramgroup description="MODIS True Color RGB" name="MODIS_RGB_TrueColor">
     <params p1="101_Band1_REF" p2="101_Band4_REF" p3="101_Band3_REF"/>
     <params p1="111_Band1_REF" p2="111_Band4_REF" p3="111_Band3_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4" p3="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_3"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b04" p3="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b03"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b04_1" p3="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b03_1"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_4" p3="MOD*.*Surface_Reflectance_Band_3"/>
+    <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b04*.*" p3="MOD*.*sur_refl_b03*.*"/>
   </paramgroup>
   <paramgroup description="MODIS False Color RGB" name="MODIS_RGB_FalseColor">
     <params p1="101_Band7_REF" p2="101_Band2_REF" p3="101_Band1_REF"/>
     <params p1="111_Band7_REF" p2="111_Band2_REF" p3="111_Band1_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_7" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2" p3="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b07" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02" p3="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b01"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_7" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1" p3="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_1"/>
+    <params p1="MOD*.*1km_Surface_Reflectance_Band_7" p2="MOD*.*1km_Surface_Reflectance_Band_2" p3="MOD*.*Surface_Reflectance_Band_1"/>
+    <params p1="MOD*.*sur_refl_b07*.*" p2="MOD*.*sur_refl_b02*.*" p3="MOD*.*sur_refl_b01*.*"/>
   </paramgroup>
     <paramgroup description="MODIS BAI" name="MODIS_BAI">
     <params p1="101_Band1_REF" p2="101_Band2_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_2"/>
+    <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b02*.*"/>
   </paramgroup>
   <paramgroup description="MODIS NBR" name="MODIS_NBR">
     <params p1="101_Band2_REF" p2="101_Band6_REF"/>
     <params p1="111_Band2_REF" p2="111_Band6_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_6"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b06"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b06_1"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_2" p2="MOD*.*Surface_Reflectance_Band_6"/>
+    <params p1="MOD*.*sur_refl_b02*.*" p2="MOD*.*sur_refl_b06*.*"/>
   </paramgroup>
   <paramgroup description="MODIS VARI" name="MODIS_VARI">
     <params p1="101_Band1_REF" p2="101_Band3_REF" p3="101_Band4_REF"/>
     <params p1="111_Band1_REF" p2="111_Band3_REF" p3="111_Band4_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_3" p3="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b03" p3="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b04"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b03_1" p3="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b04_1"/>
+    <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_3" p3="MOD*.*Surface_Reflectance_Band_4"/>
+    <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b03*.*" p3="MOD*.*sur_refl_b04*.*"/>
   </paramgroup>
   <paramgroup description="MODIS NDBI" name="MODIS_NDBI">
     <params p1="101_Band2_REF" p2="101_Band6_REF"/>
     <params p1="111_Band2_REF" p2="111_Band6_REF"/>
-    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_6"/>
-    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b06"/>
-    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b06_1"/>
+    <params p1="MOD*.*1km_Surface_Reflectance_Band_2" p2="MOD*.*1km_Surface_Reflectance_Band_6"/>
+    <params p1="MOD*.*sur_refl_b02*.*" p2="MOD*.*sur_refl_b06*.*"/>
   </paramgroup>
   <paramgroup description="" name="speed_and_dir">
     <params p1="wind_speed" p2="wind_dir"/>
