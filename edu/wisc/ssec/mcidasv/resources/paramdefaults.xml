@@ -387,4 +387,9 @@
   <param name="abiTempToRad" table="Inverse Gray Scale"/>
   <param ci_base="200.0" ci_interval="20.0" ci_max="340.0" ci_min="180.0" ci_width="1" name="abiRadToTemp" range_max="320.0" range_min="180.0" table="Inverse Gray Scale"/>
   <!-- end inq 3122 -->
+
+  <param name="SnowData/NDSI" range_max="1.0" range_min="-1.0" table="NDSI"/>
+  <param name="SnowData/NDSI_Snow_Cover" range_max="100.0" range_min="0.0" table="Gray scale"/>
+  <param name="NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
+  
 </params>
