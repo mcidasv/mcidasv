@@ -321,7 +321,8 @@
     <params p1="327_Band1_REF" p2="327_Band2_REF"/>
     <params p1="328_Band1_REF" p2="328_Band2_REF"/>
     <params p1="329_Band1_REF" p2="329_Band2_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I1" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I2"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I1" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I2"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SWIR1_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*SWIR2_reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Dust RGB" name="JPSS_EDR_RGB_Dust">
     <params p1="VIIRS-M14-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p3="VIIRS-M16-MOD-EDR_All/BrightnessTemperature"/>
@@ -330,7 +331,7 @@
     <params p1="327_Band19_TEMP" p2="327_Band20_TEMP" p3="327_Band21_TEMP"/>
     <params p1="328_Band19_TEMP" p2="328_Band20_TEMP" p3="328_Band21_TEMP"/>
     <params p1="329_Band19_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M14" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M16"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M14" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Fire Temperature RGB" name="JPSS_EDR_RGB_FireTemperature">
     <params p1="VIIRS-M12-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M11-MOD-EDR_All/Reflectance" p3="VIIRS-M10-MOD-EDR_All/Reflectance"/>
@@ -339,7 +340,7 @@
     <params p1="327_Band17_TEMP" p2="327_Band16_REF" p3="327_Band15_REF"/>
     <params p1="328_Band17_TEMP" p2="328_Band16_REF" p3="328_Band15_REF"/>
     <params p1="329_Band17_TEMP" p2="329_Band16_REF" p3="329_Band15_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M12" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M11" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M10"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M12" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M11" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Natural Color RGB" name="JPSS_EDR_RGB_NaturalColor">
     <params p1="VIIRS-M10-MOD-EDR_All/Reflectance" p2="VIIRS-M7-MOD-EDR_All/Reflectance" p3="VIIRS-M5-MOD-EDR_All/Reflectance"/>
@@ -349,8 +350,7 @@
     <params p1="327_Band15_REF" p2="327_Band12_REF" p3="327_Band10_REF"/>
     <params p1="328_Band15_REF" p2="328_Band12_REF" p3="328_Band10_REF"/>
     <params p1="329_Band15_REF" p2="329_Band12_REF" p3="329_Band10_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M7" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M5"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M7" p3="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M5"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M7" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Natural Color SVI RGB" name="JPSS_EDR_RGB_I_NaturalColor">
     <params p1="VIIRS-I3-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
@@ -360,7 +360,7 @@
     <params p1="327_Band3_REF" p2="327_Band2_REF" p3="327_Band1_REF"/>
     <params p1="328_Band3_REF" p2="328_Band2_REF" p3="328_Band1_REF"/>
     <params p1="329_Band3_REF" p2="329_Band2_REF" p3="329_Band1_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I3" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I2" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I1"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I3" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I2" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I1"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Nighttime Microphysics RGB" name="JPSS_EDR_RGB_NightMicrophysics">
     <params p1="VIIRS-M12-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p3="VIIRS-M16-MOD-EDR_All/BrightnessTemperature"/>
@@ -369,7 +369,7 @@
     <params p1="327_Band17_TEMP" p2="327_Band20_TEMP" p3="327_Band21_TEMP"/>
     <params p1="328_Band17_TEMP" p2="328_Band20_TEMP" p3="328_Band21_TEMP"/>
     <params p1="329_Band17_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M12" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M16"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M12" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR True Color RGB" name="JPSS_EDR_RGB_TrueColor">
     <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M4-MOD-EDR_All/Reflectance" p3="VIIRS-M3-MOD-EDR_All/Reflectance"/>
@@ -379,9 +379,8 @@
     <params p1="327_Band10_REF" p2="327_Band9_REF" p3="327_Band8_REF"/>
     <params p1="328_Band10_REF" p2="328_Band9_REF" p3="328_Band8_REF"/>
     <params p1="329_Band10_REF" p2="329_Band9_REF" p3="329_Band8_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M4" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M3"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M4" p3="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M3"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_Grid_16Day_VI_500m/Data_Fields/500_m_16_days_red_reflectance" p2="HDFEOS/GRIDS/VIIRS_Grid_16Day_VI_500m/Data_Fields/500_m_16_days_green_reflectance" p3="HDFEOS/GRIDS/VIIRS_Grid_16Day_VI_500m/Data_Fields/500_m_16_days_blue_reflectance"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M4" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M3"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*red_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*green_reflectance" p3="HDFEOS/GRIDS/VIIRS_*.*blue_reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Cloud Type RGB" name="JPSS_EDR_RGB_CloudType">
     <params p1="VIIRS-M9-MOD-EDR_All/Reflectance" p2="VIIRS-M5-MOD-EDR_All/Reflectance" p3="VIIRS-M10-MOD-EDR_All/Reflectance"/>
@@ -399,8 +398,7 @@
     <params p1="327_Band15_REF" p2="327_Band13_REF" p3="327_Band10_REF"/>
     <params p1="328_Band15_REF" p2="328_Band13_REF" p3="328_Band10_REF"/>
     <params p1="329_Band15_REF" p2="329_Band13_REF" p3="329_Band10_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M8" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M5"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M8" p3="HDFEOS/GRIDS/VIIRS_Grid_1km_L3_2d/Data_Fields/SurfReflect_M10"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M8" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5"/>
   </paramgroup>
   <paramgroup description="JPSS EDR NDSI" name="JPSS_EDR_NDSI">
     <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance"/>
@@ -410,7 +408,8 @@
     <params p1="327_Band1_REF" p2="327_Band3_REF"/>
     <params p1="328_Band1_REF" p2="328_Band3_REF"/>
     <params p1="329_Band1_REF" p2="329_Band3_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I1" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I3"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I1" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I3"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SWIR1_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*SWIR3_reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Sea Spray RGB" name="JPSS_EDR_RGB_SeaSpray">
     <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p4="VIIRS-I5-IMG-EDR_All/BrightnessTemperature"/>
@@ -427,7 +426,7 @@
     <params p1="327_Band19_TEMP" p2="327_Band20_TEMP" p3="327_Band21_TEMP"/>
     <params p1="328_Band19_TEMP" p2="328_Band20_TEMP" p3="328_Band21_TEMP"/>
     <params p1="329_Band19_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M14" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M16"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M14" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Day Cloud Phase Distinction M RGB" name="JPSS_EDR_RGB_DayCloudPhaseDistinctionM">
     <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M10-MOD-EDR_All/Reflectance" p3="VIIRS-M15-MOD-EDR_All/BrightnessTemperature"/>
@@ -436,7 +435,7 @@
     <params p1="327_Band10_REF" p2="327_Band15_REF" p3="327_Band20_TEMP"/>
     <params p1="328_Band10_REF" p2="328_Band15_REF" p3="328_Band20_TEMP"/>
     <params p1="329_Band10_REF" p2="329_Band15_REF" p3="329_Band20_TEMP"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M10" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M15"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Day Cloud Phase Distinction I RGB" name="JPSS_EDR_RGB_DayCloudPhaseDistinctionI">
     <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-I5-IMG-EDR_All/BrightnessTemperature"/>
@@ -453,7 +452,7 @@
     <params p1="327_Band12_REF" p2="327_Band15_REF" p3="327_Band17_TEMP" p4="327_Band20_TEMP"/>
     <params p1="328_Band12_REF" p2="328_Band15_REF" p3="328_Band17_TEMP" p4="328_Band20_TEMP"/>
     <params p1="329_Band12_REF" p2="329_Band15_REF" p3="329_Band17_TEMP" p4="329_Band20_TEMP"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M7" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_M10" p3="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M12" p4="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/BrightTemp_M15"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M7" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M12" p4="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Day Snow-Fog I RGB" name="JPSS_EDR_RGB_DayCloudSnowFogI">
     <params p1="VIIRS-I2-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p4="VIIRS-I5-IMG-EDR_All/BrightnessTemperature"/>
@@ -470,7 +469,8 @@
     <params p1="327_Band2_REF" p2="327_Band3_REF"/>
     <params p1="328_Band2_REF" p2="328_Band3_REF"/>
     <params p1="329_Band2_REF" p2="329_Band3_REF"/>
-    <params p1="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I2" p2="HDFEOS/GRIDS/VIIRS_CMG/Data_Fields/SurfReflect_I3"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I2" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I3"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SWIR2_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*SWIR3_reflectance"/>
   </paramgroup>
   <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
     <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>
