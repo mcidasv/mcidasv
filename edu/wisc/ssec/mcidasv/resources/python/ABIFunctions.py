@@ -316,12 +316,16 @@ def abiRadToTemp(data):
     # Formula to calculate temberature from the NOAA ATBD:
     # https://www.star.nesdis.noaa.gov/goesr/docs/ATBD/Imagery.pdf
     # fk1/2 and bc1/2 values are extracted from the data then used in the function
-    fk1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk1').read()))
-    fk2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk2').read()))
-    bc1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc1').read()))
-    bc2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc2').read()))
-    T = ( fk2 / (log((fk1 /data) + 1)) - bc1 ) / bc2
-    Tnew = createNewUnit(T, 'K')
+    bandNumber = float(str(data[0].geoGrid.dataset.getDataVariable('band_id').read()))
+    if int(bandNumber) >= 7:
+        fk1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk1').read()))
+        fk2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk2').read()))
+        bc1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc1').read()))
+        bc2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc2').read()))
+        T = ( fk2 / (log((fk1 /data) + 1)) - bc1 ) / bc2
+        Tnew = createNewUnit(T, 'K')
+    else:
+        raise ValueError("Band number %s not allowed. Only bands 7 through 16 are supported" % (bandNumber))
     return Tnew
 
 def abiTempToRad(data):
@@ -329,11 +333,61 @@ def abiTempToRad(data):
     # Valid only for bands 7 through 16
     # Formula to calculate radiance from the NOAA ATBD:
     # https://www.star.nesdis.noaa.gov/goesr/docs/ATBD/Imagery.pdf
-    # fk1/2 and bc1/2 values are extracted from the data then used in the function
-    fk1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk1').read()))
-    fk2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_fk2').read()))
-    bc1 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc1').read()))
-    bc2 = float(str(data[0].geoGrid.dataset.getDataVariable('planck_bc2').read()))
+    # the band number is extracted from the data and the fk1/2 and bc1/2
+    # values for that band from the ATBD are applied in the formula
+    bandNumber = str(data[0].geoGrid.gcs.getNetcdfDataset().findGlobalAttribute('channel_id')).replace(':channel_id = ','')
+    if int(bandNumber) == 7:
+        fk1 = 200774
+        fk2 = 3689.09
+        bc1 = 0.50777
+        bc2 = 0.99929
+    elif int(bandNumber) == 8:
+        fk1 = 50361.4
+        fk2 = 2326.57
+        bc1 = 2.12504
+        bc2 = 0.99541
+    elif int(bandNumber) == 9:
+        fk1 = 35494.0
+        fk2 = 2070.47
+        bc1 = 0.33291
+        bc2 = 0.9992
+    elif int(bandNumber) == 10:
+        fk1 = 30092.5
+        fk2 = 1959.61
+        bc1 = 0.06984
+        bc2 = 0.99983
+    elif int(bandNumber) == 11:
+        fk1 = 19373.3
+        fk2 = 1692.07
+        bc1 = 0.17462
+        bc2 = 0.99951
+    elif int(bandNumber) == 12:
+        fk1 = 13438.2
+        fk2 = 1497.84
+        bc1 = 0.10861
+        bc2 = 0.99966
+    elif int(bandNumber) == 13:
+        fk1 = 10736.4
+        fk2 = 1389.86
+        bc1 = 0.13445
+        bc2 = 0.99955
+    elif int(bandNumber) == 14:
+        fk1 = 8483.10
+        fk2 = 1284.90
+        bc1 = 0.25361
+        bc2 = 0.9991
+    elif int(bandNumber) == 15:
+        fk1 = 6401.46
+        fk2 = 1169.80
+        bc1 = 0.27049 
+        bc2 = 0.99894
+    elif int(bandNumber) == 16:
+        fk1 = 5066.03
+        fk2 = 1082.03
+        bc1 = 0.07574
+        bc2 = 0.99968
+    else:
+        raise ValueError("Band number %s not allowed.  Only bands 7 through 16 are supported" % (bandNumber))
     R = fk1 / (exp (fk2 / (bc1 + (bc2 * data))) -1)
     Rnew = createNewUnit(R, 'mW/m^2/sr/cm-1')
     return Rnew
