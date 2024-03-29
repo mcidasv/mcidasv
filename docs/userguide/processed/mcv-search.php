@@ -3,6 +3,12 @@
 error_reporting(E_ALL ^ E_NOTICE);
 
 $terms=trim($_POST["terms"]);
+if (isset($_GET["terms"])) {
+  $terms=trim($_GET["terms"]);
+}
+if ($argc == 2) {
+  $terms = $argv[1];
+}
 
 $BASEDIR=dirname($_SERVER["SCRIPT_FILENAME"]);
 if ($BASEDIR=="") { $BASEDIR="/var/apache/www/htdocs/mcidas/doc/mcv_guide/working"; }
@@ -10,7 +16,6 @@ if ($BASEDIR=="") { $BASEDIR="/var/apache/www/htdocs/mcidas/doc/mcv_guide/workin
 ################################################################################
 
 if ($terms=="") {
-  print "";
   exit(0);
 }
 
@@ -50,7 +55,6 @@ if (!count($results)) {
 # At this point, we have a sorted array with filenames as keys and branches
 #  "count" and "terms" indicating how well they were matched
 uasort($results,"pagesorter");
-$total=count($array);
 
 print "<table border=0 cellspacing=0 cellpadding=0>\n";
 foreach ($results as $page=>$stats) {
@@ -102,10 +106,8 @@ function quote_split($string) {
 
 function pagesorter($a,$b) {
   if ($a["count"]>$b["count"]) { return -1; }
-  elseif ($a["count"]<$b["count"]) { return 1; }
-  else {
-    return(strcmp($a["name"],$b["name"]));
-  }
+  if ($a["count"]<$b["count"]) { return 1; }
+  return(strnatcmp($a["name"],$b["name"]));
 }
 
 ?>
