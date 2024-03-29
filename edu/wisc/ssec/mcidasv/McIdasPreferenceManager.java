@@ -311,8 +311,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     /** Date formats */
     private final Set<String> dateFormats = CollectionHelpers.set(
         DEFAULT_DATE_FORMAT, "MM/dd/yy HH:mm z", "dd.MM.yy HH:mm z", 
-        "yyyy-MM-dd", "EEE, MMM dd yyyy HH:mm z", "HH:mm:ss", "HH:mm", 
-        "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ");
+        "EEE, MMM dd yyyy HH:mm z", "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        "yyyy-MM-dd'T'HH:mm:ssZ");
     
     /** The toolbar editor */
     private McvToolbarEditor toolbarEditor;
@@ -1601,7 +1601,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         formatPanel.setBorder(BorderFactory.createTitledBorder("Formats"));
         
         // Date stuff
-        JLabel dateLabel = McVGuiUtils.makeLabelRight("Date Format:", Width.ONEHALF);
+        JLabel dateLabel = McVGuiUtils.makeLabelRight("Date/Time Format:", Width.ONEHALF);
         
         String dateFormat = getStore().get(PREF_DATE_FORMAT, DEFAULT_DATE_FORMAT);
         
