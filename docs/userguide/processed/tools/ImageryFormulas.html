@@ -151,12 +151,181 @@ of the latitudes at each point.</li>
 <div class="pagesubtitle">ABI Functions<a name="abiFunctions" id="abiFunctions"></a></div>
 <p>The following describes each formula included in the ABI (Advanced Baseline Imager - GOES-16 through GOES-19) Functions section of McIDAS-V. These formulas create displays of various RGB and channel difference products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> ABI Functions tree. For specifics about the usage of each of these products (except ABI True Color RGB), see the <a href="https://rammb2.cira.colostate.edu/training/visit/quick_reference/#tab17">CIRA VISIT Quick Guides</a>.</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>ABI Airmass RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+    <li class="propertylistitem"><strong>Differences</strong></li>
+    <ul class="propertylist">
+        <li class="propertylistitem"><strong>ABI Night Fog Difference (Band 13 Temperature, Band 7 Temperature) -</strong> Identifies clouds made up of water droplets at night.
+    <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+      <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+       </strong></td></tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 13 T</em>emperature</p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>ABI band 13 (10.3um) temperature.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 7 T</em>emperature</p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>ABI band 7 (3.9um) temperature.</p>
+   </td>
+   </tr>
+</table></li>
+        <li class="propertylistitem"><strong>ABI Split Cloud Phase Difference (Band 14 Temperature, Band 11 Temperature) -</strong> Differentiates between types of clouds.  For example, thick and thin cirrus, and clouds made of ice and water.
+  <table id="miscformulas2" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+       </strong></td></tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 14 Temperature</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>ABI band 14 (11.2um) temperature.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 11 Temperature</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>ABI band 11 (8.4um) temperature.</p>
+   </td>
+   </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>ABI Split Ozone Difference (Band 12 Temperature, Band 13 Temperature) -</strong> Displays ozone absorption compared to the clean window.
+  <table id="miscformulas3" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+       </strong></td></tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 12 Temperature</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>ABI band 12 (9.6um) temperature.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 13 Temperature</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>ABI band 13 (10.3um) temperature.</p>
+   </td>
+   </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>ABI Split Snow Difference (Band 5 Reflectance, Band 2 Reflectance) -</strong> Emphasizes regions where ice is present, including glaciated clouds and snow/ice.  Note that reflectance isn't a calibration returned through ADDE, meaning that it won't be available for a data source loaded through the Satellite&gt;Imagery chooser.  To use this formula, CMIP Level 2 files for bands 2 and 5, or a MCMIP Level 2 file containing bands 2 and 5 must be loaded through the General&gt;Files/Directories chooser as a gridded data source.
+  <table id="miscformulas4" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+       </strong></td></tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 5 Reflectance</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>ABI band 5 (1.6um) reflectance.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 2 Reflectance</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>ABI band 2 (0.64um) reflectance.</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>ABI Split Water Vapor Difference (Band 12 Temperature, Band 13 Temperature) -</strong> Displays water vapor concentration and distribution.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 12T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>ABI band 12 (9.6um) temperature.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 13T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>ABI band 13 (10.3um) temperature.</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>ABI Split Window Difference (Band 13 Temperature, Band 15 Temperature) -</strong> Emphasizes low level moisture and dust.
+  <table id="miscformulas5" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+       </strong></td></tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 13T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>ABI band 13 (10.3um) temperature.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 15T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>ABI band 15 (12.3um) temperature.</p>
+   </td>
+   </tr>
+</table></li>
+        <li class="propertylistitem"><strong>ABI Split Window Difference (Dust) (Band 13 Temperature, Band 15 Temperature) -</strong> Emphasizes low level dust.
+          <table id="miscformulas6" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+       </strong></td></tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 13T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>ABI band 13 (10.3um) temperature.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="145" colspan="1" rowspan="1" valign="top">
+   <p><em>Band 15T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>ABI band 15 (12.3um) temperature.</p>
+   </td>
+   </tr>
+</table></li>
+        </ul></ul>
+<ul class="propertylist">
+    <li class="propertylistitem"><strong>RGBs</strong></li>
+    <ul class="propertylist">
+<li class="propertylistitem"><strong>ABI Airmass RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+  <table id="miscformulas7" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 T</em>emperature</p>
@@ -190,13 +359,13 @@ of the latitudes at each point.</li>
         </td>
       </tr>
 </table>
-</li>
-<li class="propertylistitem"><strong>ABI Ash RGB (Band 11 Temperature, Band 13 Temperature, Band 14 Temperature, Band 15 Temperature) -</strong> Monitors volcanic ash and sulfur dioxide gas.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+        </li>
+    <li class="propertylistitem"><strong>ABI Ash RGB (Band 11 Temperature, Band 13 Temperature, Band 14 Temperature, Band 15 Temperature) -</strong> Monitors volcanic ash and sulfur dioxide gas.
+  <table id="miscformulas8" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 11 Temperature</em></p>
@@ -231,12 +400,12 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Cloud Type RGB (Band 4 Albedo, Band 2 Albedo, Band 5 Albedo) -</strong> Distinguishes between cirrus (red), opaque ice (yellow), water clouds (cyan), snow (green), and lofted water clouds (white).
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI Cloud Type RGB (Band 4 Albedo, Band 2 Albedo, Band 5 Albedo) -</strong> Distinguishes between cirrus (red), opaque ice (yellow), water clouds (cyan), snow (green), and lofted water clouds (white).
+  <table id="miscformulas9" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 4 Albedo</em></p>
@@ -263,12 +432,12 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Cloud Convection RGB (Band 2 Albedo, Band 13 Temperature) -</strong> Distinguishes between high and low clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI Day Cloud Convection RGB (Band 2 Albedo, Band 13 Temperature) -</strong> Distinguishes between high and low clouds.
+  <table id="miscformulas11" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Albedo</em></p>
@@ -287,12 +456,12 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Cloud Phase Distinction RGB (Band 2 Albedo, Band 5 Albedo, Band 13 Temperature) -</strong> Monitors convection by evaluating the phase of cooling cloud tops.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI Day Cloud Phase Distinction RGB (Band 2 Albedo, Band 5 Albedo, Band 13 Temperature) -</strong> Monitors convection by evaluating the phase of cooling cloud tops.
+  <table id="miscformulas12" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Albedo</em></p>
@@ -319,12 +488,12 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Convection RGB (Band 2 Albedo, Band 5 Albedo, Band 7 Temperature, Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) -</strong> Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI Day Convection RGB (Band 2 Albedo, Band 5 Albedo, Band 7 Temperature, Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) -</strong> Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
+  <table id="miscformulas13" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Albedo</em></p>
@@ -375,12 +544,12 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Fire RGB (Band 2 Albedo, Band 3 Albedo, Band 6 Albedo) -</strong> Highlights fire pixels in red and differentiates between water and ice clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI Day Fire RGB (Band 2 Albedo, Band 3 Albedo, Band 6 Albedo) -</strong> Highlights fire pixels in red and differentiates between water and ice clouds.
+  <table id="miscformulas14" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Albedo</em></p>
@@ -408,11 +577,11 @@ of the latitudes at each point.</li>
 </table>
 </li>
 <li class="propertylistitem"><strong>ABI Day Land Cloud RGB (Band 2 Albedo, Band 3 Albedo, Band 5 Albedo) -</strong> Distinguishes between water and ice clouds, making it easier to identify high and low clouds.  This RGB also distinguishes between green vegetation and brown inactive vegetation or soil.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas15" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Albedo</em></p>
@@ -440,11 +609,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI Day Rocket Plume RGB (Band 2 Albedo, Band 7 Temperature, Band 8 Temperature) -</strong> Allows for tracking the plume associated with rockets and other hotspots during daytime hours.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas16" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Albedo</em></p>
@@ -472,11 +641,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI Day Snow Fog RGB (Band 3 Albedo, Band 5 Albedo, Band 7 Temperature, Band 13 Temperature) -</strong> Distinguishes between snow on the ground and clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas17" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 3 Albedo</em></p>
@@ -512,11 +681,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI Differential Water Vapor RGB (Band 8 Temperature, Band 10 Temperature) -</strong> Analyzes the vertical distribution of water vapor in the atmosphere and highlights potential vorticity anomalies.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas18" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 Temperature</em></p>
@@ -536,11 +705,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI Dust RGB (Band 11 Temperature, Band 13 Temperature, Band 14 Temperature, Band 15 Temperature) -</strong> Contrasts between dusts and clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas19" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 11 Temperature</em></p>
@@ -576,11 +745,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI Fire Temperature RGB (Band 5 Albedo, Band 6 Albedo, Band 7 Temperature) -</strong> Highlights intense fires by contrasting them from cooler fires.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas20" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+          </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 5 Albedo</em></p>
@@ -607,35 +776,12 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Night Fog Difference (Band 13 Temperature, Band 7 Temperature) -</strong> Identifies clouds made up of water droplets at night.
-    <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
-      <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 13 T</em>emperature</p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>ABI band 13 (10.3um) temperature.</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 7 T</em>emperature</p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ABI band 7 (3.9um) temperature</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>ABI Night Rocket Plume RGB (Band 7 Temperature, Band 8 Temperature, Band 10 Temperature) -</strong> Allows for tracking the plume associated with rockets and other hotspots during day and nighttime hours.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI Night Rocket Plume RGB (Band 7 Temperature, Band 8 Temperature, Band 10 Temperature) -</strong> Allows for tracking the plume associated with rockets and other hotspots during day and nighttime hours.
+  <table id="miscformulas21" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 7 Temperature</em></p>
@@ -663,11 +809,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI Nighttime Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas22" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 7 Temperature</em></p>
@@ -695,11 +841,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI Simple Water Vapor RGB (Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) -</strong> Analyzes the vertical distribution of water vapor in the atmosphere.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas23" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 Temperature</em></p>
@@ -727,11 +873,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>ABI SO2 RGB (Band 9 Temperature, Band 10 Temperature, Band 11 Temperature, Band 13 Temperature) -</strong> Detects and analyzes sulfur dioxide emissions from power plants and volcanoes.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas24" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 9 Temperature</em></p>
@@ -766,129 +912,12 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Split Cloud Phase Difference (Band 14 Temperature, Band 11 Temperature) -</strong> Differentiates between types of clouds.  For example, thick and thin cirrus, and clouds made of ice and water.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
-    <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 14 Temperature</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>ABI band 14 (11.2um) temperature.</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 11 Temperature</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ABI band 11 (8.4um) temperature.</p>
-   </td>
-   </tr>
-</table>
-</li>
-<li class="propertylistitem"><strong>ABI Split Ozone Difference (Band 12 Temperature, Band 13 Temperature) -</strong> Displays ozone absorption compared to the clean window.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
-    <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 12 Temperature</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>ABI band 12 (9.6um) temperature.</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 13 Temperature</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ABI band 13 (10.3um) temperature.</p>
-   </td>
-   </tr>
-</table>
-</li>
-<li class="propertylistitem"><strong>ABI Split Snow Difference (Band 5 Reflectance, Band 2 Reflectance) -</strong> Emphasizes regions where ice is present, including glaciated clouds and snow/ice.  Note that reflectance isn't a calibration returned through ADDE, meaning that it won't be available for a data source loaded through the Satellite&gt;Imagery chooser.  To use this formula, CMIP Level 2 files for bands 2 and 5, or a MCMIP Level 2 file containing bands 2 and 5 must be loaded through the General&gt;Files/Directories chooser as a gridded data source.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
-    <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 5 Reflectance</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>ABI band 5 (1.6um) reflectance.</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 2 Reflectance</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ABI band 2 (0.64um) reflectance.</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>ABI Split Water Vapor Difference (Band 12 Temperature, Band 13 Temperature) -</strong> Displays water vapor concentration and distribution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
-    <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 12T</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>ABI band 12 (9.6um) temperature.</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 13T</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ABI band 13 (10.3um) temperature.</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>ABI Split Window Difference (Band 13 Temperature, Band 15 Temperature) -</strong> Emphasizes low level moisture and dust.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
-    <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 13T</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>ABI band 13 (10.3um) temperature.</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 15T</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ABI band 15 (12.3um) temperature.</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>ABI True Color RGB (Band 2 Brightness, Band 3 Brightness, Band 1 Brightness) -</strong> Creates a true color RGB display by simulating a green band. This is based on McIDAS-X's ABITRUCOL function which uses the <a href="http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_CIMSSRGB_v2.pdf">CIMSS Natural True Color method</a>.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI True Color RGB (Band 2 Brightness, Band 3 Brightness, Band 1 Brightness) -</strong> Creates a true color RGB display by simulating a green band. This is based on McIDAS-X's ABITRUCOL function which uses the <a href="http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_CIMSSRGB_v2.pdf">CIMSS Natural True Color method</a>.
+  <table id="miscformulas25" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Brightness</em></p>
@@ -914,17 +943,51 @@ of the latitudes at each point.</li>
         </td>
       </tr>
   </table>
+</li></ul>
+    </ul>
+    <ul class="propertylist">
+<li class="propertylistitem"><strong>ABI Rad To Temp Bands 7-16 (Data) -</strong> Converts ABI L1b netCDF radiance data (bands 7 through 16) to temperature.
+  <table id="miscformulas26" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Radiance Data</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>ABI Radiance data bands 7 through 16</p>
+        </td>
+      </tr>
+  </table>
 </li>
-</ul>
+        <li class="propertylistitem"><strong>ABI Temperature To Radiance Bands 7-16 (Data) -</strong> Converts ABI L2 netCDF temperature data (bands 7 through 16) to radiance.
+  <table id="miscformulas26" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Temperature Data</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>ABI Temperature data bands 7 through 16</p>
+        </td>
+      </tr>
+  </table>
+</li>
+    </ul>
 <div class="pagesubtitle">AHI Functions<a name="ahiFunctions" id="ahiFunctions"></a></div>
 <p>The following describes each formula included in the AHI (Advanced Himawari Imager - Himawari-8 and -9) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> AHI Functions tree.</p>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>AHI 24 Hour Microphysics RGB (Band 11 Temperature, Band 13 Temperature, Band 14 Temperature, Band 15 Temperature) -</strong> Allows for cloud analysis and dust detection during day and night.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas26" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 11 Temperature</em></p>
@@ -960,11 +1023,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Airmass RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas27" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 Temperature</em></p>
@@ -1000,11 +1063,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Ash RGB (Band 11 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Monitors volcanic ash and sulfur dioxide gas.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas28" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 11 Temperature</em></p>
@@ -1032,11 +1095,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Cloud Phase Distinction (Band 3 Albedo, Band 5 Albedo, Band 13 Temperature) -</strong> Allows for the analysis of cloud thickness, and phase.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas29" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 3 Albedo</em></p>
@@ -1065,11 +1128,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Day Cloud Phase (Band 1 Albedo, Band 5 Albedo, Band 6 Albedo) -</strong> Allows for the analysis of cloud thickness and phase.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas30" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Albedo</em></p>
@@ -1098,11 +1161,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Day Convective Storm RGB (Band 3 Albedo, Band 5 Albedo, Band 7 Temperature, Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) -</strong> Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas33" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 3 Albedo</em></p>
@@ -1154,11 +1217,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Day Deep Clouds RGB (Band 3 Albedo, Band 8 Temperature,  Band 13 Temperature) -</strong> Highlights areas of thick clouds including cumulonimbus.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas34" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 3 Albedo</em></p>
@@ -1186,11 +1249,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Differential Water Vapor RGB (Band 8 Temperature,  Band 10 Temperature) -</strong> Highlights high and mid level atmospheric water vapor.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas35" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 Temperature</em></p>
@@ -1210,11 +1273,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Dust RGB (Band 11 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Contrasts between dusts and clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas36" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 11 Temperature</em></p>
@@ -1242,11 +1305,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Fire Temperature RGB (Band 5 Albedo, Band 6 Albedo,  Band 7 Temperature) -</strong> Highlights areas of thick clouds including cumulonimbus.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas37" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 5 Albedo</em></p>
@@ -1274,11 +1337,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Natural Color Fire RGB (Band 3 Albedo, Band 4 Albedo, Band 6 Albedo) -</strong> Highlights fires and discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas38" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 3 Albedo</em></p>
@@ -1306,11 +1369,11 @@ of the latitudes at each point.</li>
 </table>
 </li>
 <li class="propertylistitem"><strong>AHI Natural Color RGB (Band 3 Albedo, Band 4 Albedo, Band 5 Albedo) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas40" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 3 Albedo</em></p>
@@ -1338,11 +1401,11 @@ of the latitudes at each point.</li>
 </table>
 </li>
 <li class="propertylistitem"><strong>AHI Night Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong>Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
-  <table id="miscformulas2" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas41" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition </strong>
-    </tr>
+    </td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top"><p><em>Band 7 Temperature</em></p></td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>AHI band 7 (3.9um) temperature.</p></td>
@@ -1358,11 +1421,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Simple Water Vapor RGB (Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) -</strong> Allows for analysis of atmospheric water vapor distribution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas42" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 Temperature</em></p>
@@ -1390,11 +1453,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI SO2 RGB (Band 9 Temperature, Band 10 Temperature, Band 11 Temperature, Band 13 Temperature, Band 14 Temperature) -</strong> Allows for detection of volcanic SO2 during the day and night.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas43" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 Temperature</em></p>
@@ -1438,11 +1501,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI Tropical Airmass RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies, while also showing contrast in colder cloud tops.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas44" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 8 Temperature</em></p>
@@ -1478,11 +1541,11 @@ of the latitudes at each point.</li>
   </table>
 </li>
 <li class="propertylistitem"><strong>AHI True Color RGB (Band 1 Albedo, Band 2 Albedo, Band 3 Albedo) -</strong> Displays an image of approximately what would be seen from the satellite, with green vegetation, brown inactive vegetation/soil, and blue water.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas45" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Albedo</em></p>
@@ -1514,11 +1577,11 @@ of the latitudes at each point.</li>
 <p>The following describes each formula included in the AVHRR (Advanced Very High Resolution Radiometer - METOP/NOAA) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> AVHRR Functions tree.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>AVHRR Cloud RGB (Band 1 Reflectance, Band 2 Reflectance, Band 4 Temperature) -</strong> Distinguishes between different types of clouds and cloud-free areas.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas46" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -1546,11 +1609,11 @@ of the latitudes at each point.</li>
 </table>
 </li>
 <li class="propertylistitem"><strong>AVHRR Day Microphysics RGB (Band 2 Reflectance, Band 4 Temperature, Band 6 Reflectance) -</strong> Contrasts between different types of clouds and the cloud-free areas.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas47" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Reflectance</em></p>
@@ -1578,11 +1641,11 @@ of the latitudes at each point.</li>
 </table>
 </li>
 <li class="propertylistitem"><strong>AVHRR Natural Color RGB (Band 1 Reflectance, Band 2 Reflectance, Band 6 Reflectance) -</strong> Provides information on cloud optical thickness and cloud top phase and distinguishes water from ice clouds. Green vegetation can also be detected.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas48" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -1609,11 +1672,11 @@ of the latitudes at each point.</li>
 </table>
 </li>
 <li class="propertylistitem"><strong>AVHRR Night Microphysics RGB (Band 3 Temperature, Band 4 Temperature, Band 5 Temperature) -</strong> Distinguishes between fog and low clouds, as well as providing general information such as cloud top temperature, optical thickness, and phase.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas49" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 3 Temperature</em></p>
@@ -1645,11 +1708,11 @@ of the latitudes at each point.</li>
 <p>The following describes each formula included in the CLAVRx (NOAA Clouds from AVHRR Extended) Functions section of McIDAS-V. This formula displays an RGB product that is useful to visualize different features. This is also a derived formula, meaning if a data source is loaded containing the necessary bands for the formula, it will be listed in the Field Selector under the Imagery -> CLAVRx Functions tree.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>CLAVRx Cloud Type RGB (1.378um Reflectance, 0.64um Reflectance, 1.61um Reflectance) - </strong>Distinguishes between cirrus (red), opaque ice (yellow), water clouds (cyan), snow (green), and lofted water clouds (white).
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas50" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>1.378um Reflectance</em></p>
@@ -1685,7 +1748,7 @@ of the latitudes at each point.</li>
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>fill</em></p>
@@ -1752,7 +1815,7 @@ of the latitudes at each point.</li>
    <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>replace</em></p>
@@ -1799,7 +1862,7 @@ has only two values.
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>brkpoint1</em></p>
@@ -1857,7 +1920,7 @@ has only two values.
    <td width="510" colspan="2" rowspan="1" valign="top"><p>if (<em>sdataset1</em> &gt; <em>brkpoint1</em>) and (<em>sdataset2</em> &gt; <em>brkpoint2</em>) <br>
 then <em>ddataset</em> = <em>replace1</em><br>
 else <em>ddataset</em> = <em>replace2</em></p>
-  </tr>
+  </td></tr>
 </table>
 </li>
 <li class="propertylistitem"><a name="discriminate" id="discriminate"></a><strong>Discriminate Image Filter (brkpoint1, brkpoint2, brkpoint3, brkpoint4,
@@ -1869,7 +1932,7 @@ else <em>ddataset</em> = <em>replace2</em></p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>brkpoint1</em></p>
@@ -1947,7 +2010,7 @@ else <em>ddataset</em> = <em>replace</em></p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>stretch</em></p>
@@ -1988,7 +2051,7 @@ else <em>ddataset</em> = <em>replace</em></p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
@@ -2029,7 +2092,7 @@ else <em>ddataset</em> = <em>replace</em></p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>radius</em></p>
@@ -2083,7 +2146,7 @@ else <em>ddataset</em> = <em>replace</em></p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>brkpoint1</em></p>
@@ -2139,7 +2202,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>linecoef</em></p>
@@ -2182,7 +2245,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p>Equation for each <em>ddataset</em> element: </p><a name="pgfId-1072405" id="pgfId-1072405"></a>
    </td>
 <td width="510" colspan="2" rowspan="1" valign="top"><p><em>ddataset</em> = (sample average)</p>
-  </tr>
+  </td></tr>
 </table>
 </li>
 <li class="propertylistitem"><a name="low" id="low"></a><strong>Low Pass Image Filter (radius, leak) -</strong> Applies a one-dimensional
@@ -2194,7 +2257,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>radius</em></p>
@@ -2238,7 +2301,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p>Equation for each <em>ddataset</em> element: </p><a name="pgfId-1072405" id="pgfId-1072405"></a>
    </td>
       <td width="510" colspan="2" rowspan="1" valign="top"><p><em>ddataset</em> = (sample average)</p>
-  </tr>
+  </td></tr>
 </table>
 </li>
 <li class="propertylistitem"><a name="merge" id="merge"></a><strong>Merge Image Filter (brkpoint1, brkpoint2, constant) -</strong> Merges two images by selecting the <em>sdataset1</em> value for each element if its value is between the specified breakpoints. Otherwise, it selects the <em>sdataset2</em> value minus the specified constant.
@@ -2246,7 +2309,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>brkpoint1</em></p>
@@ -2299,7 +2362,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>New Value</em></p>
@@ -2345,7 +2408,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
   ranges<br>
 then <em>ddataset</em> = <em>sdataset</em><br>
 else <em>ddataset</em> = <em>replaceVal</em> </p>
-  </tr>
+  </td></tr>
 </table>
 </li>
 <li class="propertylistitem"><a name="shot" id="shot"></a><strong>Shot Image Filter (bline, eline, pdiff) -</strong> Cleans an image
@@ -2356,7 +2419,7 @@ else <em>ddataset</em> = <em>replaceVal</em> </p>
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr>
+   </strong></td></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>bline</em></p>
@@ -2418,11 +2481,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 <p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) EDR (Environmental Data Record)  section of McIDAS-V. These formulas, designed to work with imagery EDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> JPSS Functions -&gt; VIIRS EDR tree.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>VIIRS EDR Ash RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas60" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM14 Temperature</em></p>
@@ -2450,11 +2513,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature) -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas62" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -2482,11 +2545,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature) - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas63" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM05 Reflectance</em></p>
@@ -2514,11 +2577,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance) -</strong> Distinguishes between low clouds and fog.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas64" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM09 Reflectance</em></p>
@@ -2546,11 +2609,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance) -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas65" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI04 Temperature</em></p>
@@ -2578,11 +2641,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas66" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI02 Reflectance</em></p>
@@ -2618,11 +2681,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature) - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas67" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM07 Reflectance</em></p>
@@ -2658,11 +2721,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Dust RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Contrasts between dusts and clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas68" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM14 Temperature</em></p>
@@ -2690,11 +2753,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Fire Temperature RGB (SVM12 Temperature, SVM11 Reflectance, SVM10 Reflectance) -</strong> Detects fire activity and provides a qualitative estimate of intensity.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas69" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM12 Temperature</em></p>
@@ -2723,11 +2786,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVI bands of 375m resolution. 
-   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+   <table id="miscformulas70" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI03 Reflectance</em></p>
@@ -2756,11 +2819,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVM bands of 750m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas71" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM10 Reflectance</em></p>
@@ -2788,11 +2851,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR NDSI (SVI01 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -2812,11 +2875,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR NDVI (SVI01 Reflectance, SVI02 Reflectance) -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.    
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas73" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -2836,11 +2899,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Nighttime Microphysics RGB (SVM12 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas74" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM12 Temperature</em></p>
@@ -2868,11 +2931,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas75" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -2906,11 +2969,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance) -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas76" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM10 Reflectance</em></p>
@@ -2938,11 +3001,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS EDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance) -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas77" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM05 Reflectance</em></p>
@@ -2974,11 +3037,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 <p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) SDR (Sensor Data Record)  section of McIDAS-V. These formulas, designed to work with imagery SDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. All of the RGB and channel combination functions use Swath To Grid to remap the data to a gridded projection and remove bowtie deletion lines. Other than Swath To Grid, these are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> JPSS Functions -&gt; VIIRS SDR tree.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Swath To Grid - Bowtie Removal (field, resolution_in_meters, mode) - </strong>Remaps SDR data into a gridded projection and removes bowtie deletion lines.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas78" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>field</em></p>
@@ -3006,11 +3069,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Ash RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas79" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM14 Temperature</em></p>
@@ -3038,11 +3101,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature) -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas80" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -3070,11 +3133,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature) - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas81" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM05 Reflectance</em></p>
@@ -3102,11 +3165,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance) -</strong> Distinguishes between low clouds and fog.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas82" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM09 Reflectance</em></p>
@@ -3134,11 +3197,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance) -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas83" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI04 Temperature</em></p>
@@ -3166,11 +3229,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas84" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI02 Reflectance</em></p>
@@ -3206,11 +3269,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature) - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas85" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM07 Reflectance</em></p>
@@ -3246,11 +3309,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Dust RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Contrasts between dusts and clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas86" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM14 Temperature</em></p>
@@ -3278,11 +3341,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Fire Temperature RGB (SVM12 Temperature, SVM11 Reflectance, SVM10 Reflectance) -</strong> Detects fire activity and provides a qualitative estimate of intensity.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas87" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM12 Temperature</em></p>
@@ -3311,11 +3374,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVI bands of 375m resolution. 
-   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+   <table id="miscformulas88" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI03 Reflectance</em></p>
@@ -3344,11 +3407,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVM bands of 750m resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas89" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM10 Reflectance</em></p>
@@ -3376,11 +3439,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR NDSI (SVI01 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas90" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -3400,11 +3463,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR NDVI (SVI01 Reflectance, SVI02 Reflectance) -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.    
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas91" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -3424,11 +3487,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Nighttime Microphysics RGB (SVM12 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas92" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM12 Temperature</em></p>
@@ -3456,11 +3519,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas93" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVI01 Reflectance</em></p>
@@ -3494,11 +3557,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance) -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas94" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM10 Reflectance</em></p>
@@ -3526,11 +3589,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance) -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas95" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>SVM05 Reflectance</em></p>
@@ -3562,11 +3625,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 <p>The following describes each formula included in the MODIS (Moderate Resolution Imaging Spectroradiometer) - Aqua and Terra (Level 1b) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> MODIS Functions tree.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>MODIS Airmass RGB (Band 27 Temperature, Band 28 Temperature, Band 30 Temperature, Band 31 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas96" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 27 Temperature</em></p>
@@ -3602,11 +3665,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MODIS Dust RGB (Band 29 Temperature, Band 31 Temperature, Band 32 Temperature) -</strong> Contrasts between dusts and clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas97" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 29 Temperature</em></p>
@@ -3635,11 +3698,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </li>
 <li class="propertylistitem"><strong>MODIS EVI (Band 1 Reflectance, Band 2 Reflectance, Band 3 Reflectance) -</strong> The Enhanced Vegetation Index (EVI) quantifies the amount of live green vegetation using an enhancement ranging from -1 to 1.  In general, negative numbers indicate water, whereas positive values indicate vegetation.  The closer the number is to 1, the more dense green vegetation at that location.
  This is similar to NDVI with improved sensitivity in regions of dense vegetation.
-   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+   <table id="miscformulas98" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -3667,11 +3730,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
  <li class="propertylistitem"><strong>MODIS False Color RGB (Band 7 Brightness, Band 2 Brightness, Band 1 Brightness) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
-      <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+      <table id="miscformulas99" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 7 Brightness</em></p>
@@ -3698,11 +3761,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MODIS NDSI (Band 4 Reflectance, Band 6 Reflectance) -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the presence of snow cover in a pixel. Using an enhancement ranging from -1 to 1, values greater than 0.0 are considered to have some snow present and values less than or equal to 0.0 are considered snow-free land.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas100" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 4 Reflectance</em></p>
@@ -3722,11 +3785,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MODIS NDVI (Band 1 Reflectance, Band 2 Reflectance) -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount of live green vegetation using an enhancement ranging from -1 to 1.  In general, negative numbers indicate water, whereas positive values indicate vegetation.  The closer the number is to 1, the more dense green vegetation at that location.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas101" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -3746,11 +3809,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MODIS NDWI (Band 2 Reflectance, Band 4 Reflectance) -</strong> The Normalized Difference Water Index (NDWI) estimates the amount of leaf water content at canopy level using an enhancement ranging from -1 to 1.  In general, high numbers correspond to high vegetation cover and water content.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas102" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 2 Reflectance</em></p>
@@ -3770,11 +3833,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MODIS Night Microphysics RGB (Band 22 Temperature, Band 31 Temperature, Band 32 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas103" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 22 Temperature</em></p>
@@ -3802,11 +3865,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MODIS True Color RGB (Band 1 Brightness, Band 4 Brightness, Band 3 Brightness) -</strong> Displays an image of approximately what would be seen from the satellite, with green vegetation, brown inactive vegetation/soil, and blue water.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas104" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Brightness</em></p>
@@ -3837,11 +3900,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 <p>The following describes each formula included in the MSG (Meteosat Second Generation (SEVIRI instrument) - Meteosat-8 through Meteosat-11) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> MSG Functions tree.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>MSG 24 Hour Microphysics RGB (Band 7 Temperature, Band 9 Temperature, Band 10 Temperature) -</strong> Distinguishes between low clouds and fog.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas105" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 7 Temperature</em></p>
@@ -3869,11 +3932,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Airmass RGB (Band 5 Temperature, Band 6 Temperature, Band 8 Temperature, Band 9 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas106" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 5 Temperature</em></p>
@@ -3909,11 +3972,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Airmass Tropics RGB (Band 5 Temperature, Band 8 Temperature, Band 9 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.  Channel combinations are tuned for tropical regions.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas107" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 5 Temperature</em></p>
@@ -3941,11 +4004,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Cloud Microphysics RGB (Band 7 Temperature, Band 9 Temperature, Band 10 Temperature) -</strong> Distinguishes between low clouds and fog.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas108" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 7 Temperature</em></p>
@@ -3973,11 +4036,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Dust RGB (Band 7 Temperature, Band 9 Temperature, Band 10 Temperature) -</strong> Contrasts between dusts and clouds.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas109" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 7 Temperature</em></p>
@@ -4005,11 +4068,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Generic Natural Color RGB (Band 1 Reflectance, Band 2 Reflectance, Band 3 Reflectance) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.  Allows the user to modify the minimum, maximum, and gamma value of the red, green, and blue components once the display has been created.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas110" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -4037,11 +4100,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Generic Severe Convection RGB (Band 1 Reflectance, Band 3 Reflectance, Band 4 Temperature, Band 5 Temperature, Band 6 Temperature, Band 9 Temperature) -</strong> Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather. Allows the user to modify the minimum, maximum, and gamma value of the red, green, and blue components once the display has been created.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas111" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -4093,11 +4156,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG HRV Cloud RGB (HRV Reflectivity, Band 9 Temperature) -</strong> Monitors convection and high level clouds at high (1km) resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas112" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>HRV Reflectivity</em></p>
@@ -4117,11 +4180,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG HRV Fog RGB (HRV Reflectivity, Band 3 Reflectivity) -</strong> Distinguishes between fog and other low clouds from snow-covered land at high (1km) resolution.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas113" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>HRV Reflectivity</em></p>
@@ -4141,11 +4204,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Natural Color RGB (Band 1 Reflectance, Band 2 Reflectance, Band 3 Reflectance, minrefl, maxrefl, ) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas114" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -4189,11 +4252,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Night Microphysics RGB (Band 4 Temperature, Band 9 Temperature, Band 10 Temperature) -</strong> Distinguishes between low clouds and fog.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas115" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 4 Temperature</em></p>
@@ -4221,11 +4284,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Night Microphysics Tropics RGB (Band 4 Temperature, Band 9 Temperature, Band 10 Temperature) -</strong> Distinguishes between low clouds and fog.  Channel combinations are tuned for tropical regions.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas116" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 4 Temperature</em></p>
@@ -4253,11 +4316,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Severe Convection RGB (Band 1 Reflectance, Band 3 Reflectance, Band 4 Temperature, Band 5 Temperature, Band 6 Temperature, Band 9 Temperature) -</strong> Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas117" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -4309,11 +4372,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Severe Convection Tropics RGB (Band 1 Reflectance, Band 3 Reflectance, Band 4 Temperature, Band 5 Temperature, Band 6 Temperature, Band 9 Temperature) -</strong> Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.  Channel combinations are tuned for tropical regions.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas118" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 1 Reflectance</em></p>
@@ -4365,11 +4428,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG SO2 RGB (Band 7 Temperature, Band 9 Temperature, Band 10 Temperature) -</strong> Detects and analyzes sulfur dioxide emissions from power plants and volcanoes.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas119" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 7 Temperature</em></p>
@@ -4396,11 +4459,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 <li class="propertylistitem"><strong>MSG Tropical Airmass RGB (Band 5 Temperature, Band 6 Temperature, Band 8 Temperature, Band 9 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.  This is similar to the MSG Airmass RGB, except that it enhances colder/higher clouds to see gradients and overshooting tops.  In the standard MSG Airmass RGB, these cold/high clouds are solid white without any contrast.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+  <table id="miscformulas120" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr>
+      </strong></td></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
         <p><em>Band 5 Temperature</em></p>
