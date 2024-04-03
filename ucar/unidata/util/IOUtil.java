@@ -1636,16 +1636,30 @@ public class IOUtil {
      * @return _more_
      */
     public static boolean isADescendent(File parent, File child) {
-        if (child == null) {
+        if ((parent == null) || (child == null)) {
+            return false;
+        }
+
+        try {
+            //Convert the files with their canonical path to get rid of "..", symbolic links, etc
+            parent = new File(parent.getCanonicalPath());
+            child = new File(child.getCanonicalPath());
+            return isADescendentInner(parent, child);
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
+    private static boolean isADescendentInner(File parent, File child) {
+        if ((parent == null) || (child == null)) {
             return false;
         }
         if (parent.equals(child)) {
             return true;
         }
         File newParent = child.getParentFile();
-        return isADescendent(parent, newParent);
+        return isADescendentInner(parent, newParent);
     }
-
 
     /**
      * Return the String contents of the specified contentName.
@@ -1748,7 +1762,36 @@ public class IOUtil {
         return results;
     }
 
-
+    /**
+     *  Return the String contents of the final url string.
+     *
+     * @param urlStr can  be a URL .
+     *
+     * @return   contents or <code>null</code> if there is a problem.
+     */
+    public static String getFinalURL(String urlStr) {
+        try {
+            URL url = new URL(urlStr);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setInstanceFollowRedirects(false);
+            con.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+            con.addRequestProperty("Referer", "https://www.google.com/");
+            con.connect();
+            int resCode = con.getResponseCode();
+            if (resCode == HttpURLConnection.HTTP_SEE_OTHER
+                    || resCode == HttpURLConnection.HTTP_MOVED_PERM
+                    || resCode == HttpURLConnection.HTTP_MOVED_TEMP) {
+                String Location = con.getHeaderField("Location");
+                if (Location.startsWith("/")) {
+                    Location = url.getProtocol() + "://" + url.getHost() + Location;
+                }
+                return getFinalURL( Location);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return urlStr;
+    }
 
     /**
      * See if the content is in the perma-cache. If it is then return it.
