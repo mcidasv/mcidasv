@@ -1430,10 +1430,10 @@
             windowtitle="McIDAS-V ${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release} Developer Documentation">
 
             <classpath refid="build.classpath" />
-            <link href="http://docs.oracle.com/javase/8/docs/api/" />
-            <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
-            <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
-            <link href="http://www.unidata.ucar.edu/software/thredds/v4.6/netcdf-java/javadocAll/" />
+            <link href="https://docs.oracle.com/en/java/javase/21/docs/api/" />
+            <link href="https://www.ssec.wisc.edu/visad-docs/javadoc/" />
+            <link href="https://docs.unidata.ucar.edu/idv/current/javadoc/" />
+            <link href="https://docs.unidata.ucar.edu/netcdf-java/current/javadoc/" />
             <arg value="-Xmaxerrs" />
             <arg value="${javadoc.errors.maxnum}"/>
             <arg value="-Xmaxwarns" />
