@@ -549,6 +549,9 @@
     <resource label="McIDAS-V ISL Formatters" location="%APPPATH%/python/islformatters.py">
       <property name="category" value="System" />
     </resource>
+    <resource label="Angles" location="%APPPATH%/python/angles.py">
+          <property name="category" value="System" />
+    </resource>
   </resources>
 
 <!--We don't use this now. Python libraries     -->
