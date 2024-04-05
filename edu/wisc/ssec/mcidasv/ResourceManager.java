@@ -372,7 +372,7 @@ public class ResourceManager extends IdvResourceManager {
      *
      * <pre>
      * &lt;resources name="idv.resource.pluginindex"&gt;
-     *   &lt;resource label="Plugin Index" location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml"&gt;
+     *   &lt;resource label="Plugin Index" location="https://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml"&gt;
      *     &lt;property name="default" value="%APPPATH%/plugins.xml"/&gt;
      *   &lt;/resource&gt;
      * &lt;/resources&gt;

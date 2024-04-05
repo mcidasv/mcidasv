@@ -246,7 +246,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
-        "http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
+        "https://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
 
     /** Separator to use between window title components. */
     protected static final String TITLE_SEPARATOR = " - ";

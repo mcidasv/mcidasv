@@ -59,9 +59,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A popup window that attaches itself to a parent and can display an 
  * component without preventing user interaction like a {@code JComboBox}.
- *   
- * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
- *
  */
 public class ComponentPopup extends JWindow {
     

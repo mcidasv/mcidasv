@@ -45,10 +45,6 @@ import javax.swing.JTabbedPane;
  * <p>
  * This was originally written to facilitate the use of {@code Canvas3D} objects in
  * a {@code JTabbedPane}, but I believe it will work for any heavy-weight component.
- * <p>
- * 
- * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
- * @version $Id$
  */
 public class HeavyTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = -3903797547171213551L;

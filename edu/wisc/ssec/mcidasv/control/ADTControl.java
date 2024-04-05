@@ -721,11 +721,9 @@ public class ADTControl extends DisplayControlImpl {
         JLabel blankfield = new JLabel("");
         
         // TJJ Jan 2018 - interim link to Help for McV 1.7 release 
-        JButton helpLinkLabel = new JButton("<html><a href=\"http://www.ssec.wisc.edu\">Help</a></html>");
+        JButton helpLinkLabel = new JButton("<html><a href=\"https://www.ssec.wisc.edu\">Help</a></html>");
         helpLinkLabel.setToolTipText("Opens ADT Help PDF in your system web browser");
-        helpLinkLabel.addActionListener(e -> {
-            WebBrowser.browse("http://www.ssec.wisc.edu/mcidas/software/v/resources/adt/McV_ADT_1p7.pdf");
-        });
+        helpLinkLabel.addActionListener(e -> WebBrowser.browse("https://www.ssec.wisc.edu/mcidas/software/v/resources/adt/McV_ADT_1p7.pdf"));
 
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
         JComponent widgets =
