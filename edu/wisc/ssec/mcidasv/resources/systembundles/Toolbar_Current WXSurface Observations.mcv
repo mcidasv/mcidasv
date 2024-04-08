@@ -8,7 +8,7 @@
                     <property name="Sources">
                         <object class="java.util.ArrayList">
                             <method name="add">
-                                <string><![CDATA[adde://adde.ssec.wisc.edu/pointdata?compress=gzip&port=112&debug=false&version=1&user=RMC&proj=6999&group=RTPTSRC&user=RMC&proj=6999&descr=SFCHOURLY&select='%relative%;type 0;%latlonbox%'&num=ALL&pos=ALL]]></string>
+                                <string><![CDATA[adde://adde.ucar.edu/pointdata?compress=gzip&port=112&debug=false&version=1&user=idv&proj=0&group=RTPTSRC&user=idv&proj=0&descr=SFCHOURLY&select='%relative%;type 0;%latlonbox%'&num=ALL&pos=ALL]]></string>
                             </method>
                         </object>
                     </property>
