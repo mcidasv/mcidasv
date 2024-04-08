@@ -6,7 +6,7 @@
             <method name="add">
                 <object class="edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource" id="id37">
                     <property name="Source">
-                        <string><![CDATA[adde://adde.ssec.wisc.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LINELE=700 864&PLACE=&SIZE=700 864&UNIT=TEMP&MAG=-2 -2&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=0]]></string>
+                        <string><![CDATA[adde://adde.ucar.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LINELE=700 864&PLACE=&SIZE=700 864&UNIT=TEMP&MAG=-2 -2&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=0]]></string>
                     </property>
                     <property name="PollingInfo">
                         <object class="ucar.unidata.util.PollingInfo">
@@ -181,7 +181,7 @@
                             <method name="add">
                                 <object class="ucar.unidata.data.imagery.AddeImageDescriptor">
                                     <property name="Source">
-                                        <string><![CDATA[adde://adde.ssec.wisc.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=0]]></string>
+                                        <string><![CDATA[adde://adde.ucar.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=0]]></string>
                                     </property>
                                     <property name="Directory">
                                         <object class="edu.wisc.ssec.mcidas.AreaDirectory" id="id19">
@@ -226,7 +226,7 @@
                                                 <string><![CDATA[RTIMAGES]]></string>
                                             </property>
                                             <property name="Host">
-                                                <string><![CDATA[adde.ssec.wisc.edu]]></string>
+                                                <string><![CDATA[adde.ucar.edu]]></string>
                                             </property>
                                             <property name="User">
                                                 <string><![CDATA[idv]]></string>
@@ -247,7 +247,7 @@
                             <method name="add">
                                 <object class="ucar.unidata.data.imagery.AddeImageDescriptor">
                                     <property name="Source">
-                                        <string><![CDATA[adde://adde.ssec.wisc.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-1]]></string>
+                                        <string><![CDATA[adde://adde.ucar.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-1]]></string>
                                     </property>
                                     <property name="Directory">
                                         <object idref="id19"/>
@@ -291,7 +291,7 @@
                                                 <string><![CDATA[RTIMAGES]]></string>
                                             </property>
                                             <property name="Host">
-                                                <string><![CDATA[adde.ssec.wisc.edu]]></string>
+                                                <string><![CDATA[adde.ucar.edu]]></string>
                                             </property>
                                             <property name="User">
                                                 <string><![CDATA[idv]]></string>
@@ -312,7 +312,7 @@
                             <method name="add">
                                 <object class="ucar.unidata.data.imagery.AddeImageDescriptor">
                                     <property name="Source">
-                                        <string><![CDATA[adde://adde.ssec.wisc.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-2]]></string>
+                                        <string><![CDATA[adde://adde.ucar.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-2]]></string>
                                     </property>
                                     <property name="Directory">
                                         <object idref="id19"/>
@@ -356,7 +356,7 @@
                                                 <string><![CDATA[RTIMAGES]]></string>
                                             </property>
                                             <property name="Host">
-                                                <string><![CDATA[adde.ssec.wisc.edu]]></string>
+                                                <string><![CDATA[adde.ucar.edu]]></string>
                                             </property>
                                             <property name="User">
                                                 <string><![CDATA[idv]]></string>
@@ -377,7 +377,7 @@
                             <method name="add">
                                 <object class="ucar.unidata.data.imagery.AddeImageDescriptor">
                                     <property name="Source">
-                                        <string><![CDATA[adde://adde.ssec.wisc.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-3]]></string>
+                                        <string><![CDATA[adde://adde.ucar.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-3]]></string>
                                     </property>
                                     <property name="Directory">
                                         <object idref="id19"/>
@@ -421,7 +421,7 @@
                                                 <string><![CDATA[RTIMAGES]]></string>
                                             </property>
                                             <property name="Host">
-                                                <string><![CDATA[adde.ssec.wisc.edu]]></string>
+                                                <string><![CDATA[adde.ucar.edu]]></string>
                                             </property>
                                             <property name="User">
                                                 <string><![CDATA[idv]]></string>
@@ -442,7 +442,7 @@
                             <method name="add">
                                 <object class="ucar.unidata.data.imagery.AddeImageDescriptor">
                                     <property name="Source">
-                                        <string><![CDATA[adde://adde.ssec.wisc.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-4]]></string>
+                                        <string><![CDATA[adde://adde.ucar.edu/imagedata?&PORT=112&COMPRESS=gzip&USER=idv&PROJ=0&VERSION=1&DEBUG=false&TRACE=0&GROUP=RTIMAGES&DESCRIPTOR=GE-IR&BAND=4&LATLON=35.1 -89.0&PLACE=CENTER&SIZE=486 968&UNIT=TEMP&MAG=1 1&SPAC=4&NAV=X&AUX=YES&DOC=X&POS=-4]]></string>
                                     </property>
                                     <property name="Directory">
                                         <object idref="id19"/>
@@ -486,7 +486,7 @@
                                                 <string><![CDATA[RTIMAGES]]></string>
                                             </property>
                                             <property name="Host">
-                                                <string><![CDATA[adde.ssec.wisc.edu]]></string>
+                                                <string><![CDATA[adde.ucar.edu]]></string>
                                             </property>
                                             <property name="User">
                                                 <string><![CDATA[idv]]></string>
@@ -557,7 +557,7 @@
                     <property name="Sources">
                         <object class="java.util.ArrayList">
                             <method name="add">
-                                <string><![CDATA[adde://adde.ssec.wisc.edu/pointdata?compress=gzip&port=112&debug=false&version=1&user=RMC&proj=6999&group=RTPTSRC&user=RMC&proj=6999&descr=SFCHOURLY&select='%relative%;type 0;%latlonbox%'&num=ALL&pos=ALL]]></string>
+                                <string><![CDATA[adde://adde.ucar.edu/pointdata?compress=gzip&port=112&debug=false&version=1&user=idv&proj=0&group=RTPTSRC&user=idv&proj=0&descr=SFCHOURLY&select='%relative%;type 0;%latlonbox%'&num=ALL&pos=ALL]]></string>
                             </method>
                         </object>
                     </property>
