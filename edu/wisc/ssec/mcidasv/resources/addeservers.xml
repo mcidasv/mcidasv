@@ -16,7 +16,8 @@ they essentially get it from their container type tag.
 
 This file overrides IDV addeservers.xml
 -->
-  
+
+  <!-- Removing adde.ssec.wisc.edu - RMC Apr 2023 - Inq  3134
   <server name="adde.ssec.wisc.edu">
     <group
             names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO,GLOBAL,GINIALL,IMAGEALL,NEXRCALL,NPGOESR,NPGOESS,RTGEOC,RTSNCL,RTDDST,RTGOESR,RTGOESS,RTGOEST,EAST,WEST,L2GOESR,L2GEAST,L2GWEST,L2GOESS,EASTALL,GLOBALL,L2GEALL,L2GWALL,NPGRALL,NPGSALL,NPGWALL,GOESRALL,GOESSALL,GOESTALL,DDSTALL,GEOCALL,SNCLALL,WESTALL"
@@ -35,6 +36,7 @@ This file overrides IDV addeservers.xml
             type="text"/>
     
   </server>
+  -->
 
   <!-- NON-SSEC servers below -->
 
