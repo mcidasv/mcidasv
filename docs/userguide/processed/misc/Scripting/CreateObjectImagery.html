@@ -106,7 +106,7 @@ default=True</td>
 </table></div>
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>directoryListLocal = listADDEImages(localEntry=desc, band=4, unit='TEMP')</em><br>
-<em>directoryListRemote = listADDEImages(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',unit='TEMP')</em></div>
+<em>directoryListRemote = listADDEImages(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',unit='TEMP')</em></div>
 <div class="OneTabIndent">The data object returned from <strong>listADDEImages</strong> contains a variety of key:value pairings with information about the data.  The list of keys may vary dependent on the server or type of data, but here is a general list of keys that may be included in the data object returned from <strong>listADDEImages</strong> as well as example values:</div>
 <div class="TwoTabIndent"><table border="1">
     <tr>
@@ -318,7 +318,7 @@ default=True</td>
 </table></div>
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>print listADDEImageTimes(localEntry=desc, position=-5)</em><br>
-<em>print listADDEImageTimes(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',time=('02:00','04:00'),position='ALL')</em></div>
+<em>print listADDEImageTimes(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',time=('02:00','04:00'),position='ALL')</em></div>
 <div class="OneTabIndent">The data object returned from <strong>listADDEImageTimes</strong> contains a variety of key:value pairings with information about the data.  The list of keys may vary dependent on the server or type of data, but here is a general list of keys that may be included in the data object returned from <strong>listADDEImageTimes</strong> as well as example values:</div>
 <div class="TwoTabIndent"><table border="1">
     <tr>
@@ -437,7 +437,7 @@ default=True</td>
 </table></div>
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>dataLocal = loadADDEImage(localEntry=desc, size='ALL', mag=(1,1), unit='BRIT',debug=True)</em></div>
-<div class="TwoTabIndent"><em>dataRemote = loadADDEImage(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
+<div class="TwoTabIndent"><em>dataRemote = loadADDEImage(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
 <div class="OneTabIndent">The data object returned from <strong>loadADDEImage</strong> contains a variety of key:value pairings with information about the data.  The list of keys may vary dependent on the server or type of data, but here is a general list of keys that may be included in the data object returned from <strong>loadADDEImage</strong> as well as example values:</div>
 <div class="TwoTabIndent"><table border="1">
     <tr>
@@ -453,7 +453,7 @@ default=True</td>
     </tr>
     <tr>
       <td valign="top">server</td>
-      <td>adde.ssec.wisc.edu</td>
+      <td>adde.ucar.edu</td>
     </tr>
     <tr>
       <td valign="top">calibration-scale-factor</td>
