@@ -399,7 +399,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         Document          doc  = null;
         XMLEntityResolver jaxp = new XMLEntityResolver(true);
         builder = jaxp.getSAXBuilder();
-        List collections = new ArrayList();
+        List<TwoFacedObject> collections = new ArrayList<>();
 
         try {
             doc = builder.build(radarServerURL);
