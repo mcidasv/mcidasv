@@ -70,7 +70,10 @@ def getCosSolarZenith(field):
      
     SunRelativePosition.getCosSolarZenith(latlons[1], latlons[0], javaDate, solzens)
 
-    return solzens
+    noUnitCosSolZens = noUnit(solzens)
+    degreeCosSolZens = createNewUnit(noUnitCosSolZens,'degrees')
+
+    return degreeCosSolZens
 
 def getSolarZenith(field):
 
@@ -100,7 +103,10 @@ def getSolarZenith(field):
 
     SunRelativePosition.getSolarZenith(latlons[1], latlons[0], javaDate, solzens)
 
-    return solzens
+    noUnitSolZens = noUnit(solzens)
+    degreeSolZens = createNewUnit(noUnitSolZens,'degrees')
+
+    return degreeSolZens
 
 def getElevationAngle(field):
     """
