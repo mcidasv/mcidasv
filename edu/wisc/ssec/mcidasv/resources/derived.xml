@@ -4710,5 +4710,95 @@
             <category value="display:planviewcontour"/>
         </categories>
     </derived>
-	<!-- End of Inq 3122 updates -->
+    <!-- End of Inq 3122 updates -->
+    <!-- Inq 3138 - TEMPO Dobson Unit Formulas -->
+    <derived description="nitrogen dioxide vertical column (DU)" formula="createNewUnit((noUnit(D1/26870000000000000.0)), 'DU',1)" id="no2_vert_col_du" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-product-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="product/vertical_column_total"/>
+        </operands>
+    </derived>
+    <derived description="stratosphere nitrogen dioxide vertical column (DU)" formula="createNewUnit((noUnit(D1/26870000000000000.0)), 'DU',1)" id="no2_strat_vert_col_du" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-product-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="product/vertical_column_stratosphere"/>
+        </operands>
+    </derived>
+    <derived description="troposphere nitrogen dioxide vertical column (DU)" formula="createNewUnit((noUnit(D1/26870000000000000.0)), 'DU',1)" id="no2_trop_vert_col_du" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-product-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="product/vertical_column_troposphere"/>
+        </operands>
+    </derived>
+    <derived description="formaldehyde vertical column (DU)" formula="createNewUnit((noUnit(D1/26870000000000000.0)), 'DU',1)" id="hcho_vert_col_du" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-product-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="product/vertical_column"/>
+        </operands>
+    </derived>
+    <!-- End of TEMPO formulas -->
 </derived_parameters>
