@@ -129,13 +129,12 @@ public class WMSControl extends ImageControl implements ImageObserver {
     /** A virtual timestamp for aborting image get calls */
     private int timestamp = 0;
 
-
     /** When created by a data source we keep this around */
     private DataChoice theDataChoice;
 
     /** The layer */
     private Object theLayer = null;
-
+    private Object theTitle = null;
 
     /** This is the last image data */
     private FieldImpl imageData;
@@ -240,8 +239,14 @@ public class WMSControl extends ImageControl implements ImageObserver {
         if (dataChoice != null) {
             theDataChoice = dataChoice;
             if (theLayer == null) {
-                theLayer =
-                    theDataChoice.getProperty(WmsDataSource.PROP_LAYER);
+                TwoFacedObject layerObj = (TwoFacedObject)theDataChoice.getProperty(WmsDataSource.PROP_LAYER);
+                String tmpStr = (String)layerObj.getId();
+                int idx = tmpStr.indexOf("-layer=");
+                String title = tmpStr.substring(0, idx);
+                String layer = tmpStr.substring(idx+7);
+                theLayer = layer;
+                theTitle = title;
+                  //  theDataChoice.getProperty(WmsDataSource.PROP_LAYER);
             }
             wmsSelections = new ArrayList();
             //            wmsInfo = (WmsSelection)dataChoice.getId();
@@ -341,6 +346,12 @@ public class WMSControl extends ImageControl implements ImageObserver {
 
         if ((theLayer != null) && (theLayer instanceof TwoFacedObject)) {
             String layer = ((TwoFacedObject) theLayer).getId().toString();
+            //A hack but we gotta work with what we got
+            if (layer.indexOf("fixed") >= 0) {
+                return true;
+            }
+        } else if((theLayer != null) && (theLayer instanceof String)) {
+            String layer = (String) theLayer;
             //A hack but we gotta work with what we got
             if (layer.indexOf("fixed") >= 0) {
                 return true;
@@ -746,7 +757,7 @@ public class WMSControl extends ImageControl implements ImageObserver {
         }
 
         String[]       resNames    = { "Very High", "High", "Medium", "Low" };
-        double[]       resValues   = { 0.5, 1.0, 2.0, 3.0 };
+        double[]       resValues   = { 0.2, 1.0, 2.0, 3.0 };
         ArrayList      resItems    = new ArrayList();
         TwoFacedObject resSelected = null;
         for (int i = 0; i < resValues.length; i++) {
@@ -954,6 +965,9 @@ public class WMSControl extends ImageControl implements ImageObserver {
 
         if (theDataChoice != null) {
             Hashtable requestProperties = new Hashtable();
+            if (theTitle != null) {
+                requestProperties.put(WmsDataSource.PROP_TITLE, theTitle);
+            }
             if (theLayer != null) {
                 requestProperties.put(WmsDataSource.PROP_LAYER, theLayer);
             }
@@ -1270,7 +1284,12 @@ public class WMSControl extends ImageControl implements ImageObserver {
         if (layer instanceof WmsSelection) {
             wmsInfo = (WmsSelection) layer;
         } else {
-            theLayer = layer;
+            TwoFacedObject layerObj = (TwoFacedObject)layer;
+            String tmpStr = (String)layerObj.getId();
+            int idx = tmpStr.indexOf("-layer=");
+            String layerStr = tmpStr.substring(idx+7);
+            theLayer = layerStr;
+            theTitle = layerObj.getLabel();
         }
         updateLegendAndList();
         if (imageDisplay != null) {
@@ -1419,9 +1438,9 @@ public class WMSControl extends ImageControl implements ImageObserver {
                 && (theLayer instanceof WmsSelection)) {
             selection = (WmsSelection) theLayer;
         }
-        if (theLayer != null) {
-            labels.add(theLayer.toString());
-            setParamName(theLayer.toString());
+        if (theLayer != null && theTitle != null) {
+            labels.add(theTitle.toString());
+            setParamName(theTitle.toString());
         } else {
             super.getLegendLabels(labels, legendType);
         }
@@ -1667,6 +1686,25 @@ public class WMSControl extends ImageControl implements ImageObserver {
      */
     public Object getTheLayer() {
         return theLayer;
+    }
+	
+	 /**
+     *  Get the TheTitle property.
+     *
+     *  @return The TheTitle
+     */
+    public Object getTheTitle() {
+        return theTitle;
+    }
+
+
+    /**
+     *  Set the TheTitle property.
+     *
+     *  @param value The new value for TheTitle
+     */
+    public void setTheTitle(Object value) {
+        theTitle = value;
     }
 
 
