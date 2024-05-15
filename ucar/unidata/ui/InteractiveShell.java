@@ -410,8 +410,10 @@ public class InteractiveShell implements HyperlinkListener {
         cardLayoutPanel.flip();
         if (getCommandFld() instanceof JTextArea) {
             flipBtn.setIcon(getImageIcon("/auxdata/ui/icons/UpUp.gif"));
+            flipBtn.setToolTipText("Switch to single-line input mode");
         } else {
             flipBtn.setIcon(getImageIcon("/auxdata/ui/icons/DownDown.gif"));
+            flipBtn.setToolTipText("Switch to multi-line input mode");
         }
         // save the user a redundant mouse click:
         getCommandFld().requestFocusInWindow();
