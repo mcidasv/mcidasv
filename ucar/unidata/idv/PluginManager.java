@@ -1073,6 +1073,7 @@ public class PluginManager extends IdvManager {
             JButton deleteBtn = GuiUtils.makeImageButton(
                                     "/auxdata/ui/icons/plugin_delete.png",
                                     this, "removeCreateFile");
+            deleteBtn.setToolTipText("Remove Selected File(s)");
             JScrollPane listScroll = GuiUtils.makeScrollPane(createList, 150,
                                          250);
             JButton writeBtn = GuiUtils.makeButton("Write Plugin: ", this,
