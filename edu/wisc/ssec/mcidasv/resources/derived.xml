@@ -4801,4 +4801,47 @@
         </operands>
     </derived>
     <!-- End of TEMPO formulas -->
+    <derived description="Heat Index (from %N1% &amp; %N2%)" formula="DerivedGridFactory.createHeatIndex(D1, D2)" id="heatIndex" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourovertheta"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category value="display:timeheight"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:isosurfacebyanother"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:isosurface"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontourfilledovertheta"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:timelonshade"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:colorxs"/>
+            <category value="display:planviewcolorovertheta"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:vprofile2"/>
+            <category value="display:vprofile1"/>
+            <category value="display:contourxs"/>
+            <category value="display:probe"/>
+            <category append="Derived" childidx="0" value="inherit"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="GRID-3D-*;GRID-2D-*;" name="T_RH"/>
+        </operands>
+    </derived>
 </derived_parameters>
