@@ -392,5 +392,7 @@
   <param name="SnowData/NDSI" range_max="1.0" range_min="-1.0" table="NDSI"/>
   <param name="SnowData/NDSI_Snow_Cover" range_max="100.0" range_min="0.0" table="Gray scale"/>
   <param name="NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
+
+  <param ci_base="0.0" ci_interval="5.0" ci_max="100.0" ci_min="-180.0" ci_width="1" name="heatIndex" range_max="45.0" range_min="-90.0" table="Temperature" unit="°C"/>
   
 </params>
