@@ -464,6 +464,18 @@ def thetaSurfaceV(gridt, griduv, theta0):
 def thetaSurfaceADV(gridt, griduv, other, theta0):
   return DerivedGridFactory.extractGridADVOverThetaTopoSurface(gridt, griduv, other,float(theta0))
 
+def heatIndex(gridtemp, gridrh):
+  return DerivedGridFactory.createHeatIndex(gridtemp, gridrh)
+
+def timeStepAccumulatedPrecip(grid):
+  return DerivedGridFactory.timeStepAccumulatedPrecip(grid)
+
+def virtualTemperature(p, t, dp):
+  return DerivedGridFactory.createVirtualTemperature(p, t, dp)
+
+def virtualPotentialTemperature(p, t, dp):
+  return DerivedGridFactory.createVirtualPotentialTemperature(p, t, dp)
+
 # RMC Inq 2973 - Jun 21
 def zmax(grid):
     # Max across the vertical levels of a grid at all x/y points
