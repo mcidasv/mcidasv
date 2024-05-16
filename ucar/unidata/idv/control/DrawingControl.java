@@ -1555,6 +1555,7 @@ public class DrawingControl extends DisplayControlImpl {
     protected List getShapeCommands() {
         List commands = new ArrayList();
         commands.add(GlyphCreatorCommand.CMD_SMOOTHPOLYGON);
+        commands.add(GlyphCreatorCommand.CMD_CLOSEDPOLYGON);
         //        commands.add(GlyphCreatorCommand.CMD_POLYGON);
         //        commands.add(GlyphCreatorCommand.CMD_LINE);
         commands.add(GlyphCreatorCommand.CMD_RECTANGLE);
@@ -1586,6 +1587,8 @@ public class DrawingControl extends DisplayControlImpl {
                     icon = "/auxdata/ui/icons/StationaryFront16.gif";
                 } else if (type.equals(FrontDrawer.TYPE_TROUGH)) {
                     icon = "/auxdata/ui/icons/Trough16.gif";
+                } else if (type.equals(FrontDrawer.TYPE_WAVE_LINE)) {
+                    icon = "/auxdata/ui/icons/WaveLine.png";
                 }
 
                 commands.add(
