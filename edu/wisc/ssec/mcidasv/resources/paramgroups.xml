@@ -820,4 +820,11 @@
     <params p1="Temperature_1075mb" p2="RelHum_1075mb"/>
     <params p1="Temperature_1100mb" p2="RelHum_1100mb"/>
   </paramgroup>
+  <paramgroup description="Temperature and Relative Humidity" name="T_RH">
+    <params p1="Temperature_height_above_ground" p2="Relative_humidity_height_above_ground"/>
+    <params p1="Temperature_isobaric" p2="Relative_humidity_isobaric"/>
+    <params p1="Temperature_pressure_difference_layer" p2="Relative_humidity_pressure_difference_layer"/>
+    <params p1="Temperature_sigma" p2="Relative_humidity_sigma"/>
+    <params p1="Temperature_layer_between_two_pressure_difference_from_ground_layer" p2="Relative_humidity_layer_between_two_pressure_difference_from_ground_layer"/>
+  </paramgroup>
 </paramgroups>
