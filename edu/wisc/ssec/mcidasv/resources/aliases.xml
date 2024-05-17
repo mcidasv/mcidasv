@@ -293,7 +293,8 @@
      SFX_X001HU2M_P,
      SFX_X002HU2M_P,
      SFX_HU2M_SEA,
-     SFX_HU2M_TEB"/>
+     SFX_HU2M_TEB,
+     WRF relative humidity"/>
   <alias
      name="Z"
      label="Z"
@@ -590,7 +591,8 @@
      prmslmsl,
      Mean_sea_level_pressure_ETA_model_msl,
      Mean_sea_level_pressure_surface,
-     Surface_pressure_surface"/>
+     Surface_pressure_surface,
+     WRF MSLP"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
