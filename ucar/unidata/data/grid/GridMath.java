@@ -83,6 +83,12 @@ public class GridMath {
     /** function for the applyFunctionOverTime routine */
     public static final String FUNC_MODE = "mode";
 
+    /** function for the applyFunctionOverTime 10 base exp routine */
+    public static final String FUNC_EXP = "exp";
+
+    /** function for the applyFunctionOverTime 10 base pow routine */
+    public static final String FUNC_POW = "pow";
+    
     /** function for the timeStepFunc routine */
     public static final String FUNC_DIFFERENCE = "difference";
 
@@ -2840,6 +2846,104 @@ public class GridMath {
             }
         }
         return prob;
+
+    }
+    
+    public static FieldImpl applyFunctionOverGridsExt(FieldImpl field,  String function)  throws VisADException  {
+        FieldImpl fi = field;
+        boolean doExp   = function.equals(FUNC_EXP);
+        boolean doPow   = function.equals(FUNC_POW);
+        if(!doExp && !doPow)
+            return null;
+        try {
+
+            Set timeSet = GridUtil.getTimeSet(field);
+            fi = new FieldImpl((FunctionType) field.getType(), timeSet);
+            if(doExp) {
+                for (int i = 0; i < timeSet.getLength(); i++) {
+                    FlatField data = (FlatField) field.getSample(i, false);
+                    FlatField data1 = GridMath.applyFunctionOverGrids0(new FlatField[]{data},
+                            FUNC_EXP);
+                    fi.setSample(i, data1, false);
+                }
+            } else {
+                for (int i = 0; i < timeSet.getLength(); i++) {
+                    FlatField data = (FlatField) field.getSample(i, false);
+                    FlatField data1 = GridMath.applyFunctionOverGrids0(new FlatField[]{data},
+                            FUNC_POW);
+                    fi.setSample(i, data1, false);
+                }
+            }
+        } catch (RemoteException re) {}
+
+        return fi;
+    }
+    
+    public static FlatField applyFunctionOverGrids0(FlatField[] grids,
+                                                   String function)
+            throws VisADException {
+
+        try {
+            int       numGrids = grids.length;
+            FlatField newGrid  = null;
+            if (numGrids == 0) {
+                newGrid = (FlatField) grids[0].clone();
+                newGrid.setSamples(grids[0].getFloats(false), true);
+                return newGrid;
+            }
+
+            float[][]     values  = null;
+
+
+            for (int gridIdx = 0; gridIdx < numGrids; gridIdx++) {
+                FieldImpl sample     = (FieldImpl) grids[gridIdx];
+                float[][] gridValues = sample.getFloats(false);
+                // be careful about missing grids
+                if (Misc.isNaN(gridValues)) {
+                    continue;
+                }
+                if (values == null) {  // first pass through
+                    values = Misc.cloneArray(gridValues);
+
+                    newGrid = (FlatField) sample.clone();
+                    continue;
+                }
+
+            }
+            // all grids were missing
+            if (newGrid == null) {
+                return null;
+            }
+
+            if (function.equals(FUNC_EXP)) {
+                for (int i = 0; i < values.length; i++) {
+                    for (int j = 0; j < values[i].length; j++) {
+                        if (values[i][j] == values[i][j]) { //check missing value
+                            values[i][j] = (float) Math.exp(values[i][j]);
+                        }
+                    }
+                }
+            }
+
+
+            if (function.equals(FUNC_POW)) {
+                for (int i = 0; i < values.length; i++) {
+                    for (int j = 0; j < values[i].length; j++) {
+                        if (values[i][j] == values[i][j]) { // check missing value
+                            values[i][j] = (float) Math.pow(10, values[i][j]);
+                        }
+                    }
+                }
+            }
+
+            newGrid.setSamples(values, false);
+            return newGrid;
+        } catch (CloneNotSupportedException cnse) {
+            throw new VisADException("Cannot clone field");
+        } catch (RemoteException re) {
+            throw new VisADException(
+                    "RemoteException in applyFunctionOverTime");
+        }
 
     }
 }
