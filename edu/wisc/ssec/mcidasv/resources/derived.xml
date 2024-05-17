@@ -4844,4 +4844,248 @@
             <paramgroup categories="GRID-3D-*;GRID-2D-*;" name="T_RH"/>
         </operands>
     </derived>
+    <derived description="WRF Potential Temperature" formula="wrf_theta(P, PB, T)" id="WRF potential temperature" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Grids-WRF"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourovertheta"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category value="display:timeheight"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:isosurfacebyanother"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:isosurface"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontourfilledovertheta"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:timelonshade"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:colorxs"/>
+            <category value="display:planviewcolorovertheta"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:vprofile2"/>
+            <category value="display:vprofile1"/>
+            <category value="display:contourxs"/>
+            <category value="display:probe"/>
+        </categories>
+        <operands/>
+    </derived>
+    <derived description="WRF Relative Humidity" formula="wrf_rh(T, QVAPOR, P, PB, flag=1 )" id="WRF relative humidity" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Grids-WRF"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourovertheta"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category value="display:timeheight"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:isosurfacebyanother"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:isosurface"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontourfilledovertheta"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:timelonshade"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:colorxs"/>
+            <category value="display:planviewcolorovertheta"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:vprofile2"/>
+            <category value="display:vprofile1"/>
+            <category value="display:contourxs"/>
+            <category value="display:probe"/>
+        </categories>
+        <operands/>
+    </derived>
+    <derived description="WRF Dewpoint" formula="wrf_dewpoint(T, QVAPOR, P, PB, flag=1 )" id="WRF dewpoint" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Grids-WRF"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourovertheta"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category value="display:timeheight"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:isosurfacebyanother"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:isosurface"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontourfilledovertheta"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:timelonshade"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:colorxs"/>
+            <category value="display:planviewcolorovertheta"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:vprofile2"/>
+            <category value="display:vprofile1"/>
+            <category value="display:contourxs"/>
+            <category value="display:probe"/>
+        </categories>
+        <operands/>
+    </derived>
+    <derived description="WRF Equivalent Potential Temperature" formula="wrf_thetaE(P, PB, T, QVAPOR)" id="WRF equivTheta" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Grids-WRF"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourovertheta"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category value="display:timeheight"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:isosurfacebyanother"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:isosurface"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontourfilledovertheta"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:timelonshade"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:colorxs"/>
+            <category value="display:planviewcolorovertheta"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:vprofile2"/>
+            <category value="display:vprofile1"/>
+            <category value="display:contourxs"/>
+            <category value="display:probe"/>
+        </categories>
+        <operands/>
+    </derived>
+    <derived description="WRF Saturation Equivalent Potential Temperature" formula="wrf_SatThetaE(P, PB, T)" id="WRF SatEquivTheta" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Grids-WRF"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourovertheta"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category value="display:timeheight"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:isosurfacebyanother"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:isosurface"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontourfilledovertheta"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:timelonshade"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:colorxs"/>
+            <category value="display:planviewcolorovertheta"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:vprofile2"/>
+            <category value="display:vprofile1"/>
+            <category value="display:contourxs"/>
+            <category value="display:probe"/>
+        </categories>
+    </derived>
+    <derived description="WRF MSLP" formula="wrf_mslp(PSFC, HGT, T2)" id="WRF MSLP" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Grids-WRF"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourovertheta"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category value="display:timeheight"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:isosurfacebyanother"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:isosurface"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontourfilledovertheta"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:timelonshade"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:colorxs"/>
+            <category value="display:planviewcolorovertheta"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:vprofile2"/>
+            <category value="display:vprofile1"/>
+            <category value="display:contourxs"/>
+            <category value="display:probe"/>
+        </categories>
+    </derived>
 </derived_parameters>
