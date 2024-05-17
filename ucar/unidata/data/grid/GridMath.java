@@ -2946,4 +2946,151 @@ public class GridMath {
         }
 
     }
+
+    public static FieldImpl replaceNegativeValue(FieldImpl grid, float newValue)
+            throws VisADException, RemoteException {
+        boolean   isSequence = GridUtil.isTimeSequence(grid);
+        FieldImpl retField   = null;
+        if (isSequence) {
+            Set          s         = GridUtil.getTimeSet(grid);
+            for (int i = 0; i < s.getLength(); i++) {
+                FieldImpl funcFF = null;
+
+                FlatField f = replaceNegativeValueFF(((FlatField) grid.getSample(i)),
+                        newValue);
+                if (i == 0) {
+                    FunctionType ftype =
+                            new FunctionType(
+                                    ((SetType) s.getType()).getDomain(),
+                                    f.getType());
+                    retField = new FieldImpl(ftype, s);
+                }
+                retField.setSample(i, f, false);
+            }
+
+
+        } else {
+            retField = replaceNegativeValueFF(((FlatField) grid), newValue);
+        }
+        return retField;
+    }
+    
+    private static FlatField replaceNegativeValueFF(FlatField grid,  float newValue)
+            throws VisADException {
+
+        FlatField newField = null;
+        try {
+            GriddedSet domainSet =
+                    (GriddedSet) GridUtil.getSpatialDomain(grid);
+            int[] lengths = domainSet.getLengths();
+            int   sizeX   = lengths[0];
+            int   sizeY   = lengths[1];
+            int   sizeZ   = ((lengths.length == 2)
+                    || (domainSet.getManifoldDimension() == 2))
+                    ? 1
+                    : lengths[2];
+            float[][] samples   = grid.getFloats(false);
+
+            float[][] newValues = new float[samples.length][sizeX * sizeY  * sizeZ];
+            for (int np = 0; np < samples.length; np++) {
+                float[] paramVals = samples[np];
+                float[] newVals   = newValues[np];
+                for (int j = 0; j < sizeY; j++) {
+                    for (int i = 0; i < sizeX; i++) {
+                        for (int k = 0; k < sizeZ; k++) {
+                            int   index = k * sizeX * sizeY + j * sizeX + i;
+                            float value = paramVals[index];
+                            if (value <= 0) {
+                                newVals[index] =  newValue;
+                            }  else
+                                newVals[index] = value;
+                        }
+                    }
+                }
+            }
+
+            FunctionType newFT = (FunctionType)grid.getType();
+
+            newField = new FlatField(newFT, domainSet);
+            newField.setSamples(newValues, false);
+
+        } catch (RemoteException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return newField;
+    }
+    
+    public static FieldImpl replacePositiveValue(FieldImpl grid, float newValue)
+            throws VisADException, RemoteException {
+        boolean   isSequence = GridUtil.isTimeSequence(grid);
+        FieldImpl retField   = null;
+        if (isSequence) {
+            Set          s         = GridUtil.getTimeSet(grid);
+            for (int i = 0; i < s.getLength(); i++) {
+                FieldImpl funcFF = null;
+
+                FlatField f = replacePositiveValueFF(((FlatField) grid.getSample(i)),
+                        newValue);
+                if (i == 0) {
+                    FunctionType ftype =
+                            new FunctionType(
+                                    ((SetType) s.getType()).getDomain(),
+                                    f.getType());
+                    retField = new FieldImpl(ftype, s);
+                }
+                retField.setSample(i, f, false);
+            }
+
+
+        } else {
+            retField = replacePositiveValueFF(((FlatField) grid), newValue);
+        }
+        return retField;
+    }
+    
+    private static FlatField replacePositiveValueFF(FlatField grid,  float newValue)
+            throws VisADException {
+
+        FlatField newField = null;
+        try {
+            GriddedSet domainSet =
+                    (GriddedSet) GridUtil.getSpatialDomain(grid);
+            int[] lengths = domainSet.getLengths();
+            int   sizeX   = lengths[0];
+            int   sizeY   = lengths[1];
+            int   sizeZ   = ((lengths.length == 2)
+                    || (domainSet.getManifoldDimension() == 2))
+                    ? 1
+                    : lengths[2];
+            float[][] samples   = grid.getFloats(false);
+
+            float[][] newValues = new float[samples.length][sizeX * sizeY  * sizeZ];
+            for (int np = 0; np < samples.length; np++) {
+                float[] paramVals = samples[np];
+                float[] newVals   = newValues[np];
+                for (int j = 0; j < sizeY; j++) {
+                    for (int i = 0; i < sizeX; i++) {
+                        for (int k = 0; k < sizeZ; k++) {
+                            int   index = k * sizeX * sizeY + j * sizeX + i;
+                            float value = paramVals[index];
+                            if (value < 0) {
+                                newVals[index] =  newValue;
+                            }  else
+                                newVals[index] = value;
+                        }
+                    }
+                }
+            }
+
+            FunctionType newFT = (FunctionType)grid.getType();
+
+            newField = new FlatField(newFT, domainSet);
+            newField.setSamples(newValues, false);
+
+        } catch (RemoteException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return newField;
+
+    }
 }
