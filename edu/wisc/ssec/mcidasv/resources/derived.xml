@@ -5088,8 +5088,7 @@
             <category value="display:probe"/>
         </categories>
     </derived>
-    </derived>
-        <derived description="Galvez-Davison Index (from T and RH)" formula="GalvezDavisonIndex(T, RH)" id="GDI" isdefault="false" isenduser="true" override="true">
+    <derived description="Galvez-Davison Index (from T and RH)" formula="GalvezDavisonIndex(T, RH)" id="GDI" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Grids-Diagnostics"/>
             <category value="display:valuedisplay"/>
