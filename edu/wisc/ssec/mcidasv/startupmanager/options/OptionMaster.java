@@ -71,8 +71,6 @@ public class OptionMaster {
         { "USE_GEOBYREF", "Enable access to geometry by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "USE_IMAGEBYREF", "Enable access to image data by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "USE_NPOT", "Enable Non-Power of Two (NPOT) textures", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
-        // temp bandaid for people suffering from permgen problems.
-        { "USE_CMSGC", "Enable concurrent mark-sweep garbage collector", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "LOG_LEVEL", "Log Level", "INFO", Type.LOGLEVEL, OptionPlatform.ALL, Visibility.VISIBLE },
         { "JVM_OPTIONS", "Java Virtual Machine Options", "", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
         { "TEXTURE_WIDTH", "Texture Size", "4096", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },

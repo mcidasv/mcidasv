@@ -298,7 +298,6 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption jogl = optMaster.getBooleanOption("JOGL_TOGL");
         BooleanOption use3d = optMaster.getBooleanOption("USE_3DSTUFF");
         BooleanOption defaultBundle = optMaster.getBooleanOption("DEFAULT_LAYOUT");
-        BooleanOption useCmsCollector = optMaster.getBooleanOption("USE_CMSGC");
         BooleanOption useNpot = optMaster.getBooleanOption("USE_NPOT");
         BooleanOption useGeometryByRef = optMaster.getBooleanOption("USE_GEOBYREF");
         BooleanOption useImageByRef = optMaster.getBooleanOption("USE_IMAGEBYREF");
@@ -332,10 +331,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+ ':',
             McVGuiUtils.topBottom(startupBundlePanel, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
-            
-        JCheckBox useCmsCollectorCheckBox = useCmsCollector.getComponent();
-        useCmsCollectorCheckBox.setText(useCmsCollector.getLabel());
-        
+
         JCheckBox useGeometryByRefCheckBox = useGeometryByRef.getComponent();
         useGeometryByRefCheckBox.setText(useGeometryByRef.getLabel());
         
@@ -360,7 +356,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         
         JPanel scalingPanel = McVGuiUtils.makeLabeledComponent(scaling.getLabel()+':', scaling.getComponent());
 
-        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.vertical(useCmsCollectorCheckBox, useDarkModeCheckBox, scalingPanel));
+        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.vertical(useDarkModeCheckBox, scalingPanel));
 
         JTextField jvmArgsField = jvmArgs.getComponent();
 

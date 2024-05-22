@@ -158,16 +158,8 @@ echo %MCV_PARAMS% | findstr /C:" -script ">nul && (
     set BACKGROUND=0
 )
 
-REM toggles the CMS collector (CMS collector goes away in Java 14)
-IF "%USE_CMSGC%"=="1" GOTO setgcargs
-IF "%BACKGROUND%"=="1" GOTO setgcargs
-GOTO nogcargs
-:setgcargs
-SET GC_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
-GOTO donegcargs
-:nogcargs
+REM disable ability to change garbage collector (for now?)
 SET GC_ARGS=
-:donegcargs
 
 REM temp?: toggles the visad.java3d.geometryByRef property
 IF "%USE_GEOBYREF%"=="0" (
