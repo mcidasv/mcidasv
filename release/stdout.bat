@@ -92,12 +92,8 @@ jre\bin\javaw.exe -Dmcv.userpath="%MCV_USERPATH%" -cp %MCV_JAR% edu.wisc.ssec.mc
 if ERRORLEVEL 1 GOTO end
 )
 
-REM temp: toggles the CMS collector
-IF "%USE_CMSGC%"=="1" (
-SET JVM_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128m
-) ELSE (
+REM Used to set the garbage collector. keeping around because it may be use in the future.
 SET JVM_ARGS=
-)
 
 REM temp?: toggles the visad.java3d.geometryByRef property
 IF "%USE_GEOBYREF%"=="0" (
