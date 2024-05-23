@@ -71,6 +71,10 @@ public class OptionMaster {
         { "USE_GEOBYREF", "Enable access to geometry by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "USE_IMAGEBYREF", "Enable access to image data by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "USE_NPOT", "Enable Non-Power of Two (NPOT) textures", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
+        // USE_CMSGC is no longer in use, so the visibility is "HIDDEN".
+        // If we remove the option entirely, existing users with USE_CMSGC will may see
+        // a warning message.
+        { "USE_CMSGC", "Enable concurrent mark-sweep garbage collector", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.HIDDEN },
         { "LOG_LEVEL", "Log Level", "INFO", Type.LOGLEVEL, OptionPlatform.ALL, Visibility.VISIBLE },
         { "JVM_OPTIONS", "Java Virtual Machine Options", "", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
         { "TEXTURE_WIDTH", "Texture Size", "4096", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
