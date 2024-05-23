@@ -91,7 +91,7 @@ JAVA_FLAGS=
 
 # Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
-  JAVA_HOME="$dirname/.install4j/jre.bundle/Contents/Home/jre"
+  JAVA_HOME="$dirname/.install4j/jre.bundle/Contents/Home"
 fi
 
 # Look for java
