@@ -1862,13 +1862,26 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // showBasicWindow(true);
         
         if (getStore().get(Constants.PREF_VERSION_CHECK, true)) {
+            asyncStateCheck();
+        }
+
+        initDone = true;
+        logger.info("initDone");
+        showDashboard();
+    }
+
+    /**
+     * Checks for newest version asynchronously
+     * Issue #2740
+     */
+    private void asyncStateCheck() {
+        logger.info("Thread started");
+        new Thread(() -> {
             StateManager stateManager = (StateManager)getStateManager();
             stateManager.checkForNewerVersion(false);
             stateManager.checkForNotice(false);
-        }
-        
-        initDone = true;
-        showDashboard();
+            logger.info("Thread ended");
+        }).start();
     }
 
     /**
