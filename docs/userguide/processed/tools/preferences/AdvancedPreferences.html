@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   a restart in order for them to take effect. To
   configure the settings before running McIDAS-V, execute <em>runMcV-Config</em> on Linux/macOS platforms or <em>runMcV.bat</em> on Windows from the directory where McIDAS-V was installed (normally McIDAS-V-System)
   or by selecting <strong>Configure McIDAS-V</strong> in the Windows <strong>Start</strong> menu. The below image represents the default settings for the <strong>Advanced</strong> tab.</p>
-<div class="images"><img src="../images/preferences/Advanced.gif" width="923" height="640" alt="Image 1: Advanced Preferences (Default)"/><br>
+<div class="images"><img src="../images/preferences/Advanced.gif" width="1038" height="618" alt="Image 1: Advanced Preferences (Default)"/><br>
   <span class="caption">Image 1: Advanced Preferences (Default)</span></div>
 <p></p>
 <div class="pagesubtitle">Startup Options</div>
@@ -84,12 +84,6 @@ of larger datasets because of the more efficient use of memory. Unchecking this
 <li class="propertylistitem"><strong>ERROR -</strong> Outputs error messages.</li>
 <li class="propertylistitem"><strong>OFF -</strong> Outputs no information.</li>
 </ul>
-<li class="propertylistitem"><strong>Enable concurrent mark-sweep garbage collector -</strong> Passes "-XX:+UseConcMarkSweepGC
-  -XX:+CMSClassUnloadingEnabled" to the McIDAS-V JVM (Java
-  Virtual Machine) and uses shorter
-  garbage collection pauses by performing most garbage collection activity while
-  the McIDAS-V threads are running. Unchecking this option uses the JVM defaults,
-  which vary by Operating System.</li>
   <li class="propertylistitem"><strong>Enable Dark Mode -</strong> Allows for McIDAS-V to run in dark mode.  This option is currently only available on macOS.</li>
   <li class="propertylistitem"><strong>GUI Scaling -</strong> Allows for scaling the Main Display and Data Explorer windows when using a HiDPI display. Values greater than 1 (default) will increase the size of the components of the McIDAS-V windows.</li>
   <li class="propertylistitem"><strong>Java Flags -</strong> Allows for manually entered Java flags to be used at the startup of McIDAS-V.</li>
