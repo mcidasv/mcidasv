@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import ucar.nc2.util.IO;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -86,13 +87,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.text.DecimalFormat;
 
 import java.util.ArrayList;
@@ -123,6 +128,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import java.security.MessageDigest;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 
@@ -2326,6 +2333,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                              double displayRate, Element scriptingNode,
                              double endPause) {
 
+        // path is used to add extended attributes to the file
+        Path path = null;
         List fileToks = StringUtil.split(commaSeparatedFiles, ",", true,
                                          true);
         boolean doingPanel = false;
@@ -2397,19 +2406,20 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                            || movieFile.toLowerCase().endsWith(".html")) {
                     createAnisHtml(movieFile, images, size, displayRate,
                             scriptingNode);
-                } else if (movieFile.toLowerCase()
-                        .endsWith(FileManager.SUFFIX_KMZ)) {
+                } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_KMZ)) {
                     createKmz(movieFile, images, scriptingNode);
                 } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_KML)) {
                     createKml(movieFile, images, scriptingNode);
                 } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_ZIP)) {
                     createZip(movieFile, images, scriptingNode);
-                } else if (movieFile.toLowerCase().endsWith(
-                        FileManager.SUFFIX_AVI)) {
+                } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_AVI)) {
+                    File output = new File(movieFile);
+                    path = output.toPath();
                     ImageUtils.writeAvi(ImageWrapper.makeFileList(images),
-                                        displayRate, new File(movieFile));
+                                        displayRate, output);
                 } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_MP4)) {
                     File output = new File(movieFile);
+                    path = output.toPath();
                     // TODO(jon): jcodec has a strange way of specifying FPS...30 FPS would be "30/1", 29.97 FPS would be "30000/1001".
                     //SequenceEncoder enc = SequenceEncoder.createWithFps(NIOUtils.writableChannel(output), new Rational(displayRate, 1));
                     //for (ImageWrapper img : images) {
@@ -2454,7 +2464,66 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             idv.getPublishManager().publishContent(movieFile, viewManager,
                     publishCbx);
         }
+        // Add extended attributes
+        includeExtendedAttributes(path, displayRate, images.size());
+    }
 
+    /**
+     * adds extended attributes / metadata to the file
+     * need to figure out exactly what attributes need to be included
+     * Issue #3071
+     *
+     * @param path file path
+     */
+    private void includeExtendedAttributes(Path path, double displayRate, int frameCount) {
+        if (path == null) {
+            logger.error("Adding extended attributes/metadata to this file type is not supported");
+            JOptionPane.showMessageDialog(null, "Adding extended attributes/metadata to this file type is not supported");
+            return;
+        }
+        try {
+            UserDefinedFileAttributeView view = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+
+            // attribute:value pair is added with -> view.write(attribute, Charset.defaultCharset().encode(value));
+            view.write("software", Charset
+                    .defaultCharset()
+                    .encode("McIDAS-V"));
+            view.write("developer", Charset
+                    .defaultCharset()
+                    .encode("SSEC"));
+            view.write("MD5_hash", Charset
+                    .defaultCharset()
+                    .encode(hashMovieAsString(path)));
+            view.write("display_rate", Charset
+                    .defaultCharset()
+                    .encode(((Double) displayRate).toString()));
+            view.write("frame_count", Charset
+                    .defaultCharset()
+                    .encode(((Integer) frameCount).toString()));
+
+        } catch (Exception e) {
+            // TODO: Maybe do more specific error checks
+            logger.error("Extended attribute addition failed");
+            logger.info(e.toString());
+        }
+    }
+
+    /**
+     * Attempts to hash the movie
+     *
+     * @param path file path
+     * @return hash code as a string
+     */
+    private String hashMovieAsString(Path path) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(Files.readAllBytes(path));
+            return String.format("%032x", new BigInteger(1, md.digest()));
+        } catch (Exception e) {
+            logger.error("Hash failed");
+            JOptionPane.showMessageDialog(null, "Adding hash data failed!");
+            return "HASH FAILED";
+        }
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ImageSequenceGrabber.class);
