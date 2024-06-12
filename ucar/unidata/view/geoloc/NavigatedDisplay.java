@@ -2412,7 +2412,6 @@ public abstract class NavigatedDisplay extends DisplayMaster {
      * McIDAS Inquiry #1961-3141
      */
     public void rotateFaster() {
-        logger.info("We're going faster!");
         rotateXMultiplier *= 1.2;
         rotateYMultiplier *= 1.2;
         rotateZMultiplier *= 1.2;
@@ -2424,7 +2423,6 @@ public abstract class NavigatedDisplay extends DisplayMaster {
      * McIDAS Inquiry #1961-3141
      */
     public void rotateSlower() {
-        logger.info("We're going slower!");
         rotateXMultiplier *= 0.8;
         rotateYMultiplier *= 0.8;
         rotateZMultiplier *= 0.8;
