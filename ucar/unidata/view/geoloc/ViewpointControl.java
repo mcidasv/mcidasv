@@ -245,7 +245,7 @@ public class ViewpointControl implements ActionListener {
             navDisplay.getSouthViewName(), navDisplay.getWestViewName()
         };
         /**
-         * Default view on Western Hemisphere instead of Antarctica
+         * Default view on the Greenwich Meridian instead of Antarctica
          * McIDAS Inquiry #1575-3141
          */
         setNorthView();
