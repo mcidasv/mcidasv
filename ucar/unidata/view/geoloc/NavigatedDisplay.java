@@ -74,6 +74,8 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3d;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * Provides support for a navigated VisAD DisplayImplJ3D for
@@ -238,10 +240,15 @@ public abstract class NavigatedDisplay extends DisplayMaster {
      */
     private NavigatedDisplayToolBar navToolBar;
 
+    /** Logger for debugging*/
+    private Logger logger = null;
+
     /**
      * Default Constructor
      */
-    protected NavigatedDisplay() {}
+    protected NavigatedDisplay() {
+        logger = Logger.getLogger(NavigatedDisplay.class);
+    }
 
     /**
      * Construct a NavigatedDisplay with the specified VisAD display
@@ -2401,16 +2408,26 @@ public abstract class NavigatedDisplay extends DisplayMaster {
 
     /**
      * Rotate faster
+     * Changed implementation to make the animation less choppy
+     * McIDAS Inquiry #1961-3141
      */
     public void rotateFaster() {
-        setRotateDelay(rotateDelay / 2);
+        logger.info("We're going faster!");
+        rotateXMultiplier *= 1.2;
+        rotateYMultiplier *= 1.2;
+        rotateZMultiplier *= 1.2;
     }
 
     /**
      * rotate slower
+     * Changed implementation to make the animation less choppy []
+     * McIDAS Inquiry #1961-3141
      */
     public void rotateSlower() {
-        setRotateDelay(rotateDelay * 2);
+        logger.info("We're going slower!");
+        rotateXMultiplier *= 0.8;
+        rotateYMultiplier *= 0.8;
+        rotateZMultiplier *= 0.8;
     }
 
     /**
