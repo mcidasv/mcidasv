@@ -2412,13 +2412,13 @@ public abstract class NavigatedDisplay extends DisplayMaster {
      * McIDAS Inquiry #1961-3141
      */
     public void rotateFaster() {
-        rotateXMultiplier *= 1.2;
-        rotateYMultiplier *= 1.2;
-        rotateZMultiplier *= 1.2;
+        rotateXMultiplier *= 1.25;
+        rotateYMultiplier *= 1.25;
+        rotateZMultiplier *= 1.25;
     }
 
     /**
-     * rotate slower
+     * Rotate slower
      * Changed implementation to make the animation less choppy []
      * McIDAS Inquiry #1961-3141
      */
