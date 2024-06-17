@@ -29,6 +29,7 @@
 package ucar.unidata.data;
 
 
+import edu.wisc.ssec.mcidasv.ui.PopupMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -212,9 +213,11 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
     /** Holds information for polling */
     private PollingInfo pollingInfo;
 
+    /** Checkbox to enable/disable polling notifications*/
+    private JCheckBox notificationsActive = new JCheckBox();
+
     /** Has the initPolling been called yet */
     private boolean haveInitedPolling = false;
-
 
     /** The properties dialog */
     private JDialog propertiesDialog;
@@ -2469,9 +2472,26 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
                 putCache(cacheKey, cachedData);
             }
         } else {}
+
+        // If polling is active AND the user has activated notifications, show the toast
+        if (notificationsActive.isSelected() && isPolling()) {
+            toastForData();
+        }
         return cachedData;
     }
 
+    /**
+     * Creates a toast when data is updated
+     * McIDAS Inquiry #3083-3141
+     */
+
+    private void toastForData() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Double width = (Double) screenSize.getWidth();
+        // Double height = (Double) screenSize.getHeight();
+        PopupMessage pop = new PopupMessage("Data Updated!", width.intValue() - 250, 50, "DataRefresh");
+        pop.showPopupMessage(8000);
+    }
 
     /**
      * Have this one around for other, non-unidata, datasource implementations.
@@ -3066,6 +3086,8 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
             } else {
                 comps.add(GuiUtils.rLabel("Automatically Reload: "));
                 comps.add(GuiUtils.left(pollingInfo.getActiveWidget()));
+                comps.add(GuiUtils.rLabel("Notifications: "));
+                comps.add(GuiUtils.left(notificationsActive));
                 comps.add(GuiUtils.rLabel("Check Every: "));
                 comps.add(
                     GuiUtils.left(
