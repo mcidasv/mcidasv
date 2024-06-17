@@ -303,7 +303,7 @@ public class McIDASV extends IntegratedDataViewer {
                 // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
                 // use as delegates for various com.apple.eawt.ApplicationListener methods
                 Class<?> thisClass = getClass();
-                Class<?>[] args = (Class[])null;
+                Class<?>[] args = null;
                 OSXAdapter.setQuitHandler(this, thisClass.getDeclaredMethod("MacOSXQuit", args));
                 OSXAdapter.setAboutHandler(this, thisClass.getDeclaredMethod("MacOSXAbout", args));
                 OSXAdapter.setPreferencesHandler(this, thisClass.getDeclaredMethod("MacOSXPreferences", args));
@@ -382,7 +382,7 @@ public class McIDASV extends IntegratedDataViewer {
      * Initializes a XML encoder with McIDAS-V specific XML delegates.
      * 
      * @param encoder XML encoder that'll be dealing with persistence.
-     * @param forRead Not used as of yet.
+     * @param forRead Not used as yet.
      */
     // TODO: if we ever get up past three or so XML delegates, I vote that we
     // make our own version of VisADPersistence.
@@ -1909,10 +1909,11 @@ public class McIDASV extends IntegratedDataViewer {
     }
     
     /**
-     * Attempts a clean shutdown of McIDAS-V. Currently this entails 
-     * suppressing any error dialogs, explicitly killing the 
-     * {@link #addeEntries}, removing {@link #SESSION_FILE}, and disabling
-     * the directory monitors found in the file choosers.
+     * Attempts a clean shutdown of McIDAS-V.
+     *
+     * <p>Currently, this entails suppressing any error dialogs, explicitly
+     * killing the {@link #addeEntries}, removing {@link #SESSION_FILE},
+     * and disabling the directory monitors found in the file choosers.
      * 
      * @param exitCode System exit code to use.
      * 
