@@ -382,7 +382,7 @@ public class McIDASV extends IntegratedDataViewer {
      * Initializes a XML encoder with McIDAS-V specific XML delegates.
      * 
      * @param encoder XML encoder that'll be dealing with persistence.
-     * @param forRead Not used as of yet.
+     * @param forRead Not used as yet.
      */
     // TODO: if we ever get up past three or so XML delegates, I vote that we
     // make our own version of VisADPersistence.
