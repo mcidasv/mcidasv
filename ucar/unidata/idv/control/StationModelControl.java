@@ -31,7 +31,10 @@ package ucar.unidata.idv.control;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DataTimeRange;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.point.PointDataInstance;
@@ -421,6 +424,9 @@ public class StationModelControl extends ObsDisplayControl {
      * fixed value. May be {@code null}.
      */
     private JRadioButton fixedPositionButton;
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(StationModelControl.class);
 
     /**
      * Default constructor.
@@ -2515,6 +2521,12 @@ public class StationModelControl extends ObsDisplayControl {
         // unused
         setDeclutterFilter(value);
         loadDataInThread();
+
+        /**
+         * McIDAS Inquiry #3104-3141
+         * DensitySlider?
+         */
+
         if (densitySlider != null) {
             GuiUtils.setSliderPercent(densitySlider, 1.0f - value);
         }
@@ -2913,10 +2925,11 @@ public class StationModelControl extends ObsDisplayControl {
      * @return The panel that holds the density slider.
      */
     protected JPanel getDensityControl() {
-        densitySlider = new JSlider(0, 10, 0);
+        int scaleMax = 5;
+        densitySlider = new JSlider(0, 100, 0);
         addDensityComp(densitySlider);
         GuiUtils.setSliderPercent(densitySlider,
-                                  (double) 1.0f - declutterFilter);
+                                   1 - (declutterFilter / scaleMax));
         densitySlider.setToolTipText(
             "Control the density of the plot displays");
         densitySlider.addChangeListener(new ChangeListener() {
@@ -2924,8 +2937,14 @@ public class StationModelControl extends ObsDisplayControl {
                 if (densitySlider.getValueIsAdjusting()) {
                     return;
                 }
-                float newValue =
-                    1.0f - (float) GuiUtils.getSliderPercent(densitySlider);
+
+                /**
+                 * McIDAS Inquiry #3104-3141
+                 * Density value
+                 */
+
+                float newValue = (1 - (float) GuiUtils.getSliderPercent(densitySlider)) * scaleMax;
+                    logger.info(String.valueOf(newValue));
                 if (newValue == declutterFilter) {
                     return;
                 }
