@@ -2522,11 +2522,6 @@ public class StationModelControl extends ObsDisplayControl {
         setDeclutterFilter(value);
         loadDataInThread();
 
-        /**
-         * McIDAS Inquiry #3104-3141
-         * DensitySlider?
-         */
-
         if (densitySlider != null) {
             GuiUtils.setSliderPercent(densitySlider, 1.0f - value);
         }
