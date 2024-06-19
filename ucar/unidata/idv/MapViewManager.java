@@ -314,8 +314,12 @@ public class MapViewManager extends NavigatedViewManager {
     /** initial lat/lon bounds */
     private Rectangle2D.Float initLatLonBounds;
 
+    /**
+     * McIDAS Inquiry #983-3141
+     * Globe background is on by default
+     */
     /** use default globe background flag */
-    private boolean defaultGlobeBackground = false;
+    private boolean defaultGlobeBackground = true;
 
     /** Whether auto-rotation should be toggled automatically after initialization completes. */
     private boolean defaultAutoRotate = false;
@@ -3623,8 +3627,11 @@ public class MapViewManager extends NavigatedViewManager {
     public Color getGlobeBackgroundColorToUse() {
         Color backgroundColor = globeBackgroundColor;
         if (backgroundColor == null) {
+            /**
+             * McIDAS Inquiry #983-3141
+             */
             backgroundColor = getStore().get(PREF_GLOBEBACKGROUND,
-                                             Color.white);
+                                             new Color(20, 30, 50, 255));
         }
         return backgroundColor;
     }
