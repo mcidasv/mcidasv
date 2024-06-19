@@ -1,7 +1,13 @@
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
