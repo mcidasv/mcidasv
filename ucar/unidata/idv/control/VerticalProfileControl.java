@@ -147,9 +147,9 @@ public class VerticalProfileControl extends LineProbeControl {
     private boolean showTable = true;
 
     /** _more_ */
-    private Unit altUnit = null;
+    private Unit altUnit = CommonUnit.meter;
 
-    private String altCoord = PRESSURE_COORD;
+    private String altCoord = "leeroy jenkins";
 
     /**
      * Default constructor; set attribute flags
@@ -524,12 +524,12 @@ public class VerticalProfileControl extends LineProbeControl {
                     info.getDataInstance().getRawUnit(0));
         }
         info.setUnit(vpUnit);
-        if (altUnit == null && altCoord.equals(PRESSURE_COORD)) {
-            info.setAltitudeUnit(CommonUnits.HECTOPASCAL);
+        if (altCoord.equals(PRESSURE_COORD)) {
             altUnit = CommonUnits.HECTOPASCAL;
-        } else if(altUnit == null){
-            info.setAltitudeUnit(CommonUnit.meter);
+        } else {
+            altUnit = CommonUnit.meter;
         }
+        info.setAltitudeUnit(altUnit);
         Range vpRange = info.getLineState().getRange();
 
         if (vpRange == null) {
@@ -675,12 +675,12 @@ public class VerticalProfileControl extends LineProbeControl {
                     vUnit = cs.getReferenceUnits()[2];
                 }
                 float[] alts = domainVals[2];
-                if (altUnit != null && altUnit.isConvertible(CommonUnits.HECTOPASCAL)) {
+                if (altUnit.isConvertible(CommonUnits.HECTOPASCAL)) {
                     CoordinateSystem pressToHeightCS =
                             DataUtil.getPressureToHeightCS(DataUtil.STD_ATMOSPHERE);
                     float[][] hvals = pressToHeightCS.fromReference(new float[][]{alts});
                     alts = hvals[0];  //altUnit.toThis(alts, vUnit);
-                } else if ( !vUnit.equals(CommonUnit.meter)) {
+                } else {
                     alts = CommonUnit.meter.toThis(alts, vUnit);
                 }
                 try {  // domain might have NaN's in it
@@ -1067,6 +1067,24 @@ public class VerticalProfileControl extends LineProbeControl {
         return chart;
     }
 
+    /**
+     * Set AltCoord
+     * McIDAS Inquiry #3105-3141
+     *
+     * @param cname
+     */
+    public void setAltCoord(String cname) {
+       altCoord = cname;
+    }
+
+    /**
+     * Get AltCoord
+     *
+     * @return altCoord
+     */
+    public String getAltCoord() {
+        return altCoord;
+    }
 
 
 
