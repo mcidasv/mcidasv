@@ -149,7 +149,7 @@ public class VerticalProfileControl extends LineProbeControl {
     /** _more_ */
     private Unit altUnit = CommonUnit.meter;
 
-    private String altCoord = "leeroy jenkins";
+    private String altCoord = "PLACEHOLDER";
 
     /**
      * Default constructor; set attribute flags
