@@ -40,6 +40,7 @@ public class PopupMessage extends JFrame {
         w.setAlwaysOnTop(true);
         w.setBackground(new Color(0, 0, 0, 0));
 
+
         JPanel p = new JPanel() {
             public void paintComponent(Graphics g) {
                 if (spec.equals(DATA_REFRESH)) {
@@ -107,7 +108,15 @@ public class PopupMessage extends JFrame {
 
         w.add(p);
         w.setLocation(x, y);
-        w.setSize(500, 300);
+
+        // TODO: set the dimensions as tightly as possible if you want to avoid a grey background
+        if (spec.equals(DATA_REFRESH)) {
+            w.setSize(220, 65);
+        } else if (spec.equals(EXAMPLE_REFRESH)) {
+            w.setSize(220, 65);
+        } else {
+            logger.error("Notification spec is not valid");
+        }
     }
 
     /**
