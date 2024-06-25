@@ -209,17 +209,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
         }
     }
 
-    /**
-     * Show a message explaining why drag and drop is temporarily disabled on macOS.
-     */
-    private void showMacDisabledMessage() {
-        JOptionPane.showMessageDialog(
-                null,
-                "Tab drag-and-drop has been disabled on macOS until the next release, apologies.",
-                "Tab Reorder on macOS",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
+    // Removed showMacDisabledMessage() as it no longer appears to be a problem
 
     /**
      * Triggered when the user does a (platform-dependent) drag initiating 
@@ -227,22 +217,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * drag. 
      */
     @Override public void dragGestureRecognized(DragGestureEvent e) {
-        if (System.getProperty("os.name").contains("Mac OS X")) {
-            // TJJ Apr 2023
-            // https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=3047
-            // Will resolve macOS tab reordering problem after 1.9 release
-            //
-            // sorry to be fraudulently creating TJJs, Tommy!
-            // just didn't want to lose track of these so that
-            // we can remove 'em after we've fixed the bug.
-            // - jon
-            showMacDisabledMessage();
-            return;
-        }
-
         // currently we want to disable drag and drop for "chrome-less" windows
         // one alternative is to have drag and drop simply *reposition*
         // chrome-less windows.
+        // 3141 June 2024 -> it looks like the MacOS tab problem (McV Inquiry #3047) is no longer an issue?
         if (showTabArea(group, this)) {
             sourceIndex = getSelectedIndex();
 
@@ -358,14 +336,11 @@ public class DraggableTabbedPane extends JTabbedPane implements
             // make sure the user chose to drop over a valid area/thing first
             // then do the actual drop.
             if ((dropIndex != -1) && (getComponentAt(dropIndex) != null)) {
+                doDrop(sourceIndex, dropIndex);
                 // TJJ Apr 2023
                 // https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=3047
                 // Will resolve macOS tab reordering problem after 1.9 release
-                if (System.getProperty("os.name").contains("Mac OS X")) {
-                    showMacDisabledMessage();
-                } else {
-                    doDrop(sourceIndex, dropIndex);
-                }
+                // 3141 June 2024 -> it looks like this is no longer an issue?
             }
 
             // clean up anything associated with the current drag and drop
