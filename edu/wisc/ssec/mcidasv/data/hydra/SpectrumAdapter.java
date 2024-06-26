@@ -274,7 +274,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
       return channel_sort[idx];
     } catch (ArrayIndexOutOfBoundsException e) {
       String errorMessage = "Invalid wavenumber: must be between the valid range for this sensor: [" + domainSet.getLow()[0] + ", " + domainSet.getHi()[0] + "].";
-      logger.error(errorMessage + " Index cannot be found.");
+      logger.error(errorMessage + " Index cannot be found. Passing " + channel_sort[ channel_sort.length >> 1 ] + " as the value.");
       JOptionPane.showMessageDialog(null, errorMessage, "Invalid Wavenumber", JOptionPane.ERROR_MESSAGE);
       return channel_sort[ channel_sort.length >> 1 ]; // default to somewhere
     }
