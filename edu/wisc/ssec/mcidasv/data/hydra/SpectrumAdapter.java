@@ -44,6 +44,8 @@ import visad.SampledSet;
 import visad.Set;
 import visad.SingletonSet;
 
+import javax.swing.*;
+
 public class SpectrumAdapter extends MultiDimensionAdapter {
   
   private static final Logger logger =
@@ -263,8 +265,19 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public int getChannelIndexFromWavenumber(float wavenumber) throws Exception {
-    int idx = (domainSet.valueToIndex(new float[][] {{wavenumber}}))[0];
-    return channel_sort[idx];
+    /**
+     * McIDAS Inquiry #1098-3141
+     * Cleaner error message + dialog for invalid wavenumber input
+     */
+    try {
+      int idx = (domainSet.valueToIndex(new float[][]{{wavenumber}}))[0];
+      return channel_sort[idx];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      String errorMessage = "Invalid wavenumber: must be between the valid range for this sensor: (" + domainSet.getLow()[0] + ", " + domainSet.getHi()[0] + ").";
+      logger.error(errorMessage + " Index cannot be found.");
+      JOptionPane.showMessageDialog(null, errorMessage, "Invalid Wavenumber", JOptionPane.ERROR_MESSAGE);
+      return channel_sort[ channel_sort.length >> 1 ]; // default to somewhere
+    }
   }
 
   public float getWavenumberFromChannelIndex(int index) throws Exception {
