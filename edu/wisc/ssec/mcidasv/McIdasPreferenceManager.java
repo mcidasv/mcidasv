@@ -953,7 +953,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         String arLabel = "<html>"+MapViewManager.PR_LABEL+"<p>Changes do not affect current displays/layers.</html>";
 
         Object[][] panelObjects = {
-            { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, Boolean.valueOf(getStore().get(MapViewManager.PREF_SHOWGLOBEBACKGROUND, false)) },
+            { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, Boolean.valueOf(getStore().get(MapViewManager.PREF_SHOWGLOBEBACKGROUND, true)) },
             { "Show Top Bar", MapViewManager.PREF_TOPBAR_VISIBLE, Boolean.valueOf(mappy.getTopBarVisible()) },
             { "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, Boolean.valueOf(mappy.getWireframe()) },
             { "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, Boolean.valueOf(mappy.getShowCursor()) },
@@ -975,7 +975,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         XmlObjectStore store = getStore();
 
-        Color globeColor = mappy.getGlobeBackgroundColor();
+        // McIDAS Inquiry #983-3141: set the preference/default as the color under preferences
+        Color globeColor = mappy.getGlobeBackgroundColorToUse();
         ColorSwatchComponent globeSwatch = new ColorSwatchComponent(store, globeColor, "Set Globe Background Color");
         globeSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         JPanel globePanel = new JPanel(new FlowLayout());

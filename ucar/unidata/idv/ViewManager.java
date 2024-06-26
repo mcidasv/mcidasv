@@ -355,7 +355,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected boolean useGlobeDisplay = false;
 
     /** background color for filled globe */
-    protected Color globeBackgroundColor = null;
+    // 3141
+    protected Color globeBackgroundColor;
 
     /** z level (really radius) for where to put the globe fill layer */
     protected double globeBackgroundLevel = -0.01;

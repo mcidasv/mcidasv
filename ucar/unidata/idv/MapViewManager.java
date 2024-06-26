@@ -3612,6 +3612,8 @@ public class MapViewManager extends NavigatedViewManager {
 
     /**
      *  Get the GlobeBackgroundColor property.
+     *  McIDAS Inquiry #983-3141: This function is potentially redundant
+     *  because of getGlobeBackgroundColorToUse()
      *
      *  @return The GlobeBackgroundColor
      */
