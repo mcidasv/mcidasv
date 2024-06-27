@@ -1688,7 +1688,7 @@ public class IOUtil {
         try {
             return readContents(contentName, origin);
         } catch (Exception exc) {
-            logger.warn("could not read contents for '"+contentName+'\'', exc);
+            logger.warn("could not read contents for '"+contentName+'\'');
         }
         return dflt;
     }

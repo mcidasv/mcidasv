@@ -53,6 +53,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -1877,10 +1878,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private void asyncStateCheck() {
         logger.info("Thread started");
         new Thread(() -> {
-            StateManager stateManager = (StateManager)getStateManager();
-            //stateManager.checkForNewerVersion(false);
-            // This link does not exist and results in an exception
-            stateManager.checkForNotice(false);
+            try {
+                StateManager stateManager = (StateManager) getStateManager();
+                stateManager.checkForNewerVersion(false);
+                // This link does not exist and results in an exception however, that is intended behavior
+                stateManager.checkForNotice(false);
+            } catch (Exception e){
+                logger.warn("State check failed!");
+            }
             logger.info("Thread ended");
         }).start();
     }
