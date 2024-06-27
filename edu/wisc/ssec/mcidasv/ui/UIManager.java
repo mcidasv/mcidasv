@@ -1878,7 +1878,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         logger.info("Thread started");
         new Thread(() -> {
             StateManager stateManager = (StateManager)getStateManager();
-            stateManager.checkForNewerVersion(false);
+            //stateManager.checkForNewerVersion(false);
+            // This link does not exist and results in an exception
             stateManager.checkForNotice(false);
             logger.info("Thread ended");
         }).start();
