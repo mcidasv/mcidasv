@@ -31,20 +31,11 @@ import static java.util.Objects.requireNonNull;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
 
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -61,11 +52,16 @@ import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.FocusTraveller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * This class handles all the GUI elements of a McIDAS-V support request.
@@ -600,7 +596,44 @@ public class SupportForm extends JFrame {
         String current = field.getText();
         JFileChooser jfc = new JFileChooser(current);
         if (jfc.showOpenDialog(field) == JFileChooser.APPROVE_OPTION) {
-            field.setText(jfc.getSelectedFile().toString());
+            //logger.info(jfc.getSelectedFile().toString());
+
+            /**
+             * McIDAS Inquiry #1690-3141
+             * Zip files before sending them through the support form
+             */
+
+            String newFileName;
+            String newFilePath;
+            try {
+                File file = jfc.getSelectedFile();
+                FileInputStream inStream = new FileInputStream(file);
+
+                newFilePath = file + "_compressed.zip";
+                newFileName = file.getName() + "_compressed.zip";
+
+                FileOutputStream outStream = new FileOutputStream(newFilePath);
+                ZipOutputStream zipStream = new ZipOutputStream(outStream);
+
+                ZipEntry zipEntry = new ZipEntry(file.getName());
+                zipStream.putNextEntry(zipEntry);
+
+                byte[] bytes = new byte[1024];
+                int length;
+                while ((length = inStream.read(bytes)) >= 0) {
+                    zipStream.write(bytes, 0, length);
+                }
+
+                zipStream.close();
+                inStream.close();
+                outStream.close();
+
+                field.setText(newFilePath);
+                logger.info(newFilePath, newFileName);
+            } catch (Exception e) {
+                logger.error("Zipping the file failed", e);
+                JOptionPane.showMessageDialog(null, "Unable to attach this file", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
     
