@@ -31,11 +31,20 @@ import static java.util.Objects.requireNonNull;
 
 import java.awt.EventQueue;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
 
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -596,13 +605,10 @@ public class SupportForm extends JFrame {
         String current = field.getText();
         JFileChooser jfc = new JFileChooser(current);
         if (jfc.showOpenDialog(field) == JFileChooser.APPROVE_OPTION) {
-            //logger.info(jfc.getSelectedFile().toString());
-
             /**
              * McIDAS Inquiry #1690-3141
              * Zip files before sending them through the support form
              */
-
             String newFileName;
             String newFilePath;
             try {
