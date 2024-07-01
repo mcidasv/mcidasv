@@ -29,6 +29,9 @@
 package ucar.unidata.data.grid;
 
 
+import edu.wisc.ssec.mcidasv.supportform.SupportForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Trace;
@@ -112,6 +115,8 @@ public class GridMath {
 
     /** negative one */
     public static final Real NEGATIVE_ONE;
+
+    private static final Logger logger = LoggerFactory.getLogger(GridMath.class);
 
     static {
         try {
@@ -1285,9 +1290,9 @@ public class GridMath {
                             continue;
                         }
                         if (doMax) {
-                            values[i][j] = Math.max(values[i][j], value);
+                            values[i][j] = missingMax(values[i][j], value);
                         } else if (doMin) {
-                            values[i][j] = Math.min(values[i][j], value);
+                            values[i][j] = missingMin(values[i][j], value);
                         } else if (doStd) {
                             values[i][j]  += value;
                             values2[i][j] += value * value;
@@ -1404,9 +1409,9 @@ public class GridMath {
                             continue;
                         }
                         if (doMax) {
-                            values[i][j] = Math.max(values[i][j], value);
+                            values[i][j] = missingMax(values[i][j], value);
                         } else if (doMin) {
-                            values[i][j] = Math.min(values[i][j], value);
+                            values[i][j] = missingMin(values[i][j], value);
                         } else if (doStd) {
                             values[i][j]  += value;
                             values2[i][j] += value * value;
@@ -1731,12 +1736,12 @@ public class GridMath {
                                 continue;
                             }
                             if (doMax) {
-                                values[i][j] = Math.max(values[i][j], value);
+                                values[i][j] = missingMax(values[i][j], value);
                             } else if (doMin) {
-                                values[i][j] = Math.min(values[i][j], value);
+                                values[i][j] = missingMin(values[i][j], value);
                             } else if (doRange) {
-                                values[i][j] = Math.max(values[i][j], value);
-                                rangev[i][j] = Math.min(rangev[i][j], value);
+                                values[i][j] = missingMax(values[i][j], value);
+                                rangev[i][j] = missingMin(rangev[i][j], value);
                             } else {
                                 values[i][j] += value;
                             }
@@ -1994,9 +1999,9 @@ public class GridMath {
                                 numNonMissing++;
                             } else {
                                 if (doMax) {
-                                    result = Math.max(result, value);
+                                    result = missingMax(result, value);
                                 } else if (doMin) {
-                                    result = Math.min(result, value);
+                                    result = missingMin(result, value);
                                 } else {
                                     result += value;
                                     numNonMissing++;
@@ -2171,9 +2176,9 @@ public class GridMath {
                                 numNonMissing++;
                             } else {
                                 if (doMax) {
-                                    result = Math.max(result, value);
+                                    result = missingMax(result, value);
                                 } else if (doMin) {
-                                    result = Math.min(result, value);
+                                    result = missingMin(result, value);
                                 } else {
                                     result += value;
                                     numNonMissing++;
@@ -2357,9 +2362,9 @@ public class GridMath {
                                 numNonMissing++;
                             } else {
                                 if (doMax) {
-                                    result = Math.max(result, value);
+                                    result = missingMax(result, value);
                                 } else if (doMin) {
-                                    result = Math.min(result, value);
+                                    result = missingMin(result, value);
                                 } else {
                                     result += value;
                                     numNonMissing++;
@@ -3092,5 +3097,59 @@ public class GridMath {
         }
         return newField;
 
+    }
+
+    /**
+     * McIDAS Inquiry #1935-3141
+     * Max function that considers the possibility of NaN values
+     * @param val1
+     * @param val2
+     * @return the larger value
+     */
+
+    private static float missingMax(Float val1, Float val2) {
+        // default case
+        return missingMax(val1, val2, Float.MIN_VALUE);
+    }
+
+    private static float missingMax(Float val1, Float val2, Float defaultVal) {
+        float a, b;
+
+        // if NaN, assign it a value
+        if (val1.isNaN()) {a = defaultVal;}
+        else {a = val1;}
+
+        // if NaN, assign it a value
+        if (val2.isNaN()) {b = defaultVal;}
+        else {b = val2;}
+
+        return (a > b) ? a : b;
+    }
+
+    /**
+     * McIDAS Inquiry #1935-3141
+     * Min function that considers the possibility of NaN values
+     * @param val1
+     * @param val2
+     * @return the smaller value
+     */
+
+    private static float missingMin(Float val1, Float val2) {
+        //default case
+        return missingMin(val1, val2, Float.MAX_VALUE);
+    }
+
+    private static float missingMin(Float val1, Float val2, Float defaultVal) {
+        float a, b;
+
+        // if NaN, assign it a value
+        if (val1.isNaN()) {a = defaultVal;}
+        else {a = val1;}
+
+        // if NaN, assign it a value
+        if (val2.isNaN()) {b = defaultVal;}
+        else {b = val2;}
+
+        return (a < b) ? a : b;
     }
 }
