@@ -265,6 +265,10 @@ public class AddeRadarChooser extends AddeImageChooser {
 
     /**
      * Generate a list of radar ids for the id list.
+     * McIDAS Inquiry #2794-3141
+     * Replaced previous readStations with one from IDV
+     * so that the stations are not plotted
+     * sporadically
      *
      * @return  list of station IDs
      */
@@ -276,25 +280,35 @@ public class AddeRadarChooser extends AddeImageChooser {
             }
             StringBuffer buff        = getGroupUrl(REQ_IMAGEDIR, getGroup());
             String       descrForIds = descriptorNames[0];
-            // try to use base reflectivity if it's available.
-            for (int i = 0; i < descriptorNames.length; i++) {
-                if ((descriptorNames[i] != null)
-                        && descriptorNames[i].toLowerCase().startsWith(
-                            "base")) {
-                    descrForIds = descriptorNames[i];
+            Hashtable    dtable      = getDescriptorTable();
+            Iterator     iter        = dtable.keySet().iterator();
+            String group = getGroup().toLowerCase();
+            while (iter.hasNext()) {
+                String name       = (String) iter.next();
+                String descriptor = ((String) dtable.get(name)).toLowerCase();
+                if (group.indexOf("tdw") >= 0 && descriptor.equals("tr0")) {
+                    descrForIds = ((String) dtable.get(name));
+                    break;
+                } else if (descriptor.equals("daa")
+                        || descriptor.equals("eet")
+                        || descriptor.startsWith("bref")) {
+                    descrForIds = ((String) dtable.get(name));
                     break;
                 }
             }
             appendKeyValue(buff, PROP_DESCR,
-                           getDescriptorFromSelection(descrForIds));
+                    descrForIds);
             appendKeyValue(buff, PROP_ID, VALUE_LIST);
+            if (archiveDay != null) {
+                appendKeyValue(buff, PROP_DAY, archiveDay);
+            }
             Hashtable         seen    = new Hashtable();
             AreaDirectoryList dirList =
-                new AreaDirectoryList(buff.toString());
+                    new AreaDirectoryList(buff.toString());
             for (Iterator it = dirList.getDirs().iterator(); it.hasNext(); ) {
                 AreaDirectory ad = (AreaDirectory) it.next();
                 String stationId =
-                    McIDASUtil.intBitsToString(ad.getValue(20)).trim();
+                        McIDASUtil.intBitsToString(ad.getValue(20)).trim();
                 //Check for uniqueness
                 if (seen.get(stationId) != null) {
                     continue;
@@ -311,12 +325,12 @@ public class AddeRadarChooser extends AddeImageChooser {
             if (msg.toLowerCase().indexOf(
                     "no images meet the selection criteria") >= 0) {
                 LogUtil.userErrorMessage(
-                    "No stations could be found on the server");
+                        "No stations could be found on the server");
+                stations = new ArrayList();
+                setState(STATE_UNCONNECTED);
             } else {
                 handleConnectionError(e);
             }
-            stations = new ArrayList();
-            setState(STATE_UNCONNECTED);
         }
         return stations;
     }
