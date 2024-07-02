@@ -66,6 +66,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -110,6 +111,8 @@ public class SupportForm extends JFrame {
     private JButton sendButton;
     private JButton cancelButton;
     private JButton helpButton;
+
+    private static ArrayList<String> filesToDelete = new ArrayList<>();
     
     /**
      * Creates a support request form that collects information about
@@ -495,6 +498,8 @@ public class SupportForm extends JFrame {
         setVisible(false);
         dispose();
         JOptionPane.showMessageDialog(null, "Support request sent successfully.", "Success", JOptionPane.DEFAULT_OPTION);
+        // delete compressed files, if any exist
+        clearFiles();
     }
     
     // TODO: dialogs are bad news hares.
@@ -563,6 +568,7 @@ public class SupportForm extends JFrame {
     }
     
     private void sendRequest(ActionEvent evt) {
+
         // check input validity
         if (!validInput()) {
             showInvalidInputs();
@@ -600,6 +606,14 @@ public class SupportForm extends JFrame {
             }
         }
     }
+
+    public static void clearFiles() {
+        for (int i = 0; i < filesToDelete.size(); i++) {
+            logger.warn(filesToDelete.get(i) + " will be deleted!");
+            File toDelete = new File(filesToDelete.get(i));
+            toDelete.delete();
+        }
+    }
     
     private static void attachFileToField(final JTextField field) {
         String current = field.getText();
@@ -634,6 +648,7 @@ public class SupportForm extends JFrame {
                 inStream.close();
                 outStream.close();
 
+                filesToDelete.add(newFilePath);
                 field.setText(newFilePath);
                 logger.info(newFilePath, newFileName);
             } catch (Exception e) {
