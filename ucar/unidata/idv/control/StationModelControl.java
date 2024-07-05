@@ -428,7 +428,11 @@ public class StationModelControl extends ObsDisplayControl {
     private static final Logger logger =
             LoggerFactory.getLogger(StationModelControl.class);
 
-    int SCALE_MAX = 5;
+
+    /**
+     * Maximum value for the declutter filter supported through the UI
+     */
+    private final int SCALE_MAX = 5;
     /**
      * Default constructor.
      */
@@ -2522,6 +2526,14 @@ public class StationModelControl extends ObsDisplayControl {
         // unused
         setDeclutterFilter(value);
         loadDataInThread();
+
+        if (value > SCALE_MAX) {
+            value = SCALE_MAX;
+        }
+
+        if (value < 0) {
+            value = 0; 
+        }
 
         // McIDAS Inquiry #3104-3141
         // For request 3, the previous version did not scale this part by the SCALE_MAX
