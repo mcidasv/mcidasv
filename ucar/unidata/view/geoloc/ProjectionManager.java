@@ -31,6 +31,7 @@ package ucar.unidata.view.geoloc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ucar.ma2.Array;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
 
@@ -48,6 +49,7 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.ListenerManager;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.Parameter;
 import ucar.unidata.view.NPController;
 
 
@@ -126,7 +128,9 @@ public class ProjectionManager implements ActionListener {
     public static List getDefaultProjections() {
         if (defaultProjections.size() == 0) {
             defaultProjections.add(
-                "ucar.unidata.geoloc.projection.LatLonProjection");
+                    "ucar.unidata.geoloc.projection.LatLonProjection");
+            defaultProjections.add(
+                "ucar.unidata.view.geoloc.EditableLatLon"); // McIDAS Inquiry #934-3141
             defaultProjections.add(
                 "ucar.unidata.geoloc.projection.LambertConformal");
             defaultProjections.add(
@@ -461,15 +465,7 @@ public class ProjectionManager implements ActionListener {
         } catch (Exception exc) {
             LogUtil.logException("Writing projection file: " + filename, exc);
         }
-
-
-
-
     }
-
-
-
-
 
     /**
      * Make the default projections from the internal list of classes.
@@ -981,8 +977,21 @@ public class ProjectionManager implements ActionListener {
                     ProjectionClass projClass =
                         findProjectionClass(editProjection);
                     if (null != projClass) {
-                        setProjFromDialog(projClass, editProjection);
+                        ArrayList<String> fix = setProjFromDialog(projClass, editProjection);
                         setProjection(editProjection);
+
+                        // McIDAS Inquiry #934-3141: for some reason the text fields
+                        // would reset after changing the projection
+                        // this just takes the previous values and explicitly
+                        // sets the correct values back in the text fields
+
+                        for (int i = 0; i < projClass.paramList.size(); i++) {
+                            ProjectionParam pp = (ProjectionParam) projClass.paramList.get(i);
+                            logger.info(pp.getTextField().getText());
+                            pp.getTextField().setText(fix.get(i));
+                            logger.info(pp.getTextField().getText());
+                            logger.info(fix.get(i));
+                        }
                     }
                 }
             });
@@ -1271,9 +1280,11 @@ public class ProjectionManager implements ActionListener {
          * @param projClass  projection class
          * @param proj       projection
          */
-        private void setProjFromDialog(ProjectionClass projClass,
+        private ArrayList setProjFromDialog(ProjectionClass projClass,
                                        ProjectionImpl proj) {
             proj.setName(nameTF.getText().trim());
+
+            ArrayList<String> fix = new ArrayList<>();
 
             for (int i = 0; i < projClass.paramList.size(); i++) {
                 ProjectionParam pp =
@@ -1281,6 +1292,7 @@ public class ProjectionManager implements ActionListener {
                 // fetch the value from the projection object
                 try {
                     String   valstr = pp.getTextField().getText();
+                    fix.add(valstr);
                     Double   valdub = new Double(valstr);
                     Object[] args   = { valdub };
                     if (debugBeans) {
@@ -1297,6 +1309,8 @@ public class ProjectionManager implements ActionListener {
                     continue;
                 }
             }
+
+            return fix;
         }
 
     }  // end NewProjectionDialog
