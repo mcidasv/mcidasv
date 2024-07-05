@@ -428,6 +428,7 @@ public class StationModelControl extends ObsDisplayControl {
     private static final Logger logger =
             LoggerFactory.getLogger(StationModelControl.class);
 
+    int SCALE_MAX = 5;
     /**
      * Default constructor.
      */
@@ -2522,8 +2523,14 @@ public class StationModelControl extends ObsDisplayControl {
         setDeclutterFilter(value);
         loadDataInThread();
 
+        // McIDAS Inquiry #3104-3141
+        // For request 3, the previous version did not scale this part by the SCALE_MAX
+
+        // scaling the slider with respect to SCALE_MAX
+        double val = (SCALE_MAX - value) / SCALE_MAX;
+
         if (densitySlider != null) {
-            GuiUtils.setSliderPercent(densitySlider, 1.0f - value);
+            GuiUtils.setSliderPercent(densitySlider, val);
         }
     }
 
@@ -2920,11 +2927,10 @@ public class StationModelControl extends ObsDisplayControl {
      * @return The panel that holds the density slider.
      */
     protected JPanel getDensityControl() {
-        int scaleMax = 5;
         densitySlider = new JSlider(0, 100, 0);
         addDensityComp(densitySlider);
         GuiUtils.setSliderPercent(densitySlider,
-                                   1 - (declutterFilter / scaleMax));
+                                   1 - (declutterFilter / SCALE_MAX));
         densitySlider.setToolTipText(
             "Control the density of the plot displays");
         densitySlider.addChangeListener(new ChangeListener() {
@@ -2938,7 +2944,7 @@ public class StationModelControl extends ObsDisplayControl {
                  * Density value
                  */
 
-                float newValue = (1 - (float) GuiUtils.getSliderPercent(densitySlider)) * scaleMax;
+                float newValue = (1 - (float) GuiUtils.getSliderPercent(densitySlider)) * SCALE_MAX;
                     logger.info(String.valueOf(newValue));
                 if (newValue == declutterFilter) {
                     return;
