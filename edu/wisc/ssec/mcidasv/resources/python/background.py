@@ -1663,7 +1663,26 @@ class _Display(_JavaProxy):
                 if layer.usedTemporaryId:
                     layer.getJavaInstance().setId(None)
                     layer.usedTemporaryId = False
-                    
+
+
+    # McIDAS Inquiry #2920-3141
+    def annotateAtStation(self, text, station, font=None, color='red', size=None, style=None, alignment=None,
+                          bgColor=None):
+
+        if station is not None:
+            stations = self.loadStations()
+            if station not in stations:
+                return "Not a valid station"
+            else:
+                lat, lon = stations.get(station)
+                for _ in range(2):
+                    try:
+                        return self.annotate(text = text, lat = lat, lon = lon, font = font, color = color, size = size, style = style, alignment=alignment, bgColor=bgColor)
+                    except:
+                        # For some reason, it needs to fail once before it creates an annotation
+                        continue
+
+
     # @gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
         font=None, color='red', size=None, style=None, alignment=None, 
@@ -1711,7 +1730,7 @@ class _Display(_JavaProxy):
         import colorutils
         from visad.georef import EarthLocationTuple
         from ucar.unidata.idv.control.drawing import DrawingGlyph
-        
+
         alignment = alignment or ('center', 'center')
         
         # Force into offscreen mode for the moment so drawing control
