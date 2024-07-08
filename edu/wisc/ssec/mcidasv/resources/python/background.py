@@ -1153,7 +1153,22 @@ class _Display(_JavaProxy):
             cord = (float(l[2]), float(l[3]))
             out[name] = cord
 
+        out = self.loadNEXRADstns(out)
+
         return out
+
+    def loadNEXRADstns(self, stationTable):
+        stationsDBrel = "../edu/wisc/ssec/mcidasv/resources/nexradstns.csv" # insert path here
+        stationsDB = os.path.abspath(stationsDBrel)
+        log = open(stationsDB, "r")
+        inCSV = csv.reader(log)
+
+        for l in inCSV:
+            name = l[0]
+            cord = (float(l[1]), float(l[2]))
+            stationTable[name] = cord
+
+        return stationTable
 
     @gui_invoke_later
     def setCenterAtStation(self, name, scale = 1.0):
