@@ -81,25 +81,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.JViewport;
-import javax.swing.ScrollPaneConstants;
-
-
+import javax.swing.*;
 
 
 /**
@@ -807,10 +789,24 @@ public class MapDisplayControl extends DisplayControlImpl {
             addMapMenu.add(mi);
             mi.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
+                    logger.info(String.valueOf(mapData));
                     MapState mapState = new MapState(mapData);
-                    mapState.setVisible(true);
-                    addMap(mapState);
-                    fillContents();
+
+                    // McIDAS Inquiry #1033-3141
+                    // Should not be able to add another map of the same kind if it exists in the legend
+                    boolean flag = true;
+                    for (int i = 0; i < mapStates.size(); i++) {
+                        if (mapState.equals(mapStates.get(i))) {
+                            flag = false;
+                            JOptionPane.showMessageDialog(null, "This system map is already in the legend", "Invalid Map Choice", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+
+                    if (flag) {
+                        mapState.setVisible(true);
+                        addMap(mapState);
+                        fillContents();
+                    }
                 }
             });
         }
