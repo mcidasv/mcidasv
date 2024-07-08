@@ -2,6 +2,7 @@
 
 import os
 import types
+import csv
 
 import islformatters
 
@@ -1138,7 +1139,33 @@ class _Display(_JavaProxy):
     def center(self, lat, lon, scale=1.0):
         self.setCenter(lat, lon)
         #self.setScaleFactor(scale)
-        
+    # McIDAS Inquiry #2920-3141
+    @gui_invoke_later
+    def loadStations(self):
+        stationsDBrel = "../edu/wisc/ssec/mcidasv/resources/orbittrack_groundstations_db.csv"
+        stationsDB = os.path.abspath(stationsDBrel)
+        log = open(stationsDB, "r")
+        inCSV = csv.reader(log)
+
+        out = {}
+        for l in inCSV:
+            name = l[1]
+            cord = (float(l[2]), float(l[3]))
+            out[name] = cord
+
+        return out
+
+    @gui_invoke_later
+    def setCenterAtStation(self, name, scale = 1.0):
+        stations = self.loadStations()
+
+        if name not in stations:
+            return "Not a valid station"
+        else:
+            lat, lon = stations.get(name)
+            self.setCenter(lat, lon, scale)
+
+
     @gui_invoke_later
     def setCenter(self, lat, lon, scale=1.0):
         """Center display over a given latitude and longitude.
