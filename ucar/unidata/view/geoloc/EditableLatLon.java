@@ -45,7 +45,8 @@ public class EditableLatLon extends ProjectionImpl {
      * Resize ProjectionRect based on the params
      */
     private void resize() {
-        this.defaultMapArea = new ProjectionRect(latitude0, longitude0, latitude1, longitude1);
+        // McIDAS Inquiry #934-3141: Bug1 from Request 5
+        this.defaultMapArea = new ProjectionRect(longitude0, latitude0, longitude1, latitude1);
     }
 
     /**
