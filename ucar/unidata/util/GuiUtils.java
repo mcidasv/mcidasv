@@ -1997,6 +1997,18 @@ public class GuiUtils extends LayoutUtil {
                                           CMD_CANCEL });
     }
 
+    /**
+     * Utility to make ok/help button panel
+     *
+     * @param l The listener to add to the buttons
+     * @return Button panel
+     */
+    public static JPanel makeOkHelpButtons(ActionListener l) {
+        return makeButtons(l, new String[] { "OK", "Help" },
+                new String[] { CMD_OK,
+                        CMD_HELP });
+    }
+
 
     /**
      * Utility to make apply/ok/cancel button panel

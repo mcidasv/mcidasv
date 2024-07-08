@@ -383,7 +383,7 @@ public class ProjectionManager implements ActionListener {
         // put it together in the viewDialog
         // McIDAS Inquiry #1173-3141 -> changed the buttons to OK, Help, and Cancel to remove redundant buttons
         if (makeDialog) {
-            Container buttPanel = GuiUtils.makeOkHelpCancelButtons(this);
+            Container buttPanel = GuiUtils.makeOkHelpButtons(this);
             contents   = GuiUtils.centerBottom(contents, buttPanel);
             viewDialog = GuiUtils.createDialog(GuiUtils.getApplicationTitle()
                     + "Projection Manager", false);
@@ -407,10 +407,10 @@ public class ProjectionManager implements ActionListener {
             accept();
             close();
         }
-        if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+        //if (cmd.equals(GuiUtils.CMD_CANCEL)) {
             // Closes the manager
-            close();
-        }
+        //    close();
+        //}
         if (cmd.equals(GuiUtils.CMD_HELP)) {
             // This does nothing from what I can tell but I'm leaving it here for when it gets fixed
             ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(helpId);
