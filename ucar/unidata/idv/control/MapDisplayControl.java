@@ -97,6 +97,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JViewport;
+import javax.swing.JOptionPane;
 import javax.swing.ScrollPaneConstants;
 
 
@@ -805,7 +806,6 @@ public class MapDisplayControl extends DisplayControlImpl {
             addMapMenu.add(mi);
             mi.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    logger.info(String.valueOf(mapData));
                     MapState mapState = new MapState(mapData);
 
                     // McIDAS Inquiry #1033-3141
