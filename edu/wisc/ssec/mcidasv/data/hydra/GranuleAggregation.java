@@ -854,13 +854,48 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   primArray = processArray(
 			      mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count
 			   );
+			   // new implementation works for:
+			   // CrIS: GCRSO-SCRIF_npp_d20211107_t1738479_e1746457_b51974_c20211108124028112597_oebc_ops.h5
+			   // ATMS: GATMO-SATMS_npp_d20170605_t1908560_e1916556_b29048_c20170606172759645421_noac_ops.h5
+			   // up to some other weird numbers (no errors)
+
+			   // Array a = (Array) primArray;
+			   // if (a != null) {
+			   //	   logger.info("NULL ARRAY - 3117-3141");
+			   //	   continue;
+			   // }
+			   // McIDAS Inquiry #3117-3141 -> Fixed for ATMS data
+			   int push = 0;
 			   if (a.getSize() > remaining) {
-			       System.arraycopy(primArray, 0, finalArray, destPos, remaining);
+				   push = remaining;
+				   for (int i = 0; i < remaining; i++) {
+					   if (!((Float) a.getFloat(i)).equals(null)) {
+						   finalArray[destPos + i] = a.getFloat(i);
+					   } else {
+						   // At least with, GATMO-SATMS_npp_d20170605_t1908560_e1916556_b29048_c2017060617275, this never happened
+						   finalArray[destPos + i] = 0;
+						   logger.info("wambam1 -3141");
+					   }
+				   }
+
+			       // System.arraycopy(primArray, 0, finalArray, destPos, remaining);
+
 			   } else {
-			       System.arraycopy(primArray, 0, finalArray, destPos, (int) a.getSize());
+				   push = (int) a.getSize();
+				   for (int i = 0; i < (int) a.getSize(); i++) {
+					   if (!((Float) a.getFloat(i)).equals(null)) {
+						   finalArray[destPos + i] = a.getFloat(i);
+					   } else {
+						   // At least with, GATMO-SATMS_npp_d20170605_t1908560_e1916556_b29048_c2017060617275, this never happened
+						   finalArray[destPos + i] = 0;
+						   logger.info("wambam2 -3141");
+					   }
+				   }
+
+			       // System.arraycopy(primArray, 0, finalArray, destPos, (int) a.getSize());
 			   }
-			   destPos += a.getSize();
-			   remaining -= (int) a.getSize();
+			   destPos += push;
+			   remaining -= push;
 		   }
 		   granIdx++;
 	   }
