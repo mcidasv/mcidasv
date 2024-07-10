@@ -41,6 +41,7 @@ import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.geoloc.ProjectionRect;
+import ucar.unidata.geoloc.projection.LatLonProjection;
 import ucar.unidata.gis.maps.MapData;
 import ucar.unidata.gis.maps.MapInfo;
 import ucar.unidata.idv.control.MapDisplayControl;
@@ -91,21 +92,9 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.VisADException;
 
-import visad.georef.EarthLocation;
-import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonPoint;
-import visad.georef.MapProjection;
-import visad.georef.TrivialMapProjection;
+import visad.georef.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -116,27 +105,10 @@ import java.rmi.RemoteException;
 
 import java.text.Collator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
-import java.util.TreeSet;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -2911,12 +2883,96 @@ public class MapViewManager extends NavigatedViewManager {
         }
     }
 
+    /**
+     * McIDAS Inquiry #3151-3141
+     * Creates projection using two corner points
+     */
+    public void setProjectionLatLon(double[] lowerRight, double[] upperLeft) {
+        try {
+            NavigatedDisplay display = getMapDisplay();
+
+            LatLonTuple ulLLP = new LatLonTuple(upperLeft[0], upperLeft[1]);
+            LatLonTuple lrLLP = new LatLonTuple(lowerRight[0], lowerRight[1]);
+
+            if ((ulLLP == null) || (lrLLP == null)) {
+                LogUtil.userMessage("Could not create a valid projection");
+                return;
+            }
+
+            double minX = Math.min(ulLLP.getLongitude().getValue(),
+                    lrLLP.getLongitude().getValue());
+            double maxX = Math.max(ulLLP.getLongitude().getValue(),
+                    lrLLP.getLongitude().getValue());
+            double minY = Math.min(ulLLP.getLatitude().getValue(),
+                    lrLLP.getLatitude().getValue());
+            double maxY = Math.max(ulLLP.getLatitude().getValue(),
+                    lrLLP.getLatitude().getValue());
+            Rectangle2D.Float rect = new Rectangle2D.Float((float) minX,
+                    (float) minY, (float) (maxX - minX),
+                    (float) (maxY - minY));
+
+            MapProjection mp = ucar.visad.Util.makeMapProjection(minY, minX, maxY, maxX);
+            setMapProjection(mp, true);
+            display.saveProjection();
+
+        } catch (Exception exp) {
+            logException("Setting projection", exp);
+        }
+    }
+
 
     /**
      * Show the projection manager.
      */
     public void showProjectionManager() {
         getIdv().showIdvProjectionManager();
+    }
+
+    /**
+     * McIDAS Inquiry #3151-3141
+     * Creates a projection manager that accepts two corner points
+     * to create a projection
+     */
+
+    public void makeCustomProjectionManager() {
+        JFrame frame = new JFrame("Custom Projection");
+        frame.setSize(600, 100);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        ArrayList<JTextField> fields = new ArrayList<>();
+        Dimension size = new Dimension(90, 30);
+        String[] labels = {"Lat0", "Lon0", "Lat1", "Lon1"};
+
+        for (int i = 0; i < 4; i++) {
+            panel.add(new JLabel(labels[i]));
+            JTextField textField = new JTextField();
+            textField.setPreferredSize(size);
+            fields.add(textField);
+            panel.add(textField);
+        }
+
+        JButton submit = new JButton("Submit");
+        panel.add(submit);
+
+        submit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                double[] pt1 = new double[2];
+                double[] pt2 = new double[2];
+                for (int i = 0; i < 2; i++) {
+                    pt1[i] = Double.valueOf(fields.get(i).getText());
+                    pt2[i] = Double.valueOf(fields.get(i + 2).getText());
+                }
+
+                logger.info(Arrays.toString(pt1));
+                logger.info(Arrays.toString(pt2));
+                setProjectionLatLon(pt1, pt2);
+            }
+        });
+
+        frame.add(panel);
+        frame.setVisible(true);
     }
 
 
@@ -3204,6 +3260,10 @@ public class MapViewManager extends NavigatedViewManager {
             projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Use Displayed Area",
                     this,
                     "setCurrentAsProjection"), "/auxdata/ui/icons/world_rect.png"));
+            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Custom gProjection",
+                    this,
+                    "makeCustomProjectionManager"
+                    ), "/auxdata/ui/icons/world_rect.png"));
         }
         projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Go to Address",
                 this, "goToAddress"), "/auxdata/ui/icons/house_go.png"));
