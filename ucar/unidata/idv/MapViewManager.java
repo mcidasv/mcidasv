@@ -3260,7 +3260,7 @@ public class MapViewManager extends NavigatedViewManager {
             projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Use Displayed Area",
                     this,
                     "setCurrentAsProjection"), "/auxdata/ui/icons/world_rect.png"));
-            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Custom gProjection",
+            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Custom Projection",
                     this,
                     "makeCustomProjectionManager"
                     ), "/auxdata/ui/icons/world_rect.png"));
