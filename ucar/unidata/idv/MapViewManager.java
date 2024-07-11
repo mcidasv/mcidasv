@@ -2936,28 +2936,78 @@ public class MapViewManager extends NavigatedViewManager {
 
     public void makeCustomProjectionManager() {
         JFrame frame = new JFrame("Custom Projection");
-        frame.setSize(600, 100);
+        frame.setSize(600, 400);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
+        // Top: instructions/err msgs, Mid: Input, Bottom: Buttons
+        JPanel outerPanel = new JPanel(new BorderLayout());
+        JPanel midPanel = new JPanel(new FlowLayout());
+        JPanel botPanel = new JPanel(new FlowLayout());
+        JPanel topPanel = new JPanel(new FlowLayout());
+        String initStr = "Provide Upper Left and Lower Right Latitude and Longitude";
+        JLabel topLabel = new JLabel(initStr);
+        topPanel.add(topLabel);
+        outerPanel.add(topPanel, BorderLayout.NORTH);
+        outerPanel.add(botPanel, BorderLayout.SOUTH);
+        outerPanel.add(midPanel, BorderLayout.CENTER);
 
         ArrayList<JTextField> fields = new ArrayList<>();
         Dimension size = new Dimension(90, 30);
         String[] labels = {"Lat0", "Lon0", "Lat1", "Lon1"};
 
         for (int i = 0; i < 4; i++) {
-            panel.add(new JLabel(labels[i]));
+            midPanel.add(new JLabel(labels[i]));
             JTextField textField = new JTextField();
             textField.setPreferredSize(size);
             fields.add(textField);
-            panel.add(textField);
+            midPanel.add(textField);
         }
 
+        // Two options for UI, Cancel or Submit
+        JButton cancel = new JButton("Cancel");
+        botPanel.add(cancel);
+
         JButton submit = new JButton("Submit");
-        panel.add(submit);
+        botPanel.add(submit);
+
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                return;
+            }
+        });
 
         submit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+
+                // Do some validation on input fields
+                float fLatUL;
+                float fLonUL;
+                float fLatLR;
+                float fLonLR;
+
+                // JLabel style strings for error messages
+                String styleStr = "\"font-family:verdana;color:red;font-size:12px\">";
+                String htmlStart = "<html><p style=";
+                String htmlEnd = "</p></html>";
+
+                try {
+                    fLatUL = Float.parseFloat(fields.get(0).getText());
+                    fLonUL = Float.parseFloat(fields.get(1).getText());
+                    fLatLR = Float.parseFloat(fields.get(2).getText());
+                    fLonLR = Float.parseFloat(fields.get(3).getText());
+                } catch (NumberFormatException nfe) {
+                    topLabel.setText(htmlStart + styleStr + "Latitude and Longitude must be floating point numbers, please correct." + htmlEnd);
+                    return;
+                }
+                if ((fLatUL < -90) || (fLatUL > 90) || (fLatLR < -90) || (fLatLR > 90)) {
+                    topLabel.setText(htmlStart + styleStr + "Latitude value(s) are out of valid range, -90 to +90" + htmlEnd);
+                    return;
+                }
+                if ((fLonUL < -180) || (fLonUL > 180) || (fLonLR < -180) || (fLonLR > 180)) {
+                    topLabel.setText(htmlStart + styleStr + "Longitude value(s) are out of valid range, -180 to +180" + htmlEnd);
+                    return;
+                }
+
                 double[] pt1 = new double[2];
                 double[] pt2 = new double[2];
                 for (int i = 0; i < 2; i++) {
@@ -2971,12 +3021,9 @@ public class MapViewManager extends NavigatedViewManager {
             }
         });
 
-        frame.add(panel);
+        frame.add(outerPanel);
         frame.setVisible(true);
     }
-
-
-
 
     /**
      * Set or reset map area of view, using NavigatedDisplay method.
