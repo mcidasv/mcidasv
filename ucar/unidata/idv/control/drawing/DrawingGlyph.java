@@ -1,36 +1,30 @@
-/*
- * This file is part of McIDAS-V
+/**
+ * $Id: DrawingGlyph.java,v 1.92 2007/08/16 14:04:12 jeffmc Exp $
  *
- * Copyright 2007-2024
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- * https://www.ssec.wisc.edu/mcidas/
- * 
- * All Rights Reserved
- * 
- * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see https://www.gnu.org/licenses/.
+ * Copyright  1997-2024 Unidata Program Center/University Corporation for
+ * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
+ * support@unidata.ucar.edu.
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 
 package ucar.unidata.idv.control.drawing;
 
 
-import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import ij.macro.Symbol;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -178,19 +172,22 @@ public abstract class DrawingGlyph {
     /** Represents LAT/LON vertical coordinate */
     public static final int COORD_LATLON = 3;
 
+    /** Represents LAT/LON vertical coordinate */
+    public static final int COORD_LONLAT = 4;
+
     /** Drawing coordinate types */
     public static final int[] COORD_TYPES = { COORD_XYZ, COORD_XY,
-            COORD_LATLONALT, COORD_LATLON };
+            COORD_LATLONALT, COORD_LATLON, COORD_LONLAT };
 
 
     /** Drawing coordinate names */
     public static final String[] COORD_TYPENAMES = { "XYZ", "XY", "LATLONALT",
-            "LATLON" };
+            "LATLON", "LONLAT" };
 
 
     /** labels for coordinate syste type. */
     public static final String[] COORD_LABELS = { "X/Y/Z", "X/Y",
-            "Lat/Lon/Alt", "Lat/Lon" };
+            "Lat/Lon/Alt", "Lat/Lon", "Lon/Lat" };
 
     /** The name of this glyph */
     private String name;
@@ -334,9 +331,9 @@ public abstract class DrawingGlyph {
     private boolean beingCreated = false;
 
     /** Shows the color */
-    private ColorSwatchComponent colorSwatch;
+    private GuiUtils.ColorSwatch colorSwatch;
 
-    private ColorSwatchComponent bgColorSwatch;
+    private GuiUtils.ColorSwatch bgColorSwatch;
 
     /** _more_          */
     private AbstractTableModel pointTableModel;
@@ -470,9 +467,9 @@ public abstract class DrawingGlyph {
 
         //zPosition = XmlUtil.getAttribute(node, ATTR_ZPOSITION, (float) 0.0);
         zPosition = XmlUtil.getAttribute(node, ATTR_ZPOSITION,
-                                         getDefaultZPosition());
+                getDefaultZPosition());
         String coordTypeName = XmlUtil.getAttribute(node, ATTR_COORDTYPE,
-                                   "LATLONALT");
+                "LATLONALT");
         coordTypeName = coordTypeName.toUpperCase();
         setCoordType(COORD_LATLONALT);
         for (int i = 0; i < COORD_TYPES.length; i++) {
@@ -482,9 +479,9 @@ public abstract class DrawingGlyph {
             }
         }
         String timeAttr = XmlUtil.getAttribute(node, ATTR_TIMES,
-                              (String) null);
+                (String) null);
         String timeFormat = XmlUtil.getAttribute(node, ATTR_TIMEFORMAT,
-                                (String) null);
+                (String) null);
         SimpleDateFormat sdf = null;
         if (timeAttr != null) {
             List timeStrings = StringUtil.split(timeAttr, ",", true, true);
@@ -495,10 +492,10 @@ public abstract class DrawingGlyph {
                     String s = timeStrings.get(i).toString();
                     if (s.equals("NEGATIVE_INFINITY")) {
                         timeValues.add(
-                            new DateTime(Double.NEGATIVE_INFINITY));
+                                new DateTime(Double.NEGATIVE_INFINITY));
                     } else if (s.equals("POSITIVE_INFINITY")) {
                         timeValues.add(
-                            new DateTime(Double.POSITIVE_INFINITY));
+                                new DateTime(Double.POSITIVE_INFINITY));
                     } else {
                         if (timeFormat != null) {
                             if (sdf == null) {
@@ -523,23 +520,24 @@ public abstract class DrawingGlyph {
 
 
         List pointStrings = StringUtil.split(XmlUtil.getAttribute(node,
-                                ATTR_POINTS), ",", true, true);
+                ATTR_POINTS), ",", true, true);
 
         int stride = 3;
-        if ((coordType == COORD_XY) || (coordType == COORD_LATLON)) {
+        if ((coordType == COORD_XY) || (coordType == COORD_LATLON) ||
+                (coordType == COORD_LONLAT)) {
             stride = 2;
         }
         if (isInXYSpace()) {
             for (int i = 0; i < pointStrings.size(); i += stride) {
                 double[] da = new double[3];
                 da[IDX_X] =
-                    Double.parseDouble(pointStrings.get(i).toString());
+                        Double.parseDouble(pointStrings.get(i).toString());
                 da[IDX_Y] = Double.parseDouble(pointStrings.get(i
                         + 1).toString());
                 da[IDX_Z] = (coordType == COORD_XY)
-                            ? (double) zPosition
-                            : Double.parseDouble(pointStrings.get(i
-                            + 2).toString());
+                        ? (double) zPosition
+                        : Double.parseDouble(pointStrings.get(i
+                        + 2).toString());
                 points.add(da);
             }
         } else {
@@ -547,7 +545,7 @@ public abstract class DrawingGlyph {
         }
 
         bgcolor = XmlUtil.getAttribute(node, ATTR_BGCOLOR, (Color)null);
-        
+
 
 
         Color c = XmlUtil.getAttribute(node, ATTR_COLOR, getColor());
@@ -559,7 +557,7 @@ public abstract class DrawingGlyph {
         setFilled(XmlUtil.getAttribute(node, ATTR_FILLED, filled));
         setPickable(XmlUtil.getAttribute(node, ATTR_PICKABLE, pickable));
         setFullLatLon(XmlUtil.getAttribute(node, ATTR_FULLLATLON,
-                                           fullLatLon));
+                fullLatLon));
     }
 
     /**
@@ -588,8 +586,8 @@ public abstract class DrawingGlyph {
      */
     protected float getDefaultZPosition() {
         return (control == null)
-               ? 0.f
-               : (float) control.getZPosition();
+                ? 0.f
+                : (float) control.getZPosition();
     }
 
     /**
@@ -614,15 +612,26 @@ public abstract class DrawingGlyph {
     public void processPointStrings(List pointStrings)
             throws VisADException, RemoteException {
         int stride = 3;
-        if ((coordType == COORD_XY) || (coordType == COORD_LATLON)) {
+        if ((coordType == COORD_XY) || (coordType == COORD_LATLON) || (coordType == COORD_LONLAT)) {
             stride = 2;
         }
-        double fixedAlt = getFixedAltitude();
+        double fixedAlt;
+        if(control != null)
+            fixedAlt = getFixedAltitude();
+        else
+            fixedAlt = 0.0;
         points = new ArrayList();
         for (int i = 0; i < pointStrings.size(); i += stride) {
             double lat = Misc.decodeLatLon(pointStrings.get(i).toString());
             double lon = Misc.decodeLatLon(pointStrings.get(i
-                             + 1).toString());
+                    + 1).toString());
+
+            if(coordType == COORD_LONLAT){
+                lon = Misc.decodeLatLon(pointStrings.get(i).toString());
+                lat = Misc.decodeLatLon(pointStrings.get(i
+                        + 1).toString());
+            }
+            //lon = LatLonPointImpl.lonNormalFrom().lonNormal360(lon);
             double alt;
             if (coordType == COORD_LATLONALT) {
                 alt = Double.parseDouble((String) pointStrings.get(i + 2));
@@ -631,13 +640,50 @@ public abstract class DrawingGlyph {
             }
             points.add(new EarthLocationTuple(new Real(RealType.Latitude,
                     lat), new Real(RealType.Longitude, lon),
-                          new Real(RealType.Altitude, alt)));
+                    new Real(RealType.Altitude, alt)));
 
         }
     }
 
+    /**
+     * Parse the List of point strings. The format depends on the coordinate
+     * system type (e.g., XY, XYZ, etc.)
+     *
+     * @param pointStrings  List of Strings that represent double location values
+     *
+     * @throws RemoteException On badness
+     * @throws VisADException On badness
+     */
+    public void processPointStrings(List pointStrings, boolean normalize360)
+            throws VisADException, RemoteException {
+        int stride = 3;
+        if ((coordType == COORD_XY) || (coordType == COORD_LATLON) || (coordType == COORD_LONLAT)) {
+            stride = 2;
+        }
+        double fixedAlt;
+        if(control != null)
+            fixedAlt = getFixedAltitude();
+        else
+            fixedAlt = 0.0;
+        points = new ArrayList();
+        for (int i = 0; i < pointStrings.size(); i += stride) {
+            double lat = Misc.decodeLatLon(pointStrings.get(i).toString());
+            double lon = Misc.decodeLatLon(pointStrings.get(i
+                    + 1).toString());
+            if(normalize360)
+                lon = LatLonPointImpl.lonNormal360(lon);
+            double alt;
+            if (coordType == COORD_LATLONALT) {
+                alt = Double.parseDouble((String) pointStrings.get(i + 2));
+            } else {
+                alt = fixedAlt;
+            }
+            points.add(new EarthLocationTuple(new Real(RealType.Latitude,
+                    lat), new Real(RealType.Longitude, lon),
+                    new Real(RealType.Altitude, alt)));
 
-
+        }
+    }
 
     /**
      * handle event
@@ -679,15 +725,15 @@ public abstract class DrawingGlyph {
             selectionDisplayable = new CompositeDisplayable();
             //            Misc.printStack("setSelected", 10,null);
             VisADGeometryArray marker =
-                ShapeUtility.setSize(
-                    ShapeUtility.createShape(ShapeUtility.FILLED_SQUARE)[0],
-                    .02f);
+                    ShapeUtility.setSize(
+                            ShapeUtility.createShape(ShapeUtility.FILLED_SQUARE)[0],
+                            .02f);
 
             List thePoints = getTrimmedSelectionPoints();
             for (int i = 0; (i < thePoints.size()); i++) {
                 SelectorPoint point =
-                    new SelectorPoint("Probe point " + (uniqueCnt++),
-                                      RealTupleType.SpatialCartesian3DTuple);
+                        new SelectorPoint("Probe point " + (uniqueCnt++),
+                                RealTupleType.SpatialCartesian3DTuple);
                 point.setAutoSize(true);
                 point.setMarker(marker);
                 point.setManipulable(false);
@@ -762,19 +808,19 @@ public abstract class DrawingGlyph {
 
         //        System.err.println ("setSelectionPosition-start");
         for (int i = 0;
-                (i < thePoints.size())
-                && (i < selectionDisplayable.displayableCount());
-                i++) {
+             (i < thePoints.size())
+                     && (i < selectionDisplayable.displayableCount());
+             i++) {
             double[] loc = getBoxPoint(i, thePoints);
             if (isInFlatSpace()) {
                 loc[IDX_Z] = getZPosition();
             }
             RealTuple rt =
-                new RealTuple(RealTupleType.SpatialCartesian3DTuple,
-                              new double[] { loc[IDX_X],
-                                             loc[IDX_Y], loc[IDX_Z] });
+                    new RealTuple(RealTupleType.SpatialCartesian3DTuple,
+                            new double[] { loc[IDX_X],
+                                    loc[IDX_Y], loc[IDX_Z] });
             ((SelectorPoint) selectionDisplayable.getDisplayable(i)).setPoint(
-                rt);
+                    rt);
         }
         getParent().setDisplayActive();
     }
@@ -924,21 +970,21 @@ public abstract class DrawingGlyph {
         desc.append("  ");
         if (squareKM > 1.0) {
             desc.append(
-                control.getDisplayConventions().formatDistance(squareKM));
+                    control.getDisplayConventions().formatDistance(squareKM));
             desc.append("[km^2] ");
         } else {
             desc.append(
-                control.getDisplayConventions().formatDistance(hectares));
+                    control.getDisplayConventions().formatDistance(hectares));
             desc.append("[hectares] ");
         }
         desc.append("  ");
         if (squareMiles > 1.0) {
             desc.append(
-                control.getDisplayConventions().formatDistance(squareMiles));
+                    control.getDisplayConventions().formatDistance(squareMiles));
             desc.append("[miles^2] ");
         } else {
             desc.append(
-                control.getDisplayConventions().formatDistance(acres));
+                    control.getDisplayConventions().formatDistance(acres));
             desc.append("[acres] ");
         }
         return desc.toString();
@@ -1090,11 +1136,20 @@ public abstract class DrawingGlyph {
             return;
         }
         Real currentAnimationTime = animation.getAniValue();
-        if ((currentAnimationTime == null)
-                || currentAnimationTime.isMissing()) {
-            setVisible(true);
-            return;
+        if(currentAnimationTime == null  && timeValues.size() > 0){
+            DateTime [] dateTimes = control.getAnimationWidget().getTimes();
+            if(control.getViewAnimation() != null)
+                currentAnimationTime = control.getViewAnimation().getAniValue();
+            if(currentAnimationTime == null  && timeValues.size() == 1 )
+                currentAnimationTime = (Real)dateTimes[0];
         }
+
+        if(timeValues == null)
+            if ((currentAnimationTime == null)
+                    || currentAnimationTime.isMissing()) {
+                setVisible(true);
+                return;
+            }
 
         if (timeSet == null) {
             timeSet = Util.makeTimeSet(timeValues);
@@ -1105,14 +1160,37 @@ public abstract class DrawingGlyph {
         if (timeSet.getLength() == 1) {
             Real myTime = (Real) timeValues.get(0);
             //            System.err.println("ctv one time:" + myTime + " " + currentAnimationTime);
-            setVisible(myTime.equals(currentAnimationTime));
+            if(myTime.equals(currentAnimationTime))
+                setVisible(true);
+            else {
+                DateTime[] dateTimes = animation.getTimes();
+                int len = dateTimes.length;
+                DateTime t0 = dateTimes[0];
+                if(len == 1) {
+                    setVisible(true);
+                } else {
+                    DateTime t1 = dateTimes[1];
+
+                    double intval = (t1.getValue() - t0.getValue()) / 2.0;
+
+                    if (myTime.getValue() > (currentAnimationTime.getValue() - intval)
+                            && myTime.getValue() < (currentAnimationTime.getValue() + intval)) {
+                        setVisible(true);
+                    } else {
+                        setVisible(false);
+                        //System.out.println("hhh");
+                    }
+                }
+            }
         } else {
             //Else work the visad magic
+            if(currentAnimationTime == null)
+                return;
             float timeValueFloat = (float) currentAnimationTime.getValue(
-                                       timeSet.getSetUnits()[0]);
+                    timeSet.getSetUnits()[0]);
             //            System.err.println("multiple times:" + timeValueFloat);
             float[][] value = {
-                { timeValueFloat }
+                    { timeValueFloat }
             };
             int[]     index = timeSet.valueToIndex(value);
             //            System.err.println("index:" + index[0]);
@@ -1219,7 +1297,7 @@ public abstract class DrawingGlyph {
      * @return Is in 2d space
      */
     public boolean isInFlatSpace() {
-        return (coordType == COORD_XY) || (coordType == COORD_LATLON);
+        return (coordType == COORD_XY) || (coordType == COORD_LATLON) || (coordType == COORD_LONLAT);
     }
 
     /**
@@ -1228,7 +1306,7 @@ public abstract class DrawingGlyph {
      * @return Is in latlon space
      */
     public boolean isInLatLonSpace() {
-        return (coordType == COORD_LATLONALT) || (coordType == COORD_LATLON);
+        return (coordType == COORD_LATLONALT) || (coordType == COORD_LATLON) || (coordType == COORD_LONLAT) ;
     }
 
 
@@ -1268,8 +1346,8 @@ public abstract class DrawingGlyph {
             if (isInFlatSpace()) {
                 Real alt = el.getAltitude();
                 el = new EarthLocationTuple(
-                    el.getLatLonPoint(),
-                    new Real((RealType) alt.getType(), getFixedAltitude()));
+                        el.getLatLonPoint(),
+                        new Real((RealType) alt.getType(), getFixedAltitude()));
             }
             return el;
         } else {
@@ -1295,10 +1373,10 @@ public abstract class DrawingGlyph {
         getPropertiesComponents(comps, compMap);
         GuiUtils.tmpInsets = new Insets(4, 4, 4, 4);
         JPanel propsPanel = GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY,
-                                GuiUtils.WT_N);
+                GuiUtils.WT_N);
         propsPanel = GuiUtils.inset(propsPanel, 5);
         propDialog = new JDialog((Frame) null, getName() + " Properties",
-                                 true);
+                true);
 
         tabbedPane = new JTabbedPane();
         ActionListener listener = new ActionListener() {
@@ -1358,29 +1436,29 @@ public abstract class DrawingGlyph {
                 } else {
                     try {
                         EarthLocation el  =
-                            (EarthLocation) tmpPoints.get(row);
+                                (EarthLocation) tmpPoints.get(row);
                         Real          lat = el.getLatLonPoint().getLatitude();
                         Real          lon =
-                            el.getLatLonPoint().getLongitude();
+                                el.getLatLonPoint().getLongitude();
                         Real          alt = el.getAltitude();
 
 
                         Real newLat = new Real((RealType) lat.getType(),
-                                          ((col == 0)
-                                           ? value
-                                           : lat.getValue()), lat.getUnit());
+                                ((col == 0)
+                                        ? value
+                                        : lat.getValue()), lat.getUnit());
                         Real newLon = new Real((RealType) lon.getType(),
-                                          ((col == 1)
-                                           ? value
-                                           : lon.getValue()), lon.getUnit());
+                                ((col == 1)
+                                        ? value
+                                        : lon.getValue()), lon.getUnit());
                         Real newAlt = ((coordType == COORD_LATLONALT)
-                                       ? new Real((RealType) alt.getType(),
-                                           ((col == 2)
-                                            ? value
-                                            : alt.getValue()), alt.getUnit())
-                                       : alt);
+                                ? new Real((RealType) alt.getType(),
+                                ((col == 2)
+                                        ? value
+                                        : alt.getValue()), alt.getUnit())
+                                : alt);
                         EarthLocation newEl = new EarthLocationTuple(newLat,
-                                                  newLon, newAlt);
+                                newLon, newAlt);
                         int idx = tmpPoints.indexOf(el);
                         tmpPoints.remove(idx);
                         tmpPoints.add(idx, newEl);
@@ -1396,20 +1474,20 @@ public abstract class DrawingGlyph {
                     if (isInXYSpace()) {
                         double[] d = (double[]) tmpPoints.get(row);
                         return control.getDisplayConventions().format(
-                            d[column]);
+                                d[column]);
                     }
                     EarthLocation el    = (EarthLocation) tmpPoints.get(row);
                     String        value = null;
                     if (column == 0) {
                         value = control.getDisplayConventions().formatLatLon(
-                            el.getLatitude());
+                                el.getLatitude());
                     } else if (column == 1) {
                         value = control.getDisplayConventions().formatLatLon(
-                            el.getLongitude());
+                                el.getLongitude());
                     } else {
                         value =
-                            control.getDisplayConventions().formatAltitude(
-                                el.getAltitude());
+                                control.getDisplayConventions().formatAltitude(
+                                        el.getAltitude());
                     }
                     return value;
 
@@ -1442,28 +1520,28 @@ public abstract class DrawingGlyph {
         JTable pointTable = new JTable(pointTableModel);
 
         JButton writeBtn = GuiUtils.makeButton("Write Points", this,
-                               "writePoints");
+                "writePoints");
 
 
         int width  = 300;
         int height = 200;
         JScrollPane scroller = GuiUtils.makeScrollPane(pointTable, width,
-                                   height);
+                height);
         scroller.setBorder(BorderFactory.createLoweredBevelBorder());
         scroller.setPreferredSize(new Dimension(width, height));
         scroller.setMinimumSize(new Dimension(width, height));
 
 
         tabbedPane.add("Points",
-                       GuiUtils.centerBottom(scroller,
-                                             GuiUtils.left(writeBtn)));
+                GuiUtils.centerBottom(scroller,
+                        GuiUtils.left(writeBtn)));
 
         jythonFld = new JTextField(control.getGlyphJython());
         JButton jythonBtn = GuiUtils.makeButton("Evaluate:", this,
-                                "evaluateJython");
+                "evaluateJython");
         JPanel jythonPanel =
-            GuiUtils.inset(GuiUtils.top(GuiUtils.hbox(jythonBtn, jythonFld)),
-                           5);
+                GuiUtils.inset(GuiUtils.top(GuiUtils.hbox(jythonBtn, jythonFld)),
+                        5);
         // tabbedPane.add("Evaluate", jythonPanel);
 
         propDialog.getContentPane().add(GuiUtils.centerBottom(tabbedPane,
@@ -1479,8 +1557,8 @@ public abstract class DrawingGlyph {
      */
     public void writePoints() {
         String filename =
-            FileManager.getWriteFile(Misc.newList(FileManager.FILTER_CSV,
-                FileManager.FILTER_XLS), FileManager.SUFFIX_CSV, null);
+                FileManager.getWriteFile(Misc.newList(FileManager.FILTER_CSV,
+                        FileManager.FILTER_XLS), FileManager.SUFFIX_CSV, null);
 
         if (filename == null) {
             return;
@@ -1591,7 +1669,7 @@ public abstract class DrawingGlyph {
         comps.add(visibleCbx = new JCheckBox("Visible", visibleFlag));
         if (shouldShowColorSelector()) {
             comps.add(GuiUtils.rLabel("Color:"));
-            colorSwatch = new ColorSwatchComponent(control.getStore(), color, "", false);
+            colorSwatch = new GuiUtils.ColorSwatch(color, "", false);
             colorSwatch.setMinimumSize(new Dimension(20, 20));
             colorSwatch.setPreferredSize(new Dimension(20, 20));
             comps.add(GuiUtils.left(colorSwatch));
@@ -1600,7 +1678,7 @@ public abstract class DrawingGlyph {
 
         if (shouldShowBgColorSelector()) {
             comps.add(GuiUtils.rLabel("BG Color:"));
-            bgColorSwatch = new ColorSwatchComponent(control.getStore(), bgcolor, "", false);
+            bgColorSwatch = new GuiUtils.ColorSwatch(bgcolor, "", false);
             bgColorSwatch.setMinimumSize(new Dimension(20, 20));
             bgColorSwatch.setPreferredSize(new Dimension(20, 20));
             comps.add(GuiUtils.left(bgColorSwatch.getPanel()));
@@ -1630,7 +1708,7 @@ public abstract class DrawingGlyph {
      * @param compMap map
      */
     protected void getTimePropertiesComponents(List comps,
-            Hashtable compMap) {
+                                               Hashtable compMap) {
         try {
             List       allTimes  = new ArrayList();
             DateTime[] animTimes = control.getAllTimes();
@@ -1651,7 +1729,7 @@ public abstract class DrawingGlyph {
                 timeList = new JList();
                 timeList.setListData(new Vector(allTimes));
                 timeList.setSelectionMode(
-                    ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                        ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 timeList.setVisibleRowCount(5);
                 if ((timeValues != null) && (timeValues.size() > 0)) {
                     int[] selected = new int[timeValues.size()];
@@ -1688,6 +1766,7 @@ public abstract class DrawingGlyph {
         if ( !isInLatLonSpace() || !canShowDistance()) {
             return null;
         }
+
         double    distance = 0.0;
         float[][] pts      = getPointValues();
         for (int i = 1; i < pts[0].length; i++) {
@@ -1696,9 +1775,8 @@ public abstract class DrawingGlyph {
             float lat2 = pts[IDX_LAT][i];
             float lon2 = pts[IDX_LON][i];
             Bearing result =
-                Bearing.calculateBearing(new LatLonPointImpl(lat1, lon1),
-                                         new LatLonPointImpl(lat2, lon2),
-                                         null);
+                    Bearing.calculateBearing(new LatLonPointImpl(lat1, lon1),
+                            new LatLonPointImpl(lat2, lon2));
             if ( !Double.isNaN(result.getDistance())) {
                 distance += result.getDistance();
             }
@@ -1706,7 +1784,7 @@ public abstract class DrawingGlyph {
 
         Unit kmUnit = ucar.visad.Util.parseUnit("km");
         return new Real(RealType.getRealType("distance", kmUnit), distance,
-                        kmUnit);
+                kmUnit);
     }
 
 
@@ -1722,8 +1800,8 @@ public abstract class DrawingGlyph {
     public double getArea() throws Exception {
         double    area   = 0.0;
         float[][] pts    = getLatLons(((actualPoints != null)
-                                       ? actualPoints
-                                       : points));
+                ? actualPoints
+                : points));
         double    minLat = Double.POSITIVE_INFINITY;
         double    minLon = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < pts[0].length; i++) {
@@ -1767,12 +1845,12 @@ public abstract class DrawingGlyph {
                             double lon2)
             throws Exception {
         Bearing result = Bearing.calculateBearing(new LatLonPointImpl(lat1,
-                             lon1), new LatLonPointImpl(lat2, lon2), null);
+                lon1), new LatLonPointImpl(lat2, lon2));
         double distance = result.getDistance();
         Unit   kmUnit   = ucar.visad.Util.parseUnit("km");
         Unit   feetUnit = ucar.visad.Util.parseUnit("feet");
         Real kmDistance = new Real(RealType.getRealType("distance", kmUnit),
-                                   distance, kmUnit);
+                distance, kmUnit);
 
         return kmDistance.getValue(feetUnit);
     }
@@ -1959,16 +2037,16 @@ public abstract class DrawingGlyph {
             points = new ArrayList();
             EarthLocation currentLoc = control.toEarth(event);
             double deltaLon =
-                currentLoc.getLatLonPoint().getLongitude().getValue()
-                - firstMoveEarthLocation.getLatLonPoint().getLongitude()
-                    .getValue();
+                    currentLoc.getLatLonPoint().getLongitude().getValue()
+                            - firstMoveEarthLocation.getLatLonPoint().getLongitude()
+                            .getValue();
             double deltaLat =
-                currentLoc.getLatLonPoint().getLatitude().getValue()
-                - firstMoveEarthLocation.getLatLonPoint().getLatitude()
-                    .getValue();
+                    currentLoc.getLatLonPoint().getLatitude().getValue()
+                            - firstMoveEarthLocation.getLatLonPoint().getLatitude()
+                            .getValue();
             double deltaAlt =
-                currentLoc.getAltitude().getValue()
-                - firstMoveEarthLocation.getAltitude().getValue();
+                    currentLoc.getAltitude().getValue()
+                            - firstMoveEarthLocation.getAltitude().getValue();
             for (int i = 0; i < oldPoints.size(); i++) {
                 EarthLocation el  = (EarthLocation) oldPoints.get(i);
                 Real          lat = el.getLatLonPoint().getLatitude();
@@ -1976,18 +2054,18 @@ public abstract class DrawingGlyph {
                 Real          alt = el.getAltitude();
 
                 Real newLon = new Real((RealType) lon.getType(),
-                                       lon.getValue() + deltaLon,
-                                       lon.getUnit());
+                        lon.getValue() + deltaLon,
+                        lon.getUnit());
                 Real newLat = new Real((RealType) lat.getType(),
-                                       lat.getValue() + deltaLat,
-                                       lat.getUnit());
+                        lat.getValue() + deltaLat,
+                        lat.getUnit());
                 Real newAlt = ((coordType == COORD_LATLONALT)
-                               ? new Real((RealType) alt.getType(),
-                                          alt.getValue() + deltaAlt,
-                                          alt.getUnit())
-                               : alt);
+                        ? new Real((RealType) alt.getType(),
+                        alt.getValue() + deltaAlt,
+                        alt.getUnit())
+                        : alt);
                 EarthLocation newEl = new EarthLocationTuple(newLat, newLon,
-                                          newAlt);
+                        newAlt);
                 points.add(newEl);
             }
             firstMoveEarthLocation = currentLoc;
@@ -2030,8 +2108,8 @@ public abstract class DrawingGlyph {
                 pts[IDX_X][i] = (float) point[IDX_X];
                 pts[IDX_Y][i] = (float) point[IDX_Y];
                 pts[IDX_Z][i] = ((coordType == COORD_XYZ)
-                                 ? (float) point[IDX_Z]
-                                 : zPosition);
+                        ? (float) point[IDX_Z]
+                        : zPosition);
             }
         } else if (isInLatLonSpace()) {
             double fixedAlt = getFixedAltitude();
@@ -2041,15 +2119,15 @@ public abstract class DrawingGlyph {
                     double[] point = getSpatialCoordinates(el);
                     pts[IDX_X][i] = (float) point[IDX_X];
                     pts[IDX_Y][i] = (float) point[IDX_Y];
-                    if (coordType == COORD_LATLON) {
+                    if (coordType == COORD_LATLON || coordType == COORD_LONLAT) {
                         pts[IDX_Z][i] =
-                            (float) control.getVerticalValue(zPosition);
+                                (float) control.getVerticalValue(zPosition);
                     }
                 } else {
                     pts[IDX_LAT][i] =
-                        (float) el.getLatLonPoint().getLatitude().getValue();
+                            (float) el.getLatLonPoint().getLatitude().getValue();
                     pts[IDX_LON][i] =
-                        (float) el.getLatLonPoint().getLongitude().getValue();
+                            (float) el.getLatLonPoint().getLongitude().getValue();
                     if (coordType == COORD_LATLONALT) {
                         pts[IDX_ALT][i] = (float) el.getAltitude().getValue();
                     } else {
@@ -2073,8 +2151,8 @@ public abstract class DrawingGlyph {
      */
     public float[][] getLatLons() throws Exception {
         return getLatLons(((actualPoints != null)
-                           ? actualPoints
-                           : points));
+                ? actualPoints
+                : points));
     }
 
     /**
@@ -2094,20 +2172,20 @@ public abstract class DrawingGlyph {
             for (int i = 0; i < points.size(); i++) {
                 double[] point = (double[]) points.get(i);
                 EarthLocation el = control.boxToEarth(new double[] {
-                                       point[IDX_X],
-                                       point[IDX_Y], 0.0 });
+                        point[IDX_X],
+                        point[IDX_Y], 0.0 });
                 pts[IDX_LAT][i] =
-                    (float) el.getLatLonPoint().getLatitude().getValue();
+                        (float) el.getLatLonPoint().getLatitude().getValue();
                 pts[IDX_LON][i] =
-                    (float) el.getLatLonPoint().getLongitude().getValue();
+                        (float) el.getLatLonPoint().getLongitude().getValue();
             }
         } else if (isInLatLonSpace()) {
             for (int i = 0; i < points.size(); i++) {
                 EarthLocation el = (EarthLocation) points.get(i);
                 pts[IDX_LAT][i] =
-                    (float) el.getLatLonPoint().getLatitude().getValue();
+                        (float) el.getLatLonPoint().getLatitude().getValue();
                 pts[IDX_LON][i] =
-                    (float) el.getLatLonPoint().getLongitude().getValue();
+                        (float) el.getLatLonPoint().getLongitude().getValue();
             }
         }
         return pts;
@@ -2151,8 +2229,8 @@ public abstract class DrawingGlyph {
                 pts[IDX_X][i] = (double) point[IDX_X];
                 pts[IDX_Y][i] = (double) point[IDX_Y];
                 pts[IDX_Z][i] = ((coordType == COORD_XYZ)
-                                 ? (double) point[IDX_Z]
-                                 : zPosition);
+                        ? (double) point[IDX_Z]
+                        : zPosition);
             }
         } else if (isInLatLonSpace()) {
             double fixedAlt = getFixedAltitude();
@@ -2162,19 +2240,19 @@ public abstract class DrawingGlyph {
                     double[] point = getSpatialCoordinates(el);
                     pts[IDX_X][i] = (double) point[IDX_X];
                     pts[IDX_Y][i] = (double) point[IDX_Y];
-                    if (coordType == COORD_LATLON) {
+                    if (coordType == COORD_LATLON || coordType == COORD_LONLAT) {
                         pts[IDX_Z][i] =
-                            (double) control.getVerticalValue(zPosition);
+                                (double) control.getVerticalValue(zPosition);
                     }
                 } else {
                     pts[IDX_LAT][i] =
-                        (double) el.getLatLonPoint().getLatitude().getValue();
+                            (double) el.getLatLonPoint().getLatitude().getValue();
                     pts[IDX_LON][i] =
-                        (double) el.getLatLonPoint().getLongitude()
-                            .getValue();
+                            (double) el.getLatLonPoint().getLongitude()
+                                    .getValue();
                     if (coordType == COORD_LATLONALT) {
                         pts[IDX_ALT][i] =
-                            (double) el.getAltitude().getValue();
+                                (double) el.getAltitude().getValue();
                     } else {
                         pts[IDX_ALT][i] = (double) fixedAlt;
                     }
@@ -2225,13 +2303,13 @@ public abstract class DrawingGlyph {
             DelaunayCustom da = new DelaunayCustom(rect2d, tri);
 
             MathType mathType3D = null;
-          if (isInXYSpace()) {
-              mathType3D = RealTupleType.SpatialCartesian3DTuple;
-          } else if (isInLatLonSpace()) {
-              mathType3D = RealTupleType.LatitudeLongitudeAltitude;
-          }
+            if (isInXYSpace()) {
+                mathType3D = RealTupleType.SpatialCartesian3DTuple;
+            } else if (isInLatLonSpace()) {
+                mathType3D = RealTupleType.LatitudeLongitudeAltitude;
+            }
 
-          return new Irregular3DSet(mathType3D, pts, null, null, null, da);
+            return new Irregular3DSet(mathType3D, pts, null, null, null, da);
 
         } catch (VisADException vexc) {
             //System.err.println("error:" + vexc);
@@ -2256,8 +2334,8 @@ public abstract class DrawingGlyph {
     protected float[] toLatLonAlt(EarthLocation el)
             throws VisADException, RemoteException {
         float[] a = { (float) el.getLatLonPoint().getLatitude().getValue(),
-                      (float) el.getLatLonPoint().getLongitude().getValue(),
-                      (float) el.getAltitude().getValue() };
+                (float) el.getLatLonPoint().getLongitude().getValue(),
+                (float) el.getAltitude().getValue() };
         return a;
     }
 
@@ -2273,7 +2351,7 @@ public abstract class DrawingGlyph {
             throws VisADException, RemoteException {
         return control.boxToEarth(new double[] { 0.0, 0.0,
                 control.getVerticalValue(
-                    zPosition) }, false).getAltitude().getValue();
+                        zPosition) }, false).getAltitude().getValue();
     }
 
     /**
@@ -2418,23 +2496,23 @@ public abstract class DrawingGlyph {
         return color;
     }
 
-/**
-Set the Bgcolor property.
+    /**
+     Set the Bgcolor property.
 
-@param value The new value for Bgcolor
-**/
-public void setBgcolor (Color value) {
-	this.bgcolor = value;
-}
+     @param value The new value for Bgcolor
+     **/
+    public void setBgcolor (Color value) {
+        this.bgcolor = value;
+    }
 
-/**
-Get the Bgcolor property.
+    /**
+     Get the Bgcolor property.
 
-@return The Bgcolor
-**/
-public Color getBgcolor () {
-	return this.bgcolor;
-}
+     @return The Bgcolor
+     **/
+    public Color getBgcolor () {
+        return this.bgcolor;
+    }
 
 
 
@@ -2483,8 +2561,8 @@ public Color getBgcolor () {
     protected EarthLocation makePoint(double lat, double lon, double alt)
             throws VisADException, RemoteException {
         return new EarthLocationTuple(new Real(RealType.Latitude, lat),
-                                      new Real(RealType.Longitude, lon),
-                                      new Real(RealType.Altitude, alt));
+                new Real(RealType.Longitude, lon),
+                new Real(RealType.Altitude, alt));
     }
 
     /**
@@ -2521,8 +2599,8 @@ public Color getBgcolor () {
      */
     public static double distanceBetween(double[] origin, double[] loc2) {
         return Math.sqrt(squared(origin[0] - loc2[0])
-                         + squared(origin[1] - loc2[1])
-                         + squared(origin[2] - loc2[2]));
+                + squared(origin[1] - loc2[1])
+                + squared(origin[2] - loc2[2]));
     }
 
 
@@ -2569,9 +2647,9 @@ public Color getBgcolor () {
             EarthLocation oldPt = (EarthLocation) points.get(stretchIndex);
             EarthLocation newPt = (EarthLocation) getPoint(event);
             double deltaY = oldPt.getLatitude().getValue()
-                            - newPt.getLatitude().getValue();
+                    - newPt.getLatitude().getValue();
             double deltaX = oldPt.getLongitude().getValue()
-                            - newPt.getLongitude().getValue();
+                    - newPt.getLongitude().getValue();
             for (int i = stretchIndex - 1; i >= 0; i--) {
                 percent -= 1.0 / (double) startPts;
                 if (percent <= 0) {
@@ -2579,10 +2657,10 @@ public Color getBgcolor () {
                 }
                 EarthLocation pt = (EarthLocation) points.get(i);
                 EarthLocation newEl =
-                    makePoint(
-                        pt.getLatitude().getValue() - deltaY * percent,
-                        pt.getLongitude().getValue() - deltaX * percent,
-                        pt.getAltitude().getValue());
+                        makePoint(
+                                pt.getLatitude().getValue() - deltaY * percent,
+                                pt.getLongitude().getValue() - deltaX * percent,
+                                pt.getAltitude().getValue());
                 points.set(i, newEl);
             }
             percent = 1.0;
@@ -2593,10 +2671,10 @@ public Color getBgcolor () {
                 }
                 EarthLocation pt = (EarthLocation) points.get(i);
                 EarthLocation newEl =
-                    makePoint(
-                        pt.getLatitude().getValue() - deltaY * percent,
-                        pt.getLongitude().getValue() - deltaX * percent,
-                        pt.getAltitude().getValue());
+                        makePoint(
+                                pt.getLatitude().getValue() - deltaY * percent,
+                                pt.getLongitude().getValue() - deltaX * percent,
+                                pt.getAltitude().getValue());
                 points.set(i, newEl);
             }
         } else {
@@ -2661,18 +2739,18 @@ public Color getBgcolor () {
         //        System.out.println("\tdirection = " + d_x + " " + d_y + " " + d_z);
 
         double   minx     = 0.0f,
-                 miny     = 0.0f,
-                 minz     = 0.0f;
+                miny     = 0.0f,
+                minz     = 0.0f;
         double[] buff     = new double[3];
 
         boolean  isDouble = (points.get(0) instanceof double[]);
 
         for (int i = 0; i < points.size(); i++) {
             double[] d = (isDouble
-                          ? (double[]) points.get(i)
-                          : control.getNavigatedDisplay()
-                              .getSpatialCoordinates((EarthLocation) points
-                                  .get(i), buff));
+                    ? (double[]) points.get(i)
+                    : control.getNavigatedDisplay()
+                    .getSpatialCoordinates((EarthLocation) points
+                            .get(i), buff));
 
             double x   = d[IDX_X] - o_x;
             double y   = d[IDX_Y] - o_y;
@@ -3152,4 +3230,3 @@ public Color getBgcolor () {
 
 
 }
-
