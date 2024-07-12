@@ -92,4 +92,8 @@ public class AggregationRangeProcessor extends RangeProcessor {
 	public synchronized double[] processRange(double[] values, Map<String, double[]> subset) {
 		return rangeProcessors.get(rngIdx).processRange(values, subset);
 	}
+
+	public synchronized float[] processRangeUshort(int[] values, Map<String, double[]> subset) {
+		return rangeProcessors.get(rngIdx).processRangeUshorts(values, subset);
+	}
 }

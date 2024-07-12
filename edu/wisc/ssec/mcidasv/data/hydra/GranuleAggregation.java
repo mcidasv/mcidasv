@@ -850,9 +850,25 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   int remaining = totalLength;
 	   for (Array a : arrayList) {
 		   if (a != null) {
-			   Object primArray = a.copyTo1DJavaArray();
-			   primArray = processArray(
-			      mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count
+			   Object newPrim = null;
+			   if (a.getDataType() == DataType.USHORT) {
+				   int[] intArr = new int[totalLength];
+				   short[] ushorts = (short[])a.copyTo1DJavaArray();
+				   for (int i = 0; i < totalLength; i++) {
+					   short tmp = ushorts[i];
+					   if (tmp < 0) {
+						   intArr[i] = Short.toUnsignedInt(tmp);
+					   } else {
+						   intArr[i] = tmp;
+					   }
+				   }
+				   newPrim = intArr;
+			   } else {
+				   newPrim = a.get1DJavaArray(DataType.FLOAT);
+			   }
+
+			   Object primArray = processArray(
+					   mapName, array_name, arrayType, granIdx, newPrim, rngProcessor, start, count
 			   );
 			   // new implementation works for:
 			   // CrIS: GCRSO-SCRIF_npp_d20211107_t1738479_e1746457_b51974_c20211108124028112597_oebc_ops.h5
@@ -942,7 +958,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   // if variable is a LUT var, apply LUT
 			   if ((lutMap != null) && (lutMap.containsKey(mapName))) {
 				   float lut[] = lutMap.get(mapName);
-				   outArray = rngProcessor.processRangeApplyLUT((short []) values, lut);
+				   outArray = rngProcessor.processRangeApplyLUT((short[]) values, lut);
 			   } else {
 				   outArray = rngProcessor.processRange((short[]) values, null);
 			   }
@@ -958,6 +974,15 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   outArray = rngProcessor.processRange((float[]) values, null);
 		   } else if (arrayType == DataType.DOUBLE) {
 			   outArray = rngProcessor.processRange((double[]) values, null);
+		   } else if (arrayType == DataType.USHORT) {
+				AggregationRangeProcessor aggRangeProc = ((AggregationRangeProcessor) rngProcessor);
+				   // if variable is a LUT var, apply LUT
+				if ((lutMap != null) && (lutMap.containsKey(mapName))) {
+					float lut[] = lutMap.get(mapName);
+					outArray = aggRangeProc.processRangeUshortsApplyLUT((int[]) values , lut);
+				} else {
+					outArray = aggRangeProc.processRangeUshort((int[]) values, null);
+				}
 		   }
 
 		   return outArray;

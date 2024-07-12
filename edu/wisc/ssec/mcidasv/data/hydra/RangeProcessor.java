@@ -524,7 +524,7 @@ public class RangeProcessor {
 
             val = (float) values[k];
             if (unsigned) {
-                i = Util.unsignedShortToInt(values[k]);
+                i = Util.unsignedShortToInt((short)values[k]);
                 val = (float) i;
             }
 
@@ -577,6 +577,84 @@ public class RangeProcessor {
                 }
             }
 
+        }
+        return new_values;
+    }
+
+    public float[] processRangeUshorts(int[] values, Map<String, double[]> subset) {
+
+        int multiScaleDimLen = 1;
+
+        if (subset != null) {
+            if (subset.get(multiScaleDimName) != null) {
+                double[] coords = subset.get(multiScaleDimName);
+                soIndex = (int) coords[0];
+                multiScaleDimLen = (int) (coords[1] - coords[0] + 1.0);
+            }
+        }
+
+        float[] new_values = new float[values.length];
+
+        float val = 0f;
+        int i = 0;
+        boolean isMissing = false;
+
+        for (int k = 0; k < values.length; k++) {
+
+            val = (float) values[k];
+            if (unsigned) {
+                i = Util.unsignedShortToInt((short)values[k]);
+                val = (float) i;
+            }
+
+            // first, check the (possibly multiple) missing values
+            isMissing = false;
+            if (missing != null) {
+                for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
+                    if (val == missing[mvIdx]) {
+                        isMissing = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isMissing) {
+                new_values[k] = Float.NaN;
+                continue;
+            }
+
+            if (rangeCheckBeforeScaling) {
+                if ((val < valid_low) || (val > valid_high)) {
+                    new_values[k] = Float.NaN;
+                    continue;
+                }
+            }
+
+            if (scale != null) {
+                if (unpack) {
+                    if (multiScaleDimLen == 1) {
+                        new_values[k] = (scale[soIndex] * val) + offset[soIndex];
+                    } else {
+                        new_values[k] = (scale[soIndex + k] * val) + offset[soIndex + k];
+                    }
+                } else {
+                    if (multiScaleDimLen == 1) {
+                        new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+                    } else {
+
+                        new_values[k] = scale[soIndex + k] * (val - offset[soIndex + k]);
+                    }
+                }
+            } else {
+                new_values[k] = val;
+            }
+
+            // do valid range check AFTER scaling?
+            if (!rangeCheckBeforeScaling) {
+                if ((new_values[k] < valid_low) || (new_values[k] > valid_high)) {
+                    new_values[k] = Float.NaN;
+                }
+            }
         }
         return new_values;
     }
@@ -709,7 +787,29 @@ public class RangeProcessor {
         int lutLen = lut.length;
 
         for (int i = 0; i < values.length; i++) {
-            short tmpVal = values[i];
+            int tmpVal = values[i];
+            if (tmpVal > 0) {
+                if (tmpVal < lutLen) {
+                    newValues[i] = lut[tmpVal];
+                } else {
+                    newValues[i] = Float.NaN;
+                }
+            } else {
+                newValues[i] = Float.NaN;
+            }
+        }
+
+        return newValues;
+    }
+
+    public Object processRangeUshortsApplyLUT(int[] values, float[] lut) {
+
+        float[] newValues = new float[values.length];
+
+        int lutLen = lut.length;
+
+        for (int i = 0; i < values.length; i++) {
+            int tmpVal = values[i];
             if (tmpVal > 0) {
                 if (tmpVal < lutLen) {
                     newValues[i] = lut[tmpVal];
