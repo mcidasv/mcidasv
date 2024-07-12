@@ -109,6 +109,7 @@ import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -2935,8 +2936,9 @@ public class MapViewManager extends NavigatedViewManager {
      */
 
     public void makeCustomProjectionManager() {
-        JFrame frame = new JFrame("Custom Projection");
+        JFrame frame = new JFrame("Custom Viewpoint");
         frame.setSize(750, 150);
+        Dimension size = new Dimension(180, 30);
 
         // Top: instructions/err msgs, Mid: Input, Bottom: Buttons
         String styleStr = "\"font-family:verdana;color:black;font-size:12px\">";
@@ -2945,16 +2947,23 @@ public class MapViewManager extends NavigatedViewManager {
         JPanel midPanel = new JPanel(new FlowLayout());
         JPanel botPanel = new JPanel(new FlowLayout());
         JPanel topPanel = new JPanel(new FlowLayout());
+        JPanel namePanel = new JPanel(new FlowLayout());
         String initStr = "Provide Upper Left and Lower Right Latitude and Longitude";
-        JLabel topLabel = new JLabel();
-        topLabel.setText(htmlStart + styleStr + initStr);
-        topPanel.add(topLabel);
+        //JLabel topLabel = new JLabel();
+        JLabel nameLabel = new JLabel("Name for display:" );
+        JTextField nameField = new JTextField();
+        nameField.setPreferredSize(size);
+        //topLabel.setText(htmlStart + styleStr + initStr);
+        namePanel.add(nameLabel);
+        namePanel.add(nameField);
+        //topPanel.add(topLabel);
+        topPanel.add(namePanel, BorderLayout.CENTER);
         outerPanel.add(topPanel, BorderLayout.NORTH);
         outerPanel.add(botPanel, BorderLayout.SOUTH);
         outerPanel.add(midPanel, BorderLayout.CENTER);
 
         ArrayList<JTextField> fields = new ArrayList<>();
-        Dimension size = new Dimension(90, 30);
+        size = new Dimension(90, 30);
         String[] labels = {"Lat0", "Lon0", "Lat1", "Lon1"};
 
         for (int i = 0; i < 4; i++) {
@@ -2969,7 +2978,7 @@ public class MapViewManager extends NavigatedViewManager {
         JButton cancel = new JButton("Cancel");
         botPanel.add(cancel);
 
-        JButton submit = new JButton("Submit");
+        JButton submit = new JButton("Save");
         botPanel.add(submit);
 
         cancel.addActionListener(new ActionListener() {
@@ -3000,19 +3009,19 @@ public class MapViewManager extends NavigatedViewManager {
                     fLatLR = Float.parseFloat(fields.get(2).getText());
                     fLonLR = Float.parseFloat(fields.get(3).getText());
                 } catch (NumberFormatException nfe) {
-                    topLabel.setText(htmlStart + styleStrErr + "Latitude and Longitude must be floating point numbers, please correct." + htmlEnd);
+                    //topLabel.setText(htmlStart + styleStrErr + "Latitude and Longitude must be floating point numbers, please correct." + htmlEnd);
                     return;
                 }
                 if ((fLatUL < -90) || (fLatUL > 90) || (fLatLR < -90) || (fLatLR > 90)) {
-                    topLabel.setText(htmlStart + styleStrErr + "Latitude value(s) are out of valid range, -90 to +90" + htmlEnd);
+                    //topLabel.setText(htmlStart + styleStrErr + "Latitude value(s) are out of valid range, -90 to +90" + htmlEnd);
                     return;
                 }
                 if ((fLonUL < -180) || (fLonUL > 180) || (fLonLR < -180) || (fLonLR > 180)) {
-                    topLabel.setText(htmlStart + styleStrErr + "Longitude value(s) are out of valid range, -180 to +180" + htmlEnd);
+                    //topLabel.setText(htmlStart + styleStrErr + "Longitude value(s) are out of valid range, -180 to +180" + htmlEnd);
                     return;
                 }
 
-                topLabel.setText(htmlStart + styleStr + "Provide Upper Left and Lower Right Latitude and Longitude" + htmlEnd);
+                //topLabel.setText(htmlStart + styleStr + "Provide Upper Left and Lower Right Latitude and Longitude" + htmlEnd);
 
                 double[] pt1 = new double[2];
                 double[] pt2 = new double[2];
@@ -3020,8 +3029,10 @@ public class MapViewManager extends NavigatedViewManager {
                     pt1[i] = Double.valueOf(fields.get(i).getText());
                     pt2[i] = Double.valueOf(fields.get(i + 2).getText());
                 }
-                
+
                 setProjectionLatLon(pt1, pt2);
+                doSaveState(nameField.getText());
+                frame.dispose();
             }
         });
 
@@ -3311,7 +3322,7 @@ public class MapViewManager extends NavigatedViewManager {
             projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Use Displayed Area",
                     this,
                     "setCurrentAsProjection"), "/auxdata/ui/icons/world_rect.png"));
-            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Custom Projection",
+            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Custom Viewpoint",
                     this,
                     "makeCustomProjectionManager"
                     ), "/auxdata/ui/icons/world_rect.png"));

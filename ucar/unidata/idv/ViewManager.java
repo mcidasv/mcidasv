@@ -6311,6 +6311,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
         getVMManager().saveViewManagerState(this);
     }
 
+    public void doSaveState(String name) {
+        getVMManager().saveViewManagerState(this, name);
+    }
+
     /**
      * User has requested saving display as an image. Prompt
      * for a filename and save the image to it.

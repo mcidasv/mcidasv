@@ -2,17 +2,17 @@
  * Copyright 1997-2024 Unidata Program Center/University Corporation for
  * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
  * support@unidata.ucar.edu.
- *
+ * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or (at
  * your option) any later version.
- *
+ * 
  * This library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -114,11 +114,11 @@ public class VMManager extends IdvManager {
         //Switch the vmstate.xml to viewpoints.xml
         try {
             File oldFile =
-                    new File(IOUtil.joinDir(getStore().getUserDirectory(),
-                            "vmstate.xml"));
+                new File(IOUtil.joinDir(getStore().getUserDirectory(),
+                                        "vmstate.xml"));
             File newFile =
-                    new File(IOUtil.joinDir(getStore().getUserDirectory(),
-                            "viewpoints.xml"));
+                new File(IOUtil.joinDir(getStore().getUserDirectory(),
+                                        "viewpoints.xml"));
             if (oldFile.exists() && !newFile.exists()) {
                 IOUtil.moveFile(oldFile, newFile);
             }
@@ -167,7 +167,7 @@ public class VMManager extends IdvManager {
         List vms = getViewManagers();
 
         String filename = FileManager.getWriteFile(FileManager.FILTER_IMAGE,
-                FileManager.SUFFIX_JPG);
+                              FileManager.SUFFIX_JPG);
         if (filename == null) {
             return;
         }
@@ -176,7 +176,7 @@ public class VMManager extends IdvManager {
 
         StringBuffer sb   = new StringBuffer("<html>");
         sb.append(
-                "Since there were multiple images they were written out as:<ul>");
+            "Since there were multiple images they were written out as:<ul>");
         for (int i = 0; i < vms.size(); i++) {
             ViewManager vm   = (ViewManager) vms.get(i);
             String      name = vm.getName();
@@ -193,7 +193,7 @@ public class VMManager extends IdvManager {
         sb.append("</ul></html>");
         if (vms.size() > 1) {
             GuiUtils.showDialog("Captured Images",
-                    GuiUtils.inset(new JLabel(sb.toString()), 5));
+                                GuiUtils.inset(new JLabel(sb.toString()), 5));
         }
     }
 
@@ -322,7 +322,7 @@ public class VMManager extends IdvManager {
      */
     private ViewManager findViewManagerInList(ViewDescriptor viewDescriptor) {
         return findViewManagerInList(viewDescriptor,
-                new ArrayList(viewManagers));
+                                     new ArrayList(viewManagers));
     }
 
     /**
@@ -352,7 +352,7 @@ public class VMManager extends IdvManager {
         List controls = findTransectDrawingControls();
         for (int i = 0; i < controls.size(); i++) {
             TransectDrawingControl tdc =
-                    (TransectDrawingControl) controls.get(i);
+                (TransectDrawingControl) controls.get(i);
             tdc.transectViewsChanged();
         }
 
@@ -405,13 +405,13 @@ public class VMManager extends IdvManager {
         }
         try {
             XmlResourceCollection rc =
-                    getResourceManager().getXmlResources(
-                            getResourceManager().RSC_VIEWPOINTS);
+                getResourceManager().getXmlResources(
+                    getResourceManager().RSC_VIEWPOINTS);
             for (int i = 0; i < rc.size(); i++) {
                 if (rc.isWritableResource(i)) {
                     File f = new File(rc.get(i).toString());
                     String contents = getIdv().encodeObject(localViewpoints,
-                            true, true);
+                                          true, true);
                     IOUtil.writeFile(f, contents);
                     return;
                 }
@@ -432,8 +432,8 @@ public class VMManager extends IdvManager {
         if (viewpoints == null) {
             List tmp = new ArrayList();
             XmlResourceCollection rc =
-                    getResourceManager().getXmlResources(
-                            getResourceManager().RSC_VIEWPOINTS);
+                getResourceManager().getXmlResources(
+                    getResourceManager().RSC_VIEWPOINTS);
 
             for (int i = 0; i < rc.size(); i++) {
                 String contents = rc.read(i);
@@ -442,8 +442,8 @@ public class VMManager extends IdvManager {
                 }
                 try {
                     List resources =
-                            (List) getIdv().getEncoderForRead().toObject(
-                                    contents);
+                        (List) getIdv().getEncoderForRead().toObject(
+                            contents);
                     tmp.addAll(resources);
                     boolean local = rc.isWritable(i);
                     for (Object o : resources) {
@@ -472,9 +472,23 @@ public class VMManager extends IdvManager {
     protected void saveViewManagerState(ViewManager vm) {
         try {
             String name = ((vm instanceof MapViewManager)
-                    ? "Map View"
-                    : "View");
+                           ? "Map View"
+                           : "View");
             name = GuiUtils.getInput(null, "Name for saved view: ", name);
+            if (name == null) {
+                return;
+            }
+            ViewState viewState = vm.doMakeViewState();
+            viewState.setName(name);
+            getVMState().add(viewState);
+            writeVMState();
+        } catch (Exception exc) {
+            logException("Saving view state", exc);
+        }
+    }
+
+    protected void saveViewManagerState(ViewManager vm, String name) {
+        try {
             if (name == null) {
                 return;
             }
@@ -492,7 +506,6 @@ public class VMManager extends IdvManager {
 
 
 
-
     /**
      * Add the new view manager into the list if we don't have
      * one with the {@link ViewDescriptor} of the new view manager
@@ -504,7 +517,7 @@ public class VMManager extends IdvManager {
 
 
         ViewManager vm =
-                findViewManagerInList(newViewManager.getViewDescriptor());
+            findViewManagerInList(newViewManager.getViewDescriptor());
 
         if (vm == null) {
             synchronized (viewManagers) {
@@ -602,7 +615,7 @@ public class VMManager extends IdvManager {
         try {
             for (int i = 0; i < newViewManagers.size(); i++) {
                 ViewManager newViewManager =
-                        (ViewManager) newViewManagers.get(i);
+                    (ViewManager) newViewManagers.get(i);
                 newViewManager.initAfterUnPersistence(getIdv());
             }
         } catch (Exception exc) {
@@ -647,7 +660,7 @@ public class VMManager extends IdvManager {
      * @return The found or created ViewManager
      */
     public ViewManager findOrCreateViewManager(ViewDescriptor viewDescriptor,
-                                               String properties) {
+            String properties) {
         synchronized (viewManagers) {
             ViewManager viewManager = findViewManager(viewDescriptor);
             if (viewManager == null) {
@@ -676,23 +689,23 @@ public class VMManager extends IdvManager {
                 }
                 if (viewDescriptor.getClassNames().size() > 0) {
                     Class viewManagerClass =
-                            Misc.findClass(
-                                    (String) viewDescriptor.getClassNames().get(0));
+                        Misc.findClass(
+                            (String) viewDescriptor.getClassNames().get(0));
                     Constructor ctor = Misc.findConstructor(viewManagerClass,
-                            new Class[] {
-                                    IntegratedDataViewer.class,
-                                    ViewDescriptor.class, String.class });
+                                           new Class[] {
+                                               IntegratedDataViewer.class,
+                            ViewDescriptor.class, String.class });
 
                     if (ctor == null) {
                         throw new IllegalArgumentException(
-                                "cannot create ViewManager:"
-                                        + viewManagerClass.getName());
+                            "cannot create ViewManager:"
+                            + viewManagerClass.getName());
                     }
 
                     viewManager =
-                            (ViewManager) ctor.newInstance(new Object[] {
-                                    getIdv(),
-                                    viewDescriptor, properties });
+                        (ViewManager) ctor.newInstance(new Object[] {
+                            getIdv(),
+                            viewDescriptor, properties });
                 } else {
                     viewManager = new MapViewManager(getIdv(),
                             viewDescriptor, properties);
@@ -738,8 +751,8 @@ public class VMManager extends IdvManager {
                 continue;
             }
             NavigatedDisplay navDisplay =
-                    (NavigatedDisplay) ((MapViewManager) viewManager)
-                            .getMapDisplay();
+                (NavigatedDisplay) ((MapViewManager) viewManager)
+                    .getMapDisplay();
             navDisplay.center(el);
         }
     }
@@ -811,8 +824,8 @@ public class VMManager extends IdvManager {
                 continue;
             }
             NavigatedDisplay navDisplay =
-                    (NavigatedDisplay) ((MapViewManager) viewManager)
-                            .getMapDisplay();
+                (NavigatedDisplay) ((MapViewManager) viewManager)
+                    .getMapDisplay();
             navDisplay.setMapArea(pr);
         }
     }
