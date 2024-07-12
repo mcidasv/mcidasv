@@ -2936,15 +2936,18 @@ public class MapViewManager extends NavigatedViewManager {
 
     public void makeCustomProjectionManager() {
         JFrame frame = new JFrame("Custom Projection");
-        frame.setSize(600, 400);
+        frame.setSize(750, 150);
 
         // Top: instructions/err msgs, Mid: Input, Bottom: Buttons
+        String styleStr = "\"font-family:verdana;color:black;font-size:12px\">";
+        String htmlStart = "<html><p style=";
         JPanel outerPanel = new JPanel(new BorderLayout());
         JPanel midPanel = new JPanel(new FlowLayout());
         JPanel botPanel = new JPanel(new FlowLayout());
         JPanel topPanel = new JPanel(new FlowLayout());
         String initStr = "Provide Upper Left and Lower Right Latitude and Longitude";
-        JLabel topLabel = new JLabel(initStr);
+        JLabel topLabel = new JLabel();
+        topLabel.setText(htmlStart + styleStr + initStr);
         topPanel.add(topLabel);
         outerPanel.add(topPanel, BorderLayout.NORTH);
         outerPanel.add(botPanel, BorderLayout.SOUTH);
@@ -2986,7 +2989,8 @@ public class MapViewManager extends NavigatedViewManager {
                 float fLonLR;
 
                 // JLabel style strings for error messages
-                String styleStr = "\"font-family:verdana;color:red;font-size:12px\">";
+                String styleStrErr = "\"font-family:verdana;color:red;font-size:12px\">";
+                String styleStr = "\"font-family:verdana;color:black;font-size:12px\">";
                 String htmlStart = "<html><p style=";
                 String htmlEnd = "</p></html>";
 
@@ -2996,17 +3000,19 @@ public class MapViewManager extends NavigatedViewManager {
                     fLatLR = Float.parseFloat(fields.get(2).getText());
                     fLonLR = Float.parseFloat(fields.get(3).getText());
                 } catch (NumberFormatException nfe) {
-                    topLabel.setText(htmlStart + styleStr + "Latitude and Longitude must be floating point numbers, please correct." + htmlEnd);
+                    topLabel.setText(htmlStart + styleStrErr + "Latitude and Longitude must be floating point numbers, please correct." + htmlEnd);
                     return;
                 }
                 if ((fLatUL < -90) || (fLatUL > 90) || (fLatLR < -90) || (fLatLR > 90)) {
-                    topLabel.setText(htmlStart + styleStr + "Latitude value(s) are out of valid range, -90 to +90" + htmlEnd);
+                    topLabel.setText(htmlStart + styleStrErr + "Latitude value(s) are out of valid range, -90 to +90" + htmlEnd);
                     return;
                 }
                 if ((fLonUL < -180) || (fLonUL > 180) || (fLonLR < -180) || (fLonLR > 180)) {
-                    topLabel.setText(htmlStart + styleStr + "Longitude value(s) are out of valid range, -180 to +180" + htmlEnd);
+                    topLabel.setText(htmlStart + styleStrErr + "Longitude value(s) are out of valid range, -180 to +180" + htmlEnd);
                     return;
                 }
+
+                topLabel.setText(htmlStart + styleStr + "Provide Upper Left and Lower Right Latitude and Longitude" + htmlEnd);
 
                 double[] pt1 = new double[2];
                 double[] pt2 = new double[2];
