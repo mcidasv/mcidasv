@@ -145,8 +145,6 @@ import javax.vecmath.Point3d;
  */
 public final class Util {
 
-    private static final Logger logger = LoggerFactory.getLogger(Util.class);
-
     /** timerange delta */
     private static final double TIMERANGE_DELTA = 0.00000001;
 
@@ -3230,11 +3228,6 @@ public final class Util {
         minY = Math.max(-90, minY);
         maxY = Math.min(90, maxY);
 
-        logger.info(String.valueOf(minY));
-        logger.info(String.valueOf(minX));
-        logger.info(String.valueOf(maxY));
-        logger.info(String.valueOf(maxX));
-
         double maxDegrees = Math.max(maxX - minX, maxY - minY);
         Rectangle2D.Float rect = new Rectangle2D.Float((float) minX,
                                      (float) minY, (float) (maxX - minX),
@@ -3254,11 +3247,6 @@ public final class Util {
         double maxY = Math.max(lat1, lat2);
         double degX = maxX - minX;
         double degY = maxY - minY;
-
-        logger.info(String.valueOf(minY));
-        logger.info(String.valueOf(minX));
-        logger.info(String.valueOf(maxY));
-        logger.info(String.valueOf(maxX));
 
         Rectangle2D.Float rect = new Rectangle2D.Float((float) minX,
                 (float) minY, (float) degX,

@@ -2911,12 +2911,7 @@ public class MapViewManager extends NavigatedViewManager {
                     (float) minY, (float) (maxX - minX),
                     (float) (maxY - minY));
 
-            logger.info(String.valueOf(minY));
-            logger.info(String.valueOf(minX));
-            logger.info(String.valueOf(maxY));
-            logger.info(String.valueOf(maxX));
             MapProjection mp = ucar.visad.Util.makeMapProjectionCustom(minY, minX, maxY, maxX);
-            logger.info(mp.toString());
             setMapProjection(mp, true);
             display.saveProjection();
 
@@ -3025,9 +3020,7 @@ public class MapViewManager extends NavigatedViewManager {
                     pt1[i] = Double.valueOf(fields.get(i).getText());
                     pt2[i] = Double.valueOf(fields.get(i + 2).getText());
                 }
-
-                logger.info(Arrays.toString(pt1));
-                logger.info(Arrays.toString(pt2));
+                
                 setProjectionLatLon(pt1, pt2);
             }
         });
