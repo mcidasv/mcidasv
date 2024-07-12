@@ -29,8 +29,11 @@
 package ucar.visad;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.geoloc.Bearing;
 import ucar.unidata.geoloc.LatLonPointImpl;
+import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
@@ -141,6 +144,8 @@ import javax.vecmath.Point3d;
  * @version $Revision: 1.81 $ $Date: 2007/08/19 15:55:31 $
  */
 public final class Util {
+
+    private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
     /** timerange delta */
     private static final double TIMERANGE_DELTA = 0.00000001;
@@ -3225,6 +3230,11 @@ public final class Util {
         minY = Math.max(-90, minY);
         maxY = Math.min(90, maxY);
 
+        logger.info(String.valueOf(minY));
+        logger.info(String.valueOf(minX));
+        logger.info(String.valueOf(maxY));
+        logger.info(String.valueOf(maxX));
+
         double maxDegrees = Math.max(maxX - minX, maxY - minY);
         Rectangle2D.Float rect = new Rectangle2D.Float((float) minX,
                                      (float) minY, (float) (maxX - minX),
@@ -3232,6 +3242,30 @@ public final class Util {
 
         return new TrivialMapProjection(RealTupleType.SpatialEarth2DTuple,
                                         rect);
+    }
+
+    public static MapProjection makeMapProjectionCustom(double lat1, double lon1,
+                                                  double lat2, double lon2)
+            throws VisADException {
+
+        double minX = Math.max(-180, Math.min(lon1, lon2));
+        double maxX = Math.min(180, Math.max(lon1, lon2));
+        double minY = Math.min(lat1, lat2);
+        double maxY = Math.max(lat1, lat2);
+        double degX = maxX - minX;
+        double degY = maxY - minY;
+
+        logger.info(String.valueOf(minY));
+        logger.info(String.valueOf(minX));
+        logger.info(String.valueOf(maxY));
+        logger.info(String.valueOf(maxX));
+
+        Rectangle2D.Float rect = new Rectangle2D.Float((float) minX,
+                (float) minY, (float) degX,
+                (float) degY);
+
+        return new TrivialMapProjection(RealTupleType.SpatialEarth2DTuple,
+                rect);
     }
 
 
