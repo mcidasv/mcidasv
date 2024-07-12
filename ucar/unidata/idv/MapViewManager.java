@@ -3009,19 +3009,25 @@ public class MapViewManager extends NavigatedViewManager {
                     fLatLR = Float.parseFloat(fields.get(2).getText());
                     fLonLR = Float.parseFloat(fields.get(3).getText());
                 } catch (NumberFormatException nfe) {
-                    //topLabel.setText(htmlStart + styleStrErr + "Latitude and Longitude must be floating point numbers, please correct." + htmlEnd);
+                    JOptionPane.showMessageDialog(null,
+                            "Latitude and Longitude must be floating point numbers", "Invalid Viewpoint", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if ((fLatUL < -90) || (fLatUL > 90) || (fLatLR < -90) || (fLatLR > 90)) {
-                    //topLabel.setText(htmlStart + styleStrErr + "Latitude value(s) are out of valid range, -90 to +90" + htmlEnd);
+                    JOptionPane.showMessageDialog(null,
+                            "Latitude value(s) are out of valid range, -90 to +90", "Invalid Viewpoint", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if ((fLonUL < -180) || (fLonUL > 180) || (fLonLR < -180) || (fLonLR > 180)) {
-                    //topLabel.setText(htmlStart + styleStrErr + "Longitude value(s) are out of valid range, -180 to +180" + htmlEnd);
+                    JOptionPane.showMessageDialog(null,
+                            "Longitude value(s) are out of valid range, -180 to +180", "Invalid Viewpoint", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
-                //topLabel.setText(htmlStart + styleStr + "Provide Upper Left and Lower Right Latitude and Longitude" + htmlEnd);
+                if (nameField.getText().equals(null) || nameField.getText().matches("^\\s*")) {
+                    JOptionPane.showMessageDialog(null,
+                            "Name cannot be blank", "Invalid Viewpoint", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 double[] pt1 = new double[2];
                 double[] pt2 = new double[2];
