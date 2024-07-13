@@ -1,45 +1,38 @@
 /*
- * This file is part of McIDAS-V
+ * Copyright 1997-2024 Unidata Program Center/University Corporation for
+ * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
+ * support@unidata.ucar.edu.
  *
- * Copyright 2007-2024
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- * https://www.ssec.wisc.edu/mcidas/
- * 
- * All Rights Reserved
- * 
- * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see https://www.gnu.org/licenses/.
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package ucar.unidata.idv.control;
 
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 import org.python.util.PythonInterpreter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.collab.Sharable;
+import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.ControlContext;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.drawing.DrawingCommand;
 import ucar.unidata.idv.control.drawing.DrawingGlyph;
 import ucar.unidata.idv.control.drawing.FrontGlyph;
@@ -51,24 +44,21 @@ import ucar.unidata.idv.control.drawing.PolyGlyph;
 import ucar.unidata.idv.control.drawing.ShapeGlyph;
 import ucar.unidata.idv.control.drawing.SymbolGlyph;
 import ucar.unidata.idv.control.drawing.TextGlyph;
+import ucar.unidata.idv.ui.DataSelector;
 import ucar.unidata.ui.FineLineBorder;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.PatternFileFilter;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.ui.colortable.ColorTableDefaults;
+import ucar.unidata.util.*;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-import ucar.unidata.xml.XmlObjectStore;
+import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
 import ucar.visad.data.CalendarDateTime;
 import ucar.visad.display.Animation;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.FrontDrawer;
 
+import ucar.visad.quantities.CommonUnits;
 import visad.Data;
 import visad.DateTime;
 import visad.DisplayEvent;
@@ -80,7 +70,9 @@ import visad.UnionSet;
 import visad.Unit;
 import visad.VisADException;
 import visad.VisADRay;
+
 import visad.georef.EarthLocation;
+
 
 import java.awt.Color;
 import java.awt.Component;
@@ -99,28 +91,16 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import java.rmi.RemoteException;
+
+import java.util.*;
+
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
+
 
 /**
  * A MetApps Display Control for drawing lines on a navigated
@@ -131,13 +111,11 @@ import javax.swing.table.AbstractTableModel;
  */
 
 public class DrawingControl extends DisplayControlImpl {
-    
-    private static final Logger logger =
-        LoggerFactory.getLogger(DrawingControl.class);
+
 
     /** xgrf xml attribute */
     public static final String ATTR_USETIMESINANIMATION =
-        "usetimesinanimation";
+            "usetimesinanimation";
 
     /** xgrf attribute */
     public static final String ATTR_FRONTDISPLAY = "frontdisplay";
@@ -153,7 +131,7 @@ public class DrawingControl extends DisplayControlImpl {
 
     /** File filter used for the xgrf files */
     public static final PatternFileFilter FILTER_XGRF =
-        new PatternFileFilter(".+\\.xgrf", "IDV Drawing files (*.xgrf)");
+            new PatternFileFilter(".+\\.xgrf", "IDV Drawing files (*.xgrf)");
 
     /** File suffix used for the xgrfg files */
     public static final String SUFFIX_XGRF = ".xgrf";
@@ -175,22 +153,22 @@ public class DrawingControl extends DisplayControlImpl {
 
     /** Select command */
     public static final DrawingCommand CMD_SELECT =
-        new DrawingCommand(
-            "Select",
-            "Click to select; CTRL+x to cut; CTRL+P to set properties",
-            "/ucar/unidata/ui/drawing/images/pointer.gif");
+            new DrawingCommand(
+                    "Select",
+                    "Click to select; CTRL+x to cut; CTRL+P to set properties",
+                    "/ucar/unidata/ui/drawing/images/pointer.gif");
 
     /** command */
     public static final DrawingCommand CMD_MOVE =
-        new DrawingCommand(
-            "Move or stretch graphic",
-            "Drag: move graphic; Control-Drag: stretch graphic",
-            "/auxdata/ui/icons/Move16.gif");
+            new DrawingCommand(
+                    "Move or stretch graphic",
+                    "Drag: move graphic; Control-Drag: stretch graphic",
+                    "/auxdata/ui/icons/Move16.gif");
 
     /** command */
     public static final DrawingCommand CMD_STRETCH =
-        new DrawingCommand("Stretch graphic", "Drag: reshape graphic",
-                           "/auxdata/ui/icons/Reshape16.gif");
+            new DrawingCommand("Stretch graphic", "Drag: reshape graphic",
+                    "/auxdata/ui/icons/Reshape16.gif");
 
 
 
@@ -305,7 +283,7 @@ public class DrawingControl extends DisplayControlImpl {
 
     /** Current command */
     protected DrawingCommand currentCmd =
-        GlyphCreatorCommand.CMD_SMOOTHPOLYGON;
+            GlyphCreatorCommand.CMD_SMOOTHPOLYGON;
 
 
 
@@ -338,7 +316,25 @@ public class DrawingControl extends DisplayControlImpl {
     /** the autoscroll counter */
     private int autoScrollCnt = 0;
 
+    protected DataChoice datachoice = null;
 
+    public boolean isProbsevere = false;
+    /** The label to show the readout in the side legend */
+    //private JLabel sideLegendDataChoiceName;
+
+    protected HashMap dataChoiceProperties;
+
+    /** Keep around for the label macros */
+    private String glyphNameText;
+
+    /** Keep around for the legend */
+    protected JTextArea legendNoteTextArea;
+
+    /** Show the table in the legend */
+    private boolean showNoteInLegend = false;
+
+    /** Keep around for the legend */
+    protected JComponent legendNoteWrapper;
     /**
      * Create a new Drawing Control; set attributes.
      */
@@ -370,7 +366,7 @@ public class DrawingControl extends DisplayControlImpl {
     public String formatDistance(Real distance)
             throws VisADException, RemoteException {
         return getDisplayConventions().formatDistance(
-            distance.getValue(getDistanceUnit())) + " " + getDistanceUnit();
+                distance.getValue(getDistanceUnit())) + " " + getDistanceUnit();
     }
 
     /**
@@ -379,7 +375,10 @@ public class DrawingControl extends DisplayControlImpl {
      * @return the distance unit
      */
     public Unit getDistanceUnit() {
-        return getDisplayUnit();
+        if(isProbsevere)
+            return getDefaultDistanceUnit();
+        else
+            return getDisplayUnit();
     }
 
     /**
@@ -398,10 +397,10 @@ public class DrawingControl extends DisplayControlImpl {
         setColor(Color.red);
         if (deleteCursor == null) {
             deleteCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-                GuiUtils.getImage("/auxdata/ui/icons/Cut16.gif"),
-                new Point(0, 0), "Custom Delete");
+                    GuiUtils.getImage("/auxdata/ui/icons/Cut16.gif"),
+                    new Point(0, 0), "Custom Delete");
         }
-
+        dataSelection = getDataSelection();
         initDisplayUnit();
         displayHolder = new CompositeDisplayable();
         displayHolder.setUseTimesInAnimation(getUseTimesInAnimation());
@@ -409,6 +408,7 @@ public class DrawingControl extends DisplayControlImpl {
 
         List oldGlyphs = glyphs;
         glyphs = new ArrayList();
+        dataChoiceProperties = new HashMap();
         setDisplayInactive();
         for (int i = 0; i < oldGlyphs.size(); i++) {
             DrawingGlyph glyph = (DrawingGlyph) oldGlyphs.get(i);
@@ -420,13 +420,37 @@ public class DrawingControl extends DisplayControlImpl {
         getViewAnimation();
         checkGlyphTimes();
         if (dataChoice != null) {
-            Data data = dataChoice.getData(null);
+            this.datachoice = dataChoice;
+            isProbsevere = (boolean) dataChoice.getProperty("isProbsevere", false);
+            if(isProbsevere){
+                setShowNoteText(true);
+                glyphNameText = datachoice.getName();
+                setDisplayName(glyphNameText);
+                setAttributeFlags(FLAG_COLORTABLE);
+            }
+            Data data = dataChoice.getData(dataSelection);
             if (data != null) {
                 editable    = false;
                 displayOnly = true;
                 processData(data);
+                processProperties(dataChoice);
+                if(dataChoiceProperties.size() > 0)
+                    currentCmd = CMD_SELECT;
+                //setCurrentCommand(CMD_SELECT);
             }
+        /*    if (ctw == null) {
+                ColorTable colorTableToUse = getColorTableToApply();
+                ctw = new ColorTableWidget(this,
+                        controlContext.getColorTableManager(),
+                        ((colorTableToUse != null)
+                                ? colorTableToUse
+                                : controlContext
+                                .getColorTableManager()
+                                .getDefaultColorTable()), getRangeForColorTable());
+                addRemovable(ctw);
+            } */
         }
+
         return true;
     }
 
@@ -500,11 +524,6 @@ public class DrawingControl extends DisplayControlImpl {
         super.timeChanged(time);
     }
 
-
-
-
-
-
     /**
      * Process the visad data object. For now  this is a text object
      * that holds the glyph xml
@@ -522,7 +541,7 @@ public class DrawingControl extends DisplayControlImpl {
             try {
                 root = XmlUtil.getRoot(contents);
             } catch (Exception exc) {
-                logger.error("Could not get root of XML document", exc);
+                exc.printStackTrace();
             }
             if (root != null) {
                 processXml(root, true);
@@ -531,6 +550,33 @@ public class DrawingControl extends DisplayControlImpl {
         }
     }
 
+    /**
+     * Process the visad data object. For now  this is a text object
+     * that holds the glyph xml
+     *
+     * @param dataChoice The data object
+     *
+     * @throws RemoteException When bad things happen
+     * @throws VisADException When bad things happen
+     */
+    protected void processProperties(DataChoice dataChoice){
+        if (dataChoice instanceof CompositeDataChoice) {
+            ArrayList<DataChoice>  choices = (ArrayList<DataChoice>)((CompositeDataChoice)dataChoice).getDataChoices();
+            for(DataChoice dc: choices) {
+                processProperties(dc);
+            }
+        }  else  {
+            Object pObj = dataChoice.getProperty("plygonProperties");
+            if(pObj  != null) {
+                dataChoiceProperties.put(dataChoice.getName(), pObj.toString());
+            } else {
+                Hashtable properties =   dataChoice.getProperties();
+                if(properties != null && properties.size() > 0){
+                    dataChoiceProperties.putAll(properties);
+                }
+            }
+        }
+    }
 
     /**
      * respond to the reload data call
@@ -542,7 +588,10 @@ public class DrawingControl extends DisplayControlImpl {
         DataChoice dataChoice = getDataChoice();
         if (dataChoice != null) {
             removeAllGlyphs();
-            Data data = dataChoice.getData(null);
+            DataSelection ds = getDataSelection();
+            if(ds != null)
+                ds = updateDataSelection(ds);
+            Data data = dataChoice.getData(ds);
             if (data != null) {
                 processData(data);
             }
@@ -570,7 +619,7 @@ public class DrawingControl extends DisplayControlImpl {
         }
 
         frontDisplay = XmlUtil.getAttribute(root, ATTR_FRONTDISPLAY,
-                                            frontDisplay);
+                frontDisplay);
         if (displayHolder != null) {
             displayHolder.setUseTimesInAnimation(getUseTimesInAnimation());
         }
@@ -616,7 +665,7 @@ public class DrawingControl extends DisplayControlImpl {
                 List glyphTimes = glyph.getTimeValues();
                 if (glyphTimes != null) {
                     for (int timeIdx = 0; timeIdx < glyphTimes.size();
-                            timeIdx++) {
+                         timeIdx++) {
                         Object dttm = glyphTimes.get(timeIdx);
                         if ( !times.contains(dttm)) {
                             times.add(dttm);
@@ -794,6 +843,8 @@ public class DrawingControl extends DisplayControlImpl {
         } else {
             super.getLegendLabels(labels, legendType);
         }
+        if(isProbsevere)
+            labels.add(glyphNameText);
     }
 
 
@@ -880,7 +931,7 @@ public class DrawingControl extends DisplayControlImpl {
                 if (Misc.equals(currentCmd, CMD_STRETCH)
                         && (currentGlyph instanceof ImageGlyph)) {
                     msgLabel.setText(
-                        "Drag: reshape; Drag/Ctrl: unconstrained");
+                            "Drag: reshape; Drag/Ctrl: unconstrained");
 
                 }
             }
@@ -940,11 +991,7 @@ public class DrawingControl extends DisplayControlImpl {
      * @return Ok to handle events
      */
     protected boolean canHandleEvents() {
-        if (displayOnly || !getEnabled() || !editable
-                || !getHaveInitialized()
-                || (getMakeWindow() && !getWindowVisible())) {
-            return false;
-        }
+
         return isGuiShown();
     }
 
@@ -1031,7 +1078,7 @@ public class DrawingControl extends DisplayControlImpl {
 
                 if (currentGlyph != null) {
                     setCurrentGlyph(currentGlyph,
-                                    currentGlyph.handleKeyPressed(event));
+                            currentGlyph.handleKeyPressed(event));
                 }
             }
 
@@ -1048,7 +1095,7 @@ public class DrawingControl extends DisplayControlImpl {
             if (id == DisplayEvent.MOUSE_MOVED) {
                 if (currentGlyph != null) {
                     setCurrentGlyph(currentGlyph,
-                                    currentGlyph.handleMouseMoved(event));
+                            currentGlyph.handleMouseMoved(event));
                 }
                 return;
             }
@@ -1073,8 +1120,18 @@ public class DrawingControl extends DisplayControlImpl {
                     if (closestGlyph != null) {
                         closestGlyph.mousePressed(event);
                         setCurrentGlyph(currentGlyph, null);
+                        List newSelection = Misc.newList(closestGlyph);
+                        if (newSelection.equals(selectedGlyphs)) {
+                            if (isProbsevere && selectedGlyphs.size() != 0) {
+                                clearSelection();
+                                setNoteText(null);
+                                glyphNameText = datachoice.getName() ;
+                                updateLegendLabel();
+                                return;
+                            }
+                        }
                         setSelection(Misc.newList(closestGlyph),
-                                     inputEvent.isControlDown());
+                                inputEvent.isControlDown());
                     } else {
                         clearSelection();
                     }
@@ -1104,7 +1161,7 @@ public class DrawingControl extends DisplayControlImpl {
                     DrawingGlyph glyph = createGlyph(event, true);
                 } else {
                     setCurrentGlyph(currentGlyph,
-                                    currentGlyph.handleMousePressed(event));
+                            currentGlyph.handleMousePressed(event));
                 }
             } else if (id == DisplayEvent.MOUSE_DRAGGED) {
                 if ( !isLeftButtonDown(event)) {
@@ -1131,7 +1188,7 @@ public class DrawingControl extends DisplayControlImpl {
                 if (distance != null) {
                     Unit distanceUnit = getDistanceUnit();
                     msgLabel.setText(" Distance: "
-                                     + formatDistance(distance));
+                            + formatDistance(distance));
 
                 }
 
@@ -1154,7 +1211,7 @@ public class DrawingControl extends DisplayControlImpl {
                     return;
                 }
                 setCurrentGlyph(currentGlyph,
-                                currentGlyph.handleMouseDragged(event));
+                        currentGlyph.handleMouseDragged(event));
             } else if (id == DisplayEvent.MOUSE_RELEASED) {
                 if (skipNextMouseReleased) {
                     skipNextMouseReleased = false;
@@ -1174,7 +1231,7 @@ public class DrawingControl extends DisplayControlImpl {
                         DrawingGlyph glyphNow = currentGlyph;
                         setSelection(currentGlyph);
                         DrawingGlyph nextGlyph =
-                            currentGlyph.handleMouseReleased(event);
+                                currentGlyph.handleMouseReleased(event);
                         setCurrentGlyph(currentGlyph, nextGlyph);
                         if (nextGlyph == null) {
                             //&& (currentCmd.equals(CMD_MOVE)
@@ -1221,20 +1278,20 @@ public class DrawingControl extends DisplayControlImpl {
         try {
             DrawingGlyph closestGlyph = null;
             VisADRay ray = getNavigatedDisplay().getRay(event.getX(),
-                               event.getY());
+                    event.getY());
             double[] box1     = { 0, 0 };
             double[] box2     = { 100, 0 };
 
             double[] location = toBox(event);
             double[] vector =
-                getNavigatedDisplay().getRayDirection(event.getX(),
-                    event.getY());
+                    getNavigatedDisplay().getRayDirection(event.getX(),
+                            event.getY());
             Component comp =
-                displayHolder.getDisplayMaster().getDisplayComponent();
+                    displayHolder.getDisplayMaster().getDisplayComponent();
             Rectangle bounds = comp.getBounds();
             double[]  ul     = screenToBox(0, 0);
             double[] lr = screenToBox((int) bounds.getWidth(),
-                                      (int) bounds.getHeight());
+                    (int) bounds.getHeight());
             double diagonal    = DrawingGlyph.distanceBetween(ul, lr);
             double minDistance = diagonal * 0.05;
 
@@ -1366,13 +1423,20 @@ public class DrawingControl extends DisplayControlImpl {
             }
             selectedGlyphs.add(g);
             g.setSelected(true);
+            if(dataChoiceProperties.size() > 0 && g.getName() != null  &&
+                    dataChoiceProperties.get(g.getName())!= null) {
+                setNoteText((String) dataChoiceProperties.get(g.getName()));
+                if (isProbsevere) {
+                    glyphNameText = datachoice.getName() + " : " + g.getName();
+                    updateLegendLabel();
+                }
+            }
         }
         if ( !oldSelection.equals(selectedGlyphs)) {
             selectionChanged();
         }
         setDisplayActive();
     }
-
 
     /**
      * Is the given glyph selected
@@ -1518,7 +1582,7 @@ public class DrawingControl extends DisplayControlImpl {
         for (int i = 0; i < commands.size(); i++) {
             final DrawingCommand cmd = (DrawingCommand) commands.get(i);
             JToggleButton btn = GuiUtils.getToggleButton(cmd.getIconPath(),
-                                    4, 4);
+                    4, 4);
             btn.setToolTipText(cmd.getLabel());
             bg.add(btn);
             if (Misc.equals(currentCmd, cmd)) {
@@ -1536,7 +1600,7 @@ public class DrawingControl extends DisplayControlImpl {
         }
         if (buttons.size() > shapeColumns) {
             return GuiUtils.colGrid(GuiUtils.getComponentArray(buttons),
-                                    shapeColumns);
+                    shapeColumns);
         } else {
             return GuiUtils.hflow(buttons, 4, 0);
         }
@@ -1592,18 +1656,18 @@ public class DrawingControl extends DisplayControlImpl {
                 }
 
                 commands.add(
-                    new GlyphCreatorCommand(
-                        "Create " + StringUtil.getAnOrA(label) + " " + label,
-                        "Click and drag: create "
-                        + StringUtil.getAnOrA(label) + " " + label, icon,
-                            DrawingControl.FLAG_STRAIGHT) {
-                    public DrawingGlyph createGlyph(DrawingControl control,
-                            DisplayEvent event)
-                            throws VisADException, RemoteException {
-                        return new FrontGlyph(control, event, type,
-                                !getStraight());
-                    }
-                });
+                        new GlyphCreatorCommand(
+                                "Create " + StringUtil.getAnOrA(label) + " " + label,
+                                "Click and drag: create "
+                                        + StringUtil.getAnOrA(label) + " " + label, icon,
+                                DrawingControl.FLAG_STRAIGHT) {
+                            public DrawingGlyph createGlyph(DrawingControl control,
+                                                            DisplayEvent event)
+                                    throws VisADException, RemoteException {
+                                return new FrontGlyph(control, event, type,
+                                        !getStraight());
+                            }
+                        });
             }
         }
         return commands;
@@ -1619,10 +1683,10 @@ public class DrawingControl extends DisplayControlImpl {
         JComponent contents = GuiUtils.inset(doMakeTablePanel(), 4);
         if (displayOnly) {
             zPositionPanel = GuiUtils.hgrid(doMakeZPositionSlider(),
-                                            GuiUtils.filler());
+                    GuiUtils.filler());
             contents = GuiUtils.centerBottom(contents,
-                                             GuiUtils.label("Z Position: ",
-                                                 zPositionPanel));
+                    GuiUtils.label("Z Position: ",
+                            zPositionPanel));
             return GuiUtils.centerBottom(contents, msgLabel);
         }
 
@@ -1646,7 +1710,7 @@ public class DrawingControl extends DisplayControlImpl {
             tabbedPane.add("Fronts", doMakeShapesPanel());
         } else if ( !editable) {
             return GuiUtils.topCenter(doMakeControlsPanel(),
-                                      doMakeShapesPanel());
+                    doMakeShapesPanel());
         } else {
             tabbedPane.add("Controls", GuiUtils.top(doMakeControlsPanel()));
             if (editable) {
@@ -1654,6 +1718,7 @@ public class DrawingControl extends DisplayControlImpl {
             }
             tabbedPane.add("Shapes", doMakeShapesPanel());
         }
+
         return GuiUtils.centerBottom(tabbedPane, msgLabel);
     }
 
@@ -1693,7 +1758,7 @@ public class DrawingControl extends DisplayControlImpl {
         addControlWidgets(widgets);
         GuiUtils.tmpInsets = new Insets(4, 4, 0, 4);
         JPanel comps = GuiUtils.doLayout(widgets, 2, GuiUtils.WT_NY,
-                                         GuiUtils.WT_N);
+                GuiUtils.WT_N);
 
         return GuiUtils.top(GuiUtils.topCenter(titleLabel, comps));
     }
@@ -1710,14 +1775,14 @@ public class DrawingControl extends DisplayControlImpl {
 
 
         int[] coords = { DrawingGlyph.COORD_XYZ, DrawingGlyph.COORD_XY,
-                         DrawingGlyph.COORD_LATLONALT,
-                         DrawingGlyph.COORD_LATLON };
-        String[] coordLabels = { "X/Y/Z", "X/Y", "Lat/Lon/Alt", "Lat/Lon" };
+                DrawingGlyph.COORD_LATLONALT,
+                DrawingGlyph.COORD_LATLON, DrawingGlyph.COORD_LONLAT };
+        String[] coordLabels = { "X/Y/Z", "X/Y", "Lat/Lon/Alt", "Lat/Lon", "Lon/Lat" };
         List           coordItems = new ArrayList();
         TwoFacedObject coordTfo   = null;
         for (int i = 0; i < coords.length; i++) {
             TwoFacedObject tfo = new TwoFacedObject(coordLabels[i],
-                                     coords[i]);
+                    coords[i]);
             if (coords[i] == coordType) {
                 coordTfo = tfo;
             }
@@ -1725,7 +1790,7 @@ public class DrawingControl extends DisplayControlImpl {
         }
 
         zPositionPanel = GuiUtils.hgrid(doMakeZPositionSlider(),
-                                        GuiUtils.filler());
+                GuiUtils.filler());
 
         final JComboBox coordBox = new JComboBox();
         GuiUtils.setListData(coordBox, coordItems);
@@ -1735,7 +1800,7 @@ public class DrawingControl extends DisplayControlImpl {
         coordBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 TwoFacedObject tfo =
-                    (TwoFacedObject) coordBox.getSelectedItem();
+                        (TwoFacedObject) coordBox.getSelectedItem();
                 coordType = ((Integer) tfo.getId()).intValue();
                 checkZSliderEnabled();
             }
@@ -1769,8 +1834,8 @@ public class DrawingControl extends DisplayControlImpl {
         if (showLocationWidgets()) {
             widgets.add(GuiUtils.rLabel("Coordinates:"));
             widgets.add(GuiUtils.left(GuiUtils.flow(new Component[] {
-                coordBox,
-                fullLatLonCbx })));
+                    coordBox,
+                    fullLatLonCbx })));
         }
         widgets.add(GuiUtils.rLabel("Z Position:"));
         widgets.add(zPositionPanel);
@@ -1779,8 +1844,8 @@ public class DrawingControl extends DisplayControlImpl {
         if (showTimeWidgets()) {
             widgets.add(GuiUtils.rLabel("Time:"));
             widgets.add(GuiUtils.left(GuiUtils.flow(new Component[] {
-                useTimeCbx,
-                ignoreTimeCbx })));
+                    useTimeCbx,
+                    ignoreTimeCbx })));
         }
 
     }
@@ -1803,18 +1868,18 @@ public class DrawingControl extends DisplayControlImpl {
     protected void makeModePanel(List widgets) {
 
         List        commands = Misc.newList(CMD_SELECT, CMD_MOVE,
-                                            CMD_STRETCH);
+                CMD_STRETCH);
         List        shapes   = getShapeCommands();
         ButtonGroup bg       = new ButtonGroup();
         widgets.add(GuiUtils.rLabel("Mode:"));
         widgets.add(GuiUtils.leftCenter(makeButtonPanel(commands, bg),
-                                        GuiUtils.left(enabledCbx)));
+                GuiUtils.left(enabledCbx)));
         widgets.add(GuiUtils.rLabel("Shapes:"));
         if (showFilledCbx()) {
             widgets.add(
-                GuiUtils.leftCenter(
-                    makeButtonPanel(shapes, bg),
-                    GuiUtils.left(GuiUtils.hbox(filledCbx, straightCbx))));
+                    GuiUtils.leftCenter(
+                            makeButtonPanel(shapes, bg),
+                            GuiUtils.left(GuiUtils.hbox(filledCbx, straightCbx))));
         } else {
             widgets.add(GuiUtils.left(makeButtonPanel(shapes, bg)));
         }
@@ -1853,9 +1918,8 @@ public class DrawingControl extends DisplayControlImpl {
         if (c == null) {
             c = Color.red;
         }
-        XmlObjectStore store = getIdv().getStore();
-        ColorSwatchComponent colorSwatch = new ColorSwatchComponent(store,
-                                               c, "Set color", true) {
+        GuiUtils.ColorSwatch colorSwatch = new GuiUtils.ColorSwatch(c,
+                "Set color", true) {
             public void setBackground(Color newColor) {
                 super.setBackground(newColor);
                 try {
@@ -1866,7 +1930,7 @@ public class DrawingControl extends DisplayControlImpl {
             }
         };
         colorSwatch.setMinimumSize(new Dimension(20, 20));
-        colorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        colorSwatch.setPreferredSize(new Dimension(20, 20));
         Component colorCbx  = colorSwatch;
 
         JComboBox widthComp = doMakeLineWidthBox(lineWidth);
@@ -1882,11 +1946,11 @@ public class DrawingControl extends DisplayControlImpl {
         fontBox = GuiUtils.doMakeFontBox(new Font("Dialog", Font.PLAIN, 12));
         fontSizeBox = GuiUtils.doMakeFontSizeBox(12);
         justificationBox =
-            new JComboBox(new Vector(Misc.newList(TextGlyph.JUST_LEFT,
-                TextGlyph.JUST_CENTER, TextGlyph.JUST_RIGHT)));
+                new JComboBox(new Vector(Misc.newList(TextGlyph.JUST_LEFT,
+                        TextGlyph.JUST_CENTER, TextGlyph.JUST_RIGHT)));
         vertJustificationBox =
-            new JComboBox(new Vector(Misc.newList(TextGlyph.JUST_BOTTOM,
-                TextGlyph.JUST_CENTER, TextGlyph.JUST_TOP)));
+                new JComboBox(new Vector(Misc.newList(TextGlyph.JUST_BOTTOM,
+                        TextGlyph.JUST_CENTER, TextGlyph.JUST_TOP)));
         JPanel fontPanel = GuiUtils.flow(new Component[] { fontBox,
                 new JLabel("Size: "), fontSizeBox });
         JPanel justPanel = GuiUtils.flow(new Component[] { justificationBox,
@@ -1912,7 +1976,7 @@ public class DrawingControl extends DisplayControlImpl {
 
         GuiUtils.tmpInsets = new Insets(4, 4, 0, 4);
         return GuiUtils.doLayout(styleWidgets, 2, GuiUtils.WT_NY,
-                                 GuiUtils.WT_N);
+                GuiUtils.WT_N);
 
     }
 
@@ -1922,7 +1986,7 @@ public class DrawingControl extends DisplayControlImpl {
      */
     protected void checkZSliderEnabled() {
         boolean posEnabled = ((coordType == DrawingGlyph.COORD_XY)
-                              || (coordType == DrawingGlyph.COORD_LATLON));
+                || (coordType == DrawingGlyph.COORD_LATLON));
         //Leave this enabled
         //        GuiUtils.enableTree(zPositionPanel, posEnabled);
     }
@@ -1978,7 +2042,7 @@ public class DrawingControl extends DisplayControlImpl {
      */
     public static JComboBox doMakeLineWidthBox(int lineWidth) {
         int[]  widths = {
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
         Vector values = new Vector();
         for (int i = 0; i < widths.length; i++) {
@@ -2027,13 +2091,13 @@ public class DrawingControl extends DisplayControlImpl {
         }
 
         items.add(GuiUtils.makeMenuItem("Remove All", this,
-                                        "removeAllGlyphs"));
+                "removeAllGlyphs"));
         if ( !checkFlag(FLAG_GRIDTRAJECTORY)) {
             items.add(GuiUtils.makeMenuItem("Apply Color to Selected", this,
-                                            "applyColorToAll"));
+                    "applyColorToAll"));
             items.add(GuiUtils.makeMenuItem("Apply Z Position to Selected",
-                                            this, "applyZPosition",
-                                            selectedGlyphs));
+                    this, "applyZPosition",
+                    selectedGlyphs));
         }
         super.getEditMenuItems(items, forMenuBar);
 
@@ -2126,11 +2190,11 @@ public class DrawingControl extends DisplayControlImpl {
                 loadAsMapData = new JCheckBox("Load polygons as map data",
                         false);
                 loadAsMapData.setToolTipText(
-                    "Load polygons in this xgrf file back in as map data");
+                        "Load polygons in this xgrf file back in as map data");
             }
 
             String filename = FileManager.getWriteFile(FILTER_XGRF,
-                                  SUFFIX_XGRF, GuiUtils.top(loadAsMapData));
+                    SUFFIX_XGRF, GuiUtils.top(loadAsMapData));
             if (filename == null) {
                 return;
             }
@@ -2263,8 +2327,8 @@ public class DrawingControl extends DisplayControlImpl {
             return CalendarDateTime.timeSetToArray((Gridded1DSet) timeSet);
         }
         return new DateTime[] {
-            new DateTime(
-                (Real) ((SingletonSet) timeSet).getData().getComponent(0)) };
+                new DateTime(
+                        (Real) ((SingletonSet) timeSet).getData().getComponent(0)) };
     }
 
 
@@ -2362,7 +2426,7 @@ public class DrawingControl extends DisplayControlImpl {
             return TextGlyph.JUST_BOTTOM;
         }
         return ((String) vertJustificationBox.getSelectedItem())
-            .toLowerCase();
+                .toLowerCase();
     }
 
 
@@ -2377,7 +2441,7 @@ public class DrawingControl extends DisplayControlImpl {
             return null;
         }
         Font font =
-            (Font) ((TwoFacedObject) fontBox.getSelectedItem()).getId();
+                (Font) ((TwoFacedObject) fontBox.getSelectedItem()).getId();
         int fontSize = ((Integer) fontSizeBox.getSelectedItem()).intValue();
         return font.deriveFont((float) fontSize);
     }
@@ -2634,7 +2698,7 @@ public class DrawingControl extends DisplayControlImpl {
     public void evaluateGlyphJython(DrawingGlyph glyph, String jython) {
         glyphJython = jython;
         PythonInterpreter interpreter =
-            getControlContext().getJythonManager().createInterpreter();
+                getControlContext().getJythonManager().createInterpreter();
         interpreter.set("glyph", glyph);
         interpreter.set("control", this);
         interpreter.exec(jython);
@@ -2667,7 +2731,7 @@ public class DrawingControl extends DisplayControlImpl {
      *
      *
      * @author IDV Development Team
-     * 
+     *
      */
     public class GlyphTable extends JTable {
 
@@ -2684,7 +2748,7 @@ public class DrawingControl extends DisplayControlImpl {
             super(tableModel);
             setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             setToolTipText(
-                "<html>Double Click to  show properties<br>Delete to delete</html>");
+                    "<html>Double Click to  show properties<br>Delete to delete</html>");
             this.myTableModel = tableModel;
             addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent ke) {
@@ -2696,7 +2760,7 @@ public class DrawingControl extends DisplayControlImpl {
                             row = rows[i];
                             if ((row >= 0) && (row < glyphs.size())) {
                                 DrawingGlyph glyph =
-                                    (DrawingGlyph) glyphs.get(row);
+                                        (DrawingGlyph) glyphs.get(row);
                                 if (glyph instanceof PolyGlyph) {
                                     try {
                                         ((PolyGlyph) glyph).doFlythrough();
@@ -2721,7 +2785,7 @@ public class DrawingControl extends DisplayControlImpl {
                             row = rows[i];
                             if ((row >= 0) && (row < tmpGlyphs.size())) {
                                 DrawingGlyph glyph =
-                                    (DrawingGlyph) tmpGlyphs.get(row);
+                                        (DrawingGlyph) tmpGlyphs.get(row);
                                 removeGlyph(glyph);
                             }
                         }
@@ -2752,6 +2816,10 @@ public class DrawingControl extends DisplayControlImpl {
                     }
                     try {
                         DrawingGlyph glyph = (DrawingGlyph) glyphs.get(row);
+                        if(dataChoiceProperties.size() > 0 && glyph.getName() != null  &&
+                                dataChoiceProperties.get(glyph.getName())!= null) {
+                            setNoteText((String) dataChoiceProperties.get(glyph.getName()));
+                        }
                         if (e.getClickCount() > 1) {
                             doProperties(Misc.newList(glyph));
                         }
@@ -3027,6 +3095,213 @@ public class DrawingControl extends DisplayControlImpl {
         return frontDisplay;
     }
 
+    /**
+     * Add any macro name/value pairs.
+     *
+     *
+     * @param template The template to use
+     * @param patterns The macro names
+     * @param values The macro values
+     */
+    protected void addLabelMacros(String template, List patterns,
+                                  List values) {
+        super.addLabelMacros(template, patterns, values);
+        if(datachoice != null) {
+            String magStr = (String) datachoice.getProperty("KMLWARNING");
+            if(magStr != null)
+                setExtraLabelTemplate(MACRO_LONGNAME);
+            //patterns.add(MACRO_LONGNAME);
+            //values.add(glyphNameText);
+        }
+    }
+
+    /**
+     * Get the default display list template for this control.  Subclasses can override
+     * @return the default template
+     */
+    protected String getDefaultDisplayListTemplate() {
+        if(datachoice != null) {
+            String magStr = (String) datachoice.getProperty("KMLWARNING");
+            String idStr = datachoice.getStringId();
+            if(magStr != null)
+                return MACRO_SHORTNAME + " - " + MACRO_LONGNAME ;
+            else if(idStr != null && idStr.contains("Probsevere"))
+                return MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP;
+        }
+        return super.getDefaultDisplayListTemplate();
+    }
 
 
+    /**
+     * This method is called  to update the legend labels when
+     * some state has changed in this control that is reflected in the labels.
+     */
+    protected void updateLegendLabel() {
+        super.updateLegendLabel();
+        // if the display label has the position, we'll update the list also
+        String template = getDisplayListTemplate();
+        if (template != null && template.contains(MACRO_POSITION)) {
+            updateDisplayList();
+        }
+    }
+
+    /**
+     * Assume that any display controls that have a color table widget
+     * will want the color table to show up in the legend.
+     *
+     * @param  legendType  type of legend
+     * @return The extra JComponent to use in legend
+     */
+    protected JComponent getExtraLegendComponent(int legendType) {
+        JComponent parentComp = super.getExtraLegendComponent(legendType);
+        if (legendType == BOTTOM_LEGEND) {
+            return parentComp;
+        }
+
+        setShowNoteInLegend(showNoteInLegend);
+        return GuiUtils.vbox(parentComp, this.legendNoteWrapper);
+
+    }
+
+
+    /**
+     *  Set the show html item
+     *
+     *  @param items The items of view menu
+     */
+    protected void getViewMenuItems(List items, boolean forMenuBar) {
+        super.getViewMenuItems(items, forMenuBar);
+        ViewManager viewManager = getViewManager();
+        items.add(GuiUtils.MENU_SEPARATOR);
+        items.add(GuiUtils.makeCheckboxMenuItem("Show Text Note In Legend",
+                this,
+                "showNoteInLegend",
+                null));
+        if (forMenuBar) {
+            JMenu hovMenu = viewManager.makeViewMenu();
+            hovMenu.setText("Text/Html View");
+            items.add(hovMenu);
+        }
+    }
+
+    /**
+     *  Set the ShowNoteInLegend property.
+     *
+     *  @param value The new value for ShowTable
+     */
+    public void setShowNoteInLegend(boolean value) {
+        showNoteInLegend = value;
+        if (legendNoteTextArea == null) {
+            legendNoteTextArea = new JTextArea(10, 20);
+            if (initNoteText != null) {
+                legendNoteTextArea.setText(initNoteText);
+            }
+            JScrollPane sp =
+                    new JScrollPane(
+                            legendNoteTextArea,
+                            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+            JViewport vp = sp.getViewport();
+            vp.setViewSize(new Dimension(20, 10));
+            legendNoteWrapper = GuiUtils.inset(sp, 4);
+        }
+
+        legendNoteTextArea.setVisible(value);
+        legendNoteWrapper.setVisible(value);
+
+        //updateLegendLabel();
+    }
+
+    /**
+     *  Get the ShowNoteInLegend property.
+     *
+     */
+    public boolean getShowNoteInLegend() {
+        return showNoteInLegend;
+    }
+
+    /**
+     * Set the value of the note text area.
+     *
+     * @param n The note text
+     */
+    public void setNoteText(String n) {
+        initNoteText = n;
+        if (noteTextArea != null) {
+            noteTextArea.setText(n);
+        }
+        if(legendNoteTextArea != null){
+            legendNoteTextArea.setText(n);
+        }
+    }
+
+    /**
+     * The specific color table here is for the ProbSevere display
+     *
+     * @return The color table to use
+     */
+    protected ColorTable getInitialColorTable() {
+        if(isProbsevere) {
+            List resources =
+                    Misc.newList("/ucar/unidata/idv/resources/probsevere_cmap.xml");
+            XmlResourceCollection colorMapResources = new XmlResourceCollection("", resources);
+            Element root = colorMapResources.getRoot(0);
+            List colorNodes = XmlUtil.findChildren(root, "color");
+            float[][] pl = new float[4][colorNodes.size()];
+            for (int i = 0; i < colorNodes.size(); i++) {
+                Element serverNode = (Element) colorNodes.get(i);
+                String aval = XmlUtil.getAttribute(serverNode, "a");
+                String bval = XmlUtil.getAttribute(serverNode, "b");
+                String gval = XmlUtil.getAttribute(serverNode, "g");
+                String rval = XmlUtil.getAttribute(serverNode, "r");
+                pl[3][i] = Float.parseFloat(aval);
+                pl[2][i] = Float.parseFloat(bval);
+                pl[1][i] = Float.parseFloat(gval);
+                pl[0][i] = Float.parseFloat(rval);
+
+            }
+            ColorTable ct = new ColorTable("probsevereColorMap", "Basic", pl);
+            ct.setRange(new Range(0, 100));
+            return ct;
+        } else {
+            return super.getInitialColorTable();
+        }
+    }
+
+    /**
+     * Hook method to allow derived classes to return a different
+     * initial {@link ucar.unidata.util.Range}
+     *
+     * @return The initial range to use
+     *
+     * @throws RemoteException    Java RMI problem
+     * @throws VisADException     VisAD problem
+     */
+    protected Range getInitialRange() throws RemoteException, VisADException {
+        if (isProbsevere) {
+            return new Range(0, 100);
+        } else {
+            return null;
+        }
+
+    }
+
+    /**
+     * Return the display unit
+     *
+     * @return The display unit
+     */
+    public Unit getDisplayUnit() {
+        if (isProbsevere) {
+            displayUnit = CommonUnits.PERCENT;
+        }
+        return displayUnit;
+    }
+
+    public void initAfterUnPersistence(ControlContext vc,
+                                       Hashtable properties) {
+        super.initAfterUnPersistence(vc, properties);
+        setShowNoteInLegend(showNoteInLegend);
+    }
 }
