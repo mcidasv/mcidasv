@@ -1114,6 +1114,17 @@ public class McIDASV extends IntegratedDataViewer {
         EventBus.publish(Constants.EVENT_FILECHOOSER_START, "init finished");
         
         EventDispatchThreadHangMonitor.initMonitoring();
+
+        // McIDAS Inquiry #983-3141 -> I really don't like how this is implemented
+        new Thread(() -> {
+            try {
+                McIdasPreferenceManager pm = (McIdasPreferenceManager) doMakePreferenceManager();
+                pm.initAtStartup();
+            } catch (Exception e){
+                logger.warn("Preferences could not be initialized");
+            }
+            logger.info("Thread ended");
+        }).start();
     }
     
     /**

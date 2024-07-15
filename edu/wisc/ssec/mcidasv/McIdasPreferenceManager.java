@@ -487,6 +487,17 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
         }
     }
+
+    /**
+     * Creates an ephemeral Preferences window just to apply
+     * preferences; hacky workaround for McIDAS Inquiry #983-3141
+     */
+
+    public void initAtStartup() {
+        show();
+        apply();
+        this.window.setVisible(false);
+    }
     
     /**
      * Wrapper so that IDV code can still select which preference pane to show.
@@ -1301,6 +1312,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 boolean hiqLabelState = true;
                 theStore.put(PROP_HIQ_FONT_RENDERING, hiqLabelState);
                 System.setProperty(PROP_HIQ_FONT_RENDERING, Boolean.toString(hiqLabelState));
+                //applyEventPreferences(theStore);
 
             }
         };
