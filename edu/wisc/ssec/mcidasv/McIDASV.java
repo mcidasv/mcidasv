@@ -1081,6 +1081,7 @@ public class McIDASV extends IntegratedDataViewer {
      *   <li>Detection and handling of a crashed McIDAS-V session.</li>
      *   <li>Run action specified by {@code -doaction} flag (if any).</li>
      *   <li>Allowing tooltips to remain visible for more than 4 seconds.</li>
+     *   <li>Apply preferences</li>
      * </ul>
      *
      * @see ArgumentManager#clearAutomaticDisplayArgs()
@@ -1116,15 +1117,13 @@ public class McIDASV extends IntegratedDataViewer {
         EventDispatchThreadHangMonitor.initMonitoring();
 
         // McIDAS Inquiry #983-3141 -> I really don't like how this is implemented
-        new Thread(() -> {
+        SwingUtilities.invokeLater(() -> {
             try {
-                McIdasPreferenceManager pm = (McIdasPreferenceManager) doMakePreferenceManager();
-                pm.initAtStartup();
-            } catch (Exception e){
-                logger.warn("Preferences could not be initialized");
+                ((McIdasPreferenceManager) doMakePreferenceManager()).initAtStartup();
+            } catch (Exception e) {
+                logger.error("oh no! something happened!", e);
             }
-            logger.info("Thread ended");
-        }).start();
+        });
     }
     
     /**
