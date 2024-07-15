@@ -28,14 +28,14 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +60,6 @@ import javax.swing.JTextField;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.options.FileOption;
-import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 import org.python.core.PyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -567,6 +566,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @see #decodeXml(String, boolean, String, String, boolean, boolean, Hashtable,
      *      boolean, boolean, boolean)
      */
+    @SuppressWarnings("unchecked")
     @Override public boolean decodeXmlFile(String xmlFile, String label,
                                  boolean checkToRemove,
                                  boolean letUserChangeData,
@@ -588,6 +588,10 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         boolean mergeLayers = false;
         setMergeBundledLayers(false);
+
+        McIDASV mcv = McIDASV.getStaticMcv();
+        List<DisplayControl> layersBeforeReplace = new ArrayList<>();
+        List<DataSource> sourcesBeforeReplace = new ArrayList<>();
 
         if (checkToRemove) {
             // ok[0] = did the user press cancel 
@@ -623,12 +627,13 @@ public class PersistenceManager extends IdvPersistenceManager {
             setMergeBundledLayers(mergeLayers);
 
             if (removeAll) {
-                // Remove the displays first because, if we remove the data 
-                // some state can get cleared that might be accessed from a 
-                // timeChanged on the unremoved displays
-                getIdv().removeAllDisplays();
-                // Then remove the data
-                getIdv().removeAllDataSources();
+                // make lists of layers and data sources that exist prior to loading
+                // bundle. this is being done in an attempt to avoid the strange lockups
+                // we've been seeing on macOS 14.5.
+                // See Inquiry 3154 for more details
+                // https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=3152
+                layersBeforeReplace.addAll(cast(mcv.getDisplayControls()));
+                sourcesBeforeReplace.addAll(cast(mcv.getDataSources()));
             }
 
             if (ok.length == 4) {
@@ -639,8 +644,6 @@ public class PersistenceManager extends IdvPersistenceManager {
         // the UI manager may need to know which ViewManager was active *before*
         // we loaded the bundle.
         lastBeforeBundle = getVMManager().getLastActiveViewManager();
-
-        ArgumentManager argsManager = (ArgumentManager)getArgsManager();
 
         boolean isZidv = ArgumentManager.isZippedBundle(xmlFile);
 
@@ -709,7 +712,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
                 String tmpDir = dir;
                 if (toTmp) {
-                    tmpDir = getIdv().getObjectStore().getUserTmpDirectory();
+                    tmpDir = mcv.getObjectStore().getUserTmpDirectory();
                     tmpDir = IOUtil.joinDir(tmpDir, Misc.getUniqueId());
                 }
                 IOUtil.makeDir(tmpDir);
@@ -755,8 +758,16 @@ public class PersistenceManager extends IdvPersistenceManager {
                       shouldMerge, bundleProperties, removeAll,
                       letUserChangeData, limitNewWindows);
             Trace.call2("Decode.decodeXml");
+
+            if (removeAll) {
+                // Remove the displays first because, if we remove the data
+                // some state can get cleared that might be accessed from a
+                // timeChanged on the unremoved displays
+                layersBeforeReplace.forEach(mcv::removeDisplayControl);
+                sourcesBeforeReplace.forEach(mcv::removeDataSource);
+            }
             return true;
-        } catch (Throwable exc) {
+        } catch (Exception exc) {
             if (contents == null) {
                 logException("Unable to load bundle:" + xmlFile, exc);
             } else {
