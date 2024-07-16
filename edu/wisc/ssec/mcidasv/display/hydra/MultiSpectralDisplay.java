@@ -316,7 +316,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     /**
-     * McIDAS Inquiry #2535
+     * McIDAS Inquiry #2535-3141
      * Write multispectral data to a CSV file
      */
 
@@ -331,6 +331,23 @@ public class MultiSpectralDisplay implements DisplayListener {
             }
 
             FileWriter outputFile = new FileWriter(name);
+
+            outputFile.write(getDataAsString());
+            outputFile.close();
+
+        } catch (Exception e) {
+            logger.warn("Writing to CSV failed", e);
+        }
+    }
+
+    /**
+     * McIDAS Inquiry #2535-3141
+     * Get multispectral data as a string for CSV files
+     * @return data as a comma separated string
+     */
+
+    public String getDataAsString() {
+        try {
             domainSet = (Gridded1DSet) spectrum.getDomainSet();
 
             int[] idx = new int[domainSet.getLength()];
@@ -342,6 +359,11 @@ public class MultiSpectralDisplay implements DisplayListener {
 
             StringBuilder build = new StringBuilder();
 
+            build.append(domainType.toString());
+            build.append(",");
+            build.append(rangeType.toString());
+            build.append("\n");
+
             for (int i = 0; i < out[0].length; i++) {
                 build.append(out[0][i]);
                 build.append(",");
@@ -349,11 +371,12 @@ public class MultiSpectralDisplay implements DisplayListener {
                 build.append("\n");
             }
 
-            outputFile.write(build.toString());
-            outputFile.close();
+            logger.info(build.toString());
+            return build.toString();
 
         } catch (Exception e) {
             logger.warn("Writing to CSV failed", e);
+            return "NO STRING CREATED";
         }
     }
 

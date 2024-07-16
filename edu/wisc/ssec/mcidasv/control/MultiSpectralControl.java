@@ -783,8 +783,15 @@ public class MultiSpectralControl extends HydraControl {
               String tmp = wavenumbox.getText().trim();
               updateImage(Float.valueOf(tmp));
           });
+
+          JButton saveAsCSV = new JButton("Save...");
+          saveAsCSV.addActionListener(e-> {
+              display.writeToCSV();
+          });
+
           compList.add(nameLabel);
           compList.add(wavenumbox);
+          compList.add(saveAsCSV);
         } else {
           final JComboBox bandBox = display.getBandSelectComboBox();
           bandBox.addActionListener(e -> {
