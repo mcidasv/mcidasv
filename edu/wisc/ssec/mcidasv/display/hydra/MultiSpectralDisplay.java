@@ -141,7 +141,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         dataChoice = (DirectDataChoice)displayControl.getDataChoice();
 
         init();
-        writeToCSV();
+        // writeToCSV();
     }
 
     public MultiSpectralDisplay(final DirectDataChoice dataChoice) 
