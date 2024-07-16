@@ -36,9 +36,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,6 +141,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         dataChoice = (DirectDataChoice)displayControl.getDataChoice();
 
         init();
+        writeToCSV();
     }
 
     public MultiSpectralDisplay(final DirectDataChoice dataChoice) 
@@ -142,7 +149,6 @@ public class MultiSpectralDisplay implements DisplayListener {
     {
         this.dataChoice = dataChoice;
         init();
-        writeToCSV();
     }
 
     // TODO: generalize this so that you can grab the image data for any
