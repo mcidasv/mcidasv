@@ -32,15 +32,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import javax.swing.JComboBox;
+import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,6 +142,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     {
         this.dataChoice = dataChoice;
         init();
+        writeToCSV();
     }
 
     // TODO: generalize this so that you can grab the image data for any
@@ -307,6 +306,48 @@ public class MultiSpectralDisplay implements DisplayListener {
                     setWaveNumber(bandMap.get(bandName));
                 }
             });
+        }
+    }
+
+    /**
+     * McIDAS Inquiry #2535
+     * Write multispectral data to a CSV file
+     */
+
+    public void writeToCSV() {
+        try {
+            String name = JOptionPane.showInputDialog("Make CSV file?","multispectralDataTesting.csv");
+
+            // logger.info(name);
+            if (name == null) {
+                logger.info("File was not created!");
+                return;
+            }
+
+            FileWriter outputFile = new FileWriter(name);
+            domainSet = (Gridded1DSet) spectrum.getDomainSet();
+
+            int[] idx = new int[domainSet.getLength()];
+
+            for (int i = 0; i < domainSet.getLength(); i++) {idx[i] = i;}
+
+            float[][] out = domainSet.indexToValue(idx);
+            double[][] out2 = spectrum.unpackValues();
+
+            StringBuilder build = new StringBuilder();
+
+            for (int i = 0; i < out[0].length; i++) {
+                build.append(out[0][i]);
+                build.append(",");
+                build.append(out2[0][i]);
+                build.append("\n");
+            }
+
+            outputFile.write(build.toString());
+            outputFile.close();
+
+        } catch (Exception e) {
+            logger.warn("Writing to CSV failed", e);
         }
     }
 
