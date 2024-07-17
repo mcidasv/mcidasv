@@ -46,6 +46,7 @@ import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
+import org.python.antlr.ast.Str;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -345,7 +346,6 @@ public class MultiSpectralDisplay implements DisplayListener {
                 build.append("\n");
             }
 
-            logger.info(build.toString());
             return build.toString();
 
         } catch (Exception e) {

@@ -770,8 +770,6 @@ public class MultiSpectralControl extends HydraControl {
           });
 
           JButton saveAsCSV = new JButton("Save...");
-//          JTextField test = new JTextField("blah");
-//          GuiUtils.setupDirectoryChooser(saveAsCSV, test);
 
           saveAsCSV.addActionListener(e-> {
               writeToCSV();
@@ -788,12 +786,19 @@ public class MultiSpectralControl extends HydraControl {
              updateImage(channel.floatValue());
           });
           JLabel nameLabel = new JLabel("Band: ");
+          JButton saveAsCSV = new JButton("Save...");
+
+          saveAsCSV.addActionListener(e-> {
+              writeToCSV();
+          });
+
           compList.add(nameLabel);
           compList.add(bandBox);
           compList.add(wavelengthLabel);
+          compList.add(saveAsCSV);
         }
 
-        JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 3, GuiUtils.WT_N, GuiUtils.WT_N));
+        JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 4, GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getDisplayComponent(), waveNo);
     }
 
