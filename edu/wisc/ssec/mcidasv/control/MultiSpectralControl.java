@@ -42,6 +42,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileWriter;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -51,24 +53,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.basic.BasicTableUI;
@@ -785,8 +770,11 @@ public class MultiSpectralControl extends HydraControl {
           });
 
           JButton saveAsCSV = new JButton("Save...");
+//          JTextField test = new JTextField("blah");
+//          GuiUtils.setupDirectoryChooser(saveAsCSV, test);
+
           saveAsCSV.addActionListener(e-> {
-              display.writeToCSV();
+              writeToCSV();
           });
 
           compList.add(nameLabel);
@@ -808,6 +796,45 @@ public class MultiSpectralControl extends HydraControl {
         JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 3, GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getDisplayComponent(), waveNo);
     }
+
+    /**
+     * McIDAS Inquiry #2535-3141
+     * Write multispectral data to a CSV file
+     * (Now with file choosers!)
+     */
+    public void writeToCSV() {
+        try {
+            JFrame parent = new JFrame();
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Export Multispectral data as CSV...");
+            int userSelection = chooser.showSaveDialog(parent);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                String path = file.getAbsolutePath();
+                String name = file.getName();
+
+                if (!name.toLowerCase().endsWith(".csv")) {
+                    path += ".csv";
+                }
+
+                // logger.info(name);
+                if (path == null) {
+                    logger.info("File was not created!");
+                    return;
+                }
+
+                FileWriter outputFile = new FileWriter(path);
+
+                outputFile.write(display.getDataAsString());
+                outputFile.close();
+            }
+
+        } catch (Exception e) {
+            logger.warn("Writing to CSV failed", e);
+        }
+    }
+
 
     private JComponent getHistogramTabComponent() {
         updateHistogramTab();

@@ -317,35 +317,9 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     /**
      * McIDAS Inquiry #2535-3141
-     * Write multispectral data to a CSV file
-     */
-
-    public void writeToCSV() {
-        try {
-            String name = JOptionPane.showInputDialog("Make CSV file?","multispectralDataTesting.csv");
-
-            // logger.info(name);
-            if (name == null) {
-                logger.info("File was not created!");
-                return;
-            }
-
-            FileWriter outputFile = new FileWriter(name);
-
-            outputFile.write(getDataAsString());
-            outputFile.close();
-
-        } catch (Exception e) {
-            logger.warn("Writing to CSV failed", e);
-        }
-    }
-
-    /**
-     * McIDAS Inquiry #2535-3141
      * Get multispectral data as a string for CSV files
      * @return data as a comma separated string
      */
-
     public String getDataAsString() {
         try {
             domainSet = (Gridded1DSet) spectrum.getDomainSet();
