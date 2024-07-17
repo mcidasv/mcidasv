@@ -2220,7 +2220,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
         // Validate the display rate and end pause fields
         try {
-            displayRate = (new Double(displayRateFld.getText())).doubleValue();
+            displayRate = Double.valueOf(displayRateFld.getText());
         } catch (NumberFormatException nfe) {
             JOptionPane.showMessageDialog(mainDialog, "Invalid Display Rate: " + displayRateFld.getText());
             return;
@@ -2390,8 +2390,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                 }
 
                 // System.err.println("createMovie:" + movieFile);
-                if (movieFile.toLowerCase().endsWith(
-                        FileManager.SUFFIX_GIF)) {
+
+                if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_GIF)) {
                     // this should override pref
                     XmlUtil.getAttribute(scriptingNode, "", true);
                     double  rate   = 1.0 / displayRate;
@@ -2444,6 +2444,25 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
                     if (size == null) {
                         size = new Dimension(600, 400);
+                    }
+
+                    /**
+                     * McIDAS Inquiry #2909-3141
+                     * Dwelling on images
+                     */
+
+                    if (displayRate < 1) {
+                        int dwell = (int) (1 / displayRate);
+                        ArrayList<ImageWrapper> dwelled = new ArrayList<>();
+
+                        for (int idx = 0; idx < images.size(); idx++) {
+                            for (int rep = 0; rep < dwell; rep++) {
+                                dwelled.add(images.get(idx));
+                            }
+                        }
+
+                        images = dwelled;
+                        displayRate = 1;
                     }
 
                     JpegImagesToMovie.createMovie(movieFile, size.width,
