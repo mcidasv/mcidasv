@@ -58,51 +58,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.JTree;
-import javax.swing.KeyStroke;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -3331,7 +3291,88 @@ public class UIManager extends IdvUIManager implements ActionListener {
             menu.add(deleteMenu);
         }
 
-        for (TwoFacedObject tfo : vmStates) {
+        ArrayList<TwoFacedObject> notInDirs = new ArrayList<>();
+        HashMap<String, JMenu> dirs = new HashMap<>();
+
+        for (int i = 0; i < vmStates.size(); i++) {
+            TwoFacedObject tfo = vmStates.get(i);
+
+            if (tfo.getLabel().toString().contains(">")) {
+                String dirStr = tfo.getLabel().toString();
+                String[] dirAsArray = dirStr.split(">");
+
+                if (dirAsArray.length > 2) {
+                    String tgt = "";
+                    for (int split = 1; split < dirAsArray.length; split++) {
+                        tgt += dirAsArray[split] + ">";
+                    }
+                    dirAsArray[1] = tgt;
+                }
+
+                JMenu tmp;
+                if (dirs.containsKey(dirAsArray[0])) {
+                    tmp = dirs.get(dirAsArray[0]);
+                } else {
+                    tmp = new JMenu(dirAsArray[0]);
+                }
+                JMenuItem mi = new JMenuItem(dirAsArray[1]);
+                tmp.add(mi);
+                dirs.put(dirAsArray[0], tmp);
+
+                mi.addActionListener(new ObjectListener(tfo.getId()) {
+                    public void actionPerformed(final ActionEvent e) {
+                        logger.info("sheep");
+                        if (vm == null) {
+                            return;
+                        }
+                        if (theObject instanceof ViewManager) {
+                            vm.initWith((ViewManager)theObject, true);
+                        } else if (theObject instanceof ViewState) {
+                            try {
+                                vm.initWith((ViewState)theObject);
+                            } catch (Throwable ex) {
+                                logException("Initializing view with ViewState", ex);
+                            }
+                        } else {
+                            LogUtil.consoleMessage("UIManager.makeViewStateMenu: Object of unknown type: "+theObject.getClass().getName());
+                        }
+                    }
+                });
+
+            } else {
+                notInDirs.add(tfo);
+            }
+        }
+
+        ArrayList<JMenu> folders = new ArrayList<>();
+
+        for (Map.Entry<String, JMenu> entry : dirs.entrySet()) {
+            folders.add(entry.getValue());
+        }
+
+        Collections.sort(folders, new Comparator<JMenu>() {
+            @Override
+            public int compare(JMenu o1, JMenu o2) {
+                return (o1.getText().compareTo(o2.getText()));
+            }
+        });
+
+        for (int i = 0; i < folders.size(); i++) {
+            menu.add(folders.get(i));
+        }
+
+        if (folders.size() > 0) {
+            menu.addSeparator();
+        }
+
+        Collections.sort(notInDirs, new  Comparator<TwoFacedObject>() {
+            @Override
+            public int compare(TwoFacedObject a, TwoFacedObject b) {
+                return (a.getLabel().toString().compareTo(b.getLabel().toString()));
+            }
+        });
+
+        for (TwoFacedObject tfo : notInDirs) {
             JMenuItem mi = new JMenuItem(tfo.getLabel().toString());
             menu.add(mi);
             mi.addActionListener(new ObjectListener(tfo.getId()) {
