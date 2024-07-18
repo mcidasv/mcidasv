@@ -163,6 +163,8 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private float origRangeMin;
     private float origRangeMax;
 
+    private MyTabbedPane histogramPane;
+
     public ImagePlanViewControl() {
         super();
         logger.trace("created new imageplanviewcontrol={}", Integer.toHexString(hashCode()));
@@ -231,6 +233,8 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 //            }
 
             tab.add("Histogram", new JLabel("Histogram not yet initialized"));
+
+            histogramPane = (MyTabbedPane) tab;
             return tab;
         } catch (Exception exc) {
             logException("doMakeContents", exc);
@@ -991,6 +995,20 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         return newChild;
     }
 
+    protected void getViewMenuItems(List items, boolean forMenuBar) {
+        super.getViewMenuItems(items, forMenuBar);
+        items.add(GuiUtils.MENU_SEPARATOR);
+
+        if (!histogramPane.haveDoneHistogramInit) {
+            histogramPane.loadHistogram();
+            histogramPane.haveDoneHistogramInit = true;
+        }
+
+        JMenuItem saveMenuItem = new JMenuItem("Save Chart Image...");
+        saveMenuItem.addActionListener(e -> getChart().saveImage());
+        items.add(saveMenuItem);
+    }
+
     /**
      * Holds a JFreeChart histogram of image values.
      */
@@ -998,7 +1016,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         /** Have we been painted */
         boolean painted = false;
         
-        boolean haveDoneHistogramInit = false;
+        public boolean haveDoneHistogramInit = false;
 
         /**
          * Creates a new {@code MyTabbedPane} that gets immediately registered
@@ -1024,6 +1042,22 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                 getIdv().clearWaitCursor();
 //                haveDoneHistogramInit = true;
             }
+        }
+        public void loadHistogram() {
+                int index = -1;
+                for (int i = 0; i < getTabCount(); i++) {
+                    if (getTitleAt(i).equals("Histogram")) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                getIdv().showWaitCursor();
+                this.setComponentAt(index,
+                        GuiUtils.inset(getHistogramTabComponent(),5));
+                setInitialHistogramRange();
+                getIdv().clearWaitCursor();
+//                haveDoneHistogramInit = true;
         }
 
         /**

@@ -279,13 +279,13 @@ public class ImagePlanViewControl extends PlanViewControl {
      * @param items _more_
      * @param forMenuBar _more_
      */
-    protected void getViewMenuItems(List items, boolean forMenuBar) {
-        super.getViewMenuItems(items, forMenuBar);
-        items.add(GuiUtils.MENU_SEPARATOR);
-        JMenuItem saveMenuItem = new JMenuItem("Save Chart Image...");
-        saveMenuItem.addActionListener(e -> getChart().saveImage());
-        items.add(saveMenuItem);
-    }
+//    protected void getViewMenuItems(List items, boolean forMenuBar) {
+//        super.getViewMenuItems(items, forMenuBar);
+//        items.add(GuiUtils.MENU_SEPARATOR);
+//        JMenuItem saveMenuItem = new JMenuItem("Save Chart Image...");
+//        saveMenuItem.addActionListener(e -> getChart().saveImage());
+//        items.add(saveMenuItem);
+//    }
 
 
     /**
