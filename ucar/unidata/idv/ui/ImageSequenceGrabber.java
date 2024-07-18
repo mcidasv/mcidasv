@@ -2497,7 +2497,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
     private void includeExtendedAttributes(Path path, double displayRate, int frameCount) {
         if (path == null) {
             logger.error("Adding extended attributes/metadata to this file type is not supported");
-            JOptionPane.showMessageDialog(null, "Adding extended attributes/metadata to this file type is not supported");
             return;
         }
         try {
