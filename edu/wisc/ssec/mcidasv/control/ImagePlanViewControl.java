@@ -64,6 +64,7 @@ import org.w3c.dom.Node;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.idv.ControlContext;
@@ -223,7 +224,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             
             // MH: just add a dummy component to this tab for now..
             //            don't init histogram until the tab is clicked.
-            tab.add("Histogram", new JLabel("Histogram not yet initialized"));
+
+            if (!(this.datachoice instanceof DerivedDataChoice)) {
+                tab.add("Histogram", getHistogramTabComponent());
+            }
 
             return tab;
         } catch (Exception exc) {
