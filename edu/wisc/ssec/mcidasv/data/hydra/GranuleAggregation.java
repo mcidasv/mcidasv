@@ -854,7 +854,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   if (a.getDataType() == DataType.USHORT) {
 				   int[] intArr = new int[totalLength];
 				   short[] ushorts = (short[])a.copyTo1DJavaArray();
-				   for (int i = 0; i < totalLength; i++) {
+				   for (int i = 0; i < ushorts.length; i++) {
 					   short tmp = ushorts[i];
 					   if (tmp < 0) {
 						   intArr[i] = Short.toUnsignedInt(tmp);
