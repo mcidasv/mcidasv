@@ -771,9 +771,7 @@ public class MultiSpectralControl extends HydraControl {
 
           JButton saveAsCSV = new JButton("Save...");
 
-          saveAsCSV.addActionListener(e-> {
-              writeToCSV();
-          });
+          saveAsCSV.addActionListener(e-> writeToCSV());
 
           compList.add(nameLabel);
           compList.add(wavenumbox);
@@ -823,7 +821,6 @@ public class MultiSpectralControl extends HydraControl {
                     path += ".csv";
                 }
 
-                // logger.info(name);
                 if (path == null) {
                     logger.info("File was not created!");
                     return;
@@ -831,10 +828,40 @@ public class MultiSpectralControl extends HydraControl {
 
                 FileWriter outputFile = new FileWriter(path);
 
-                outputFile.write(display.getDataAsString());
+                MultiSpectralData data = display.getMultiSpectralData();
+                // not sure if this is the best way to lay out the CSV file,
+                // but it made sense at the time!
+                StringBuilder builder = new StringBuilder(1024);
+                for (Spectrum s : spectra) {
+                    // we can have arbitrary numbers of probes, each of which corresponds
+                    // to a line/spectrum in the multispectraldisplay.
+                    // see "settings" tab for more.
+                    //
+                    // the probes are in the main display window and there are two of
+                    // them. Unfortunately they're right on top of the other...
+                    // not exactly a great user interface decision.
+                    RealTuple location = s.getProbe().getEarthPosition();
+
+                    // IIRC coords will be a 2D array containing the row and column
+                    // within data closest to the given lat/lon pair.
+                    int[] coords = data.getSwathCoordinates(location, data.getCoordinateSystem());
+
+                    // given the coordinates, we then grab the lat/lon's value across the entire
+                    // set of channels
+                    double[] chanValsAtLocation = data.getSpectrum(coords).getValues()[0];
+//                    logger.trace("location: {}, coords: {} size: {}, values: {}", location, coords, chanValsAtLocation.length, chanValsAtLocation);
+                    builder.append(s.getLatitude())
+                           .append(',')
+                           .append(s.getLongitude())
+                           .append(',');
+                    for (int i = 0; i < chanValsAtLocation.length; i++) {
+                        builder.append(chanValsAtLocation[i]).append(',');
+                    }
+                    builder.append('\n');
+                }
+                outputFile.write(builder.toString());
                 outputFile.close();
             }
-
         } catch (Exception e) {
             logger.warn("Writing to CSV failed", e);
         }

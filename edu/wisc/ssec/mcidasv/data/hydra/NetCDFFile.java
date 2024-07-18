@@ -202,23 +202,138 @@ public class NetCDFFile implements MultiDimensionReader {
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
-     return (float[]) readArray(array_name, start, count, stride);
+       Variable var = varMap.get(array_name);
+       if (var instanceof Structure) {
+           Array array = Array.factory(getArrayType(array_name), count);
+           Index2D idx = new Index2D(count);
+           for (int i=0; i<count[0]; i++) {
+               StructureData sData = ((Structure)var).readStructure(start[0]+i);
+               StructureMembers sMembers = sData.getStructureMembers();
+               for (int j=0; j<count[1]; j++) {
+                   Object obj = sData.getScalarObject(sMembers.getMember(start[1]+j));
+                   idx.set(i,j);
+                   array.setObject(idx, obj);
+               }
+           }
+           return (float[]) array.get1DJavaArray(DataType.FLOAT);
+       }
+       else {
+           List<Range> rangeList = new ArrayList<>(start.length);
+           for (int i=0;i<start.length;i++) {
+               Range rng = new Range(start[i], start[i]+(count[i]-1)*stride[i], stride[i]);
+               rangeList.add(i, rng);
+           }
+           Array array = var.read(rangeList);
+           return (float[]) array.get1DJavaArray(DataType.FLOAT);
+       }
    }
 
    public int[] getIntArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
-     return (int[]) readArray(array_name, start, count, stride);
+       Variable var = varMap.get(array_name);
+       if (var instanceof Structure) {
+           Array array = Array.factory(getArrayType(array_name), count);
+           Index2D idx = new Index2D(count);
+           for (int i=0; i<count[0]; i++) {
+               StructureData sData = ((Structure)var).readStructure(start[0]+i);
+               StructureMembers sMembers = sData.getStructureMembers();
+               for (int j=0; j<count[1]; j++) {
+                   Object obj = sData.getScalarObject(sMembers.getMember(start[1]+j));
+                   idx.set(i,j);
+                   array.setObject(idx, obj);
+               }
+           }
+           return (int[]) array.get1DJavaArray(DataType.INT);
+       }
+       else {
+           List<Range> rangeList = new ArrayList<>(start.length);
+           for (int i=0;i<start.length;i++) {
+               Range rng = new Range(start[i], start[i]+(count[i]-1)*stride[i], stride[i]);
+               rangeList.add(i, rng);
+           }
+           Array array = var.read(rangeList);
+           return (int[]) array.get1DJavaArray(DataType.INT);
+       }
    }
 
    public double[] getDoubleArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
-     return (double[]) readArray(array_name, start, count, stride);
+       Variable var = varMap.get(array_name);
+       if (var instanceof Structure) {
+           Array array = Array.factory(getArrayType(array_name), count);
+           Index2D idx = new Index2D(count);
+           for (int i=0; i<count[0]; i++) {
+               StructureData sData = ((Structure)var).readStructure(start[0]+i);
+               StructureMembers sMembers = sData.getStructureMembers();
+               for (int j=0; j<count[1]; j++) {
+                   Object obj = sData.getScalarObject(sMembers.getMember(start[1]+j));
+                   idx.set(i,j);
+                   array.setObject(idx, obj);
+               }
+           }
+           return (double[]) array.get1DJavaArray(DataType.DOUBLE);
+       }
+       else {
+           List<Range> rangeList = new ArrayList<>(start.length);
+           for (int i=0;i<start.length;i++) {
+               Range rng = new Range(start[i], start[i]+(count[i]-1)*stride[i], stride[i]);
+               rangeList.add(i, rng);
+           }
+           Array array = var.read(rangeList);
+           return (double[]) array.get1DJavaArray(DataType.DOUBLE);
+       }
    }
 
    public short[] getShortArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
-     return (short[]) readArray(array_name, start, count, stride);
+       Variable var = varMap.get(array_name);
+       if (var instanceof Structure) {
+           Array array = Array.factory(getArrayType(array_name), count);
+           Index2D idx = new Index2D(count);
+           for (int i=0; i<count[0]; i++) {
+               StructureData sData = ((Structure)var).readStructure(start[0]+i);
+               StructureMembers sMembers = sData.getStructureMembers();
+               for (int j=0; j<count[1]; j++) {
+                   Object obj = sData.getScalarObject(sMembers.getMember(start[1]+j));
+                   idx.set(i,j);
+                   array.setObject(idx, obj);
+               }
+           }
+           return (short[]) array.get1DJavaArray(DataType.SHORT);
+       }
+       else {
+           List<Range> rangeList = new ArrayList<>(start.length);
+           for (int i=0;i<start.length;i++) {
+               Range rng = new Range(start[i], start[i]+(count[i]-1)*stride[i], stride[i]);
+               rangeList.add(i, rng);
+           }
+           Array array = var.read(rangeList);
+           return (short[]) array.get1DJavaArray(DataType.SHORT);
+       }
    }
 
    public byte[] getByteArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
-     return (byte[]) readArray(array_name, start, count, stride);
+       Variable var = varMap.get(array_name);
+       if (var instanceof Structure) {
+           Array array = Array.factory(getArrayType(array_name), count);
+           Index2D idx = new Index2D(count);
+           for (int i=0; i<count[0]; i++) {
+               StructureData sData = ((Structure)var).readStructure(start[0]+i);
+               StructureMembers sMembers = sData.getStructureMembers();
+               for (int j=0; j<count[1]; j++) {
+                   Object obj = sData.getScalarObject(sMembers.getMember(start[1]+j));
+                   idx.set(i,j);
+                   array.setObject(idx, obj);
+               }
+           }
+           return (byte[]) array.get1DJavaArray(DataType.BYTE);
+       }
+       else {
+           List<Range> rangeList = new ArrayList<>(start.length);
+           for (int i=0;i<start.length;i++) {
+               Range rng = new Range(start[i], start[i]+(count[i]-1)*stride[i], stride[i]);
+               rangeList.add(i, rng);
+           }
+           Array array = var.read(rangeList);
+           return (byte[]) array.get1DJavaArray(DataType.BYTE);
+       }
    }
 
    public Object getArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
