@@ -225,10 +225,12 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             // MH: just add a dummy component to this tab for now..
             //            don't init histogram until the tab is clicked.
 
-            if (!(this.datachoice instanceof DerivedDataChoice)) {
-                tab.add("Histogram", getHistogramTabComponent());
-            }
+            // DO NOT DO THIS
+//            if (!(this.datachoice instanceof DerivedDataChoice)) {
+//                tab.add("Histogram", getHistogramTabComponent());
+//            }
 
+            tab.add("Histogram", new JLabel("Histogram not yet initialized"));
             return tab;
         } catch (Exception exc) {
             logException("doMakeContents", exc);
