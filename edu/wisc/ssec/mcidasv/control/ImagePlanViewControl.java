@@ -999,13 +999,13 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         super.getViewMenuItems(items, forMenuBar);
         items.add(GuiUtils.MENU_SEPARATOR);
 
-        if (!histogramPane.haveDoneHistogramInit) {
-            histogramPane.loadHistogram();
-            histogramPane.haveDoneHistogramInit = true;
-        }
-
         JMenuItem saveMenuItem = new JMenuItem("Save Chart Image...");
-        saveMenuItem.addActionListener(e -> getChart().saveImage());
+        saveMenuItem.addActionListener(e -> {
+            if (!histogramPane.haveDoneHistogramInit) {
+                histogramPane.loadHistogram();
+                histogramPane.haveDoneHistogramInit = true;
+            }
+            getChart().saveImage();});
         items.add(saveMenuItem);
     }
 
