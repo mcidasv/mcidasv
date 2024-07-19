@@ -286,7 +286,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
         
         JButton removeBtn =
             GuiUtils.makeImageButton("/auxdata/ui/icons/Remove16.gif",
-                control, "doRemove");
+                control, "doRemoveWithPrompt");
         removeBtn.setToolTipText("Remove Display Control");
         
         JButton expandBtn =

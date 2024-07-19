@@ -4989,7 +4989,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
         if (remove) {
-            Misc.run(this, "doRemove");
+            Misc.run(this, "doRemoveWithPrompt");
         } else {
             //After a window close (like from hitting the "X") we cannot show the  window again
             //So null out the window so we create a new one later
@@ -6860,7 +6860,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     protected void getFileMenuItems(List items, boolean forMenuBar) {
         items.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Remove Layer",
-                this, "doRemove"), "/auxdata/ui/icons/delete.png"));
+                this, "doRemoveWithPrompt"), "/auxdata/ui/icons/delete.png"));
     }
 
     /**
@@ -7455,6 +7455,24 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
 
 
+
+
+    public void doRemoveWithPrompt() throws RemoteException, VisADException {
+        boolean withPrompt = true;
+        if (withPrompt) {
+            // McIDAS Inquiry #1865-3141
+            Object[] options = {"Cancel", "Yes"};
+            int shouldDelete = JOptionPane.showOptionDialog(null, "Remove this layer?", "Layer Control", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+
+            logger.info(String.valueOf(shouldDelete));
+            // Cancel = 0, Yes = 1
+            if (shouldDelete == 0 || shouldDelete == -1) {
+                return;
+            }
+        }
+        doRemove();
+    }
+
     /**
      *  Remove this DisplayControl. Tells the {@link ucar.unidata.idv.ControlContext}
      *  to removeDisplayControl.
@@ -7466,16 +7484,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @throws VisADException
      */
     public void doRemove() throws RemoteException, VisADException {
-
-        // McIDAS Inquiry #1865-3141
-        Object[] options = {"Cancel", "Yes"};
-        int shouldDelete = JOptionPane.showOptionDialog(null, "Remove this layer?", "Layer Control", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
-
-        // Cancel = 0, Yes = 1
-        if (shouldDelete == 0) {
-            return;
-        }
-
         if (hasBeenRemoved) {
             return;
         }
