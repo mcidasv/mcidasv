@@ -6,22 +6,22 @@
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
  * https://www.ssec.wisc.edu/mcidas/
- * 
+ *
  * All Rights Reserved
- * 
+ *
  * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * McIDAS-V is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
@@ -2103,103 +2103,114 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @return true if successful
      */
     public boolean applyProperties() {
-        if (lights != null) {
-            for (LightInfo lightInfo : lights) {
-                lightInfo.applyProperties();
-            }
-        }
-
-        int width  = 0;
-        int height = 0;
-
-        if (fullScreenWidthFld.getText().trim().equals("")
-                || fullScreenWidthFld.getText().trim().equals("0")) {
-            width = 0;
-        } else {
-            width =
-                new Integer(fullScreenWidthFld.getText().trim()).intValue();
-        }
-
-        if (fullScreenHeightFld.getText().trim().equals("")
-                || fullScreenHeightFld.getText().trim().equals("0")) {
-            height = 0;
-        } else {
-            height =
-                new Integer(fullScreenHeightFld.getText().trim()).intValue();
-        }
-
-        if ((width != fullScreenWidth) || (height != fullScreenHeight)) {
-            fullScreenWidth  = width;
-            fullScreenHeight = height;
-
-            // Reset the window size if we are in full screen
-            if ((fullScreenWindow != null) && (width != 0) && (height != 0)) {
-                Dimension  theSize      = new Dimension(width, height);
-                JComponent navComponent = getComponent();
-
-                navComponent.setMinimumSize(theSize);
-                navComponent.setPreferredSize(theSize);
-                GuiUtils.getWindow(navComponent).pack();
-            }
-        }
-
         try {
-            setName(nameFld.getText());
-
-            for (Enumeration keys = propertiesMap.keys();
-                    keys.hasMoreElements(); ) {
-                JCheckBox       cbx = (JCheckBox) keys.nextElement();
-
-                BooleanProperty bp  = (BooleanProperty) propertiesMap.get(cbx);
-                if (Objects.equals(bp.getId(), PREF_LOGO_VISIBILITY)) {
-                    // this is done to avoid flashing the logo inadvertently
-                    continue;
+            if (lights != null) {
+                for (LightInfo lightInfo : lights) {
+                    lightInfo.applyProperties();
                 }
-                bp.setValue(cbx.isSelected());
             }
 
-            setColors(fgPropertiesSwatch.getSwatchColor(),
-                      bgPropertiesSwatch.getSwatchColor());
+            int width  = 0;
+            int height = 0;
 
-            Font f = fontSelector.getFont();
+            if (fullScreenWidthFld.getText().trim().equals("")  || fullScreenWidthFld.getText().trim().equals("0")) {
+                width = 0;
+            } else {
+                width = new Integer(fullScreenWidthFld.getText().trim()).intValue();
+            }
 
-            setDisplayListFont(f);
-            setDisplayListColor(dlPropertiesSwatch.getSwatchColor());
-            updateDisplayList();
+            if (fullScreenHeightFld.getText().trim().equals("") || fullScreenHeightFld.getText().trim().equals("0")) {
+                height = 0;
+            } else {
+                height = new Integer(fullScreenHeightFld.getText().trim()).intValue();
+            }
 
-            double[] newAspectRatio = new double[] {
+            if ((width != fullScreenWidth) || (height != fullScreenHeight)) {
+                fullScreenWidth  = width;
+                fullScreenHeight = height;
+
+                // Reset the window size if we are in full screen
+                if ((fullScreenWindow != null) && (width != 0) && (height != 0)) {
+                    Dimension  theSize      = new Dimension(width, height);
+                    JComponent navComponent = getComponent();
+
+                    navComponent.setMinimumSize(theSize);
+                    navComponent.setPreferredSize(theSize);
+                    GuiUtils.getWindow(navComponent).pack();
+                }
+            }
+
+            try {
+                setName(nameFld.getText());
+
+                for (Enumeration keys = propertiesMap.keys(); keys.hasMoreElements(); ) {
+                    JCheckBox       cbx = (JCheckBox) keys.nextElement();
+
+                    BooleanProperty bp  = (BooleanProperty) propertiesMap.get(cbx);
+                    if (Objects.equals(bp.getId(), PREF_LOGO_VISIBILITY)) {
+                        // this is done to avoid flashing the logo inadvertently
+                        continue;
+                    }
+                    bp.setValue(cbx.isSelected());
+                }
+
+                setColors(fgPropertiesSwatch.getSwatchColor(),
+                        bgPropertiesSwatch.getSwatchColor());
+
+                Font f = fontSelector.getFont();
+
+                setDisplayListFont(f);
+                setDisplayListColor(dlPropertiesSwatch.getSwatchColor());
+                updateDisplayList();
+
+                double[] newAspectRatio = new double[] {
                                           aspectSliders[0].getValue() / 10.0,
                                           aspectSliders[1].getValue() / 10.0,
                                           aspectSliders[2].getValue()
                                           / 10.0 };
 
-            if ( !Arrays.equals(newAspectRatio, originalAspectSliderValues)) {
+                if ( !Arrays.equals(newAspectRatio, originalAspectSliderValues)) {
 
-                // System.err.println("aspect ratios differ:");
-                // Misc.printArray("old:" , originalAspectSliderValues);
-                // Misc.printArray("new:", newAspectRatio);
-                aspectRatio = newAspectRatio;
-                getMaster().setDisplayAspect(aspectRatio);
+                    // System.err.println("aspect ratios differ:");
+                    // Misc.printArray("old:" , originalAspectSliderValues);
+                    // Misc.printArray("new:", newAspectRatio);
+                    aspectRatio = newAspectRatio;
+                    getMaster().setDisplayAspect(aspectRatio);
+                }
+
+                setLogoVisibility(logoVisCbx.isSelected());
+                logoFile = logoFileField.getText().trim();
+
+                // setLogoAnchor(((TwoFacedObject) logoAnchorBox.getSelectedItem()).getId().toString());
+                String logoPos =
+                    ((TwoFacedObject) logoPositionBox.getSelectedItem()).getId()
+                        .toString();
+                String logoOff = logoOffsetTextField.getText().trim();
+
+                setLogoPosition(makeLogoPosition(logoPos, logoOff));
+                setLogoScale(logoSizer.getValue() / 10.f);
+                updateAnnotations();
+
+                return true;
+            } catch (Exception exp) {
+                logException("Applying properties", exp);
+
+                return false;
             }
 
-            setLogoVisibility(logoVisCbx.isSelected());
-            logoFile = logoFileField.getText().trim();
+        } catch (NullPointerException npe) {
+            // McIDAS Inquiry #2853-3141
 
-            // setLogoAnchor(((TwoFacedObject) logoAnchorBox.getSelectedItem()).getId().toString());
-            String logoPos =
-                ((TwoFacedObject) logoPositionBox.getSelectedItem()).getId()
-                    .toString();
-            String logoOff = logoOffsetTextField.getText().trim();
+            // From what I can tell, IDV - LightInfo is expecting
+            // some UI to call applyProperties() however, Hovmoller
+            // does not have this UI so it throws an NPE despite
+            // everything else working
 
-            setLogoPosition(makeLogoPosition(logoPos, logoOff));
-            setLogoScale(logoSizer.getValue() / 10.f);
-            updateAnnotations();
+            // Solution: just catch it! 
+
+            logger.warn("Expected if Hovmoller Display: " + npe);
 
             return true;
-        } catch (Exception exp) {
-            logException("Applying properties", exp);
-
-            return false;
         }
     }
 
@@ -8216,7 +8227,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /**
      * Get the logo visibility
      *
-     * @return the logo visibility 
+     * @return the logo visibility
      */
     public boolean getLogoVisibility() {
         boolean pref = getStore().get(PREF_LOGO_VISIBILITY, true);
@@ -8636,14 +8647,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
         "Enable Automatic Depth Offsetting";
 
     /**
-     * {@literal "Auto Depth Offset"} default value (default is {@code true}. 
+     * {@literal "Auto Depth Offset"} default value (default is {@code true}.
      */
     public static final boolean DEFAULT_AUTO_DEPTH = true;
 
     /**
      * Control {@literal "Auto Depth Offset"} status.
      *
-     * @param value New auto depth offset status. 
+     * @param value New auto depth offset status.
      */
     public void setAutoDepth(boolean value) {
         DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
