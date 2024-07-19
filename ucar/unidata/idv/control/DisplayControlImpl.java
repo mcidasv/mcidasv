@@ -7467,6 +7467,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void doRemove() throws RemoteException, VisADException {
 
+        // McIDAS Inquiry #1865-3141
+        Object[] options = {"Cancel", "Yes"};
+        int shouldDelete = JOptionPane.showOptionDialog(null, "Remove this layer?", "Layer Control", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+
+        // Cancel = 0, Yes = 1
+        if (shouldDelete == 0) {
+            return;
+        }
+
         if (hasBeenRemoved) {
             return;
         }
