@@ -2937,7 +2937,7 @@ public class MapViewManager extends NavigatedViewManager {
 
     public void makeCustomProjectionManager() {
         JFrame frame = new JFrame("Custom Viewpoint");
-        frame.setSize(750, 150);
+        frame.setSize(550, 170);
         Dimension size = new Dimension(180, 30);
 
         // Top: instructions/err msgs, Mid: Input, Bottom: Buttons
@@ -2950,7 +2950,7 @@ public class MapViewManager extends NavigatedViewManager {
         JPanel namePanel = new JPanel(new FlowLayout());
         String initStr = "Provide Upper Left and Lower Right Latitude and Longitude";
         //JLabel topLabel = new JLabel();
-        JLabel nameLabel = new JLabel("Name for display:" );
+        JLabel nameLabel = new JLabel("Name of viewpoint:" );
         JTextField nameField = new JTextField();
         nameField.setPreferredSize(size);
         //topLabel.setText(htmlStart + styleStr + initStr);
