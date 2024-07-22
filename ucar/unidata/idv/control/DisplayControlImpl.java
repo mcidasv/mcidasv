@@ -12544,6 +12544,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                             ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME + " - " +
                             MACRO_DISPLAYNAME : MACRO_DISPLAYNAME));
                 }
+                // McIDAS Inquiry #3079-3141
+                if (dataSource instanceof MultiSpectralDataSource) {
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+                    pref = pref + (".data");
+                    return legendLabelTemplate = getStore().get(pref, (MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME));
+                }
             }
             legendLabelTemplate = getStore().get(PREF_LEGENDLABEL_TEMPLATE
                     + "." + displayId, (String) null);
