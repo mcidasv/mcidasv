@@ -135,6 +135,7 @@ import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.imagery.AddeImageDataSource;
 import ucar.unidata.data.imagery.ImageDataSource;
+import ucar.unidata.data.radar.RadarDataSource;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.idv.ControlContext;
@@ -12464,6 +12465,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     return displayListTemplate = getStore().get(pref, (MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME));
                 }
 
+                // McIDAS Inquiry #2768-3141
+                if (dataSource instanceof RadarDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    displayListTemplate = getStore().get(pref, def);
+                    return displayListTemplate;
+                }
+
             }
             displayListTemplate = getStore().get(PREF_DISPLAYLIST_TEMPLATE
                     + "." + displayId, (String) null);
@@ -12556,6 +12566,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
                     pref = pref + (".data");
                     return legendLabelTemplate = getStore().get(pref, (MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME));
+                }
+
+                // McIDAS Inquiry #2768-3141
+                if (dataSource instanceof RadarDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    legendLabelTemplate = getStore().get(pref, def);
+                    return legendLabelTemplate;
                 }
             }
             legendLabelTemplate = getStore().get(PREF_LEGENDLABEL_TEMPLATE
