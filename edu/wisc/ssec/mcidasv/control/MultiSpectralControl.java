@@ -275,7 +275,7 @@ public class MultiSpectralControl extends HydraControl {
         bgBlack.setSelected(getBlackBackground());
         bgWhite.setSelected(!getBlackBackground());
 
-        setShowInDisplayList(false);
+        setShowInDisplayList(true);
 
         return true;
     }
