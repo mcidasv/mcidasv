@@ -12457,6 +12457,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     return displayListTemplate = getStore().get(pref,
                             getDefaultDisplayListTemplatePoint());
                 }
+                // McIDAS Inquiry #3079-3141
+                if (dataSource instanceof MultiSpectralDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref = pref + (".data");
+                    return displayListTemplate = getStore().get(pref, (MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME));
+                }
+
             }
             displayListTemplate = getStore().get(PREF_DISPLAYLIST_TEMPLATE
                     + "." + displayId, (String) null);
