@@ -12461,6 +12461,19 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     return displayListTemplate = getStore().get(pref,
                             getDefaultDisplayListTemplatePoint());
                 }
+
+                // McIDAS Inquiry #2769-3141
+                if (dataSource.getClass().toString().equals("class ucar.unidata.data.text.FrontDataSource")) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP;
+                    displayListTemplate = getStore().get(pref, def);
+                    return displayListTemplate;
+                    // Layer Label: %displayname% - %timestamp%"
+                    // Legend Label can remain the same, unless again we can change it to say "Analysis
+                    // Fronts" or "Forecast Fronts".
+                }
+
                 // McIDAS Inquiry #3079-3141
                 if (dataSource instanceof MultiSpectralDataSource) {
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
@@ -12518,18 +12531,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 //                    return displayListTemplate;
 //                    // Layer Label: "%longname% - %displayname% - %timestamp%"
 //                    // Legend Label: "%longname% - %displayname%
-//                }
-
-                // McIDAS Inquiry #2769-3141
-//                if (dataSource instanceof FrontDataSource) {
-//                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
-//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
-//                    String def = (getShortParamName() != null) ? MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
-//                    displayListTemplate = getStore().get(pref, def);
-//                    return displayListTemplate;
-//                    // Layer Label: %displayname% - %timestamp%"
-//                    // Legend Label can remain the same, unless again we can change it to say "Analysis
-//                    // Fronts" or "Forecast Fronts".
 //                }
 
                 // McIDAS Inquiry #2767-3141
@@ -12633,7 +12634,20 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                             MACRO_DISPLAYNAME : MACRO_DISPLAYNAME));
                 }
 
-                logger.info(dataSource.getClass().toString());
+                // McIDAS Inquiry #2769-3141
+                if (dataSource.getClass().toString().equals("class ucar.unidata.data.text.FrontDataSource")) {
+                    FrontDataSource src = (FrontDataSource) dataSource;
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = MACRO_DISPLAYNAME;
+                    legendLabelTemplate = getStore().get(pref, def);
+                    displayListTemplate = getStore().get(pref,  MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP);
+                    return legendLabelTemplate;
+                    // Layer Label: %displayname% - %timestamp%"
+                    // Legend Label can remain the same, unless again we can change it to say "Analysis
+                    // Fronts" or "Forecast Fronts".
+                }
+
 
                 // McIDAS Inquiry #3079-3141
                 if (dataSource instanceof MultiSpectralDataSource) {
@@ -12695,17 +12709,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 //                    // Legend Label: "%longname% - %displayname%
 //                }
 //
-//                // McIDAS Inquiry #2769-3141
-//                if (dataSource instanceof FrontDataSource) {
-//                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
-//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
-//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
-//                    legendLabelTemplate = getStore().get(pref, def);
-//                    return legendLabelTemplate;
-//                    // Layer Label: %displayname% - %timestamp%"
-//                    // Legend Label can remain the same, unless again we can change it to say "Analysis
-//                    // Fronts" or "Forecast Fronts".
-//                }
 
                 // McIDAS Inquiry #2767-3141
                 if (dataSource instanceof GridDataSource) {
