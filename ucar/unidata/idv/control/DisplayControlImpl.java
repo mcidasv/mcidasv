@@ -12497,15 +12497,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
 
                 // McIDAS Inquiry #2770-3141
-//                if (dataSource instanceof PointDataSource) {
-//                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
-//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
-//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
-//                    displayListTemplate = getStore().get(pref, def);
-//                    return displayListTemplate;
-//                    // Layer Label: "%longname% - %displayname% - %timestamp%
-//                    // Legend Label: "%longname% - %displayname%"
-//                }
+                if (dataSource instanceof PointDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    displayListTemplate = getStore().get(pref, def);
+                    return displayListTemplate;
+                    // Layer Label: "%longname% - %displayname% - %timestamp%
+                    // Legend Label: "%longname% - %displayname%"
+                }
 
                 // McIDAS Inquiry #2773-3141
 //                if (dataSource instanceof SoundingDataNode) {
@@ -12667,16 +12667,16 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     // Legend Label: "satellite name - %longname% - %displayname%
                 }
 
-//                // McIDAS Inquiry #2770-3141
-//                if (dataSource instanceof PointDataSource) {
-//                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
-//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
-//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
-//                    legendLabelTemplate = getStore().get(pref, def);
-//                    return legendLabelTemplate;
-//                    // Layer Label: "%longname% - %displayname% - %timestamp%
-//                    // Legend Label: "%longname% - %displayname%"
-//                }
+                // McIDAS Inquiry #2770-3141
+                if (dataSource instanceof PointDataSource) {
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    legendLabelTemplate = getStore().get(pref, def);
+                    return legendLabelTemplate;
+                    // Layer Label: "%longname% - %displayname% - %timestamp%
+                    // Legend Label: "%longname% - %displayname%"
+                }
 //
 //                // McIDAS Inquiry #2773-3141
 //                if (dataSource instanceof SoundingDataNode) {
