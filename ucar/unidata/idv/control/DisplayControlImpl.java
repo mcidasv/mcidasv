@@ -12446,11 +12446,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             DataChoice dataChoice = getDataChoice();
             if (dataChoice instanceof DirectDataChoice) {
                 DataSource dataSource = ((DirectDataChoice) dataChoice).getDataSource();
+
+                // McIDAS Inquiry #3079-3141 JPSS
                 if (dataSource instanceof SuomiNPPDataSource) {
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
                     pref = pref + (haveData ? ".data" : ".nodata");
-                    return displayListTemplate = getStore().get(pref,
-                            getDefaultDisplayListTemplateJPSS());
+                    String def = MACRO_LONGNAME + " - " + MACRO_TIMESTAMP;
+                    return displayListTemplate = getStore().get(pref, def);
                 }
                 // PM July 2023 - edits made for inquiry #2771
                 if (dataSource instanceof AddePointDataSource) {
@@ -12614,12 +12616,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             DataChoice dataChoice = getDataChoice();
             if (dataChoice instanceof DirectDataChoice) {
                 DataSource dataSource = ((DirectDataChoice) dataChoice).getDataSource();
+
+                // McIDAS Inquiry #3079-3141 JPSS
                 if (dataSource instanceof SuomiNPPDataSource) {
                     String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
                     pref = pref + (haveData ? ".data" : ".nodata");
-                    return legendLabelTemplate = getStore().get(pref, (haveData
-                            ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME
-                            : MACRO_DISPLAYNAME));
+                    String def = MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME;
+                    return legendLabelTemplate = getStore().get(pref, def);
                 }
                 // PM July 2023 - edits made for inquiry #2771
                 if (dataSource instanceof AddePointDataSource) {
@@ -12629,6 +12632,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                             ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME + " - " +
                             MACRO_DISPLAYNAME : MACRO_DISPLAYNAME));
                 }
+
+                logger.info(dataSource.getClass().toString());
+
                 // McIDAS Inquiry #3079-3141
                 if (dataSource instanceof MultiSpectralDataSource) {
                     String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
