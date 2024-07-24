@@ -61,12 +61,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -108,6 +103,7 @@ import javax.swing.text.JTextComponent;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource;
+import nom.tam.fits.ImageData;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,10 +128,14 @@ import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.GeoSelectionPanel;
 import ucar.unidata.data.grid.GridDataInstance;
+import ucar.unidata.data.grid.GridDataSource;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.imagery.AddeImageDataSource;
 import ucar.unidata.data.imagery.ImageDataSource;
+import ucar.unidata.data.point.PointDataSource;
+import ucar.unidata.data.radar.Level2RadarDataSource;
 import ucar.unidata.data.radar.RadarDataSource;
+import ucar.unidata.data.text.FrontDataSource;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.idv.ControlContext;
@@ -221,6 +221,7 @@ import visad.VisADException;
 import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
+import visad.meteorology.SatelliteData;
 import visad.util.DataUtility;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -12465,13 +12466,80 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     return displayListTemplate = getStore().get(pref, (MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME));
                 }
 
-                // McIDAS Inquiry #2768-3141
+                // McIDAS Inquiry #2768-3141 L2
                 if (dataSource instanceof RadarDataSource) {
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
                     pref += (getShortParamName() != null) ? ".data" : ".nodata";
-                    String def = (getShortParamName() != null) ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    String def = (getShortParamName() != null) ? MACRO_SHORTNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
                     displayListTemplate = getStore().get(pref, def);
                     return displayListTemplate;
+                }
+
+                // McIDAS Inquiry #2766-3141 & #2768-3141 L3
+                if (dataSource instanceof ImageDataSource)  {
+                    ImageDataSource src = (ImageDataSource) dataSource;
+                    String[] expName = src.getName().split("\\s+");
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+
+                    String def;
+                    if (expName[2].contains("GOES")) { // add more satellite names here
+                        def = (getShortParamName() != null) ? expName[2] + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    } else if (expName[0].length() == 3) {
+                        def = (getShortParamName() != null) ? expName[0] + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    } else {
+                        def = (getShortParamName() != null) ? src.getName() + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    }
+                    displayListTemplate = getStore().get(pref, def);
+                    return displayListTemplate;
+                    // Layer Label: "satellite name - %longname% - %timestamp%"
+                    // Legend Label: "satellite name - %longname% - %displayname%
+                }
+
+                // McIDAS Inquiry #2770-3141
+//                if (dataSource instanceof PointDataSource) {
+//                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+//                    displayListTemplate = getStore().get(pref, def);
+//                    return displayListTemplate;
+//                    // Layer Label: "%longname% - %displayname% - %timestamp%
+//                    // Legend Label: "%longname% - %displayname%"
+//                }
+
+                // McIDAS Inquiry #2773-3141
+//                if (dataSource instanceof SoundingDataNode) {
+//                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+//                    displayListTemplate = getStore().get(pref, def);
+//                    return displayListTemplate;
+//                    // Layer Label: "%longname% - %displayname% - %timestamp%"
+//                    // Legend Label: "%longname% - %displayname%
+//                }
+
+                // McIDAS Inquiry #2769-3141
+//                if (dataSource instanceof FrontDataSource) {
+//                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+//                    String def = (getShortParamName() != null) ? MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+//                    displayListTemplate = getStore().get(pref, def);
+//                    return displayListTemplate;
+//                    // Layer Label: %displayname% - %timestamp%"
+//                    // Legend Label can remain the same, unless again we can change it to say "Analysis
+//                    // Fronts" or "Forecast Fronts".
+//                }
+
+                // McIDAS Inquiry #2767-3141
+                if (dataSource instanceof GridDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    String[] expName = dataSource.getName().split("\\s+");
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? expName[0] + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_LONGNAME;
+                    displayListTemplate = getStore().get(pref, def);
+                    return displayListTemplate;
+                    // Layer Label: "grid name - %longname% - %timestamp%"
+                    // Legend Label: "grid name - %longname% - %displayname%"
                 }
 
             }
@@ -12568,13 +12636,81 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     return legendLabelTemplate = getStore().get(pref, (MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME));
                 }
 
-                // McIDAS Inquiry #2768-3141
+                // McIDAS Inquiry #2768-3141 L2
                 if (dataSource instanceof RadarDataSource) {
-                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
                     pref += (getShortParamName() != null) ? ".data" : ".nodata";
                     String def = (getShortParamName() != null) ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
                     legendLabelTemplate = getStore().get(pref, def);
                     return legendLabelTemplate;
+                }
+
+                // McIDAS Inquiry #2766-3141 & #2768-3141 L3
+                if (dataSource instanceof ImageDataSource) {
+                    ImageDataSource src = (ImageDataSource) dataSource;
+                    String[] expName = src.getName().split("\\s+");
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def;
+
+                    if (expName[2].contains("GOES")) { // add more satellite names here
+                        def = (getShortParamName() != null) ? expName[2] + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    } else if (expName[0].length() == 3) {
+                        def = (getShortParamName() != null) ? expName[0] + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    } else {
+                        def = (getShortParamName() != null) ? src.getName() + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    }
+
+                    legendLabelTemplate = getStore().get(pref, def);
+                    return legendLabelTemplate;
+                    // Layer Label: "satellite name - %longname% - %timestamp%"
+                    // Legend Label: "satellite name - %longname% - %displayname%
+                }
+
+//                // McIDAS Inquiry #2770-3141
+//                if (dataSource instanceof PointDataSource) {
+//                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+//                    legendLabelTemplate = getStore().get(pref, def);
+//                    return legendLabelTemplate;
+//                    // Layer Label: "%longname% - %displayname% - %timestamp%
+//                    // Legend Label: "%longname% - %displayname%"
+//                }
+//
+//                // McIDAS Inquiry #2773-3141
+//                if (dataSource instanceof SoundingDataNode) {
+//                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+//                    legendLabelTemplate = getStore().get(pref, def);
+//                    return legendLabelTemplate;
+//                    // Layer Label: "%longname% - %displayname% - %timestamp%"
+//                    // Legend Label: "%longname% - %displayname%
+//                }
+//
+//                // McIDAS Inquiry #2769-3141
+//                if (dataSource instanceof FrontDataSource) {
+//                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+//                    legendLabelTemplate = getStore().get(pref, def);
+//                    return legendLabelTemplate;
+//                    // Layer Label: %displayname% - %timestamp%"
+//                    // Legend Label can remain the same, unless again we can change it to say "Analysis
+//                    // Fronts" or "Forecast Fronts".
+//                }
+
+                // McIDAS Inquiry #2767-3141
+                if (dataSource instanceof GridDataSource) {
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+                    String[] expName = dataSource.getName().split("\\s+");
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? expName[0] + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    legendLabelTemplate = getStore().get(pref, def);
+                    return legendLabelTemplate;
+                    // Layer Label: "grid name - %longname% - %timestamp%"
+                    // Legend Label: "grid name - %longname% - %displayname%"
                 }
             }
             legendLabelTemplate = getStore().get(PREF_LEGENDLABEL_TEMPLATE
