@@ -30,6 +30,8 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import java.awt.Component;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -44,6 +46,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
@@ -95,6 +99,9 @@ public class Level2RadarChooser extends FileChooser {
 
     /** checkbox for switching data types */
     private JCheckBox typeCbx;
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(Level2RadarChooser.class);
 
     /**
      * Create the chooser with the given chooser manager
@@ -256,6 +263,13 @@ public class Level2RadarChooser extends FileChooser {
         if ((file == null) || !file.isDirectory()) {
             return;
         }
+
+        // McIDAS Inquiry #2739-3141
+        if (!Files.isRegularFile(Path.of(file.getPath()))) {
+            // if the path is NOT a file, don't attempt to guess
+            return;
+        }
+
         if ((nexradStations == null) || nexradStations.isEmpty()) {
             return;
         }
