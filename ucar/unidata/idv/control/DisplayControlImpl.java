@@ -12699,8 +12699,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     // Legend Label: "%longname% - %displayname%"
                 }
 
-                logger.info(dataSource.getClass().toString());
-
                 // McIDAS Inquiry #2773-3141
                 if (dataSource instanceof RaobDataSource) {
                     String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
