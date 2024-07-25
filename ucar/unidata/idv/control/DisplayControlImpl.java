@@ -135,6 +135,7 @@ import ucar.unidata.data.imagery.ImageDataSource;
 import ucar.unidata.data.point.PointDataSource;
 import ucar.unidata.data.radar.Level2RadarDataSource;
 import ucar.unidata.data.radar.RadarDataSource;
+import ucar.unidata.data.sounding.RaobDataSource;
 import ucar.unidata.data.text.FrontDataSource;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
@@ -12523,15 +12524,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
 
                 // McIDAS Inquiry #2773-3141
-//                if (dataSource instanceof SoundingDataNode) {
-//                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
-//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
-//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
-//                    displayListTemplate = getStore().get(pref, def);
-//                    return displayListTemplate;
-//                    // Layer Label: "%longname% - %displayname% - %timestamp%"
-//                    // Legend Label: "%longname% - %displayname%
-//                }
+                if (dataSource instanceof RaobDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    displayListTemplate = getStore().get(pref, def);
+                    return displayListTemplate;
+                    // Layer Label: "%longname% - %displayname% - %timestamp%"
+                    // Legend Label: "%longname% - %displayname%
+                }
 
                 // McIDAS Inquiry #2767-3141
                 if (dataSource instanceof GridDataSource) {
@@ -12697,18 +12698,20 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     // Layer Label: "%longname% - %displayname% - %timestamp%
                     // Legend Label: "%longname% - %displayname%"
                 }
-//
-//                // McIDAS Inquiry #2773-3141
-//                if (dataSource instanceof SoundingDataNode) {
-//                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
-//                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
-//                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
-//                    legendLabelTemplate = getStore().get(pref, def);
-//                    return legendLabelTemplate;
-//                    // Layer Label: "%longname% - %displayname% - %timestamp%"
-//                    // Legend Label: "%longname% - %displayname%
-//                }
-//
+
+                logger.info(dataSource.getClass().toString());
+
+                // McIDAS Inquiry #2773-3141
+                if (dataSource instanceof RaobDataSource) {
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+                    pref += (getShortParamName() != null) ? ".data" : ".nodata";
+                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    legendLabelTemplate = getStore().get(pref, def);
+                    return legendLabelTemplate;
+                    // Layer Label: "%longname% - %displayname% - %timestamp%"
+                    // Legend Label: "%longname% - %displayname%
+                }
+
 
                 // McIDAS Inquiry #2767-3141
                 if (dataSource instanceof GridDataSource) {
