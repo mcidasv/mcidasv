@@ -12452,7 +12452,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 if (dataSource instanceof SuomiNPPDataSource) {
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
                     pref = pref + (haveData ? ".data" : ".nodata");
-                    String def = MACRO_LONGNAME + " - " + MACRO_TIMESTAMP;
+                    String def = MACRO_LONGNAME;
                     return displayListTemplate = getStore().get(pref, def);
                 }
                 // PM July 2023 - edits made for inquiry #2771
