@@ -44,6 +44,7 @@ import org.jcodec.common.model.Picture;
 import org.jcodec.common.model.Rational;
 import org.jcodec.scale.ColorUtil;
 import org.jcodec.scale.Transform;
+import org.python.antlr.runtime.misc.IntArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -55,7 +56,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.flythrough.Flythrough;
-import ucar.unidata.ui.AnimatedGifEncoder;
+import edu.wisc.ssec.mcidasv.util.AnimatedGifEncoder;
 import ucar.unidata.ui.ImagePanel;
 import ucar.unidata.ui.ImageUtils;
 import ucar.unidata.ui.JpegImagesToMovie;
@@ -82,11 +83,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
+import java.awt.image.Raster;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -106,6 +112,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -141,6 +148,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
  *
  * @author IDV Development Team
  */
+@SuppressWarnings("removal")
 public class ImageSequenceGrabber implements Runnable, ActionListener {
 
     /** xml tag or attr name */
@@ -2333,6 +2341,9 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                              double displayRate, Element scriptingNode,
                              double endPause) {
 
+        logger.info("TJJ endpause: " + endPause);
+        logger.info("TJJ displayRate: " + displayRate);
+
         // path is used to add extended attributes to the file
         Path path = null;
         List fileToks = StringUtil.split(commaSeparatedFiles, ",", true,
@@ -2389,19 +2400,33 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                                          image.getHeight(null));
                 }
 
-                // System.err.println("createMovie:" + movieFile);
+                System.err.println("createMovie:" + movieFile);
 
                 if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_GIF)) {
-                    // this should override pref
-                    XmlUtil.getAttribute(scriptingNode, "", true);
-                    double  rate   = 1.0 / displayRate;
-                    boolean useGCT = getGlobalPaletteValue();
-                    AnimatedGifEncoder.createGif(movieFile,
-                            ImageWrapper.makeFileList(images),
-                            AnimatedGifEncoder.REPEAT_FOREVER,
-                            (int) (rate * 1000), (int) ((endPause == -1)
-                            ? -1
-                            : endPause * 1000), useGCT);
+
+                    AnimatedGifEncoder age = new AnimatedGifEncoder();
+                    age.setRepeat(0);
+                    age.start(movieFile);
+
+                    int frameNum = 0;
+                    for (ImageWrapper iw : images) {
+                        frameNum++;
+                        BufferedImage image = ImageUtils.toBufferedImage(
+                                ImageUtils.readImage(
+                                        iw.getPath()));
+
+                        ImageUtils.waitOnImage(image);
+                        if (frameNum == images.size()) {
+                            age.setDelay((int) (endPause * 1000));
+                            age.addFrame(image);
+                            age.finish();
+                        } else {
+                            age.setDelay((int) (displayRate * 1000));
+                            age.addFrame(image);
+                        }
+
+                    }
+
                 } else if (movieFile.toLowerCase().endsWith(".htm")
                            || movieFile.toLowerCase().endsWith(".html")) {
                     createAnisHtml(movieFile, images, size, displayRate,
@@ -3012,16 +3037,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
      * @param args args
      */
     public static void main(String[] args) {
-        AnimatedGifEncoder e = new AnimatedGifEncoder();
-
-        e.start("test.gif");
-
-        for (int i = 0; i < args.length; i++) {
-            ImagePlus image = new ImagePlus(args[i]);
-
-            e.addFrame(image);
-        }
-
-        e.finish();
+        // In case we want to test individual file types
     }
 }
