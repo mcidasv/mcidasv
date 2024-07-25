@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import static edu.wisc.ssec.mcidasv.probes.ReadoutProbe.makeEarth2dTuple;
 import static java.util.Objects.requireNonNull;
 
 import java.awt.Color;
@@ -71,10 +72,12 @@ import ucar.unidata.idv.control.FlaggedDisplayable;
 import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.visad.display.XYDisplay;
 
+import visad.Data;
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.DisplayRealType;
 import visad.FlatField;
+import visad.Real;
 import visad.RealTuple;
 import visad.Unit;
 import visad.VisADException;
@@ -91,6 +94,7 @@ import ucar.unidata.idv.ui.ParamDefaultsEditor;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
@@ -786,9 +790,7 @@ public class MultiSpectralControl extends HydraControl {
           JLabel nameLabel = new JLabel("Band: ");
           JButton saveAsCSV = new JButton("Save...");
 
-          saveAsCSV.addActionListener(e-> {
-              writeToCSV();
-          });
+          saveAsCSV.addActionListener(e-> writeToCSV());
 
           compList.add(nameLabel);
           compList.add(bandBox);
@@ -814,59 +816,108 @@ public class MultiSpectralControl extends HydraControl {
 
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
-                String path = file.getAbsolutePath();
+                String tempPath = file.getAbsolutePath();
                 String name = file.getName();
 
                 if (!name.toLowerCase().endsWith(".csv")) {
-                    path += ".csv";
+                    tempPath += ".csv";
                 }
 
-                if (path == null) {
+                if (tempPath == null) {
                     logger.info("File was not created!");
                     return;
                 }
 
-                FileWriter outputFile = new FileWriter(path);
-
-                MultiSpectralData data = display.getMultiSpectralData();
-                // not sure if this is the best way to lay out the CSV file,
-                // but it made sense at the time!
-                StringBuilder builder = new StringBuilder(1024);
-                for (Spectrum s : spectra) {
-                    // we can have arbitrary numbers of probes, each of which corresponds
-                    // to a line/spectrum in the multispectraldisplay.
-                    // see "settings" tab for more.
-                    //
-                    // the probes are in the main display window and there are two of
-                    // them. Unfortunately they're right on top of the other...
-                    // not exactly a great user interface decision.
-                    RealTuple location = s.getProbe().getEarthPosition();
-
-                    // IIRC coords will be a 2D array containing the row and column
-                    // within data closest to the given lat/lon pair.
-                    int[] coords = data.getSwathCoordinates(location, data.getCoordinateSystem());
-
-                    // given the coordinates, we then grab the lat/lon's value across the entire
-                    // set of channels
-                    double[] chanValsAtLocation = data.getSpectrum(coords).getValues()[0];
-//                    logger.trace("location: {}, coords: {} size: {}, values: {}", location, coords, chanValsAtLocation.length, chanValsAtLocation);
-                    builder.append(s.getLatitude())
-                           .append(',')
-                           .append(s.getLongitude())
-                           .append(',');
-                    for (int i = 0; i < chanValsAtLocation.length; i++) {
-                        builder.append(chanValsAtLocation[i]).append(',');
+                final String path = tempPath;
+                // needs to become a backgroundtask asap
+                Misc.run(() -> {
+                    try (FileWriter writer = new FileWriter(path)) {
+                        String contents = exportSpectra();
+                        writer.write(contents);
+                    } catch (Exception e) {
+                        logger.error("Something went wrong extracting values", e);
                     }
-                    builder.append('\n');
-                }
-                outputFile.write(builder.toString());
-                outputFile.close();
+                });
             }
         } catch (Exception e) {
             logger.warn("Writing to CSV failed", e);
         }
     }
 
+    /**
+     * Iterates through each channel/wavenumber and extracts the value of the existing ReadoutProbes
+     * at their current positions.
+     *
+     * <p>Be warned, this can be slow when there are thousands of channels. Definitely do not
+     * run this method on the event dispatch thread.</p>
+     *
+     * @return String intended to be dumped into a CSV file.
+     *
+     * @throws Exception if there was a problem
+     */
+    private String exportSpectra() throws Exception {
+        DecimalFormat format = new DecimalFormat(getIdv().getStore().get(Constants.PREF_LATLON_FORMAT, "##0.0"));
+        boolean use360 = false;
+        if (use360Box != null) {
+            use360 = use360Box.isSelected();
+        }
+
+        double[] wavelengths = display.getDomainSet().getDoubles()[0];
+        double[][] values = new double[spectra.size()][wavelengths.length];
+
+        RealTuple[] probeLocations = new RealTuple[spectra.size()];
+        for (int i = 0; i < spectra.size(); i++) {
+            Spectrum s = spectra.get(i);
+            RealTuple location = s.getProbe().getEarthPosition();
+            double[] locVals = location.getValues();
+            if (locVals[1] < -180) {
+                locVals[1] += 360f;
+            }
+
+            if (locVals[0] > 180) {
+                locVals[0] -= 360f;
+            }
+            probeLocations[i] = makeEarth2dTuple(locVals[0], locVals[1]);
+        }
+        for (int i = 0; i < wavelengths.length; i++) {
+            FlatField imageData = display.getImageDataFrom((float)wavelengths[i]);
+            for (int j = 0; j < probeLocations.length; j++) {
+                RealTuple probeLoc = probeLocations[j];
+                Real realVal = (Real)imageData.evaluate(probeLoc, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+                values[j][i] = realVal.getValue();
+            }
+        }
+
+        // each wavelen,value1,value2 generally less than 50 chars, will need wavelengths.length of 'em
+        // +200 to account for the length of the column headers
+        StringBuilder builder = new StringBuilder(wavelengths.length * 50 + 200);
+        // Wavelen, Probe 1 LATLON BrightnessTemp, Probe 2 LATLON BrightnessTemp, Probe 3 LatLon BrightnessTemp
+        builder.append("Wavelength,");
+        for (int i = 0; i < spectra.size(); i++) {
+            Spectrum s = spectra.get(i);
+            double lon = use360
+                    ? ProbeTableModel.clamp360(s.getLongitude())
+                    : ProbeTableModel.clamp180(s.getLongitude());
+            builder.append(s.getId())
+                    .append(" (Latitude: ").append(format.format(s.getLatitude()))
+                    .append("; Longitude: ").append(format.format(lon)).append(')');
+            if (i < spectra.size() - 1) {
+                builder.append(',');
+            }
+        }
+        builder.append('\n');
+        for (int i = 0; i < wavelengths.length; i++) {
+            builder.append(wavelengths[i]).append(',');
+            for (int j = 0; j < spectra.size(); j++) {
+                builder.append(values[j][i]);
+                if (j < spectra.size() - 1) {
+                    builder.append(',');
+                }
+            }
+            builder.append('\n');
+        }
+        return builder.toString();
+    }
 
     private JComponent getHistogramTabComponent() {
         updateHistogramTab();

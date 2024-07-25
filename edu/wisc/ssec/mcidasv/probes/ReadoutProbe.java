@@ -682,7 +682,7 @@ public class ReadoutProbe
      * @throws VisADException Problem creating VisAD object.
      * @throws RemoteException Java RMI error.
      */
-    private static RealTuple makeEarth2dTuple(double lat, double lon)
+    public static RealTuple makeEarth2dTuple(double lat, double lon)
         throws VisADException, RemoteException
     {
         return new RealTuple(SpatialEarth2DTuple, new double[] { lon, lat });
