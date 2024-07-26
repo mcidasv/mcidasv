@@ -43,8 +43,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -53,6 +53,8 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -92,6 +94,7 @@ import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.idv.control.WrapperWidget;
 import ucar.unidata.idv.ui.ParamDefaultsEditor;
 import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
@@ -762,8 +765,16 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
+    private JButton saveAsCsv;
+    private JProgressBar csvProgress;
+
+
     private JComponent getDisplayTab() {
         List<JComponent> compList = new ArrayList<>(5);
+
+        saveAsCsv = new JButton("Save...");
+        saveAsCsv.addActionListener(e-> writeToCSV());
+        csvProgress = new JProgressBar(0, 100);
 
         if (display.getBandSelectComboBox() == null) {
           final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
@@ -773,13 +784,8 @@ public class MultiSpectralControl extends HydraControl {
               updateImage(Float.valueOf(tmp));
           });
 
-          JButton saveAsCSV = new JButton("Save...");
-
-          saveAsCSV.addActionListener(e-> writeToCSV());
-
           compList.add(nameLabel);
           compList.add(wavenumbox);
-          compList.add(saveAsCSV);
         } else {
           final JComboBox bandBox = display.getBandSelectComboBox();
           bandBox.addActionListener(e -> {
@@ -788,17 +794,14 @@ public class MultiSpectralControl extends HydraControl {
              updateImage(channel.floatValue());
           });
           JLabel nameLabel = new JLabel("Band: ");
-          JButton saveAsCSV = new JButton("Save...");
-
-          saveAsCSV.addActionListener(e-> writeToCSV());
 
           compList.add(nameLabel);
           compList.add(bandBox);
-          compList.add(wavelengthLabel);
-          compList.add(saveAsCSV);
         }
+        compList.add(saveAsCsv);
+        compList.add(csvProgress);
 
-        JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 4, GuiUtils.WT_N, GuiUtils.WT_N));
+        JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, compList.size(), GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getDisplayComponent(), waveNo);
     }
 
@@ -808,116 +811,39 @@ public class MultiSpectralControl extends HydraControl {
      * (Now with file choosers!)
      */
     public void writeToCSV() {
-        try {
-            JFrame parent = new JFrame();
-            JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("Export Multispectral data as CSV...");
-            int userSelection = chooser.showSaveDialog(parent);
+        String filename = FileManager.getWriteFile(Misc.newList(FileManager.FILTER_CSV), FileManager.SUFFIX_CSV);
+        if (filename == null) {
+            return;
+        }
 
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
-                String tempPath = file.getAbsolutePath();
-                String name = file.getName();
-
-                if (!name.toLowerCase().endsWith(".csv")) {
-                    tempPath += ".csv";
-                }
-
-                if (tempPath == null) {
-                    logger.info("File was not created!");
-                    return;
-                }
-
-                final String path = tempPath;
-                // needs to become a backgroundtask asap
-                Misc.run(() -> {
-                    try (FileWriter writer = new FileWriter(path)) {
-                        String contents = exportSpectra();
-                        writer.write(contents);
-                    } catch (Exception e) {
-                        logger.error("Something went wrong extracting values", e);
+        CsvTask task = new CsvTask(filename);
+        task.addPropertyChangeListener(evt -> {
+            // logger.trace("property changed: {}", evt);
+            switch (evt.getPropertyName()) {
+                case "state":
+                    if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+                        saveAsCsv.setEnabled(true);
+                        csvProgress.setValue(0);
+                    } else {
+                        saveAsCsv.setEnabled(false);
                     }
-                });
+                    break;
+                case "progress":
+                    int value = (Integer)evt.getNewValue();
+                    csvProgress.setValue(value);
+                    break;
+                default:
+                    logger.trace("unknown evt type: {}", evt);
+                    task.cancel(true);
+                    saveAsCsv.setEnabled(true);
+                    csvProgress.setValue(0);
+                    break;
             }
-        } catch (Exception e) {
-            logger.warn("Writing to CSV failed", e);
-        }
+        });
+        task.execute();
     }
 
-    /**
-     * Iterates through each channel/wavenumber and extracts the value of the existing ReadoutProbes
-     * at their current positions.
-     *
-     * <p>Be warned, this can be slow when there are thousands of channels. Definitely do not
-     * run this method on the event dispatch thread.</p>
-     *
-     * @return String intended to be dumped into a CSV file.
-     *
-     * @throws Exception if there was a problem
-     */
-    private String exportSpectra() throws Exception {
-        DecimalFormat format = new DecimalFormat(getIdv().getStore().get(Constants.PREF_LATLON_FORMAT, "##0.0"));
-        boolean use360 = false;
-        if (use360Box != null) {
-            use360 = use360Box.isSelected();
-        }
 
-        double[] wavelengths = display.getDomainSet().getDoubles()[0];
-        double[][] values = new double[spectra.size()][wavelengths.length];
-
-        RealTuple[] probeLocations = new RealTuple[spectra.size()];
-        for (int i = 0; i < spectra.size(); i++) {
-            Spectrum s = spectra.get(i);
-            RealTuple location = s.getProbe().getEarthPosition();
-            double[] locVals = location.getValues();
-            if (locVals[1] < -180) {
-                locVals[1] += 360f;
-            }
-
-            if (locVals[0] > 180) {
-                locVals[0] -= 360f;
-            }
-            probeLocations[i] = makeEarth2dTuple(locVals[0], locVals[1]);
-        }
-        for (int i = 0; i < wavelengths.length; i++) {
-            FlatField imageData = display.getImageDataFrom((float)wavelengths[i]);
-            for (int j = 0; j < probeLocations.length; j++) {
-                RealTuple probeLoc = probeLocations[j];
-                Real realVal = (Real)imageData.evaluate(probeLoc, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-                values[j][i] = realVal.getValue();
-            }
-        }
-
-        // each wavelen,value1,value2 generally less than 50 chars, will need wavelengths.length of 'em
-        // +200 to account for the length of the column headers
-        StringBuilder builder = new StringBuilder(wavelengths.length * 50 + 200);
-        // Wavelen, Probe 1 LATLON BrightnessTemp, Probe 2 LATLON BrightnessTemp, Probe 3 LatLon BrightnessTemp
-        builder.append("Wavelength,");
-        for (int i = 0; i < spectra.size(); i++) {
-            Spectrum s = spectra.get(i);
-            double lon = use360
-                    ? ProbeTableModel.clamp360(s.getLongitude())
-                    : ProbeTableModel.clamp180(s.getLongitude());
-            builder.append(s.getId())
-                    .append(" (Latitude: ").append(format.format(s.getLatitude()))
-                    .append("; Longitude: ").append(format.format(lon)).append(')');
-            if (i < spectra.size() - 1) {
-                builder.append(',');
-            }
-        }
-        builder.append('\n');
-        for (int i = 0; i < wavelengths.length; i++) {
-            builder.append(wavelengths[i]).append(',');
-            for (int j = 0; j < spectra.size(); j++) {
-                builder.append(values[j][i]);
-                if (j < spectra.size() - 1) {
-                    builder.append(',');
-                }
-            }
-            builder.append('\n');
-        }
-        return builder.toString();
-    }
 
     private JComponent getHistogramTabComponent() {
         updateHistogramTab();
@@ -1002,6 +928,168 @@ public class MultiSpectralControl extends HydraControl {
     // sole use is for persistence!
     public void setBlackBackground(boolean value) {
         blackBackground = value;
+    }
+
+    class CsvTask extends SwingWorker<String, Object> {
+        private final String path;
+
+        /**
+         * Creates a CSV exporting task that's meant to store its values in the file specified by {@code path}.
+         *
+         * @param path File to write to. Cannot be {@code null}.
+         */
+        public CsvTask(String path) {
+            this.path = Objects.requireNonNull(path, "path cannot be null");
+        }
+
+        /**
+         * Does the work of exporting and formatting CSV values from a {@link MultiSpectralControl} in a
+         * background thread.
+         *
+         * @return String representing the contents to write to a CSV file. May be {@code null}.
+         */
+        @Override public String doInBackground() {
+            String csvContents = null;
+            try {
+                csvContents = exportSpectra();
+            } catch (Exception e) {
+                logger.warn("Something went wrong extracting values", e);
+            }
+            return csvContents;
+        }
+
+        /**
+         * Called (on the event dispatch thread) when {@link #doInBackground()} has completed.
+         */
+        @Override protected void done() {
+            try {
+                String contents = get();
+                if (contents == null) {
+                    logger.error("Could not extract CSV values, contents are null.");
+                } else {
+                    writeToPath(contents);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                String why = null;
+                Throwable cause = e.getCause();
+                why = Objects.requireNonNullElse(cause, e).getMessage();
+                logger.warn("Error writing to path: " + path, why);
+            }
+        }
+
+        /**
+         * Write the given string to {@link #path}.
+         *
+         * @param csvContents CSV file contents. Should not be {@code null}.
+         */
+        private void writeToPath(String csvContents) {
+            try (FileWriter writer = new FileWriter(this.path)) {
+                writer.write(csvContents);
+                writer.flush();
+            } catch (IOException ex) {
+                logger.warn("Could not write to file", ex);
+            }
+        }
+
+        /**
+         * Iterates through each channel/wavenumber and extracts the value of the existing ReadoutProbes
+         * at their current positions.
+         *
+         * <p>Be warned, this can be slow when there are thousands of channels. Definitely do not
+         * run this method on the event dispatch thread.</p>
+         *
+         * @param wavelengths Array containing all the channels/wavenumbers. Cannot be {@code null}.
+         *
+         * @return Two-dimensional array of doubles. First array represents the probes,
+         * second dimension is the value of a probe at each channel/wavenumber.
+         *
+         * @throws VisADException if there was a problem
+         * @throws RemoteException if there was somehow an RMI problem
+         */
+        private double[][] collectValues(double[] wavelengths) throws VisADException, RemoteException{
+            double[][] values = new double[spectra.size()][wavelengths.length];
+
+            RealTuple[] probeLocations = new RealTuple[spectra.size()];
+            for (int i = 0; i < spectra.size(); i++) {
+                Spectrum s = spectra.get(i);
+                RealTuple location = s.getProbe().getEarthPosition();
+                double[] locVals = location.getValues();
+                if (locVals[1] < -180) {
+                    locVals[1] += 360f;
+                }
+
+                if (locVals[0] > 180) {
+                    locVals[0] -= 360f;
+                }
+                probeLocations[i] = makeEarth2dTuple(locVals[0], locVals[1]);
+            }
+            for (int i = 0; (i < wavelengths.length) && !isCancelled(); i++) {
+                FlatField imageData = display.getImageDataFrom((float)wavelengths[i]);
+                for (int j = 0; j < probeLocations.length; j++) {
+                    RealTuple probeLoc = probeLocations[j];
+                    Real realVal = (Real)imageData.evaluate(probeLoc, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+                    values[j][i] = realVal.getValue();
+                }
+                // set percentage complete. iterating via display.getImageDataFrom(...)
+                // is easily the slowest part of the CSV export process, so simply
+                // figuring out the number of wavelengths processed likely suffices for
+                // a simple progress bar.
+                setProgress((int)(100 * ((float)i / (float)wavelengths.length)));
+            }
+            return values;
+        }
+
+        /**
+         * Coordinates the collecting of probe data as well as creating a string representing
+         * the contents of the CSV file.
+         *
+         * @return String value that can be written to a CSV file.
+         *
+         * @throws Exception if there was some problem
+         */
+        private String exportSpectra() throws Exception {
+            DecimalFormat format = new DecimalFormat(getStore().get(Constants.PREF_LATLON_FORMAT, "##0.0"));
+            boolean use360 = false;
+            if (use360Box != null) {
+                use360 = use360Box.isSelected();
+            }
+
+            double[] wavelengths = display.getDomainSet().getDoubles()[0];
+            double[][] values = collectValues(wavelengths);
+
+            // each wavelen,value1,value2 generally less than 50 chars,
+            // will need wavelengths.length of 'em.
+            // +200 to account for the length of the column headers
+            StringBuilder builder = new StringBuilder(wavelengths.length * 50 + 200);
+            // Wavelen, Probe 1 LATLON BrightnessTemp, Probe 2 LATLON BrightnessTemp, Probe 3 LatLon BrightnessTemp
+            builder.append("Wavelength,");
+            for (int i = 0; i < spectra.size(); i++) {
+                Spectrum s = spectra.get(i);
+                double lon = use360
+                        ? ProbeTableModel.clamp360(s.getLongitude())
+                        : ProbeTableModel.clamp180(s.getLongitude());
+                builder.append(s.getId())
+                        .append(" (Latitude: ").append(format.format(s.getLatitude()))
+                        .append("; Longitude: ").append(format.format(lon)).append(')');
+                if (i < spectra.size() - 1) {
+                    builder.append(',');
+                }
+            }
+            builder.append('\n');
+            for (int i = 0; i < wavelengths.length; i++) {
+                builder.append(wavelengths[i]).append(',');
+                for (int j = 0; j < spectra.size(); j++) {
+                    builder.append(values[j][i]);
+                    if (j < spectra.size() - 1) {
+                        builder.append(',');
+                    }
+                }
+                builder.append('\n');
+            }
+            return builder.toString();
+        }
     }
 
     private static class Spectrum implements ProbeListener {
