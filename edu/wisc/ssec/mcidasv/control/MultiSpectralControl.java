@@ -775,6 +775,7 @@ public class MultiSpectralControl extends HydraControl {
         saveAsCsv = new JButton("Save...");
         saveAsCsv.addActionListener(e-> writeToCSV());
         csvProgress = new JProgressBar(0, 100);
+        csvProgress.hide();
 
         if (display.getBandSelectComboBox() == null) {
           final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
@@ -824,12 +825,15 @@ public class MultiSpectralControl extends HydraControl {
                     if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
                         saveAsCsv.setEnabled(true);
                         csvProgress.setValue(0);
+                        csvProgress.setVisible(false);
                     } else {
                         saveAsCsv.setEnabled(false);
+                        csvProgress.setVisible(true);
                     }
                     break;
                 case "progress":
                     int value = (Integer)evt.getNewValue();
+                    csvProgress.setVisible(true);
                     csvProgress.setValue(value);
                     break;
                 default:
@@ -837,6 +841,7 @@ public class MultiSpectralControl extends HydraControl {
                     task.cancel(true);
                     saveAsCsv.setEnabled(true);
                     csvProgress.setValue(0);
+                    csvProgress.setVisible(false);
                     break;
             }
         });
