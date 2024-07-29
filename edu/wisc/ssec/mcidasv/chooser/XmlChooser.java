@@ -36,8 +36,11 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -46,12 +49,15 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.XmlHandler;
 import ucar.unidata.util.CatalogUtil;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.WmsUtil;
 
@@ -86,6 +92,8 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
     /** Catalog browser panel label history */
     int labelHistoryIdx = -1;
     List labelHistory = new ArrayList();
+    private static final Logger logger =
+            LoggerFactory.getLogger(XmlChooser.class);
     
     /**
      * Create the {@code XmlChooser}.
@@ -100,6 +108,11 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
         loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
         loadButton.setActionCommand(getLoadCommandName());
         loadButton.addActionListener(this);
+
+        cancelButton = McVGuiUtils.makeImageButton(ICON_CANCEL, "Cancel");
+        cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
+        cancelButton.addActionListener(this);
+        cancelButton.setEnabled(false);
 
     }
     
@@ -146,6 +159,27 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
         labelHistoryIdx++;
         labelHistory.add(labelHistoryIdx, labelName);
         repaintCatalog();
+    }
+
+    // McIDAS Inquiry #2842-3141
+    public void actionPerformed(ActionEvent ae) {
+        String cmd = ae.getActionCommand();
+        if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+            this.getIdv().clearWaitCursor();
+            if (this.cancelButton != null) {
+                this.cancelButton.setEnabled(false);
+            }
+            // Currently, the stop button doesn't actually work
+            // Need to figure out how to kill the specific
+            // data load thread
+            for (Thread t: Thread.getAllStackTraces().keySet()) {
+                logger.info(t.getName());
+            }
+
+
+        } else {
+            super.actionPerformed(ae);
+        }
     }
         
     private JLabel statusLabel = new JLabel("Status");
@@ -252,6 +286,8 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
                                         .addComponent(helpButton)
                                         .addGap(GAP_RELATED)
                                         .addComponent(refreshButton)
+                                        .addGap(GAP_RELATED)
+                                        .addComponent(cancelButton)
                                         .addPreferredGap(RELATED)
                                         .addComponent(loadButton))
                                         .addGroup(LEADING, layout.createSequentialGroup()
@@ -296,6 +332,7 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
                                         .addPreferredGap(UNRELATED)
                                         .addGroup(layout.createParallelGroup(BASELINE)
                                                 .addComponent(loadButton)
+                                                .addComponent(cancelButton)
                                                 .addComponent(refreshButton)
                                                 .addComponent(helpButton))
                                                 .addContainerGap())
