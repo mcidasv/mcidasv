@@ -91,7 +91,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
     private FieldImpl imageField = null;
     private MapProjection mapProjection = null;
 
-    private static final double DEFAULT_GAMMA = 0.4d;
+    private static final double DEFAULT_GAMMA = 1.0d;
     private double gamma = DEFAULT_GAMMA;
 
     private double redGamma = DEFAULT_GAMMA;
