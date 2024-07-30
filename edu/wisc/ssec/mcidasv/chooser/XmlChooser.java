@@ -56,10 +56,7 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.XmlHandler;
-import ucar.unidata.util.CatalogUtil;
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.WmsUtil;
+import ucar.unidata.util.*;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -165,18 +162,11 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
     public void actionPerformed(ActionEvent ae) {
         String cmd = ae.getActionCommand();
         if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+            makeUiFromPath(urlBox.getSelectedItem().toString());
             this.getIdv().clearWaitCursor();
             if (this.cancelButton != null) {
                 this.cancelButton.setEnabled(false);
             }
-            // Currently, the stop button doesn't actually work
-            // Need to figure out how to kill the specific
-            // data load thread
-            for (Thread t: Thread.getAllStackTraces().keySet()) {
-                logger.info(t.getName());
-            }
-
-
         } else {
             super.actionPerformed(ae);
         }

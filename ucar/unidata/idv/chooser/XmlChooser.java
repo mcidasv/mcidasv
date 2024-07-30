@@ -142,7 +142,7 @@ public class XmlChooser extends IdvChooser implements ActionListener {
     private PreferenceList urlListHandler;
 
     /** Combobox of urls. We get this from the urlListHandler */
-    private JComboBox urlBox;
+    public JComboBox urlBox;
 
     /** A flag to know when to ignore urlBox selection events */
     private boolean okToDoUrlListEvents = true;
