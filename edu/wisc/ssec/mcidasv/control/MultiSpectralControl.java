@@ -31,14 +31,18 @@ package edu.wisc.ssec.mcidasv.control;
 import static edu.wisc.ssec.mcidasv.probes.ReadoutProbe.makeEarth2dTuple;
 import static java.util.Objects.requireNonNull;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -54,6 +58,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
@@ -72,6 +77,7 @@ import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.FlaggedDisplayable;
 import ucar.unidata.idv.control.McVHistogramWrapper;
+import ucar.unidata.idv.ui.IdvWindow;
 import ucar.visad.display.XYDisplay;
 
 import visad.Data;
@@ -111,6 +117,7 @@ import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.probes.ProbeEvent;
 import edu.wisc.ssec.mcidasv.probes.ProbeListener;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 public class MultiSpectralControl extends HydraControl {
 
@@ -164,6 +171,12 @@ public class MultiSpectralControl extends HydraControl {
     private JRadioButton bgBlack;
     private JRadioButton bgWhite;
     private ButtonGroup bgColorGroup;
+
+    /** Used to trigger the CSV export process. */
+    private JButton saveAsCsv;
+
+    /** Dialog that allows users to see export progress as well as cancel current export. */
+    private CsvDialog exportCsvDialog;
 
     public MultiSpectralControl() {
         super();
@@ -765,17 +778,11 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
-    private JButton saveAsCsv;
-    private JProgressBar csvProgress;
-
-
     private JComponent getDisplayTab() {
         List<JComponent> compList = new ArrayList<>(5);
 
         saveAsCsv = new JButton("Save...");
         saveAsCsv.addActionListener(e-> writeToCSV());
-        csvProgress = new JProgressBar(0, 100);
-        csvProgress.hide();
 
         if (display.getBandSelectComboBox() == null) {
           final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
@@ -800,18 +807,18 @@ public class MultiSpectralControl extends HydraControl {
           compList.add(bandBox);
         }
         compList.add(saveAsCsv);
-        compList.add(csvProgress);
 
         JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, compList.size(), GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getDisplayComponent(), waveNo);
     }
 
     /**
-     * McIDAS Inquiry #2535-3141
-     * Write multispectral data to a CSV file
-     * (Now with file choosers!)
+     * Write multispectral data to a CSV file.
+     *
+     * <p>Now with file choosers!</p>
      */
     public void writeToCSV() {
+        // McIDAS Inquiry #2535-3141
         String filename = FileManager.getWriteFile(Misc.newList(FileManager.FILTER_CSV), FileManager.SUFFIX_CSV);
         if (filename == null) {
             return;
@@ -819,35 +826,69 @@ public class MultiSpectralControl extends HydraControl {
 
         CsvTask task = new CsvTask(filename);
         task.addPropertyChangeListener(evt -> {
-            // logger.trace("property changed: {}", evt);
+//            logger.trace("property changed: {}", evt);
             switch (evt.getPropertyName()) {
                 case "state":
                     if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
                         saveAsCsv.setEnabled(true);
-                        csvProgress.setValue(0);
-                        csvProgress.setVisible(false);
+                        if (exportCsvDialog != null) {
+                            SwingUtilities.invokeLater(() -> exportCsvDialog.taskOver());
+                        }
                     } else {
                         saveAsCsv.setEnabled(false);
-                        csvProgress.setVisible(true);
+                        if (exportCsvDialog != null) {
+                            SwingUtilities.invokeLater(() -> exportCsvDialog.setVisible(true));
+                        }
                     }
                     break;
                 case "progress":
                     int value = (Integer)evt.getNewValue();
-                    csvProgress.setVisible(true);
-                    csvProgress.setValue(value);
+                    if (exportCsvDialog != null) {
+                        exportCsvDialog.setProgress(value);
+                        SwingUtilities.invokeLater(() -> exportCsvDialog.setProgress(value));
+                    }
                     break;
                 default:
-                    logger.trace("unknown evt type: {}", evt);
-                    task.cancel(true);
+//                    logger.trace("unknown evt type: {}", evt);
+                    if (exportCsvDialog != null) {
+                        SwingUtilities.invokeLater(() -> exportCsvDialog.taskOver());
+                    } else {
+                        task.cancel(true);
+                    }
                     saveAsCsv.setEnabled(true);
-                    csvProgress.setValue(0);
-                    csvProgress.setVisible(false);
                     break;
             }
         });
+
+        createCsvDialog(task);
         task.execute();
     }
 
+    /**
+     * Create the dialog used to show our CSV export progress.
+     *
+     * <p>Be aware that the dialog will not be visible until {@link CsvTask#execute() execute} is called.</p>
+     *
+     * <p>The {@link CsvDialog} will automatically close upon completion or the user cancelling.</p>
+     *
+     * @param task CSV export task. Cannot be {@code null}.
+     */
+    private void createCsvDialog(CsvTask task) {
+        // attempting to center the modal CsvDialog over the data explorer window.
+        // if it somehow does not exist, try main display window.
+        UIManager mcvUI = (UIManager)McIDASV.getStaticMcv().getIdvUIManager();
+        IdvWindow window = mcvUI.getDashboardWindow();
+        if (window == null) {
+            // not sure how this would be possible, given that the multispectralcontrol
+            // is embedded within the Data Explorer window!
+            window = IdvWindow.getActiveWindow();
+        }
+        exportCsvDialog = new CsvDialog(
+                window.getWindow(),
+                getOuterContents(),
+                "Exporting values...",
+                task);
+    }
 
 
     private JComponent getHistogramTabComponent() {
@@ -935,6 +976,51 @@ public class MultiSpectralControl extends HydraControl {
         blackBackground = value;
     }
 
+    class CsvDialog extends JDialog {
+        private final JProgressBar progressBar;
+
+        CsvDialog(Window parentWindow, Component parentComponent,
+                  String title, CsvTask task) {
+            super(parentWindow, title);
+            setModalityType(ModalityType.APPLICATION_MODAL);
+            setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+            getContentPane().setLayout(new GridLayout(1,1));
+
+            JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 5, 10));
+
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+            JPanel southPanel = new JPanel(new BorderLayout());
+            mainPanel.add(southPanel, BorderLayout.SOUTH);
+
+            this.progressBar = new JProgressBar(0, 100);
+            this.progressBar.setStringPainted(true);
+            southPanel.add(progressBar, BorderLayout.CENTER);
+
+            JPanel buttonsPanel = new JPanel(new FlowLayout());
+            southPanel.add(buttonsPanel, BorderLayout.SOUTH);
+
+            JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(e -> task.cancel(true));
+            buttonsPanel.add(cancelButton);
+            getContentPane().add(mainPanel);
+            pack();
+            setLocationRelativeTo(parentComponent);
+        }
+
+        void setProgress(int percent) {
+            this.progressBar.setValue(percent);
+        }
+
+        void taskOver() {
+            setVisible(false);
+            dispose();
+        }
+    }
+
     class CsvTask extends SwingWorker<String, Object> {
         private final String path;
 
@@ -974,6 +1060,8 @@ public class MultiSpectralControl extends HydraControl {
                 } else {
                     writeToPath(contents);
                 }
+            } catch (CancellationException e) {
+                firePropertyChange("state", StateValue.STARTED, SwingWorker.StateValue.DONE);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (ExecutionException e) {

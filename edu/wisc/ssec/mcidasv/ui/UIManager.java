@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv.ui;
 import static java.util.Objects.requireNonNull;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
 import static edu.wisc.ssec.mcidasv.util.XPathUtils.elements;
@@ -2615,6 +2616,24 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
             }
         }
+    }
+
+    /**
+     * Search through list of {@link IdvWindow IdvWindows} and return the {@literal "Data Explorer"},
+     * if it exists.
+     *
+     * @return {@literal "Data Explorer"} window or {@code null} if it does not exist.
+     */
+    public IdvWindow getDashboardWindow() {
+        IdvWindow dash = null;
+        List<IdvWindow> windows = cast(IdvWindow.getWindows());
+        for (IdvWindow window : windows) {
+            if (Constants.DATASELECTOR_NAME.equals(window.getTitle())) {
+                dash = window;
+                break;
+            }
+        }
+        return dash;
     }
 
     /**
