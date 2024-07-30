@@ -2127,13 +2127,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected JComponent doMakeContents() {
         JPanel outerPanel = new JPanel();
 
-        JLabel serverLabelInner = new JLabel("Server:");    
+        JLabel serverLabelInner = new JLabel("Server:");
         McVGuiUtils.setLabelPosition(serverLabelInner, Position.RIGHT);
         JPanel serverLabel = GuiUtils.leftRight(parameterButton, serverLabelInner);
         McVGuiUtils.setComponentWidth(serverLabel);
 
         clearOnChange(serverSelector);
-        McVGuiUtils.setComponentWidth(serverSelector, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(serverSelector, Width.TRIPLE);
+        // McIDAS Inquiry #2146-3141 -> Changed from Width.DOUBLE to Width.TRIPLE
 
         JLabel groupLabel = McVGuiUtils.makeLabelRight("Dataset:");
 
