@@ -91,20 +91,21 @@ public class RGBCompositeControl extends DisplayControlImpl {
     private FieldImpl imageField = null;
     private MapProjection mapProjection = null;
 
-    private double gamma = 0.4;
+    private static final double DEFAULT_GAMMA = 0.4d;
+    private double gamma = DEFAULT_GAMMA;
 
-    private double redGamma = 0.4;
-    private double grnGamma = 0.4;
-    private double bluGamma = 0.4;
+    private double redGamma = DEFAULT_GAMMA;
+    private double grnGamma = DEFAULT_GAMMA;
+    private double bluGamma = DEFAULT_GAMMA;
 
     private final JTextField gammaTxtFld =
-        new JTextField(Float.toString(0.4f), 4);
+        new JTextField(Double.toString(gamma), 4);
     private final JTextField redGammaTxtFld =
-        new JTextField(Float.toString(0.4f), 4);
+        new JTextField(Double.toString(redGamma), 4);
     private final JTextField grnGammaTxtFld =
-        new JTextField(Float.toString(0.4f), 4);
+        new JTextField(Double.toString(grnGamma), 4);
     private final JTextField bluGammaTxtFld =
-        new JTextField(Float.toString(0.4f), 4);
+        new JTextField(Double.toString(bluGamma), 4);
 
     private final JTextField redLowTxtFld =
         new JTextField(Float.toString(1.0f), 10);
