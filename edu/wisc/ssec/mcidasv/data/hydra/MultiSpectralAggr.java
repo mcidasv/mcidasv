@@ -168,6 +168,12 @@ public class MultiSpectralAggr extends MultiSpectralData {
 
   public FlatField getImage(float channel, Map<String, double[]> subset) throws Exception {
     int channelIndex = aggrDomain.valueToIndex(new float[][] {{channel}})[0];
+    // If a value is NaN, ^^ this returns -1 but that bricks the system
+    // a way to handle this is to assign a default value. For now
+    // this is set to the median value from the list
+
+    // McIDAS Inquiry #2780-3141
+    if (channelIndex == -1) channelIndex = sort_indexes.length >> 1;
 
     int idx = sort_indexes[channelIndex];
 
