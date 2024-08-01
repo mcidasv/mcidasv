@@ -262,8 +262,9 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
     public static final String PREF_MOVIE_END_PAUSE =
         "idv.capture.gif.endPause";
 
+    // McIDAS Inquiry #3110-3141
     /** How much we pause between animation captures */
-    private static int SLEEP_TIME = 500;
+    private static int SLEEP_TIME = 275;
 
     /** Filter for HTML files */
     public static final PatternFileFilter FILTER_ANIS =
@@ -1229,7 +1230,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         // runAnimationCapture(++captureTimeStamp);
         Misc.run(new Runnable() {
             public void run() {
-                Misc.sleep(2000);
+                // McIDAS Inquiry #3110-3141
+                Misc.sleep(1500);
                 runAnimationCapture(++captureTimeStamp);
             }
         });
