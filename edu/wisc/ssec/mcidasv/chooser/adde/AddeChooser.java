@@ -2153,7 +2153,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         McVGuiUtils.setComponentWidth(descriptorLabel);
         McVGuiUtils.setLabelPosition(descriptorLabel, Position.RIGHT);
 
-        McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
+        // McIDAS Inquiry #2146-3141 -> Non-stanard length
+        McVGuiUtils.setComponentWidth(descriptorComboBox, 584);
 
         if (descriptorComboBox.getMinimumSize().getWidth() < ELEMENT_DOUBLE_WIDTH) {
             McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLE);
