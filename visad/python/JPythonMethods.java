@@ -2889,7 +2889,7 @@ public static void plot(final String name, final float[][] data)
    * @throws VisADException 
    * @throws RemoteException 
   */
-  public static FlatField replaceMissing(FieldImpl f, double v) 
+  public static FlatField replaceMissingHelper(FieldImpl f, double v)
              throws VisADException, RemoteException {
     FlatField ff;
     if (f instanceof FlatField) {
@@ -2909,8 +2909,46 @@ public static void plot(final String name, final float[][] data)
 
     ff.setSamples(dv,false);
     return ff;
-
   }
+
+  /**
+   * Replaces all the missing values in a FieldImpl with the constant given over all timesteps
+   * McIDAS Inquiry #2254-3141
+   *
+   * @param f is the input FlatField
+   * @param v is the value to insert into f.
+   * @return the new FlatField
+   * @throws VisADException
+   * @throws RemoteException
+   */
+
+  public static FieldImpl replaceMissing(FieldImpl f, double v) throws VisADException, RemoteException {
+    if (f instanceof FlatField) {
+      // one timestep
+      return replaceMissingHelper(f, v);
+
+    } else if (domainDimension(f) == 1) {
+      int numItems = getDomain(f).getLength();
+      Set ds = ( (FlatField)(f.getSample(0))).getDomainSet();
+
+      FunctionType ftype = (FunctionType) ((FlatField)f.getSample(0)).getType();
+      Set dsfi = f.getDomainSet();
+      MathType dsdom = ((SetType) f.getDomainSet().getType()).getDomain();
+      FunctionType dsft = new FunctionType(dsdom, ftype);
+      FieldImpl fi = new FieldImpl(dsft, dsfi);
+
+      for (int i = 0; i < numItems; i++) {
+        fi.setSample(i, replaceMissingHelper((FlatField) f.getSample(i), v));
+      }
+
+      return fi;
+
+    } else {
+      throw new VisADException("Cannot rescale the data - unknown structure");
+    }
+  }
+
+
 
   /**
   * Replaces all the values in a FlatField with the constant given
@@ -3532,6 +3570,7 @@ public static void plot(final String name, final float[][] data)
    * @throws RemoteException 
   *
   */
+  // 3141
   public static FieldImpl mask(FieldImpl f, String op, Data v, boolean useNaN)
              throws VisADException, RemoteException {
     FlatField ff = null;
@@ -3545,7 +3584,7 @@ public static void plot(final String name, final float[][] data)
     if (f instanceof FlatField) {
       numItems = 1;
       ds = ((FlatField)f).getDomainSet();
-     
+
     } else if (domainDimension(f) == 1) {
       isFI = true;
       numItems = getDomain(f).getLength();
