@@ -852,8 +852,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     private boolean collapseLegend = false;
 
 
-
-
+    private String[] satNames = {"POES", "EWS", "METEOSAT7","TIROS","GALILEO","METEOSAT9","METEOSAT4","RMET","HIMAWARI","TERRA","NOAA20","GOES","METEOSAT IR","METEOSAT12","METEOSAT WV","HIM","GMS IR","AMSR","MTSAT","DMSP","ERBE","VENUS","VOYAGER1","NOAA22","SP COMP","DERIVED DATA","NOAA","KALPANA","AIRS","METEOSAT5","LANDSAT","METEOSAT13","METEOSAT11","GMS","SMS","NPP","NOAA23","MISC","GMS","AMSU","METOP","METEOSAT6","MEGHA","HUBBLE ST","NOAA21","FY","METEOSAT10","METEOSAT3","MTG","GK","METEOSAT VIS","RADAR","METEOSAT8","INSAT3D","COMPOSITE","ATS","TEST IMAGE","VOYAGER2","SNPP","NP COMP","COMS","AQUA","METEOSAT14","ACFT","GRAPHICS","TRMM","HCAST","MODIS"};
     /** locking object */
     private Object MUTEX_CONTROLCHANGE = new Object();
 
@@ -12457,10 +12456,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
                 // PM July 2023 - edits made for inquiry #2771
                 if (dataSource instanceof AddePointDataSource) {
+                    logger.info(dataSource.toString());
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    String def = MACRO_DATASOURCENAME + " - " + MACRO_TIMESTAMP;
                     pref = pref + (haveData ? ".data" : ".nodata");
-                    return displayListTemplate = getStore().get(pref,
-                            getDefaultDisplayListTemplatePoint());
+                    return displayListTemplate = getStore().get(pref, def);
                 }
 
                 // McIDAS Inquiry #2769-3141
@@ -12499,13 +12499,17 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     pref += (getShortParamName() != null) ? ".data" : ".nodata";
 
                     String def;
-                    if (expName[2].contains("GOES")) { // add more satellite names here
-                        def = (getShortParamName() != null) ? expName[2] + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
-                    } else if (expName[0].length() == 3) {
-                        def = (getShortParamName() != null) ? expName[0] + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
-                    } else {
-                        def = (getShortParamName() != null) ? src.getName() + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    String satelliteName = src.getName();
+                    for (String satName : satNames) {
+                        for (String seg : expName) {
+                            if (seg.equals(satName) || seg.contains(satName + "-")) {
+                                satelliteName = seg;
+                                break;
+                            }
+                        }
                     }
+                    def = (getShortParamName() != null) ? satelliteName + " - " + MACRO_LONGNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+
                     displayListTemplate = getStore().get(pref, def);
                     return displayListTemplate;
                     // Layer Label: "satellite name - %longname% - %timestamp%"
@@ -12516,7 +12520,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 if (dataSource instanceof PointDataSource) {
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
                     pref += (getShortParamName() != null) ? ".data" : ".nodata";
-                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+                    String def = (getShortParamName() != null) ? MACRO_DATASOURCENAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
                     displayListTemplate = getStore().get(pref, def);
                     return displayListTemplate;
                     // Layer Label: "%longname% - %displayname% - %timestamp%
@@ -12631,8 +12635,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
                     pref = pref + (haveData ? ".data" : ".nodata");
                     return legendLabelTemplate = getStore().get(pref, (haveData
-                            ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME + " - " +
-                            MACRO_DISPLAYNAME : MACRO_DISPLAYNAME));
+                            ? MACRO_DATASOURCENAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME));
                 }
 
                 // McIDAS Inquiry #2769-3141
@@ -12672,16 +12675,18 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     String[] expName = src.getName().split("\\s+");
                     String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
                     pref += (getShortParamName() != null) ? ".data" : ".nodata";
+
                     String def;
-
-                    if (expName[2].contains("GOES")) { // add more satellite names here
-                        def = (getShortParamName() != null) ? expName[2] + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
-                    } else if (expName[0].length() == 3) {
-                        def = (getShortParamName() != null) ? expName[0] + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
-                    } else {
-                        def = (getShortParamName() != null) ? src.getName() + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    String satelliteName = src.getName();
+                    for (String satName : satNames) {
+                        for (String seg : expName) {
+                            if (seg.equals(satName) || seg.contains(satName + "-")) {
+                                satelliteName = seg;
+                                break;
+                            }
+                        }
                     }
-
+                    def = (getShortParamName() != null) ? satelliteName + " - " + MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
                     legendLabelTemplate = getStore().get(pref, def);
                     return legendLabelTemplate;
                     // Layer Label: "satellite name - %longname% - %timestamp%"
@@ -12692,7 +12697,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 if (dataSource instanceof PointDataSource) {
                     String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
                     pref += (getShortParamName() != null) ? ".data" : ".nodata";
-                    String def = (getShortParamName() != null) ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
+                    String def = (getShortParamName() != null) ? MACRO_DATASOURCENAME + " - " + MACRO_DISPLAYNAME : MACRO_DISPLAYNAME;
                     legendLabelTemplate = getStore().get(pref, def);
                     return legendLabelTemplate;
                     // Layer Label: "%longname% - %displayname% - %timestamp%
