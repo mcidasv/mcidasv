@@ -1051,15 +1051,15 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
       FileSystemView fsv = FileSystemView.getFileSystemView();
       File homeDir = fsv.getHomeDirectory();
       
-      try {
-         PrintStream prntStrm = new PrintStream(new FileOutputStream(new File(homeDir, "hydraout.txt"), false));
-         System.setOut(prntStrm);
-         System.setErr(prntStrm);
-      }
-      catch (Exception e) { // Just in case we can't open the log file.
-         e.printStackTrace();
-         System.out.println("Could not open hydraout.txt in: "+homeDir);
-      }
+      // try {
+      //    PrintStream prntStrm = new PrintStream(new FileOutputStream(new File(homeDir, "hydraout.txt"), false));
+      //    System.setOut(prntStrm);
+      //    System.setErr(prntStrm);
+      // }
+      // catch (Exception e) { // Just in case we can't open the log file.
+      //    e.printStackTrace();
+      //    System.out.println("Could not open hydraout.txt in: "+homeDir);
+      // }
        
       previewDisplay = getPreviewDisplay();
       DataBrowser dataBrowser = new DataBrowser();
