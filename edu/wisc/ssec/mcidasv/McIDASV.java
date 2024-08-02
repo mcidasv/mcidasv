@@ -1117,13 +1117,13 @@ public class McIDASV extends IntegratedDataViewer {
         EventDispatchThreadHangMonitor.initMonitoring();
 
         // McIDAS Inquiry #983-3141 -> I really don't like how this is implemented
-        SwingUtilities.invokeLater(() -> {
-            try {
-                ((McIdasPreferenceManager) doMakePreferenceManager()).initAtStartup();
-            } catch (Exception e) {
-                logger.error("oh no! something happened!", e);
-            }
-        });
+//        SwingUtilities.invokeLater(() -> {
+//            try {
+//                ((McIdasPreferenceManager) doMakePreferenceManager()).initAtStartup();
+//            } catch (Exception e) {
+//                logger.error("oh no! something happened!", e);
+//            }
+//        });
     }
     
     /**
