@@ -997,7 +997,7 @@ public class AddePointDataChooser extends AddeChooser {
     @Override public JComponent doMakeContents() {
         JPanel myPanel = new JPanel();
         
-        McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
+        McVGuiUtils.setComponentWidth(descriptorComboBox, 584);
                 
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
         addServerComp(stationLabel);

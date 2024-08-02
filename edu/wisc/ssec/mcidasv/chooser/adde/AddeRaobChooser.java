@@ -1197,7 +1197,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         JPanel myPanel = new JPanel();
         
         McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
-        McVGuiUtils.setComponentWidth(descriptorComboBox2, descriptorComboBox);
+        McVGuiUtils.setComponentWidth(descriptorComboBox2, 584);
         McVGuiUtils.setComponentWidth(satelliteTimeComboBox, Width.DOUBLE);
         McVGuiUtils.setComponentWidth(satellitePixelTextField, Width.DOUBLE);
         
