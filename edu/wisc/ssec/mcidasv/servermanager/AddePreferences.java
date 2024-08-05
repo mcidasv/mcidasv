@@ -260,6 +260,10 @@ public class AddePreferences {
         final JRadioButton useAllBtn = 
             new JRadioButton("Use all ADDE entries", useAll);
         useAllBtn.addActionListener(ae -> {
+            // McIDAS Inquiry #3080-3141 -> Just select all of them and run it!
+            for (CheckboxCategoryPanel cbcp : typePanels) {
+                cbcp.toggleAll(true);
+            }
             setGUIEnabled(!useAllBtn.isSelected());
             // TODO(jon): use the eventbus
             setSpecifyServers(Selection.ALL_ENTRIES);
