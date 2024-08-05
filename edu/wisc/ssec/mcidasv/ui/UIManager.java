@@ -3310,6 +3310,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             menu.add(deleteMenu);
         }
 
+        // McIDAS Inquiry #2803-3141 
         ArrayList<TwoFacedObject> notInDirs = new ArrayList<>();
         HashMap<String, JMenu> dirs = new HashMap<>();
 
@@ -3340,7 +3341,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
                 mi.addActionListener(new ObjectListener(tfo.getId()) {
                     public void actionPerformed(final ActionEvent e) {
-                        logger.info("sheep");
                         if (vm == null) {
                             return;
                         }
@@ -3366,13 +3366,33 @@ public class UIManager extends IdvUIManager implements ActionListener {
         ArrayList<JMenu> folders = new ArrayList<>();
 
         for (Map.Entry<String, JMenu> entry : dirs.entrySet()) {
-            folders.add(entry.getValue());
+            JMenu jmu = entry.getValue();
+            ArrayList<JMenuItem> itms = new ArrayList<>();
+
+            for (int i = 0; i < jmu.getItemCount(); i++) {
+                itms.add(jmu.getItem(i));
+            }
+
+            Collections.sort(itms, new Comparator<JMenuItem>() {
+                @Override
+                public int compare(JMenuItem o1, JMenuItem o2) {
+                    return (o1.getText().toLowerCase().compareTo(o2.getText().toLowerCase()));
+                }
+            });
+
+            JMenu out = new JMenu(jmu.getText());
+
+            for (int i = 0; i < itms.size(); i++) {
+                out.add(itms.get(i));
+            }
+
+            folders.add(out);
         }
 
         Collections.sort(folders, new Comparator<JMenu>() {
             @Override
             public int compare(JMenu o1, JMenu o2) {
-                return (o1.getText().compareTo(o2.getText()));
+                return (o1.getText().toLowerCase().compareTo(o2.getText().toLowerCase()));
             }
         });
 
@@ -3387,7 +3407,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         Collections.sort(notInDirs, new  Comparator<TwoFacedObject>() {
             @Override
             public int compare(TwoFacedObject a, TwoFacedObject b) {
-                return (a.getLabel().toString().compareTo(b.getLabel().toString()));
+                return (a.getLabel().toString().toLowerCase().compareTo(b.getLabel().toString().toLowerCase()));
             }
         });
 
