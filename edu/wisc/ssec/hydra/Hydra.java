@@ -31,6 +31,11 @@ package edu.wisc.ssec.hydra;
 
 import edu.wisc.ssec.hydra.data.DataSource;
 import edu.wisc.ssec.hydra.data.DataSourceFactory;
+import javax.swing.JFrame;
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.JMenuBar;
 
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
@@ -93,12 +98,6 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileSystemView;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -828,7 +827,9 @@ public class Hydra {
                   frame.setJMenuBar(menuBar);
                 }
 
-                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                if (exitOnClose) {
+                  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                }
 
                 //Add content to the window.
                 if (component != null) {

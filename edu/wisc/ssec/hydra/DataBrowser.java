@@ -31,29 +31,26 @@ package edu.wisc.ssec.hydra;
 
 import edu.wisc.ssec.adapter.HydraContext;
 import edu.wisc.ssec.hydra.data.DataSource;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
+import javax.swing.ButtonGroup;
+import javax.swing.JList;
 import javax.swing.SwingWorker;
+import javax.swing.JSplitPane;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileSystemView;
 
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -83,6 +80,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.JDialog;
+import javax.swing.JTextField;
 
 public class DataBrowser extends HydraDisplay implements ActionListener, TreeSelectionListener, TreeExpansionListener {
 
@@ -713,7 +712,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
        else if (cmd.equals("OpenRemote")) {
        }
        else if (cmd.equals("Exit")) {
-          closeFrame();
+          java.lang.System.exit(0);
        }
        else if (cmd.equals("doRGB")) {
           (new RGBComposite(this)).show(frameLoc.x+600, frameLoc.y);
@@ -852,7 +851,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
     }
 
     public void windowClosing(WindowEvent e) {
-       closeFrame();
+       java.lang.System.exit(0);
     }
 
     public Point getLocation() {
@@ -1037,13 +1036,6 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
   
    public void setCursorToDefault() {
       frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-   }
-
-   public void closeFrame() {
-      SwingUtilities.invokeLater(() -> {
-         frame.setVisible(false);
-         frame.dispose();
-      });
    }
 
    public static void main(String[] args) throws Exception {
