@@ -623,7 +623,7 @@ public class AnimationPropertiesDialog extends JDialog implements ActionListener
         // McIDAS Inquiry #3137-3141
         comps.add(addTo(GuiUtils.rLabel("Disable data refresh:"), pollList));
         rfrCBox = new JCheckBox();
-
+        rfrCBox.setToolTipText("When checked, the display will not update through time");
         comps.add(GuiUtils.left(addTo(rfrCBox, pollList)));
 
         JComponent pollIntervalPanel = GuiUtils.hbox(new Component[] {
