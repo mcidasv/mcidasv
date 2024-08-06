@@ -45,6 +45,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
@@ -203,6 +205,9 @@ public class AnimationPropertiesDialog extends JDialog implements ActionListener
     /** gui widgets */
     private JComboBox endTimeBox;
 
+    // McIDAS Inquiry #3137-3141
+    /** gui widgets */
+    private JCheckBox rfrCBox;
 
     /** gui widgets */
     private DateTimePicker startTimePicker;
@@ -615,12 +620,31 @@ public class AnimationPropertiesDialog extends JDialog implements ActionListener
         comps.add(GuiUtils.rLabel("Round To:"));
         comps.add(GuiUtils.left(roundToField.getContents()));
 
+        // McIDAS Inquiry #3137-3141
+        comps.add(addTo(GuiUtils.rLabel("Disable data refresh:"), pollList));
+        rfrCBox = new JCheckBox();
+
+        comps.add(GuiUtils.left(addTo(rfrCBox, pollList)));
 
         JComponent pollIntervalPanel = GuiUtils.hbox(new Component[] {
                                            pollIntervalFld,
                                            GuiUtils.lLabel(" minutes") });
         comps.add(addTo(GuiUtils.rLabel("Refresh Rate:"), pollList));
         comps.add(GuiUtils.left(addTo(pollIntervalPanel, pollList)));
+
+        // McIDAS Inquiry #3137-3141
+        rfrCBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == 1) {
+                    pollIntervalFld.setText("65535");
+                    pollIntervalFld.setEnabled(false);
+                } else {
+                    pollIntervalFld.setText("5");
+                    pollIntervalFld.setEnabled(true);
+                }
+            }
+        });
 
         timeDriverCbx = new JCheckBox(
             "", animationWidget.getAnimationSetInfo().getIsTimeDriver());
@@ -943,6 +967,10 @@ public class AnimationPropertiesDialog extends JDialog implements ActionListener
             //                                startMode == AnimationSetInfo.TIMEMODE_FIXED);
             //            GuiUtils.enableTree(endTimePicker,
             //                                endMode == AnimationSetInfo.TIMEMODE_FIXED);
+
+            // McIDAS Inquiry #3137-3141
+            if (rfrCBox.isEnabled()) pollIntervalFld.setEnabled(!rfrCBox.isSelected());
+
         } else {
             GuiUtils.enableTree(setContents, false);
             predefinedBtn.setEnabled(false);
