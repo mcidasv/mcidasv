@@ -504,6 +504,7 @@ public class SupportForm extends JFrame {
     
     // TODO: dialogs are bad news hares.
     public void showFailure(final String reason) {
+        clearFiles();
         String msg = "";
         if (reason == null || reason.isEmpty()) {
             msg = "Error sending request, could not determine cause.";
@@ -574,6 +575,12 @@ public class SupportForm extends JFrame {
             showInvalidInputs();
             return;
         }
+
+        // zip files!
+        boolean validFiles = true;
+        if (attachmentOneField.getText() != "" || attachmentOneField.getText() != null) validFiles = validFiles && zipFile(attachmentOneField);
+        if (attachmentTwoField.getText() != "" || attachmentTwoField.getText() != null) validFiles = validFiles && zipFile(attachmentTwoField);
+        if (!validFiles) return;
         
         // disable the ability to send more requests until we get a status
         // reply from the server.
@@ -614,47 +621,53 @@ public class SupportForm extends JFrame {
             toDelete.delete();
         }
     }
-    
+
     private static void attachFileToField(final JTextField field) {
         String current = field.getText();
         JFileChooser jfc = new JFileChooser(current);
         if (jfc.showOpenDialog(field) == JFileChooser.APPROVE_OPTION) {
-            /**
-             * McIDAS Inquiry #1690-3141
-             * Zip files before sending them through the support form
-             */
-            String newFileName;
-            String newFilePath;
-            try {
-                File file = jfc.getSelectedFile();
-                FileInputStream inStream = new FileInputStream(file);
+            field.setText(jfc.getSelectedFile().toString());
+        }
+    }
 
-                newFilePath = file + "_compressed.zip";
-                newFileName = file.getName() + "_compressed.zip";
+    /**
+     * McIDAS Inquiry #1690-3141
+     * Zip files before sending them through the support form
+     */
+    private static boolean zipFile(final JTextField field) {
+        String path = field.getText();
 
-                FileOutputStream outStream = new FileOutputStream(newFilePath);
-                ZipOutputStream zipStream = new ZipOutputStream(outStream);
+        File file = new File(path);
+        try {
+            FileInputStream inStream = new FileInputStream(file);
 
-                ZipEntry zipEntry = new ZipEntry(file.getName());
-                zipStream.putNextEntry(zipEntry);
+            String newFilePath = file + "_compressed.zip";
+            String newFileName = file.getName() + "_compressed.zip";
 
-                byte[] bytes = new byte[1024];
-                int length;
-                while ((length = inStream.read(bytes)) >= 0) {
-                    zipStream.write(bytes, 0, length);
-                }
+            FileOutputStream outStream = new FileOutputStream(newFilePath);
+            ZipOutputStream zipStream = new ZipOutputStream(outStream);
 
-                zipStream.close();
-                inStream.close();
-                outStream.close();
+            ZipEntry zipEntry = new ZipEntry(file.getName());
+            zipStream.putNextEntry(zipEntry);
 
-                filesToDelete.add(newFilePath);
-                field.setText(newFilePath);
-                logger.info(newFilePath, newFileName);
-            } catch (Exception e) {
-                logger.error("Zipping the file failed", e);
-                JOptionPane.showMessageDialog(null, "Unable to attach this file", "File Error", JOptionPane.ERROR_MESSAGE);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = inStream.read(bytes)) >= 0) {
+                zipStream.write(bytes, 0, length);
             }
+
+            zipStream.close();
+            inStream.close();
+            outStream.close();
+
+            filesToDelete.add(newFilePath);
+            field.setText(newFilePath);
+            logger.info(newFilePath, newFileName);
+            return true;
+        } catch (Exception e) {
+            logger.error("Zipping the file failed", e);
+            JOptionPane.showMessageDialog(null, "Unable to attach " + file.getName() + " file", "File Error", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
     
