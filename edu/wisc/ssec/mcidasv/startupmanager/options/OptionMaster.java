@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager.options;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -57,6 +59,7 @@ public class OptionMaster {
     public final static String EMPTY_STRING = "";
     public final static String QUOTE_STRING = "\"";
     public final static char QUOTE_CHAR = '"';
+    public final static String DEF_SCALING = hasRetinaDisplay() ? "2" : "1";
 
     // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
     public final Object[][] blahblah = {
@@ -78,7 +81,7 @@ public class OptionMaster {
         { "LOG_LEVEL", "Log Level", "INFO", Type.LOGLEVEL, OptionPlatform.ALL, Visibility.VISIBLE },
         { "JVM_OPTIONS", "Java Virtual Machine Options", "", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
         { "TEXTURE_WIDTH", "Texture Size", "4096", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
-        { "MCV_SCALING", "GUI Scaling", "1", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "MCV_SCALING", "GUI Scaling", DEF_SCALING, Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
 //        { "USE_DARK_MODE", "Enable Dark Mode", "0", Type.BOOLEAN, OptionPlatform.UNIXLIKE, Visibility.VISIBLE },
         { "USE_DARK_MODE", "Enable Dark Mode", "0", Type.BOOLEAN, OptionPlatform.MAC, Visibility.VISIBLE },
     };
@@ -125,7 +128,14 @@ public class OptionMaster {
         }
         return instance;
     }
-    
+
+    public static boolean hasRetinaDisplay() {
+        logger.info("Testing for HiDPI");
+        final GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        final AffineTransform transform = config.getDefaultTransform();
+        return !transform.isIdentity();
+    }
+
     /**
      * Creates the specified options and returns a mapping of the option ID
      * to the actual {@link Option} object.
