@@ -59,7 +59,7 @@ public class OptionMaster {
     public final static String EMPTY_STRING = "";
     public final static String QUOTE_STRING = "\"";
     public final static char QUOTE_CHAR = '"';
-    public final static String DEF_SCALING = hasRetinaDisplay() ? "2" : "1";
+    public final static String DEF_SCALING = "1";
 
     // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
     public final Object[][] blahblah = {
@@ -129,6 +129,8 @@ public class OptionMaster {
         return instance;
     }
 
+    // McIDAS Inquiry #3124-3141 and #3125-3141 -> Unused but it might be useful some time in the future
+    // HiDPI, Retina Display, MacOS
     public static boolean hasRetinaDisplay() {
         logger.info("Testing for HiDPI");
         final GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
