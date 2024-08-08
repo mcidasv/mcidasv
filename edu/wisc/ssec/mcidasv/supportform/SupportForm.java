@@ -60,10 +60,7 @@ import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.FocusTraveller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -577,10 +574,7 @@ public class SupportForm extends JFrame {
         }
 
         // zip files!
-        boolean validFiles = true;
-        if (attachmentOneField.getText() != "" || attachmentOneField.getText() != null) validFiles = validFiles && zipFile(attachmentOneField);
-        if (attachmentTwoField.getText() != "" || attachmentTwoField.getText() != null) validFiles = validFiles && zipFile(attachmentTwoField);
-        if (!validFiles) return;
+        if (!(zipFile(attachmentOneField) && zipFile(attachmentTwoField))) return;
         
         // disable the ability to send more requests until we get a status
         // reply from the server.
@@ -663,6 +657,9 @@ public class SupportForm extends JFrame {
             filesToDelete.add(newFilePath);
             field.setText(newFilePath);
             logger.info(newFilePath, newFileName);
+            return true;
+        } catch (FileNotFoundException fnfe) {
+            // no file
             return true;
         } catch (Exception e) {
             logger.error("Zipping the file failed", e);
