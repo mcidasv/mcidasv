@@ -2944,7 +2944,7 @@ public static void plot(final String name, final float[][] data)
       return fi;
 
     } else {
-      throw new VisADException("Cannot rescale the data - unknown structure");
+      throw new VisADException("replaceMissing() failed!");
     }
   }
 
