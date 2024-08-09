@@ -55,7 +55,7 @@ echo Reading system configuration...
 SET /a SYS_MEM=0
 FOR /F %%i IN ('..\jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-"..\jre\bin\java" -Dmcv.userpath="%MCV_USERPATH%" -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%
+"..\jre\bin\java" -Dmcv.userpath="%MCV_USERPATH%" -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dsun.java2d.uiScale=1 -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%
 :end
 
 CD %CURRENT_DIR%
