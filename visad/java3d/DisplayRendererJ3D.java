@@ -102,7 +102,7 @@ import visad.VisADLineArray;
 import visad.VisADPointArray;
 import visad.VisADRay;
 import visad.VisADTriangleArray;
-import visad.util.OBJWriter;
+//import visad.util.OBJWriter;
 import visad.util.Util;
 
 /**
@@ -411,13 +411,13 @@ public abstract class DisplayRendererJ3D
            }
         }        
      };
-     getDisplay().queue(writeFile);
+//     getDisplay().queue(writeFile);
   }
 
   private void write(File file) throws Exception {
-     OBJWriter writer = new OBJWriter(file);
-     writer.writeNode(non_direct);
-     writer.close();
+//     OBJWriter writer = new OBJWriter(file);
+//     writer.writeNode(non_direct);
+//     writer.close();
   }
 
   public BranchGroup getRoot() {
@@ -910,6 +910,46 @@ public abstract class DisplayRendererJ3D
     screen_locked.addChild(group);
   }
 
+  public void addSceneGraphComponent(Group group, int index) {
+    if (this.non_direct.numChildren() == 0) {
+      this.non_direct.addChild(group);
+    } else {
+      this.non_direct.insertChild(group, index);
+    }
+
+  }
+
+  public synchronized void reorderRenderers(int[] order) throws VisADException {
+    Vector rendVec = this.getDisplay().getRendererVector();
+    int numRendrs = rendVec.size();
+    if (numRendrs != order.length) {
+      throw new VisADException("Render position indirection array length must match number of DataRenders in the Display");
+    } else {
+      int[] chldIdxOrder = new int[this.non_direct.numChildren()];
+
+      for(int k = 0; k < numRendrs; ++k) {
+        RendererJ3D rend = (RendererJ3D)rendVec.get(k);
+        int ogi = rend.getOrderedGroupIndex();
+        chldIdxOrder[ogi] = order[k];
+      }
+
+      this.non_direct.setChildIndexOrder(chldIdxOrder);
+    }
+  }
+
+  public synchronized void resetRendererOrder() {
+    Vector rendVec = this.getDisplay().getRendererVector();
+    int[] chldIdxOrder = new int[this.non_direct.numChildren()];
+
+    for(int k = 0; k < rendVec.size(); chldIdxOrder[k] = k++) {
+      RendererJ3D rend = (RendererJ3D)rendVec.get(k);
+      int ogi = rend.getOrderedGroupIndex();
+    }
+
+    this.non_direct.setChildIndexOrder(chldIdxOrder);
+  }
+
+
   //- TDR, Hydra stuff
   public void addLockedSceneGraphComponent(Group group, boolean initWithProj) {
     if (not_destroyed == null || screen_locked == null) return;
@@ -934,6 +974,18 @@ public abstract class DisplayRendererJ3D
     // direct.addChild(group);
     non_direct.addChild(group);
     directs.addElement(renderer);
+  }
+
+  public void addDirectManipulationSceneGraphComponent(Group group, DirectManipulationRendererJ3D renderer, int index) {
+    if (this.not_destroyed != null) {
+      if (this.non_direct.numChildren() == 0) {
+        this.non_direct.addChild(group);
+      } else {
+        this.non_direct.insertChild(group, index);
+      }
+
+      this.directs.addElement(renderer);
+    }
   }
 
 
