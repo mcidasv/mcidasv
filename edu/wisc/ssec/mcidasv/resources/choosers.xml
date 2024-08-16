@@ -374,16 +374,6 @@
             datasourceid="JPSS" class="edu.wisc.ssec.mcidasv.chooser.SuomiNPPChooser" />
 	</panel>
 
-    <panel title="Imagery - Satellite" category="Under Development" layout="border" tabtooltip="Please do not use this just yet.">
-        <chooser id="chooser.image"
-                 title="Image Chooser Compatibility Testing"
-                 menutitle="Compatibility Testing"
-                 helppath="idv.data.choosers.imagechooser"
-                 showdetails="true"
-                 includeNavComp="true"
-                 class="edu.wisc.ssec.mcidasv.chooser.adde.ImageChooser" />
-    </panel>
-
 	<panel title="GLM" category="Under Development" layout="border" tabtooltip="For accessing GOES-R Series Geostationary Lightning Mapper (GLM) data">
 		<chooser id="chooser.glm"
 				 title="GLM"

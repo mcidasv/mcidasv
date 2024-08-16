@@ -1515,7 +1515,6 @@ public class MapViewManager extends NavigatedViewManager {
             { "Show \"Please Wait\" Message", PREF_WAITMSG,
               new Boolean(getWaitMessageVisible()) },
             { "Reset Projection With New Data", PREF_PROJ_USEFROMDATA },
-            { PR_LABEL, PREF_USE_PROGRESSIVE_RESOLUTION, status },
             { "Use 3D View", PREF_DIMENSION },
             { "Show Globe Background", PREF_SHOWGLOBEBACKGROUND,
               new Boolean(getStore().get(PREF_SHOWGLOBEBACKGROUND,
@@ -1554,17 +1553,6 @@ public class MapViewManager extends NavigatedViewManager {
 
         JPanel miscPanel = IdvPreferenceManager.makePrefPanel(miscObjects,
             widgets, getStore());
-
-        JCheckBox progRezBox = (JCheckBox)widgets.get(PREF_USE_PROGRESSIVE_RESOLUTION);
-        if (progRezBox != null) {
-            progRezBox.setEnabled(status);
-            if (!status) {
-                progRezBox.setSelected(false);
-            }
-            logger.trace("progRezBox={}", progRezBox);
-        } else {
-            logger.trace("progRezBox is null! widgets={}", widgets);
-        }
 
         JPanel legendPanel =
             IdvPreferenceManager.makePrefPanel(legendObjects, widgets,
@@ -3345,34 +3333,10 @@ public class MapViewManager extends NavigatedViewManager {
             createCBMI(projMenu, PREF_PROJ_USEFROMDATA).setToolTipText(
                 "Automatically change viewpoint to the native data projection of new displays");
         }
-        if (progRezCBMI == null) {
-            progRezCBMI = createCBMI(projMenu, PREF_USE_PROGRESSIVE_RESOLUTION);
-        }
-        progRezCBMI.setToolTipText("Adapt the data resolution to match the display resolution");
-        boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
-        progRezCBMI.setEnabled(status);
-        if (!status) {
-            progRezCBMI.setSelected(false);
-        }
-        progRezCBMI.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
-
         createCBMI(projMenu, PREF_SHAREVIEWS);
         projMenu.add(GuiUtils.makeMenuItem("Set Share Group", this,
                                            "showSharableDialog"));
         return projMenu;
-    }
-
-    private JCheckBoxMenuItem progRezCBMI;
-
-    @EventTopicSubscriber(topic="McvPreference.ProgRez")
-    public void handleProgressiveResolutionPrefChange(final String topic, final Boolean value) {
-        if (progRezCBMI != null) {
-            boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
-            progRezCBMI.setEnabled(status);
-            if (!status) {
-                progRezCBMI.setSelected(false);
-            }
-        }
     }
 
     /**
@@ -3505,15 +3469,6 @@ public class MapViewManager extends NavigatedViewManager {
         props.add(new BooleanProperty(PREF_SHOWPIP, "Show Overview Map",
                                       "Show Overview Map", false));
 
-        boolean status = false;
-        XmlObjectStore store = getStore();
-        if (store != null) {
-            status = store.get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
-        }
-        props.add(new BooleanProperty(PREF_USE_PROGRESSIVE_RESOLUTION,
-                                      PR_LABEL,
-                                      PR_LABEL,
-                                      status));
         if (useGlobeDisplay) {
             props.add(new BooleanProperty(PREF_SHOWGLOBEBACKGROUND,
                                           "Show Globe Background",

@@ -961,8 +961,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel navigationPanel = makePrefPanel(navigationObjects, widgets, getStore());
         navigationPanel.setBorder(BorderFactory.createTitledBorder("Navigation Toolbars"));
 
-        String arLabel = "<html>"+MapViewManager.PR_LABEL+"<p>Changes do not affect current displays/layers.</html>";
-
         Object[][] panelObjects = {
             { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, Boolean.valueOf(getStore().get(MapViewManager.PREF_SHOWGLOBEBACKGROUND, true)) },
             { "Show Top Bar", MapViewManager.PREF_TOPBAR_VISIBLE, Boolean.valueOf(mappy.getTopBarVisible()) },
@@ -975,12 +973,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
             { ViewManager.LABEL_AUTO_DEPTH, ViewManager.PREF_AUTO_DEPTH, mappy.getAutoDepth() },
-            { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
-
-        JCheckBox adaptiveRezCheckBox = widgets.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION);
-        adaptiveRezCheckBox.setVerticalTextPosition(SwingConstants.TOP);
 
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
 
@@ -1306,7 +1300,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 theStore.put(MapViewManager.PREF_GLOBEBACKGROUND, globeBg[0].getBackground());
 
                 ViewManager.setHighlightBorder(border[0].getBackground());
-                EventBus.publish("McvPreference.ProgRez", theStore.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false));
 
                 // TJJ Aug 2023 - we decided High Quality only going forward
                 boolean hiqLabelState = true;
@@ -1322,13 +1315,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
     private static void savePrefsFromWidgets(Hashtable widgets, XmlObjectStore store) {
         IdvPreferenceManager.applyWidgets(widgets, store);
-        for (Enumeration keys = widgets.keys(); keys.hasMoreElements(); ) {
-            String key = (String) keys.nextElement();
-            Object widget = widgets.get(key);
-            if (MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION.equals(key)) {
-                store.put(key, ((JCheckBox)widget).isSelected());
-            }
-        }
     }
 
     /**

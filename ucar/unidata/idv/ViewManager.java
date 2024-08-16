@@ -1422,15 +1422,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
             BooleanProperty bp  = (BooleanProperty) booleanProperties.get(i);
             JCheckBox       cbx = new JCheckBox(bp.getName(), bp.getValue());
 
-            if (MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION.equals(bp.getId())) {
-                boolean status = getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false);
-                cbx.setEnabled(status);
-                if (!status) {
-                    cbx.setSelected(false);
-                }
-                cbx.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
-            }
-
             // TJJ May 2017
             // Leave logo visibility out of UI, since that is now moved to logo panel
             // This block prevents that checkbox from being added to top panel

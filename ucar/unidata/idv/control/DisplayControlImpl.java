@@ -6791,53 +6791,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             });
             items.add(mi);
-            if (canDoProgressiveResolution()) {
-                final JCheckBoxMenuItem menuItem = GuiUtils.makeCheckboxMenuItem(MapViewManager.PR_LABEL, this, "isProgressiveResolution", null);
-                Boolean enableAdaptiveRez = getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false);
-                menuItem.setEnabled(enableAdaptiveRez);
-                menuItem.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
-                if (!enableAdaptiveRez) {
-                    // not so sure about this choice. without it, when the user
-                    // *does not* have the adaptive rez preference enabled, the
-                    // menu item will be "grayed out", but may still be selected.
-                    // to me this implies that adaptive resolution is still being
-                    // used.
-                    menuItem.setSelected(false);
-                } else {
-                    if (adaptiveRezOffItem != null) {
-                        menuItem.setSelected(adaptiveRezOnItem.isSelected());
-                        menuItem.addActionListener(new ActionListener() {
-                            @Override public void actionPerformed(ActionEvent e) {
-                                boolean selected = menuItem.isSelected();
-                                setMatchDisplayRegion(selected);
-                                if (adaptiveRezOnItem != null && adaptiveRezOffItem != null) {
-                                    if (selected) {
-                                        adaptiveRezOnItem.setSelected(true);
-                                        adaptiveRezOffItem.setSelected(false);
-                                    } else {
-                                        adaptiveRezOnItem.setSelected(false);
-                                        adaptiveRezOffItem.setSelected(true);
-                                    }
-                                } else {
-                                    logger.warn("popup menu items are null! adaptiveRezOn==null: {}, adaptiveRezOffItem==null: {}", adaptiveRezOnItem == null,  adaptiveRezOffItem == null);
-                                }
-                            }
-                        });
-                    }
-                }
-                items.add(menuItem);
-                // makeCheckboxMenuItem will call both getMatchDisplayRegion()
-                // as well as setMatchDisplayRegion()
-//                menuItem = GuiUtils.makeCheckboxMenuItem("Match Display Region", this, "matchDisplayRegion", null);
-//                menuItem.addActionListener(new ActionListener() {
-//                    @Override public void actionPerformed(ActionEvent e) {
-//                        logger.trace("firing!");
-//                        updateMiscButton();
-//                    }
-//                });
-//                items.add(menuItem);
-
-            }
         }
 
     }
