@@ -9,6 +9,7 @@
     <property name="dist.dir" location="${base.dir}/dist" />
     <property name="lib.dir" location="${base.dir}/lib" />
     <property name="sharedlib.dir" location="${lib.dir}/share" />
+    <property name="nativelib.dir" location="${lib.dir}/native" />
     <property name="linuxx86lib.dir" location="${lib.dir}/linux-i586" />
     <property name="linuxx64lib.dir" location="${lib.dir}/linux-amd64" />
     <property name="windowsx86lib.dir" location="${lib.dir}/windows-i586" />
@@ -112,6 +113,31 @@
     <condition property="build.macos" value="true">
         <os family="mac" />
     </condition>
+
+    <condition property="build.macos-aarch64" value="true">
+        <os family="mac" arch="aarch64" />
+    </condition>
+
+    <condition property="build.macos-x86_64" value="true">
+        <or>
+            <os family="mac" arch="amd64" />
+            <os family="mac" arch="x86_64" />
+        </or>
+    </condition>
+
+    <condition property="build.windows" value="true">
+        <os family="windows" />
+    </condition>
+
+    <condition property="build.linux" value="true">
+        <and>
+            <os family="unix" />
+            <not>
+                <os family="mac" />
+            </not>
+        </and>
+    </condition>
+
     <!-- end dock jvm arg handling -->
 
     <!-- Attempt to load the version property file -->
@@ -342,7 +368,7 @@
         <include name="external-trimmed-${idv.version}.jar" />
         <include name="idv-${idv.version}.jar" />
     </fileset>
-    
+
     <!-- Shared classpath -->
     <path id="app.classpath">
         <pathelement location="${dist.dir}/${app.jarname}" />
@@ -492,6 +518,15 @@
             ant home: ${ant.home}
             ant basedir: ${base.dir}
 
+            == SYSTEM ====================
+            os  : ${os.name}
+            arch: ${os.arch}
+            build.macos: ${build.macos}
+            build.macos-aarch64: ${build.macos-aarch64}
+            build.macos-x86_64 : ${build.macos-x86_64}
+            build.linux  : ${build.linux}
+            build.windows: ${build.windows}
+
             == JAVA ======================
             java home: ${java.home}
             java version: ${java.runtime.version}
@@ -589,12 +624,11 @@
         <mkdir dir="${build.dir}" />
         <mkdir dir="${dist.dir}" />
         <copy todir="${dist.dir}" preservelastmodified="true">
-            <!--<fileset dir="${idvlib.dir}">-->
-                <!--<include name="**/*.jar" />-->
-                <!--<exclude name="**/jython.jar" />-->
-            <!--</fileset>-->
-            <!--<fileset dir="${lib.dir}" includes="**/*.jar" />-->
             <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
+            <fileset dir="${nativelib.dir}/macos-aarch64" includes="**/*.dylib" if:set="build.macos-aarch64" />
+            <fileset dir="${nativelib.dir}/macos-intel" includes="**/*.dylib" if:set="build.macos-x86_64" />
+            <fileset dir="${nativelib.dir}/linux" includes="**/*.dylib" if:set="build.linux" />
+            <fileset dir="${nativelib.dir}/windows" includes="**/*.dylib" if:set="build.windows" />
         </copy>
 
         <javac fork="true" srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
