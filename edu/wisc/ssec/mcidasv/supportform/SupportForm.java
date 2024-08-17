@@ -109,6 +109,10 @@ public class SupportForm extends JFrame {
     private JButton cancelButton;
     private JButton helpButton;
 
+    // TODO: McIDAS Inquiry #3159-3141 -> get a list of all file types that the wisc.edu email server
+    // TODO: does not allow and add it here
+    private static String[] unsupportedAttachments = {"py", "bat"}; // add more here
+
     private static ArrayList<String> filesToDelete = new ArrayList<>();
     
     /**
@@ -624,19 +628,51 @@ public class SupportForm extends JFrame {
         }
     }
 
+    private static String getFileExtensionSF(String fullName) {
+        String fileName = new File(fullName).getName();
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1);
+    }
+
+    private static String getFileNameWithoutExt(File file) {
+       String tmp = file.getName();
+       String[] arrTmp = tmp.split("\\.");
+       String out = "";
+
+       for (int i = 0; i < arrTmp.length - 1; i++) {
+           out += arrTmp[i];
+       }
+       return out;
+    }
+
+
     /**
      * McIDAS Inquiry #1690-3141
      * Zip files before sending them through the support form
      */
     private static boolean zipFile(final JTextField field) {
         String path = field.getText();
-
+        if (path.isEmpty() || path == null) {
+            // no file in the field, that's okay!
+            return true;
+        }
         File file = new File(path);
+        String ext = getFileExtensionSF(path);
+
+        for (String e : unsupportedAttachments) {
+            logger.info(ext + " " + e + " " +ext.equalsIgnoreCase(e));
+            if (ext.equalsIgnoreCase(e)) {
+                JOptionPane.showMessageDialog(null, file.getName() + " may not be attatched correctly!", "Potentially dangerous file!", JOptionPane.ERROR_MESSAGE);
+                // let it pass
+            }
+        }
+
+        String newName = getFileNameWithoutExt(file) + "_" + ext + "File";
         try {
             FileInputStream inStream = new FileInputStream(file);
 
-            String newFilePath = file + "_compressed.zip";
-            String newFileName = file.getName() + "_compressed.zip";
+            String newFilePath = newName + "_compressed.zip";
+            String newFileName = newName + "_compressed.zip";
 
             FileOutputStream outStream = new FileOutputStream(newFilePath);
             ZipOutputStream zipStream = new ZipOutputStream(outStream);
@@ -656,10 +692,8 @@ public class SupportForm extends JFrame {
 
             filesToDelete.add(newFilePath);
             field.setText(newFilePath);
-            logger.info(newFilePath, newFileName);
-            return true;
-        } catch (FileNotFoundException fnfe) {
-            // no file
+            logger.info("1: " + newFilePath);
+            logger.info("2: " + newFileName);
             return true;
         } catch (Exception e) {
             logger.error("Zipping the file failed", e);
@@ -667,7 +701,7 @@ public class SupportForm extends JFrame {
             return false;
         }
     }
-    
+
     private class CancelListener implements ActionListener {
         BackgroundTask<?> task;
         public void actionPerformed(ActionEvent e) {
