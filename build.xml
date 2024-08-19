@@ -985,8 +985,6 @@
             <jvmarg value="--add-opens" />
             <jvmarg value="java.base/java.security=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.security.acl=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
             <jvmarg value="java.base/java.security.cert=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.base/java.security.interfaces=ALL-UNNAMED" />
@@ -1172,6 +1170,7 @@
 <!--            <sysproperty key="jogamp.debug" value="true" />-->
             <sysproperty key="jogamp.gluegen.UseTempJarCache" value="false" />
             <sysproperty key="java.library.path" value="${dist.dir}" />
+            <sysproperty key="flatlaf.useNativeLibrary" value="true" />
             <sysproperty key="sun.java2d.uiScale" value="${uiscale}" if:set="uiscale"/>
             <sysproperty key="loglevel" value="${run.log.level}" />
             <sysproperty key="mcv.userpath" value="${userpath.dir}" />
@@ -1187,7 +1186,6 @@
             <sysproperty key="file.encoding" value="UTF-8" />
             <sysproperty key="python.security.respectJavaAccessibility" value="false" />
             <sysproperty key="mcidasv.darkmode" value="${darkmode}" />
-
       <arg value="-forceaqua" />
       <arg value="-userpath" />
       <arg value="${userpath.dir}" />
@@ -1407,8 +1405,6 @@
             <jvmarg value="java.base/java.nio.file.spi=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.base/java.security=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.security.acl=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.base/java.security.cert=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
