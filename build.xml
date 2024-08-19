@@ -1205,165 +1205,12 @@
             <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
             <jvmarg value="--add-exports" unless:set="build.macos" />
             <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" unless:set="build.macos" />
+            <jvmarg value="--add-exports" if:set="build.macos" />
+            <jvmarg value="java.desktop/com.apple.eawt=ALL-UNNAMED" if:set="build.macos" />
             <jvmarg value="--add-exports" />
             <jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />
             <jvmarg value="--add-exports" />
             <jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />
-
-            <!-- add-opens opens up everything -->
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.management/sun.management=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.io=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.net=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/javax.security.auth.x500=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.security=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.security.cert=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.security.spec=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/javax.net=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/javax.net.ssl=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/sun.nio.ch=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.nio=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.nio.channels=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.nio.charset=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.text=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.util=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.util.concurrent=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.util.concurrent.atomic=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/java.util.concurrent.locks=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.base/sun.util.calendar=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.security.jgss/org.ietf.jgss=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.desktop/java.awt.geom=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.desktop/javax.swing=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.desktop/javax.swing.plaf.basic=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.desktop/javax.accessibility=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.desktop/sun.java2d.opengl=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.naming/javax.naming.ldap=ALL-UNNAMED" />
-            <jvmarg value="--add-opens" />
-            <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
-            <jvmarg value="-noverify" />
-            <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
-<!--            <jvmarg value="-XX:+UnlockExperimentalVMOptions" />-->
-<!--            <jvmarg value="-XX:+UseZGC" />-->
-<!--            <jvmarg value="-Xlog:gc" />-->
-            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-            <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-
-            <sysproperty key="sun.java2d.uiScale" value="${uiscale}" />
-            <sysproperty key="loglevel" value="${run.log.level}" />
-            <sysproperty key="mcv.userpath" value="${userpath.dir}" />
-            <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
-            <sysproperty key="debug.adde.reqs" value="true" />
-            <sysproperty key="idv.usetimedriver" value="true" />
-            <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
-            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
-            <sysproperty key="visad.java3d.noerasebackground" value="true" />
-            <sysproperty key="visad.java3d.textureNpot" value="true" />
-            <sysproperty key="visad.java3d.imageByRef" value="true" />
-            <sysproperty key="visad.java3d.geometryByRef" value="true" />
-            <sysproperty key="file.encoding" value="UTF-8" />
-            <sysproperty key="python.security.respectJavaAccessibility" value="false" />
-
-            <arg value="-forceaqua" />
-            <arg value="-userpath" />
-            <arg value="${userpath.dir}" />
-            <arg value="-script" />
-            <arg value="${pyfile}" />
-        </java>
-    </target>
-
-  <target name="debug.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
-    <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-      <classpath refid="app.classpath" />
-      <assertions refid="mcv.assertions"/>
-      <!-- Prepares the JVM for a debugging session on port 8001 -->
-      <jvmarg value="-Xdebug"/>
-      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8001,suspend=y"/>
-      <!-- flags for attempting to workaround PermGen issues -->
-      <jvmarg value="-XX:+UseConcMarkSweepGC" />
-      <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-      <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
-      <jvmarg value="-XX:MaxPermSize=512m" />
-      <!-- Misc performance flags -->
-      <!--
-      <jvmarg value="-noverify" />
-      <jvmarg value="-XX:+DoEscapeAnalysis" />
-      -->
-      <!--
-        You might want to uncomment the following two lines. They'll have the
-        JVM dump the heap's contents on an OutOfMemory exception (very helpful!)
-        ${heap.dir} defaults to "/tmp/javaheaps/", but feel free to change it.
-      -->
-      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-      <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-      <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
-      <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
-      <sysproperty key="textureWidthMax" value="${visad.texturemax}" />
-      <sysproperty key="mcv.userpath" value="${userpath.dir}" />
-      <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
-      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
-      <sysproperty key="debug.adde.reqs" value="true" />
-      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
-      <sysproperty key="file.encoding" value="UTF-8" />
-      <sysproperty key="python.security.respectJavaAccessibility" value="false" />
-      <!--<sysproperty key="idv.usetimedriver" value="true" />-->
-      <arg value="-forceaqua" />
-      <arg value="-userpath" />
-      <arg value="${userpath.dir}" />
-    </java>
-  </target>
-
-    <target name="debug.runlarge.jpms" depends="jar" description="Build and run McIDAS-V application (large memory)">
-        <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-            <classpath refid="app.classpath" />
-            <assertions refid="mcv.assertions"/>
-
-            <!--&lt;!&ndash; required for jython stuff to work without jigsaw-specific changes &ndash;&gt;-->
-            <jvmarg value="--illegal-access=warn" />
-            <!-- add-exports allows reading from public types -->
-            <jvmarg value="--add-exports" />
-            <jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />
-            <jvmarg value="--add-exports" />
-            <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
-            <jvmarg value="--add-exports" />
-            <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />
-            <jvmarg value="--add-exports" />
-            <jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />
-            <jvmarg value="--add-exports" />
-            <jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />
-
             <!-- add-opens opens up everything -->
             <jvmarg value="--add-opens" />
             <jvmarg value="java.base/java.io=ALL-UNNAMED" />
@@ -1467,6 +1314,10 @@
             <jvmarg value="java.base/javax.security.auth.x500=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.base/javax.security.cert=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/jdk.internal.module=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.base/sun.util.calendar=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
@@ -1575,18 +1426,321 @@
             <jvmarg value="java.naming/javax.naming.ldap=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
+            <jvmarg value="-noverify" />
+            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+            <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+            <jvmarg value="-Xdock:icon=../release/icons/mcidasv.icns" if:set="build.macos" />
+            <sysproperty key="jogamp.gluegen.UseTempJarCache" value="false" />
+            <sysproperty key="java.library.path" value="${dist.dir}" />
+            <sysproperty key="flatlaf.useNativeLibrary" value="true" />
+            <sysproperty key="sun.java2d.uiScale" value="${uiscale}" />
+            <sysproperty key="loglevel" value="${run.log.level}" />
+            <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+            <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
+            <sysproperty key="debug.adde.reqs" value="true" />
+            <sysproperty key="idv.usetimedriver" value="true" />
+            <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+            <sysproperty key="visad.java3d.noerasebackground" value="true" />
+            <sysproperty key="visad.java3d.textureNpot" value="true" />
+            <sysproperty key="visad.java3d.imageByRef" value="true" />
+            <sysproperty key="visad.java3d.geometryByRef" value="true" />
+            <sysproperty key="file.encoding" value="UTF-8" />
+            <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+
+            <arg value="-forceaqua" />
+            <arg value="-userpath" />
+            <arg value="${userpath.dir}" />
+            <arg value="-script" />
+            <arg value="${pyfile}" />
+        </java>
+    </target>
+
+  <target name="debug.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
+    <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+      <classpath refid="app.classpath" />
+      <assertions refid="mcv.assertions"/>
+      <!-- Prepares the JVM for a debugging session on port 8001 -->
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8001,suspend=y"/>
+      <!-- flags for attempting to workaround PermGen issues -->
+      <jvmarg value="-XX:+UseConcMarkSweepGC" />
+      <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
+      <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
+      <jvmarg value="-XX:MaxPermSize=512m" />
+      <!-- Misc performance flags -->
+      <!--
+      <jvmarg value="-noverify" />
+      <jvmarg value="-XX:+DoEscapeAnalysis" />
+      -->
+      <!--
+        You might want to uncomment the following two lines. They'll have the
+        JVM dump the heap's contents on an OutOfMemory exception (very helpful!)
+        ${heap.dir} defaults to "/tmp/javaheaps/", but feel free to change it.
+      -->
+      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
+      <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
+      <sysproperty key="textureWidthMax" value="${visad.texturemax}" />
+      <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+      <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+      <sysproperty key="debug.adde.reqs" value="true" />
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+      <sysproperty key="file.encoding" value="UTF-8" />
+      <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+      <!--<sysproperty key="idv.usetimedriver" value="true" />-->
+      <arg value="-forceaqua" />
+      <arg value="-userpath" />
+      <arg value="${userpath.dir}" />
+    </java>
+  </target>
+
+    <target name="debug.runlarge.jpms" depends="jar" description="Build and run McIDAS-V application (large memory)">
+        <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+            <classpath refid="app.classpath" />
+            <assertions refid="mcv.assertions"/>
+
+            <!--&lt;!&ndash; required for jython stuff to work without jigsaw-specific changes &ndash;&gt;-->
+            <jvmarg value="--illegal-access=warn" />
+            <!-- add-exports allows reading from public types -->
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" unless:set="build.macos" />
+            <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" unless:set="build.macos" />
+            <jvmarg value="--add-exports" if:set="build.macos" />
+            <jvmarg value="java.desktop/com.apple.eawt=ALL-UNNAMED" if:set="build.macos" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />
+            <!-- add-opens opens up everything -->
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.io=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.annotation=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.constant=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.invoke=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.module=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.ref=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.math=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.net=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.net.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.channels=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.channels.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.charset=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.charset.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.file=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.file.attribute=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.file.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.security=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.security.cert=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.security.interfaces=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.security.spec=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.text=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.text.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.time=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.time.chrono=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.time.format=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.time.temporal=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.time.zone=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.concurrent=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.concurrent.atomic=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.concurrent.locks=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.function=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.jar=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.regex=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.stream=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.zip=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.crypto=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.crypto.interfaces=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.crypto.spec=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.net=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.net.ssl=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.security.auth=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.security.auth.callback=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.security.auth.login=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.security.auth.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.security.auth.x500=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.security.cert=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/jdk.internal.module=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/sun.util.calendar=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.security.jgss/org.ietf.jgss=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.color=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.desktop=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.dnd=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.event=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.font=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.geom=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.im=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.im.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.image=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.image.renderable=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.print=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.beans=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.beans.beancontext=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.accessibility=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio.event=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio.metadata=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio.plugins.bmp=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio.plugins.jpeg=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio.plugins.tiff=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.imageio.stream=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.print=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.print.attribute=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.print.attribute.standard=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.print.event=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.sound.midi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.sound.midi.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.sound.sampled=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.sound.sampled.spi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.border=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.colorchooser=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.event=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.filechooser=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.plaf=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.plaf.basic=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.plaf.metal=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.plaf.multi=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.plaf.nimbus=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.plaf.synth=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.table=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.text=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.text.html=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.text.html.parser=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.text.rtf=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.tree=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.undo=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/sun.java2d.opengl=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.naming/javax.naming.ldap=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
+            <jvmarg value="-noverify" />
+            <jvmarg value="-Xdock:icon=../release/icons/mcidasv.icns" if:set="build.macos" />
             <!-- Prepares the JVM for a debugging session on port 8001 -->
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8001,suspend=y"/>
-            <jvmarg value="-XX:+UseConcMarkSweepGC" />
-            <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-            <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
-            <jvmarg value="-XX:MaxPermSize=512m" />
             <jvmarg value="-noverify" />
-            <jvmarg value="-XX:+DoEscapeAnalysis" />
             <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
             <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-
+            <sysproperty key="jogamp.gluegen.UseTempJarCache" value="false" />
+            <sysproperty key="java.library.path" value="${dist.dir}" />
+            <sysproperty key="flatlaf.useNativeLibrary" value="true" />
             <sysproperty key="sun.java2d.uiScale" value="${uiscale}" />
             <sysproperty key="textureWidthMax" value="${visad.texturemax}" />
             <sysproperty key="mcv.userpath" value="${userpath.dir}" />
@@ -1597,7 +1751,6 @@
             <sysproperty key="file.encoding" value="UTF-8" />
             <sysproperty key="python.security.respectJavaAccessibility" value="false" />
             <sysproperty key="mcidasv.darkmode" value="${darkmode}" />
-
             <arg value="-forceaqua" />
             <arg value="-userpath" />
             <arg value="${userpath.dir}" />
