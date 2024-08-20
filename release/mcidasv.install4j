@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="10.0.8" transformSequenceNumber="10">
+<install4j version="10.0.6" transformSequenceNumber="10">
   <directoryPresets config="/Users/jbeavers/work/install4j/jres/jetbrains-test/jmods" />
   <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="https://www.ssec.wisc.edu/mcidas" version="2.0beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="21" javaMaxVersion="21" allowBetaVM="true">
     <variables>
@@ -12,7 +12,7 @@
       <variable name="sys.ext.timestampUrl" value="http://timestamp.digicert.com" />
       <variable name="WINDOWS_CERT_PATH" value="${compiler:BASEDIR}/signing/University of Wisconsin-Madison.pfx" />
       <variable name="MACOS_CERT_PATH" value="${compiler:BASEDIR}/signing/UW-Madison Shared Apps Developer ID Application 20260204.p12" />
-      <variable name="BASEDIR" value="/Users/jbeavers/work/install4j" description="When building custom installers, you'll probably need to change this value to the following:&#xA;/Users/jbeavers/work/install4j&#xA;&#xA;mcidasv@mug.ssec.wisc.edu:&#xA;/home/mcidasv" />
+      <variable name="BASEDIR" value="/home/mcidasv" description="When building custom installers, you'll probably need to change this value to the following:&#xA;/Users/jbeavers/work/install4j&#xA;&#xA;mcidasv@mug.ssec.wisc.edu:&#xA;/home/mcidasv" />
     </variables>
     <codeSigning macEnabled="true" macPkcs12File="${compiler:MACOS_CERT_PATH}" windowsEnabled="true" windowsPkcs12File="${compiler:WINDOWS_CERT_PATH}" macNotarize="true" appleId="jebeavers@wisc.edu">
       <macAdditionalBinaries>
