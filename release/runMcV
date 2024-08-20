@@ -296,7 +296,7 @@ MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${USE_LAYOUT_BUNDLE} ${DEF
 
 # Run it
 EXEC_CMD="\"$JAVA_BIN\" $JAVA_FLAGS -jar $MCV_JAR $MCV_FLAGS $MCV_PARAMS"
-echo "${EXEC_CMD}"
+# echo "${EXEC_CMD}"
 echo "Launching McIDAS-V 2.0beta1 with ${HEAP_SIZE} of memory..."
 # might be nicer if it was like the following
 #   Launching McIDAS-V 2.0beta1 with the following options:
