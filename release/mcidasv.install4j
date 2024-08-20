@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="10.0.6" transformSequenceNumber="10">
+<install4j version="10.0.8" transformSequenceNumber="10">
   <directoryPresets config="/Users/jbeavers/work/install4j/jres/jetbrains-test/jmods" />
   <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="https://www.ssec.wisc.edu/mcidas" version="2.0beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="21" javaMaxVersion="21" allowBetaVM="true">
     <variables>
@@ -12,7 +12,7 @@
       <variable name="sys.ext.timestampUrl" value="http://timestamp.digicert.com" />
       <variable name="WINDOWS_CERT_PATH" value="${compiler:BASEDIR}/signing/University of Wisconsin-Madison.pfx" />
       <variable name="MACOS_CERT_PATH" value="${compiler:BASEDIR}/signing/UW-Madison Shared Apps Developer ID Application 20260204.p12" />
-      <variable name="BASEDIR" value="/home/mcidasv" description="When building custom installers, you'll probably need to change this value to the following:&#xA;/Users/jbeavers/work/install4j&#xA;&#xA;mcidasv@mug.ssec.wisc.edu:&#xA;/home/mcidasv" />
+      <variable name="BASEDIR" value="/Users/jbeavers/work/install4j" description="When building custom installers, you'll probably need to change this value to the following:&#xA;/Users/jbeavers/work/install4j&#xA;&#xA;mcidasv@mug.ssec.wisc.edu:&#xA;/home/mcidasv" />
     </variables>
     <codeSigning macEnabled="true" macPkcs12File="${compiler:MACOS_CERT_PATH}" windowsEnabled="true" windowsPkcs12File="${compiler:WINDOWS_CERT_PATH}" macNotarize="true" appleId="jebeavers@wisc.edu">
       <macAdditionalBinaries>
@@ -68,6 +68,10 @@
       <fileset name="Linux ADDE" id="7408" />
       <fileset name="macOS ADDE" id="7404" />
       <fileset name="Windows ADDE" id="7406" />
+      <fileset name="macOS ARM Native Libraries" id="9675" />
+      <fileset name="macOS Intel Native Libraries" id="9683" />
+      <fileset name="Windows Native Libraries" id="9685" />
+      <fileset name="Linux Native Libraries" id="9687" />
     </filesets>
     <roots>
       <root id="7335" fileset="7334" />
@@ -76,6 +80,10 @@
       <root id="7409" fileset="7408" />
       <root id="7405" fileset="7404" />
       <root id="7407" fileset="7406" />
+      <root id="9676" fileset="9675" />
+      <root id="9684" fileset="9683" />
+      <root id="9686" fileset="9685" />
+      <root id="9688" fileset="9687" />
     </roots>
     <mountPoints>
       <mountPoint id="8741" location="lib" />
@@ -86,6 +94,10 @@
       <mountPoint id="7416" root="7409" />
       <mountPoint id="7417" root="7405" />
       <mountPoint id="7469" root="7407" />
+      <mountPoint id="9677" root="9676" />
+      <mountPoint id="9689" root="9684" />
+      <mountPoint id="9690" root="9686" />
+      <mountPoint id="9691" root="9688" />
     </mountPoints>
     <entries>
       <dirEntry mountPoint="8741" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true">
@@ -122,6 +134,10 @@
       <dirEntry mountPoint="7416" file="${compiler:ADDEDIR}/linux" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7417" file="${compiler:ADDEDIR}/macos-intel" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7469" file="${compiler:ADDEDIR}/windows" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
+      <dirEntry mountPoint="9677" file="${compiler:MCVDIR}/lib/native/macos-aarch64" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="lib" />
+      <dirEntry mountPoint="9689" file="${compiler:MCVDIR}/lib/native/macos-intel" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="lib" />
+      <dirEntry mountPoint="9690" file="${compiler:MCVDIR}/lib/native/windows" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="lib" />
+      <dirEntry mountPoint="9691" file="${compiler:MCVDIR}/lib/native/linux" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="lib" />
     </entries>
     <components>
       <component name="Base components" id="67" changeable="false">
@@ -194,6 +210,26 @@
       <component name="Windows components (Java 9+)" id="9351">
         <include>
           <entry filesetId="9158" />
+        </include>
+      </component>
+      <component name="macOS aarch64" id="9678">
+        <include>
+          <entry filesetId="9675" />
+        </include>
+      </component>
+      <component name="macOS Intel" id="9679">
+        <include>
+          <entry filesetId="9683" />
+        </include>
+      </component>
+      <component name="Linux" id="9680">
+        <include>
+          <entry filesetId="9687" />
+        </include>
+      </component>
+      <component name="Windows" id="9681">
+        <include>
+          <entry filesetId="9685" />
         </include>
       </component>
     </components>
@@ -1210,6 +1246,10 @@ return console.askYesNo(message, true);
       <excludedComponents>
         <component id="7274" />
         <component id="9166" />
+        <component id="9351" />
+        <component id="9679" />
+        <component id="9680" />
+        <component id="9681" />
       </excludedComponents>
       <excludedLaunchers>
         <launcher id="844" />
@@ -1219,14 +1259,12 @@ return console.askYesNo(message, true);
         <launcher id="8851" />
       </excludedLaunchers>
       <exclude>
-        <entry filesetId="8603" />
         <entry filesetId="8605" />
         <entry filesetId="7408" />
         <entry filesetId="7406" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9156" />
-        <entry filesetId="9158" />
+        <entry filesetId="9683" />
+        <entry filesetId="9685" />
+        <entry filesetId="9687" />
       </exclude>
       <jreBundle jdkProviderId="JBR" release="21/21-b212.1" usePack200="false" overrideJdkRelease="true">
         <modules>
@@ -1238,6 +1276,10 @@ return console.askYesNo(message, true);
       <excludedComponents>
         <component id="7274" />
         <component id="9166" />
+        <component id="9351" />
+        <component id="9678" />
+        <component id="9680" />
+        <component id="9681" />
       </excludedComponents>
       <excludedLaunchers>
         <launcher id="844" />
@@ -1247,14 +1289,12 @@ return console.askYesNo(message, true);
         <launcher id="8851" />
       </excludedLaunchers>
       <exclude>
-        <entry filesetId="8603" />
         <entry filesetId="8605" />
         <entry filesetId="7408" />
         <entry filesetId="7406" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9156" />
-        <entry filesetId="9158" />
+        <entry filesetId="9675" />
+        <entry filesetId="9685" />
+        <entry filesetId="9687" />
       </exclude>
       <jreBundle jdkProviderId="JBR" release="21/21-b212.1" usePack200="false" overrideJdkRelease="true">
         <modules>
@@ -1269,6 +1309,9 @@ return console.askYesNo(message, true);
         <component id="9166" />
         <component id="9167" />
         <component id="9351" />
+        <component id="9678" />
+        <component id="9679" />
+        <component id="9680" />
       </excludedComponents>
       <excludedLaunchers>
         <launcher id="841" />
@@ -1279,13 +1322,11 @@ return console.askYesNo(message, true);
       <exclude>
         <entry filesetId="7334" />
         <entry filesetId="7332" />
-        <entry filesetId="8603" />
         <entry filesetId="7408" />
         <entry filesetId="7404" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9156" />
-        <entry filesetId="9158" />
+        <entry filesetId="9675" />
+        <entry filesetId="9683" />
+        <entry filesetId="9687" />
       </exclude>
       <jreBundle jdkProviderId="JBR" release="21/21-b212.1" usePack200="false" overrideJdkRelease="true">
         <modules>
@@ -1297,6 +1338,11 @@ return console.askYesNo(message, true);
       <excludedComponents>
         <component id="3653" />
         <component id="7274" />
+        <component id="9167" />
+        <component id="9351" />
+        <component id="9678" />
+        <component id="9679" />
+        <component id="9681" />
       </excludedComponents>
       <excludedLaunchers>
         <launcher id="844" />
@@ -1307,14 +1353,12 @@ return console.askYesNo(message, true);
       </excludedLaunchers>
       <exclude>
         <entry filesetId="7332" />
-        <entry filesetId="8603" />
         <entry filesetId="8605" />
         <entry filesetId="7404" />
         <entry filesetId="7406" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9156" />
-        <entry filesetId="9158" />
+        <entry filesetId="9675" />
+        <entry filesetId="9683" />
+        <entry filesetId="9685" />
       </exclude>
       <jreBundle jdkProviderId="JBR" release="21/21-b212.1" usePack200="false" overrideJdkRelease="true">
         <modules>
@@ -1323,5 +1367,8 @@ return console.askYesNo(message, true);
       </jreBundle>
     </unixInstaller>
   </mediaSets>
-  <buildIds buildAll="false" />
+  <buildIds>
+    <mediaSet refId="9621" />
+  </buildIds>
+  <buildOptions verbose="true" />
 </install4j>
