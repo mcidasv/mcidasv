@@ -253,7 +253,7 @@
     <property name="commons-math.version" value="3.6.1" />
     <property name="rsyntaxtextarea.version" value="3.3.4" />
     <property name="sysout.version" value="1.0.2" />
-    <property name="jython.version" value="2.7.3" />
+    <property name="jython.version" value="2.7.4" />
     <property name="juniversalchardet.version" value="2.4.0" />
     <property name="jsattrack.version" value="4.2.3" />
     <property name="commons-httpclient.version" value="3.1" />
