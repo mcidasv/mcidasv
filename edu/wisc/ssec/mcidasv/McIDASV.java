@@ -71,6 +71,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import edu.wisc.ssec.hydra.DataBrowser;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.AddeURLStreamHandler;
 
@@ -1776,6 +1777,19 @@ public class McIDASV extends IntegratedDataViewer {
             throws IOException
         {
             return IOUtil.getURL(u.getPath(), McIDASV.class).openConnection();
+        }
+    }
+
+    /**
+     * Show the new HYDRA DataBrowser GUI.
+     *
+     * <p>Mostly for ease of use via a toolbar action.</p>
+     */
+    public void showNewHydra() {
+        try {
+            DataBrowser.main(new String[]{});
+        } catch (Exception e) {
+            logger.warn("Exception launching HYDRA data browser", e);
         }
     }
 

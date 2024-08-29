@@ -340,4 +340,10 @@
         group="User Interface"
         description="Submit support request"
         action="jython:getStaticMcv().getIdvUIManager().showSupportForm();"/>
+
+    <action id="mcv.showhydra"
+            image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/hydra%d.png"
+            group="User Interface"
+            description="Show HYDRA GUI"
+            action="jython:getStaticMcv().showNewHydra();"/>
 </actions>
