@@ -29,8 +29,13 @@
 
 package edu.wisc.ssec.hydra;
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
+
 import edu.wisc.ssec.adapter.HydraContext;
 import edu.wisc.ssec.hydra.data.DataSource;
+import edu.wisc.ssec.mcidasv.chooser.FileChooser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -80,11 +85,17 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class DataBrowser extends HydraDisplay implements ActionListener, TreeSelectionListener, TreeExpansionListener {
+
+   private static final Logger logger = LoggerFactory.getLogger(DataBrowser.class);
+   private static final String HYDRA_LAST_PATH_ID = "mcidasv.hydra.lastpath";
 
    public static String version = "5.0.2";
 
@@ -168,7 +179,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
 
       instance = this;
       //Create a file chooser
-      fc = new JFileChooser();
+      fc = new JFileChooser(getDataPath(System.getProperty("user.home")));
       fc.setMultiSelectionEnabled(true);
       fc.setAcceptAllFileFilterUsed(false);
 
@@ -402,7 +413,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
       
       JMenuItem openDirABI = new JMenuItem("ABI");
       openDirABI.addActionListener(this);
-      openDirABI.setActionCommand("OpenDirABI");      
+      openDirABI.setActionCommand("OpenDirABI");
 
       JMenuItem openRemote = new JMenuItem("Remote");
       openRemote.addActionListener(this);
@@ -628,6 +639,53 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
       }
     }
 
+   /**
+    * Change the path that the file chooser is presenting to the user.
+    *
+    * <p>This value will be written to the user's preferences so that the user
+    * can pick up where they left off after restarting McIDAS-V.</p>
+    *
+    * @param newPath Path to set. Should not be {@code null}.
+    */
+    public void setDataPath(String newPath) {
+      getStaticMcv().getStateManager().writePreference(HYDRA_LAST_PATH_ID, newPath);
+    }
+
+   /**
+    * Get the path the {@link JFileChooser} should be using.
+    *
+    * <p>If the path in the user's preferences is {@code null}
+    * (or does not exist), {@code defaultValue} will be returned.</p>
+    *
+    * <p>If there is a nonexistent path in the preferences file,
+    * {@link FileChooser#findValidParent(String)} will be used.</p>
+    *
+    * @param defaultValue Default path to use if there is a {@literal "bad"}
+    *                     path in the user's preferences.
+    *                     Cannot be {@code null}.
+    *
+    * @return Path to use for the chooser.
+    *
+    * @throws NullPointerException if {@code defaultValue} is {@code null}.
+    */
+    public String getDataPath(final String defaultValue) {
+       Objects.requireNonNull(defaultValue,
+               "Default value may not be null");
+       String tempPath =
+               (String)getStaticMcv().getPreference(HYDRA_LAST_PATH_ID);
+       try {
+          if ((tempPath == null)) {
+             tempPath = defaultValue;
+          } else if (!Files.exists(Paths.get(tempPath))) {
+             tempPath = FileChooser.findValidParent(tempPath);
+          }
+       } catch (Exception e) {
+          logger.warn("Could not find valid parent directory for '"+tempPath+"', using '"+defaultValue+'\'');
+          tempPath = defaultValue;
+       }
+       return tempPath;
+    }
+
     public void actionPerformed(ActionEvent e) {
        String cmd = e.getActionCommand();
        if (e.getActionCommand().equals("OpenFile")) {
@@ -636,6 +694,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
           if (returnVal == JFileChooser.APPROVE_OPTION) {
              File[] files = fc.getSelectedFiles();
              filesSelected(files);
+             setDataPath(files[0].getPath());
           }
        }
        else if (cmd.startsWith("OpenDir")) {
@@ -644,6 +703,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
           if (returnVal == JFileChooser.APPROVE_OPTION) {
              File file = fc.getSelectedFile();
              directorySelected(file);
+             setDataPath(file.getPath());
           }
        }
        else if (cmd.equals("RemoveDataset")) {
