@@ -36,23 +36,23 @@ import java.util.ArrayList;
 
 public interface Selection {
 
-   public abstract void applyToDataSelection(DataSelection select);
+    public abstract void applyToDataSelection(DataSelection select);
 
-   public abstract int applyToDataSelection(DataChoice choice, DataSelection select);
+    public abstract int applyToDataSelection(DataChoice choice, DataSelection select);
 
-   public abstract DataChoice getSelectedDataChoice();
+    public abstract DataChoice getSelectedDataChoice();
 
-   public abstract ArrayList<SelectionListener> getSelectionListeners();
+    public abstract ArrayList<SelectionListener> getSelectionListeners();
 
-   public abstract void removeSelectionListener(SelectionListener listener);
- 
-   public abstract void addSelectionListener(SelectionListener listener);
+    public abstract void removeSelectionListener(SelectionListener listener);
 
-   public abstract String getSelectedName();
-   
-   public abstract void setSelected(Object obj);
-   
-   public abstract Object getLastSelectedLeafPath();
-   
-   public abstract Object getLastSelectedComp();
+    public abstract void addSelectionListener(SelectionListener listener);
+
+    public abstract String getSelectedName();
+
+    public abstract void setSelected(Object obj);
+
+    public abstract Object getLastSelectedLeafPath();
+
+    public abstract Object getLastSelectedComp();
 }

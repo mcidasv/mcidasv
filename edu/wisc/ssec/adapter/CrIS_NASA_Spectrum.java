@@ -28,7 +28,7 @@
  */
 
 package edu.wisc.ssec.adapter;
-                                                                                                                                                           
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,42 +36,40 @@ import visad.Set;
 
 public class CrIS_NASA_Spectrum extends SpectrumAdapter {
 
-  public static int[] ifov_order = new int[] {8,5,2,7,4,1,6,3,0};
+    public static int[] ifov_order = new int[]{8, 5, 2, 7, 4, 1, 6, 3, 0};
 
-  public HashMap new_subset = new HashMap();
-  
-  public CrIS_NASA_Spectrum(MultiDimensionReader reader, HashMap metadata) {
-    super(reader, metadata);
-  }
-  
-  public int computeNumChannels() {	  
-     String arrayName = (String) metadata.get("array_name");
-     if (arrayName.contains("lw")) {
-        numChannels = 713;
-     }
-     else if (arrayName.contains("mw")) {
-        numChannels = 865;
-     }
-     else if (arrayName.contains("sw")) {
-        numChannels = 633;
-     }
-	  
-     return numChannels;
-  }
+    public HashMap new_subset = new HashMap();
 
-  public float[] getChannels() throws Exception {
-    String arrayName = (String) metadata.get(SpectrumAdapter.channels_name);
-    ArrayList<NetCDFFile> rdrs = ((GranuleAggregation)reader).getReaders();
-    NetCDFFile rdr = rdrs.get(0);
-        
-    double[] spectrum = rdr.getDoubleArray(arrayName, new int[] {2}, new int[] {numChannels}, new int[] {1});
-    float[][] fltvalues = Set.doubleToFloat(new double[][] {spectrum});
+    public CrIS_NASA_Spectrum(MultiDimensionReader reader, HashMap metadata) {
+        super(reader, metadata);
+    }
 
-    return fltvalues[0];
-  }
-  
-  public float getInitialWavenumber() {
-    return CrIS_SDR_Utility.getWavenumberStart(getArrayName());
-  }
+    public int computeNumChannels() {
+        String arrayName = (String) metadata.get("array_name");
+        if (arrayName.contains("lw")) {
+            numChannels = 713;
+        } else if (arrayName.contains("mw")) {
+            numChannels = 865;
+        } else if (arrayName.contains("sw")) {
+            numChannels = 633;
+        }
+
+        return numChannels;
+    }
+
+    public float[] getChannels() throws Exception {
+        String arrayName = (String) metadata.get(SpectrumAdapter.channels_name);
+        ArrayList<NetCDFFile> rdrs = ((GranuleAggregation) reader).getReaders();
+        NetCDFFile rdr = rdrs.get(0);
+
+        double[] spectrum = rdr.getDoubleArray(arrayName, new int[]{2}, new int[]{numChannels}, new int[]{1});
+        float[][] fltvalues = Set.doubleToFloat(new double[][]{spectrum});
+
+        return fltvalues[0];
+    }
+
+    public float getInitialWavenumber() {
+        return CrIS_SDR_Utility.getWavenumberStart(getArrayName());
+    }
 
 }

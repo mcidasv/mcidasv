@@ -30,76 +30,76 @@
 package edu.wisc.ssec.hydra.data;
 
 import java.io.File;
+
 import edu.wisc.ssec.adapter.SwathAdapter;
+
 import java.util.ArrayList;
 
 
 public class SIPS_VIIRS_DNB extends SIPS_VIIRS_DataSource {
-   
 
-   public SIPS_VIIRS_DNB(File directory) throws Exception {
-     this(directory.listFiles());
-   }
-   
-   public SIPS_VIIRS_DNB(ArrayList<File> files) throws Exception {
-      this(files.toArray(new File[] {null}));
-   }
 
-   public SIPS_VIIRS_DNB(File[] files) throws Exception {
-      super(files);
-   }
+    public SIPS_VIIRS_DNB(File directory) throws Exception {
+        this(directory.listFiles());
+    }
 
-   void init() throws Exception {
-      
-      String groupName = "observation_data/";
-      String geoGroupName = "geolocation_data/";
-      String[] arrayNames = new String[] {"DNB_observations"};
-      String[] rangeNames = new String[] {"DNB"};
-      datGrp = catDNB;
-      
-      int nAdapters = 0;
-      
-      for (int k=0; k<arrayNames.length; k++) {
-         String arrayName = groupName+arrayNames[k];
-         String rangeName = rangeNames[k];
-         
-         SwathAdapter adapter = buildAdapter("number_of_pixels", "number_of_lines", arrayName, rangeName,
-                 "number_of_pixels", "number_of_lines", geoGroupName+"longitude", geoGroupName+"latitude", null, null, null, "_FillValue");
-         
-         setDataChoice(adapter, nAdapters, rangeName);
-         nAdapters++;
-      }
- 
-      
-      bandNames = new String[] {
-         "DNB"
-      };
-      
-      centerWavelength = new float[] {
-         0.70f
-      };
-   
-   }
-   
-   public float getNadirResolution(DataChoice choice) {
-      return 770f;
-   }
-   
-   public boolean canUnderstand(File[] files) {
+    public SIPS_VIIRS_DNB(ArrayList<File> files) throws Exception {
+        this(files.toArray(new File[]{null}));
+    }
 
-      String name = files[0].getName();
-      
-      if (name.startsWith("VNP02DNB")) {
-         return true;  
-      }
-      else if (name.startsWith("VJ102DNB")) {
-          return true; 
-      }
-      else if (name.startsWith("VJ202DNB")) {
-          return true; 
-      }
-      
-      return false;
-   }
+    public SIPS_VIIRS_DNB(File[] files) throws Exception {
+        super(files);
+    }
+
+    void init() throws Exception {
+
+        String groupName = "observation_data/";
+        String geoGroupName = "geolocation_data/";
+        String[] arrayNames = new String[]{"DNB_observations"};
+        String[] rangeNames = new String[]{"DNB"};
+        datGrp = catDNB;
+
+        int nAdapters = 0;
+
+        for (int k = 0; k < arrayNames.length; k++) {
+            String arrayName = groupName + arrayNames[k];
+            String rangeName = rangeNames[k];
+
+            SwathAdapter adapter = buildAdapter("number_of_pixels", "number_of_lines", arrayName, rangeName,
+                    "number_of_pixels", "number_of_lines", geoGroupName + "longitude", geoGroupName + "latitude", null, null, null, "_FillValue");
+
+            setDataChoice(adapter, nAdapters, rangeName);
+            nAdapters++;
+        }
+
+
+        bandNames = new String[]{
+                "DNB"
+        };
+
+        centerWavelength = new float[]{
+                0.70f
+        };
+
+    }
+
+    public float getNadirResolution(DataChoice choice) {
+        return 770f;
+    }
+
+    public boolean canUnderstand(File[] files) {
+
+        String name = files[0].getName();
+
+        if (name.startsWith("VNP02DNB")) {
+            return true;
+        } else if (name.startsWith("VJ102DNB")) {
+            return true;
+        } else if (name.startsWith("VJ202DNB")) {
+            return true;
+        }
+
+        return false;
+    }
 
 }

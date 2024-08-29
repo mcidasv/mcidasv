@@ -35,28 +35,27 @@
 package edu.wisc.ssec.hydra.data;
 
 /**
- *
  * @author rink
  */
 public class DataGroup {
-   
-   private String name;
-   
-   public DataGroup(String name) {
-      this.name = name;
-   }
-   
-   public boolean equals(Object obj) {
-      if (obj instanceof DataGroup) {
-         if ( ((DataGroup)obj).getName().equals(this.name)) {
-            return true;
-         }
-      }
-      return false;
-   }
-   
-   public String getName() {
-      return name;
-   }
-   
+
+    private String name;
+
+    public DataGroup(String name) {
+        this.name = name;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj instanceof DataGroup) {
+            if (((DataGroup) obj).getName().equals(this.name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }

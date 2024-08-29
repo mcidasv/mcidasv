@@ -27,15 +27,15 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package edu.wisc.ssec.adapter; 
+package edu.wisc.ssec.adapter;
 
 import ucar.ma2.Range;
 
 public class SegmentRange {
-   public int granIdx;
-   int first;
-   int last;
-   int stride;
-   public Range range;
+    public int granIdx;
+    int first;
+    int last;
+    int stride;
+    public Range range;
 }
 

@@ -36,6 +36,7 @@ public class IASI_AAPP_MultiSpectralData extends MultiSpectralData {
         super(swathAdapter, spectrumAdapter);
 
     }
+
     @Override
     public void setSpectrumAdapterProcessor() {
         // This method doesn't have any operation

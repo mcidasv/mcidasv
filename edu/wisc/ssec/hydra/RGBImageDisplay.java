@@ -53,59 +53,60 @@ import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import visad.georef.MapProjection;
 
 import visad.*;
+
 import java.rmi.RemoteException;
 
 
 public class RGBImageDisplay implements ActionListener {
 
-   JFrame frame;
+    JFrame frame;
 
-   MapProjectionDisplayJ3D mapProjDsp;
-   DisplayMaster dspMaster;
+    MapProjectionDisplayJ3D mapProjDsp;
+    DisplayMaster dspMaster;
 
-   MapProjection mapProjection;
+    MapProjection mapProjection;
 
-   CrossSectionSelector transect = null;
+    CrossSectionSelector transect = null;
 
-   ImageRGBDisplayable imageDsp = null;
+    ImageRGBDisplayable imageDsp = null;
 
-   String name = null;
+    String name = null;
 
-   public RGBImageDisplay(MapProjection mapProj) throws VisADException, RemoteException {
-     this(null, mapProj, null);
-   }
+    public RGBImageDisplay(MapProjection mapProj) throws VisADException, RemoteException {
+        this(null, mapProj, null);
+    }
 
-   // TODO: description should be folded into Displayable
-   public RGBImageDisplay(ImageRGBDisplayable imageDsp, MapProjection mapProj, String description)
-       throws VisADException, RemoteException {
+    // TODO: description should be folded into Displayable
+    public RGBImageDisplay(ImageRGBDisplayable imageDsp, MapProjection mapProj, String description)
+            throws VisADException, RemoteException {
 
-      this.mapProjection = mapProj;
-      this.imageDsp = imageDsp;
-      this.name = description;
+        this.mapProjection = mapProj;
+        this.imageDsp = imageDsp;
+        this.name = description;
 
-      mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
-      mapProjDsp.enableRubberBanding(false);
-      dspMaster = mapProjDsp;
+        mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
+        mapProjDsp.enableRubberBanding(false);
+        dspMaster = mapProjDsp;
 
-      //- make simple color range control.  FIXME: should wait on computeRange so we have to do this before next step.
-      RGBCompositeControl rgbCntrl = new RGBCompositeControl(dspMaster, imageDsp);
-
-
-      dspMaster.setMouseFunctions(Hydra.getMouseFunctionMap());
-
-      dspMaster.draw(); //- once at the beginning? semms ok
-
-      mapProjDsp.setMapProjection(mapProj);
-
-      dspMaster.addDisplayable(imageDsp);
-      Hydra.addBaseMap(mapProjDsp);
+        //- make simple color range control.  FIXME: should wait on computeRange so we have to do this before next step.
+        RGBCompositeControl rgbCntrl = new RGBCompositeControl(dspMaster, imageDsp);
 
 
-      ImageIcon imgIc = new ImageIcon(getClass().getResource("/resources/icons/house.png"));
-      JButton resetButton = new JButton(imgIc);
-      resetButton.setToolTipText("Reset Display scale/translation");
-      resetButton.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
+        dspMaster.setMouseFunctions(Hydra.getMouseFunctionMap());
+
+        dspMaster.draw(); //- once at the beginning? semms ok
+
+        mapProjDsp.setMapProjection(mapProj);
+
+        dspMaster.addDisplayable(imageDsp);
+        Hydra.addBaseMap(mapProjDsp);
+
+
+        ImageIcon imgIc = new ImageIcon(getClass().getResource("/resources/icons/house.png"));
+        JButton resetButton = new JButton(imgIc);
+        resetButton.setToolTipText("Reset Display scale/translation");
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 try {
                     mapProjDsp.resetScaleTranslate();
                 } catch (VisADException ve) {
@@ -113,66 +114,66 @@ public class RGBImageDisplay implements ActionListener {
                 } catch (RemoteException re) {
                     re.printStackTrace();
                 }
-         }
-      });
+            }
+        });
 
-      JPanel outerPanel = new JPanel();
-      outerPanel.setLayout(new BorderLayout());
+        JPanel outerPanel = new JPanel();
+        outerPanel.setLayout(new BorderLayout());
 
-      JPanel southPanel = new JPanel();
-      JPanel panel = new JPanel(new FlowLayout());
-      panel.add(resetButton);
-      panel.add(rgbCntrl.doMakeContents());
-      southPanel.add(panel);
-      
+        JPanel southPanel = new JPanel();
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.add(resetButton);
+        panel.add(rgbCntrl.doMakeContents());
+        southPanel.add(panel);
 
-      outerPanel.add(dspMaster.getDisplayComponent(), BorderLayout.CENTER);
-      outerPanel.add(southPanel, BorderLayout.SOUTH);
 
-      JMenuBar menuBar = new JMenuBar();
+        outerPanel.add(dspMaster.getDisplayComponent(), BorderLayout.CENTER);
+        outerPanel.add(southPanel, BorderLayout.SOUTH);
 
-      JMenu newMenu = new JMenu("New");
-      newMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-      menuBar.add(newMenu);
+        JMenuBar menuBar = new JMenuBar();
 
-      JMenu toolsMenu = new JMenu("Tools");
-      toolsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-      menuBar.add(toolsMenu);
+        JMenu newMenu = new JMenu("New");
+        newMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+        menuBar.add(newMenu);
 
-      JMenuItem transectMenu = new JMenuItem("Transect");
-      transectMenu.setActionCommand("doTransect");
-      transectMenu.addActionListener(this);
-      //toolsMenu.add(transectMenu);
+        JMenu toolsMenu = new JMenu("Tools");
+        toolsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+        menuBar.add(toolsMenu);
 
-      JMenuItem scatterMenu = new JMenuItem("Scatter");
-      scatterMenu.setActionCommand("doScatter");
-      scatterMenu.addActionListener(this);
-      scatterMenu.setToolTipText("first X, then Y creates scatter");
-      //toolsMenu.add(scatterMenu);
+        JMenuItem transectMenu = new JMenuItem("Transect");
+        transectMenu.setActionCommand("doTransect");
+        transectMenu.addActionListener(this);
+        //toolsMenu.add(transectMenu);
 
-      JMenu settingsMenu = new JMenu("Settings");
-      settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-      settingsMenu.addActionListener(this);
-      menuBar.add(settingsMenu);
-    
-      String title = (description != null) ? description : "Display";
-      Hydra.createAndShowFrame(title, outerPanel, menuBar, new Dimension(500,500));
-   }
+        JMenuItem scatterMenu = new JMenuItem("Scatter");
+        scatterMenu.setActionCommand("doScatter");
+        scatterMenu.addActionListener(this);
+        scatterMenu.setToolTipText("first X, then Y creates scatter");
+        //toolsMenu.add(scatterMenu);
 
-   public void setMapProjection(MapProjection mapProj) throws VisADException, RemoteException {
-     this.mapProjection = mapProj;
-     this.mapProjDsp.setMapProjection(mapProj);
-   }
+        JMenu settingsMenu = new JMenu("Settings");
+        settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+        settingsMenu.addActionListener(this);
+        menuBar.add(settingsMenu);
 
-   public MapProjection getMapProjection() {
-     return mapProjection;
-   }
+        String title = (description != null) ? description : "Display";
+        Hydra.createAndShowFrame(title, outerPanel, menuBar, new Dimension(500, 500));
+    }
 
-   public ImageRGBDisplayable getImageDisplayable() {
-     return imageDsp;
-   }
+    public void setMapProjection(MapProjection mapProj) throws VisADException, RemoteException {
+        this.mapProjection = mapProj;
+        this.mapProjDsp.setMapProjection(mapProj);
+    }
 
-   public void actionPerformed(ActionEvent e) {
-   }
+    public MapProjection getMapProjection() {
+        return mapProjection;
+    }
+
+    public ImageRGBDisplayable getImageDisplayable() {
+        return imageDsp;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+    }
 
 }

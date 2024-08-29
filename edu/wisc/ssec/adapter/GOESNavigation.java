@@ -35,42 +35,41 @@ import visad.Linear2DSet;
 import visad.georef.MapProjection;
 
 /**
- *
  * @author rink
  */
 public class GOESNavigation implements Navigation {
-   
-   GEOSTransform geosTrans;
-   double scale_x;
-   double offset_x;
-   double scale_y;
-   double offset_y;
-   
-   MapProjection mapProj;
-   
-   
-   public GOESNavigation(GEOSTransform geosTrans, double scale_x, double offset_x, double scale_y, double offset_y) {
-      this.geosTrans = geosTrans;
-      this.scale_x = scale_x;
-      this.offset_x = offset_x;
-      this.scale_y = scale_y;
-      this.offset_y = offset_y;
-   }
-   
-   public GOESNavigation(MapProjection mapProj) {
-      this.mapProj = mapProj;
-   }
 
-   @Override
-   public CoordinateSystem getVisADCoordinateSystem(Object subset) throws Exception {
-      return mapProj;
-   }
+    GEOSTransform geosTrans;
+    double scale_x;
+    double offset_x;
+    double scale_y;
+    double offset_y;
 
-   @Override
-   public double[] getEarthLocOfDataCoord(int[] coord) throws Exception {
-      double[][] lonlat = mapProj.toReference( new double[][] {{coord[0]}, {coord[1]}});
-      
-      return new double[] {lonlat[0][0], lonlat[1][0]};
-   }
-   
+    MapProjection mapProj;
+
+
+    public GOESNavigation(GEOSTransform geosTrans, double scale_x, double offset_x, double scale_y, double offset_y) {
+        this.geosTrans = geosTrans;
+        this.scale_x = scale_x;
+        this.offset_x = offset_x;
+        this.scale_y = scale_y;
+        this.offset_y = offset_y;
+    }
+
+    public GOESNavigation(MapProjection mapProj) {
+        this.mapProj = mapProj;
+    }
+
+    @Override
+    public CoordinateSystem getVisADCoordinateSystem(Object subset) throws Exception {
+        return mapProj;
+    }
+
+    @Override
+    public double[] getEarthLocOfDataCoord(int[] coord) throws Exception {
+        double[][] lonlat = mapProj.toReference(new double[][]{{coord[0]}, {coord[1]}});
+
+        return new double[]{lonlat[0][0], lonlat[1][0]};
+    }
+
 }

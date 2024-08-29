@@ -30,6 +30,7 @@
 package edu.wisc.ssec.adapter;
 
 import java.awt.geom.Rectangle2D;
+
 import visad.CoordinateSystem;
 import visad.RealTupleType;
 import visad.Unit;
@@ -49,9 +50,9 @@ public class InsatL1BCoordinateSystem1 extends MapProjection {
     private double min_lon;
     private double max_lat;
     private double max_lon;
-//    private float grid[];
+    //    private float grid[];
     private static Unit coordinate_system_units[] = {
-        null, null
+            null, null
     };
     //more than one if datadisk height is latlon_disk_height
     private int height_scale_factor;
@@ -213,12 +214,11 @@ public class InsatL1BCoordinateSystem1 extends MapProjection {
             float lat = latlon[latIndex][ndx];
             float lon = latlon[lonIndex][ndx];
             if ((lat <= 90f) && (lat >= -90)) {
-            tuples[latIndex][i] = lat;
-            tuples[lonIndex][i] = lon;
-            }
-            else {
-            tuples[latIndex][i] = Float.NaN;
-            tuples[lonIndex][i] = Float.NaN;
+                tuples[latIndex][i] = lat;
+                tuples[lonIndex][i] = lon;
+            } else {
+                tuples[latIndex][i] = Float.NaN;
+                tuples[lonIndex][i] = Float.NaN;
             }
             if (tuples[lonIndex][i] < 0f) {
                 tuples[lonIndex][i] += 360.0f;
@@ -285,10 +285,10 @@ public class InsatL1BCoordinateSystem1 extends MapProjection {
         if ((last_grid_x_index == -1) && (last_grid_y_index == -1)) { //Ghansham:Set last guess to false if it starts from center of the grid
             gx = (pixels - 1) / 2;
             gy = (scans - 1) / 2;
-        } else { 			//Ghansham:Set it to true if we are starting from last grid indices
+        } else {            //Ghansham:Set it to true if we are starting from last grid indices
             gx = last_grid_x_index;
             gy = last_grid_y_index;
-	    useLastGuess = true;
+            useLastGuess = true;
         }
 
         grid[0] = Float.NaN;
@@ -298,20 +298,18 @@ public class InsatL1BCoordinateSystem1 extends MapProjection {
 
         for (int itnum = 0; itnum < num_iterations; itnum++) {
             float v0[] = {latlon[0][gy * pixels + gx],
-                latlon[1][gy * pixels + gx]};
+                    latlon[1][gy * pixels + gx]};
             float v1[] = {latlon[0][gy * pixels + gx + 1],
-                latlon[1][gy * pixels + gx + 1]};
+                    latlon[1][gy * pixels + gx + 1]};
             float v2[] = {latlon[0][(gy + 1) * pixels + gx],
-                latlon[1][(gy + 1) * pixels + gx]};
+                    latlon[1][(gy + 1) * pixels + gx]};
             float v3[] = {latlon[0][(gy + 1) * pixels + gx + 1],
-                latlon[1][(gy + 1) * pixels + gx + 1]};
-
-
+                    latlon[1][(gy + 1) * pixels + gx + 1]};
 
 
             if (v0[0] != v0[0] || v0[1] != v0[1] || v1[0] != v1[0] || v1[1] != v1[1]
                     || v2[0] != v2[0] || v2[1] != v2[1] || v3[0] != v3[0] || v3[1] != v3[1]) { //Ghansham: Inserted extra to break out as soon as we find any of corners is NaN. We can replace this call with Float.isNaN. This also reduces computation time a lot.
-                    break;
+                break;
             }
 
 
@@ -433,18 +431,18 @@ public class InsatL1BCoordinateSystem1 extends MapProjection {
         }
 
 
-        if (debug ) {
-        	System.out.println(" " + grid[0] + "  " + grid[1]);
+        if (debug) {
+            System.out.println(" " + grid[0] + "  " + grid[1]);
         }
 
-	if ((grid[0] >= pixels - 0.5) || (grid[1] >= scans - 0.5)
+        if ((grid[0] >= pixels - 0.5) || (grid[1] >= scans - 0.5)
                 || (grid[0] <= -0.5) || (grid[1] <= -0.5)) {
             grid[0] = grid[1] = Float.NaN;
         }
 
         if (useLastGuess) { //Ghansham: Here is the real trick. If we have searched using lastGuess. 
             if (Float.isNaN(grid[0]) || Float.isNaN(grid[1])) { //But we have not been able to find a valid index. Give it another try make last guess false.
-                return valueToGrid(lat, lon, -1, -1);		//Call recursively passing last grid indices as -1, -1 which make the last guess false.
+                return valueToGrid(lat, lon, -1, -1);        //Call recursively passing last grid indices as -1, -1 which make the last guess false.
             }
         }
         return grid;

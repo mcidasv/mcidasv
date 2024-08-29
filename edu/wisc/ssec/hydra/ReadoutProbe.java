@@ -73,24 +73,34 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     public static final String SHARE_POSITION = "SHARE_POSITION";
 
-    /** the Point probe */
+    /**
+     * the Point probe
+     */
     protected PointProbe probe;
 
-    /** the initial position */
+    /**
+     * the initial position
+     */
     private RealTuple initPosition;
 
-    /** The shape for the probe point */
+    /**
+     * The shape for the probe point
+     */
     private String marker = "CROSS";
 
-    /** The point size */
+    /**
+     * The point size
+     */
     private float pointSize = 1.0f;
 
-    /** Keep around for the label macros */
+    /**
+     * Keep around for the label macros
+     */
     protected String positionText;
 
     private TupleType TUPTYPE = null;
 
-    public  static int txtCnt = 0;
+    public static int txtCnt = 0;
 
     private DataReference earthLocationRef = null;
 
@@ -109,7 +119,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private FlatField image = null;
 
     private RealTupleType earthTupleType = null;
- 
+
     private boolean isLonLat = true;
 
     private DisplayMaster master;
@@ -125,7 +135,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private double baseScale = 1.0;
 
     private InfoLabel infoLabel;
-    
+
     // For probes sharing location
     private static ArrayList<ReadoutProbe> readoutProbeList = new ArrayList<ReadoutProbe>();
 
@@ -133,11 +143,12 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * Default Constructor.
      */
     public ReadoutProbe(FlatField grid2d, DisplayMaster master, double[][] dataRange)
-           throws VisADException, RemoteException {
+            throws VisADException, RemoteException {
         this(grid2d, master, dataRange, true);
     }
-    public ReadoutProbe(FlatField grid2d, DisplayMaster master, double[][] dataRange, boolean share) 
-           throws VisADException, RemoteException {
+
+    public ReadoutProbe(FlatField grid2d, DisplayMaster master, double[][] dataRange, boolean share)
+            throws VisADException, RemoteException {
         super();
 
         this.image = grid2d;
@@ -145,18 +156,18 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
         earthTupleType = check2DEarthTuple(grid2d);
         if (earthTupleType != null) {
-          isLonLat = earthTupleType.equals(RealTupleType.SpatialEarth2DTuple);
+            isLonLat = earthTupleType.equals(RealTupleType.SpatialEarth2DTuple);
         }
-        
+
         initSharable();
 
         currentPosition = new RealTuple(RealTupleType.Generic2D);
 
-        earthLocationRef = new DataReferenceImpl("positionRef_"+Hydra.getUniqueID());
+        earthLocationRef = new DataReferenceImpl("positionRef_" + Hydra.getUniqueID());
 
         if (share) {
-           setSharing(true);
-           readoutProbeList.add(this);
+            setSharing(true);
+            readoutProbeList.add(this);
         }
 
         numFmt = getValueDisplayFormat(dataRange);
@@ -164,67 +175,65 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         latlonFmt.setMaximumFractionDigits(2);
         latlonFmt.setMinimumFractionDigits(2);
     }
-    
+
     DecimalFormat[] getValueDisplayFormat(double[][] dataRange) {
         DecimalFormat[] numFmt = new DecimalFormat[dataRange.length];
-        
+
         //TODO: this is pretty kludgy but will do for now.
-        for (int i=0; i<numFmt.length; i++) {
+        for (int i = 0; i < numFmt.length; i++) {
             double OofM = java.lang.Math.log10(Math.abs(dataRange[i][1]));
             if (OofM <= -2 || OofM >= 4) {
                 numFmt[i] = new DecimalFormat("0.00E00");
-            }
-            else {
-	        numFmt[i] = new DecimalFormat();
-	        numFmt[i].setMaximumFractionDigits(2);
+            } else {
+                numFmt[i] = new DecimalFormat();
+                numFmt[i].setMaximumFractionDigits(2);
             }
         }
-        
+
         return numFmt;
     }
 
     DataReference getEarthLocationRef() {
-       return earthLocationRef;
+        return earthLocationRef;
     }
 
     public void updateData(FlatField image) {
-       this.image = image;
-       updateLocationValue();
+        this.image = image;
+        updateLocationValue();
     }
-    
+
     public void updateData(FlatField image, EarthLocationTuple loc) throws Exception {
         this.image = image;
         setProbePosition(loc);
     }
 
     public void resize(double baseScale, double scale) throws VisADException, RemoteException {
-      double baseSize = probe.getSelectorPoint().getScale();
-      probe.getSelectorPoint().setPointSize((float) ((baseScale/scale)*baseSize));
-      valueDisplay.setTextSize((float) (initTextSize*(baseScale/scale)));
+        double baseSize = probe.getSelectorPoint().getScale();
+        probe.getSelectorPoint().setPointSize((float) ((baseScale / scale) * baseSize));
+        valueDisplay.setTextSize((float) (initTextSize * (baseScale / scale)));
     }
 
     /**
      * Make the probe with the specific <code>Color</code> and
      * <code>ViewDescriptor</code>.
      *
-     * @param probeColor    color for the probe
-     * @param view  view descriptor
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   VisAD Error
+     * @param probeColor color for the probe
+     * @param view       view descriptor
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  VisAD Error
      */
-     public void doMakeProbe(Color probeColor, DisplayMaster master, double baseScale, double scale) 
+    public void doMakeProbe(Color probeColor, DisplayMaster master, double baseScale, double scale)
             throws VisADException, RemoteException {
-       doMakeProbe(probeColor, master, baseScale, scale, true, "CROSS", Hydra.getTextSizeFactor()*1.2f, Hydra.getTextSizeFactor()*1.75f, null);
+        doMakeProbe(probeColor, master, baseScale, scale, true, "CROSS", Hydra.getTextSizeFactor() * 1.2f, Hydra.getTextSizeFactor() * 1.75f, null);
     }
 
     public void doMakeProbe(Color probeColor, DisplayMaster master, double baseScale, double scale, boolean visible, String marker, float pointSize, float textSize, Color textColor)
             throws VisADException, RemoteException {
 
         initTextSize = textSize;
-        
+
         if (readoutProbeList.size() > 0 && getSharing()) {
-           initPosition = readoutProbeList.get(0).getPosition();
+            initPosition = readoutProbeList.get(0).getPosition();
         }
 
         if (initPosition != null) {
@@ -251,8 +260,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         this.baseScale = baseScale;
         this.marker = marker;
 
-        if ( (baseScale != scale) && !Double.isNaN(baseScale) && !Double.isNaN(scale) ) {
-           resize(baseScale, scale);
+        if ((baseScale != scale) && !Double.isNaN(baseScale) && !Double.isNaN(scale)) {
+            resize(baseScale, scale);
         }
 
         master.addDisplayable(probe);
@@ -262,15 +271,14 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     public void destroy() {
-       image = null;
-       SharableManager.removeSharable(this);
-       readoutProbeList.remove(this);
-       try {
-          probe.removePropertyChangeListener(this);
-       }
-       catch (Exception e) {
-          e.printStackTrace();
-       }
+        image = null;
+        SharableManager.removeSharable(this);
+        readoutProbeList.remove(this);
+        try {
+            probe.removePropertyChangeListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -300,10 +308,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     /**
      * Set the probe position.  Probes are set in XY space.
      *
-     * @param xy  X and Y position of the probe.
-     *
+     * @param xy X and Y position of the probe.
      * @throws VisADException  problem setting probe position
-     * @throws RemoteException  problem setting probe position on remote display
+     * @throws RemoteException problem setting probe position on remote display
      */
     public void setProbePosition(RealTuple xy)
             throws VisADException, RemoteException {
@@ -312,40 +319,39 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     public void setProbePosition(EarthLocationTuple lla)
             throws VisADException, RemoteException {
-       double[] xyz = earthToBox(lla);
-       if (Double.isNaN(xyz[0]) || Double.isNaN(xyz[1])) { // safeguard: problems if NaN passed through
-           return;
-       }
-       setProbePosition(xyz[0], xyz[1]);
+        double[] xyz = earthToBox(lla);
+        if (Double.isNaN(xyz[0]) || Double.isNaN(xyz[1])) { // safeguard: problems if NaN passed through
+            return;
+        }
+        setProbePosition(xyz[0], xyz[1]);
     }
 
     /**
      * Set the probe position from display x and y positions.
      *
-     * @param x    X position of the probe.
-     * @param y    Y position of the probe.
-     *
+     * @param x X position of the probe.
+     * @param y Y position of the probe.
      * @throws VisADException  problem setting probe position
-     * @throws RemoteException  problem setting probe position on remote display
+     * @throws RemoteException problem setting probe position on remote display
      */
     public void setProbePosition(double x, double y)
             throws VisADException, RemoteException {
-        setProbePosition(new RealTuple(new Real[] {
-            new Real(RealType.XAxis, x),
-            new Real(RealType.YAxis, y) }));
+        setProbePosition(new RealTuple(new Real[]{
+                new Real(RealType.XAxis, x),
+                new Real(RealType.YAxis, y)}));
     }
 
     public void setPosition(EarthLocationTuple lla)
             throws VisADException, RemoteException {
         if (lla.getLongitude().isMissing() || lla.getLatitude().isMissing() || lla.getAltitude().isMissing()) {
-           return; // safegaurd: problems if NaN passed through
+            return; // safegaurd: problems if NaN passed through
         }
         double[] xyz = earthToBox(lla);
         double x = xyz[0];
         double y = xyz[1];
-        initPosition = new RealTuple(new Real[] {
-            new Real(RealType.XAxis, x),
-            new Real(RealType.YAxis, y) });
+        initPosition = new RealTuple(new Real[]{
+                new Real(RealType.XAxis, x),
+                new Real(RealType.YAxis, y)});
     }
 
     public void setFixed() {
@@ -358,9 +364,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * XML persistense.
      *
      * @return current probe position or null if probe has not been created.
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   VisAD Error
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  VisAD Error
      */
     public RealTuple getPosition() throws VisADException, RemoteException {
         return ((probe != null)
@@ -371,8 +376,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     /**
      * Get the initial position of the probe set during unpersistence.
      *
-     * @return  initial position or <code>null</code> if not set during
-     *          initialization.
+     * @return initial position or <code>null</code> if not set during
+     * initialization.
      */
     public RealTuple getInitialPosition() {
         return initPosition;
@@ -381,8 +386,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     /**
      * Method called when sharing is enabled.
      *
-     * @param from  Sharable that send the data.
-     * @param dataId  identifier for data to be shared
+     * @param from   Sharable that send the data.
+     * @param dataId identifier for data to be shared
      * @param data   data to be shared.
      */
     public void receiveShareData(Sharable from, Object dataId,
@@ -394,16 +399,15 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
             try {
                 RealTuple tup = (RealTuple) data[0];
                 if (tup instanceof LatLonPoint) {
-                   RealTuple xyz = earthToBoxTuple(new EarthLocationTuple((LatLonPoint) tup,
-                                new Real(RealType.Altitude, 0)));
-                   if (xyz != null) {
-                      RealTuple pos = new RealTuple(new Real[] { (Real) xyz.getComponent(0),
-                          (Real) xyz.getComponent(1) });
-                      probe.setPosition(pos);
-                   }
-                }
-                else {
-                  probe.setPosition((RealTuple) data[0]);
+                    RealTuple xyz = earthToBoxTuple(new EarthLocationTuple((LatLonPoint) tup,
+                            new Real(RealType.Altitude, 0)));
+                    if (xyz != null) {
+                        RealTuple pos = new RealTuple(new Real[]{(Real) xyz.getComponent(0),
+                                (Real) xyz.getComponent(1)});
+                        probe.setPosition(pos);
+                    }
+                } else {
+                    probe.setPosition((RealTuple) data[0]);
                 }
             } catch (Exception e) {
             }
@@ -422,7 +426,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
             double[] vals = position.getValues();
             EarthLocationTuple elt =
-                  (EarthLocationTuple)boxToEarth(new double[] { vals[0], vals[1], 1.0 });
+                    (EarthLocationTuple) boxToEarth(new double[]{vals[0], vals[1], 1.0});
 
             // send position while dragging
             doShare(SHARE_POSITION, elt.getLatLonPoint());
@@ -436,7 +440,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * when we get a sharable event to move the probe point. Subclasses
      * need to implement this.
      *
-     * @param position  new position for the probe.
+     * @param position new position for the probe.
      */
     protected void probePositionChanged(final RealTuple newPos) {
         if (!currentPosition.equals(newPos)) {
@@ -449,8 +453,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     protected void updatePosition(final RealTuple position) {
         double[] vals = position.getValues();
         try {
-            EarthLocationTuple elt = (EarthLocationTuple)boxToEarth(
-                new double[] { vals[0], vals[1], 1.0 });
+            EarthLocationTuple elt = (EarthLocationTuple) boxToEarth(
+                    new double[]{vals[0], vals[1], 1.0});
 
             earthLocationRef.setData(elt.getLatLonPoint());
         } catch (Exception e) {
@@ -464,13 +468,13 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     private void updateInfoLabel(float lon, float lat, float val) {
         if (infoLabel != null) {
-           infoLabel.setLatLonAndValue(lat, lon, val);
+            infoLabel.setLatLonAndValue(lat, lon, val);
         }
     }
-    
+
     private void updateInfoLabel(float lon, float lat, double[] vals) {
         if (infoLabel != null) {
-           infoLabel.setLatLonAndValues(lat, lon, vals);
+            infoLabel.setLatLonAndValues(lat, lon, vals);
         }
     }
 
@@ -479,8 +483,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         RealTuple earthTuple;
 
         try {
-            RealTuple location = (RealTuple)earthLocationRef.getData();
-          
+            RealTuple location = (RealTuple) earthLocationRef.getData();
+
             if (location == null)
                 return;
 
@@ -494,46 +498,45 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
             if (vals[1] > 180)
                 vals[1] -= 360f;
 
-            
-            if (earthTupleType != null) {
-              RealTuple lonLat =
-                 new RealTuple(RealTupleType.SpatialEarth2DTuple,
-                     new double[] { vals[1], vals[0] });
-              RealTuple latLon = new RealTuple(RealTupleType.LatitudeLongitudeTuple,
-                     new double[] { vals[0], vals[1] });
-              RealTuple rtup = lonLat;
-              if (!(isLonLat)) {
-                rtup = latLon;
-              }
-           
-              Real val = null;
-              Data dat = image.evaluate(rtup, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
 
-              if ( ((FunctionType)image.getType()).getRange() instanceof RealTupleType ) { 
-                 RealTuple tmp = (RealTuple)dat;
-                 Real[] reals = tmp.getRealComponents();
-                 double[] dvals = new double[reals.length];
-                 for (int k=0; k<dvals.length; k++){
-                    dvals[k] = reals[k].getValue();
-                 }
-                 updateInfoLabel((float)vals[1], (float)vals[0], dvals);
-                 tup = new Tuple(TUPTYPE,
-                         new Data[] { lonLat, new Text(textType, numFmt[0].format(dvals[0])) });
-                 currentValue = (float) dvals[0];
-              }
-              else {
-                 val = (Real)dat;
-                 float fval = (float)val.getValue();
-                 updateInfoLabel((float)vals[1], (float)vals[0], fval);
-                 tup = new Tuple(TUPTYPE,
-                         new Data[] { lonLat, new Text(textType, numFmt[0].format(fval)) });
-                 currentValue = fval;
-              }
-              
+            if (earthTupleType != null) {
+                RealTuple lonLat =
+                        new RealTuple(RealTupleType.SpatialEarth2DTuple,
+                                new double[]{vals[1], vals[0]});
+                RealTuple latLon = new RealTuple(RealTupleType.LatitudeLongitudeTuple,
+                        new double[]{vals[0], vals[1]});
+                RealTuple rtup = lonLat;
+                if (!(isLonLat)) {
+                    rtup = latLon;
+                }
+
+                Real val = null;
+                Data dat = image.evaluate(rtup, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+
+                if (((FunctionType) image.getType()).getRange() instanceof RealTupleType) {
+                    RealTuple tmp = (RealTuple) dat;
+                    Real[] reals = tmp.getRealComponents();
+                    double[] dvals = new double[reals.length];
+                    for (int k = 0; k < dvals.length; k++) {
+                        dvals[k] = reals[k].getValue();
+                    }
+                    updateInfoLabel((float) vals[1], (float) vals[0], dvals);
+                    tup = new Tuple(TUPTYPE,
+                            new Data[]{lonLat, new Text(textType, numFmt[0].format(dvals[0]))});
+                    currentValue = (float) dvals[0];
+                } else {
+                    val = (Real) dat;
+                    float fval = (float) val.getValue();
+                    updateInfoLabel((float) vals[1], (float) vals[0], fval);
+                    tup = new Tuple(TUPTYPE,
+                            new Data[]{lonLat, new Text(textType, numFmt[0].format(fval))});
+                    currentValue = fval;
+                }
+
             }
-            
+
             if (valueDisplay != null) {
-              valueDisplay.setData(tup);
+                valueDisplay.setData(tup);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -544,85 +547,80 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     public float getFloatValue() {
-       return currentValue;
+        return currentValue;
     }
 
-    public NavigatedDisplay  getNavigatedDisplay() {
-      return (NavigatedDisplay) master;
+    public NavigatedDisplay getNavigatedDisplay() {
+        return (NavigatedDisplay) master;
     }
 
     public static RealTupleType check2DEarthTuple(FlatField field) {
-      CoordinateSystem cs;
-      FunctionType ftype = (FunctionType) field.getType();
-      RealTupleType domain = ftype.getDomain();
-      if ( (domain.equals(RealTupleType.SpatialEarth2DTuple)) ||
-           (domain.equals(RealTupleType.LatitudeLongitudeTuple)) ) {
-        return domain;
-      } 
-      else if ((cs = domain.getCoordinateSystem()) != null) {
-        RealTupleType ref = cs.getReference();
-        if ( (ref.equals(RealTupleType.SpatialEarth2DTuple)) ||
-             (ref.equals(RealTupleType.LatitudeLongitudeTuple)) ) {
-           return ref;
+        CoordinateSystem cs;
+        FunctionType ftype = (FunctionType) field.getType();
+        RealTupleType domain = ftype.getDomain();
+        if ((domain.equals(RealTupleType.SpatialEarth2DTuple)) ||
+                (domain.equals(RealTupleType.LatitudeLongitudeTuple))) {
+            return domain;
+        } else if ((cs = domain.getCoordinateSystem()) != null) {
+            RealTupleType ref = cs.getReference();
+            if ((ref.equals(RealTupleType.SpatialEarth2DTuple)) ||
+                    (ref.equals(RealTupleType.LatitudeLongitudeTuple))) {
+                return ref;
+            }
         }
-      }
-      return null;
+        return null;
     }
 
     public static LatLonPoint getNearestImagePixel(FlatField image, LatLonPoint llPt) throws VisADException, RemoteException {
-      CoordinateSystem cs;
-      FunctionType ftype = (FunctionType) image.getType();
-      Gridded2DSet domainSet = (Gridded2DSet) image.getDomainSet();
-      RealTupleType domain = ftype.getDomain();
-      int latIdx = 0;
-      int lonIdx = 1;
+        CoordinateSystem cs;
+        FunctionType ftype = (FunctionType) image.getType();
+        Gridded2DSet domainSet = (Gridded2DSet) image.getDomainSet();
+        RealTupleType domain = ftype.getDomain();
+        int latIdx = 0;
+        int lonIdx = 1;
 
-      double[] dblVal = ((RealTuple)llPt).getValues();
-      float[][] latLon = new float[][] {{(float) dblVal[0]}, {(float)dblVal[1]}};
-      float[][] lonLat = new float[][] {{latLon[1][0]}, {latLon[0][0]}};
+        double[] dblVal = ((RealTuple) llPt).getValues();
+        float[][] latLon = new float[][]{{(float) dblVal[0]}, {(float) dblVal[1]}};
+        float[][] lonLat = new float[][]{{latLon[1][0]}, {latLon[0][0]}};
 
-      float[][] earthPt = null;
+        float[][] earthPt = null;
 
-      if ((cs = domain.getCoordinateSystem()) != null) {
-        RealTupleType ref = cs.getReference();
-        if (ref.equals(RealTupleType.SpatialEarth2DTuple)) {
-          earthPt = lonLat;
-          lonIdx = 0;
-          latIdx = 1;
-        }
-        else if (ref.equals(RealTupleType.LatitudeLongitudeTuple)) {
-          earthPt = latLon;
-        }
+        if ((cs = domain.getCoordinateSystem()) != null) {
+            RealTupleType ref = cs.getReference();
+            if (ref.equals(RealTupleType.SpatialEarth2DTuple)) {
+                earthPt = lonLat;
+                lonIdx = 0;
+                latIdx = 1;
+            } else if (ref.equals(RealTupleType.LatitudeLongitudeTuple)) {
+                earthPt = latLon;
+            }
 
-        float[][] val = cs.fromReference(earthPt);
-        int[] idx = domainSet.valueToIndex(val);
-        val = domainSet.indexToValue(idx);
-        val = cs.toReference(val);
-        return new LatLonTuple(val[latIdx][0], val[lonIdx][0]);
-      }
-      else {
-        if (domain.equals(RealTupleType.SpatialEarth2DTuple)) {
-          earthPt = lonLat;
-          lonIdx = 0;
-          latIdx = 1;
+            float[][] val = cs.fromReference(earthPt);
+            int[] idx = domainSet.valueToIndex(val);
+            val = domainSet.indexToValue(idx);
+            val = cs.toReference(val);
+            return new LatLonTuple(val[latIdx][0], val[lonIdx][0]);
+        } else {
+            if (domain.equals(RealTupleType.SpatialEarth2DTuple)) {
+                earthPt = lonLat;
+                lonIdx = 0;
+                latIdx = 1;
+            } else if (domain.equals(RealTupleType.LatitudeLongitudeTuple)) {
+                earthPt = latLon;
+            }
+            int[] idx = domainSet.valueToIndex(latLon);
+            float[][] val = domainSet.indexToValue(idx);
+            return new LatLonTuple(val[latIdx][0], val[lonIdx][0]);
         }
-        else if (domain.equals(RealTupleType.LatitudeLongitudeTuple)) {
-          earthPt = latLon;
-        }
-        int[] idx = domainSet.valueToIndex(latLon);
-        float[][] val = domainSet.indexToValue(idx);
-        return new LatLonTuple(val[latIdx][0], val[lonIdx][0]);
-      }
     }
 
     private TextDisplayable createValueDisplayer(final Color color, float textSize)
-        throws VisADException, RemoteException
-    {
+            throws VisADException, RemoteException {
         DecimalFormat fmt = new DecimalFormat();
         fmt.setMaximumIntegerDigits(3);
         fmt.setMaximumFractionDigits(1);
 
-        textType = new TextType("GENERIC_TEXT"+txtCnt++);
+        textType = new TextType("GENERIC_TEXT" + txtCnt++);
         TUPTYPE = makeTupleType();
         TextDisplayable td = new TextDisplayable(textType);
         td.setLineWidth(2f);
@@ -635,8 +633,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private TupleType makeTupleType() {
         TupleType t = null;
         try {
-            t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple,
-                                              textType});
+            t = new TupleType(new MathType[]{RealTupleType.SpatialEarth2DTuple,
+                    textType});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -685,9 +683,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
 
     /**
-     *  Set the PointSize property.
+     * Set the PointSize property.
      *
-     *  @param value The new value for PointSize
+     * @param value The new value for PointSize
      */
     public void setPointSize(float value) {
         pointSize = value;
@@ -702,9 +700,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     /**
-     *  Get the PointSize property.
+     * Get the PointSize property.
      *
-     *  @return The PointSize
+     * @return The PointSize
      */
     public float getPointSize() {
         return pointSize;
@@ -715,32 +713,30 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * Get initial XY position from the screen
      *
      * @return initial XY position  in VisAD space
-     *
      * @throws RemoteException Java RMI problem
-     * @throws VisADException VisAD problem
+     * @throws VisADException  VisAD problem
      */
     public RealTuple getInitialLinePosition()
             throws VisADException, RemoteException {
         //-double[] center = getScreenCenter();
-        double[] center = new double[] {0,0};
+        double[] center = new double[]{0, 0};
         return new RealTuple(RealTupleType.SpatialCartesian2DTuple,
-                             new double[] { center[0],
-                                            center[1] });
+                new double[]{center[0],
+                        center[1]});
     }
 
     /**
      * Set initial XY position from the screen
      *
      * @return initial XY position  in VisAD space
-     *
      * @throws RemoteException Java RMI problem
-     * @throws VisADException VisAD problem
+     * @throws VisADException  VisAD problem
      */
     public RealTuple setInitialPosition(double x, double y)
             throws VisADException, RemoteException {
-        double[] pos = new double[] {x,y};
+        double[] pos = new double[]{x, y};
         initPosition = new RealTuple(RealTupleType.SpatialCartesian2DTuple,
-                             new double[] { pos[0], pos[1] });
+                new double[]{pos[0], pos[1]});
         return initPosition;
     }
 
@@ -754,43 +750,41 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     public boolean getVisible() {
-       return probe.getVisible();
+        return probe.getVisible();
     }
 
     public boolean getReadoutVisible() {
-       return valueDisplay.getVisible();
+        return valueDisplay.getVisible();
     }
 
     public void setReadoutVisible(boolean yesno) {
-       try {
-          valueDisplay.setVisible(yesno);
-       }
-       catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("could not change probe visibility");
-       }
+        try {
+            valueDisplay.setVisible(yesno);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("could not change probe visibility");
+        }
     }
 
     public void setVisible(boolean yesno) {
-       try {
-          probe.setVisible(yesno);
-          valueDisplay.setVisible(yesno);
-       }
-       catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("could not change probe visibility");
-       }
+        try {
+            probe.setVisible(yesno);
+            valueDisplay.setVisible(yesno);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("could not change probe visibility");
+        }
     }
-    
+
     double[] earthToBox(EarthLocationTuple el) throws VisADException, RemoteException {
-       return ((NavigatedDisplay)master).getSpatialCoordinates(el, null);
+        return ((NavigatedDisplay) master).getSpatialCoordinates(el, null);
     }
-    
+
     RealTuple earthToBoxTuple(EarthLocationTuple el) throws VisADException, RemoteException {
-       return ((NavigatedDisplay)master).getSpatialCoordinates(el);
+        return ((NavigatedDisplay) master).getSpatialCoordinates(el);
     }
-    
+
     EarthLocation boxToEarth(double[] box) {
-       return ((NavigatedDisplay)master).getEarthLocation(box[0], box[1], box[2], true);
+        return ((NavigatedDisplay) master).getEarthLocation(box[0], box[1], box[2], true);
     }
 }

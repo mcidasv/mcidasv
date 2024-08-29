@@ -55,361 +55,351 @@ import visad.CellImpl;
 import visad.MouseHelper;
 import visad.java2d.DisplayImplJ2D;
 import visad.java2d.DirectManipulationRendererJ2D;
+
 import java.awt.Component;
 import java.rmi.RemoteException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 
-
 public class Histogram implements DisplayListener {
 
-   DisplayImpl display;
-   UnionSet graph;
-   String xAxisName;
-   DataReferenceImpl graphRef;
-   DataReferenceImpl clrLowRef;
-   DataReferenceImpl clrHighRef;
-   DataReferenceImpl lineLowRef;
-   DataReferenceImpl lineHighRef;
-   DataReferenceImpl lastLowRef;
-   DataReferenceImpl lastHighRef;
-   ShapeControl clrScaleCntrl;
-   ScalarMap xMap;
-   RealType xType;
-   RealType yType;
-   float[][] clrTable;
-   float start_x;
-   float width;
-   float fillFrom;
-   float fillTo;
-   double scale;
-   double offset;
-   int nbins = 60;
-   float dataLow;
-   float dataHigh;
-   float countLow;
-   float countHi;
+    DisplayImpl display;
+    UnionSet graph;
+    String xAxisName;
+    DataReferenceImpl graphRef;
+    DataReferenceImpl clrLowRef;
+    DataReferenceImpl clrHighRef;
+    DataReferenceImpl lineLowRef;
+    DataReferenceImpl lineHighRef;
+    DataReferenceImpl lastLowRef;
+    DataReferenceImpl lastHighRef;
+    ShapeControl clrScaleCntrl;
+    ScalarMap xMap;
+    RealType xType;
+    RealType yType;
+    float[][] clrTable;
+    float start_x;
+    float width;
+    float fillFrom;
+    float fillTo;
+    double scale;
+    double offset;
+    int nbins = 60;
+    float dataLow;
+    float dataHigh;
+    float countLow;
+    float countHi;
 
-   float cbHght = 0.15f;
-   float aspect = 2.5f;
+    float cbHght = 0.15f;
+    float aspect = 2.5f;
 
-   PropertyChangeListener listener;
+    PropertyChangeListener listener;
 
-   public Histogram() {
-   }
+    public Histogram() {
+    }
 
-   public Histogram(FlatField fltFld, float[] dataRange) {
-      try {
-         graph = build(fltFld, nbins, dataRange);
-      }
-      catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
+    public Histogram(FlatField fltFld, float[] dataRange) {
+        try {
+            graph = build(fltFld, nbins, dataRange);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-   public Histogram(FlatField fltFld) {
-      try {
-         graph = build(fltFld, nbins, null);
-      }
-      catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
+    public Histogram(FlatField fltFld) {
+        try {
+            graph = build(fltFld, nbins, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-   public UnionSet build(FlatField fltFld, int nbins) throws VisADException, RemoteException {
-       return build(fltFld, nbins, null);
-   }
+    public UnionSet build(FlatField fltFld, int nbins) throws VisADException, RemoteException {
+        return build(fltFld, nbins, null);
+    }
 
-   public UnionSet build(FlatField fltFld, int nbins, float[] dataRange) throws VisADException, RemoteException {
-      FlatField hist = JPythonMethods.hist(fltFld, new int[] {0}, new int[] {nbins});
-      FunctionType ftype = (FunctionType) hist.getType();
-      RealType domType = (RealType) ((RealTupleType)ftype.getDomain()).getComponent(0);
-      RealType rngType = (RealType) ftype.getRange();
-     
-      xAxisName = domType.getName();
+    public UnionSet build(FlatField fltFld, int nbins, float[] dataRange) throws VisADException, RemoteException {
+        FlatField hist = JPythonMethods.hist(fltFld, new int[]{0}, new int[]{nbins});
+        FunctionType ftype = (FunctionType) hist.getType();
+        RealType domType = (RealType) ((RealTupleType) ftype.getDomain()).getComponent(0);
+        RealType rngType = (RealType) ftype.getRange();
 
-      Linear1DSet set = (Linear1DSet) hist.getDomainSet();
-      float start = (float) set.getFirst();
-      float step = (float) set.getStep();
-      float[][] vals = hist.getFloats();
-      if (dataRange == null) {
-         dataLow = (set.getLow())[0];
-         dataHigh = (set.getHi())[0];
-      }
-      else {
-         dataLow = dataRange[0];
-         dataHigh = dataRange[1];
-      }
+        xAxisName = domType.getName();
 
-      float[] lohi = Hydra.minmax(vals[0]);
-      countLow = lohi[0];
-      countHi = lohi[1];
+        Linear1DSet set = (Linear1DSet) hist.getDomainSet();
+        float start = (float) set.getFirst();
+        float step = (float) set.getStep();
+        float[][] vals = hist.getFloats();
+        if (dataRange == null) {
+            dataLow = (set.getLow())[0];
+            dataHigh = (set.getHi())[0];
+        } else {
+            dataLow = dataRange[0];
+            dataHigh = dataRange[1];
+        }
 
-      RealTupleType histType = new RealTupleType(RealType.Generic, rngType);
+        float[] lohi = Hydra.minmax(vals[0]);
+        countLow = lohi[0];
+        countHi = lohi[1];
 
-      Gridded2DSet[] sets = new Gridded2DSet[nbins];
+        RealTupleType histType = new RealTupleType(RealType.Generic, rngType);
 
-      for (int k=0; k<nbins; k++) {
+        Gridded2DSet[] sets = new Gridded2DSet[nbins];
 
-          float x1 = k*step + (start - step/2);
-          float y1 = 0f;
-          float x2 = x1;
-          float y2 = vals[0][k];
-          float x3 = x1 + step;
-          float y3 = y2;
-          float x4 = x3;
-          float y4 = 0f;
+        for (int k = 0; k < nbins; k++) {
 
-          sets[k] = new Gridded2DSet(histType, new float[][] {{x1,x2,x3,x4},{y1,y2,y3,y4}},4);
-      }
-      
-      UnionSet uset = new UnionSet(sets);
-      return uset;
-   }
+            float x1 = k * step + (start - step / 2);
+            float y1 = 0f;
+            float x2 = x1;
+            float y2 = vals[0][k];
+            float x3 = x1 + step;
+            float y3 = y2;
+            float x4 = x3;
+            float y4 = 0f;
 
-   public void setListener(PropertyChangeListener listener) {
-      this.listener = listener;
-   }
+            sets[k] = new Gridded2DSet(histType, new float[][]{{x1, x2, x3, x4}, {y1, y2, y3, y4}}, 4);
+        }
 
-   public void updateDisplay(FlatField fltFld) throws VisADException, RemoteException {
-      graph = build(fltFld, nbins);
+        UnionSet uset = new UnionSet(sets);
+        return uset;
+    }
 
-      display.disableAction();
-      xMap.setScalarName(xAxisName);
-      graphRef.setData(graph);
-      updateRange(dataLow, dataHigh);
-      display.enableAction();
+    public void setListener(PropertyChangeListener listener) {
+        this.listener = listener;
+    }
 
-      start_x = -aspect;
-      width = 2*aspect;
-      fillFrom = start_x;
-      fillTo = start_x + width;
-      scale = width/(dataHigh - dataLow);
-      offset = dataLow;
+    public void updateDisplay(FlatField fltFld) throws VisADException, RemoteException {
+        graph = build(fltFld, nbins);
 
-      clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f ,width, cbHght, fillFrom, fillTo, clrTable));
-   }
+        display.disableAction();
+        xMap.setScalarName(xAxisName);
+        graphRef.setData(graph);
+        updateRange(dataLow, dataHigh);
+        display.enableAction();
 
-   public void updateColorBar(float[][] clrTable) throws VisADException, RemoteException {
-      fixTable(clrTable);
-      this.clrTable = clrTable;
-      clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f ,width, cbHght, fillFrom, fillTo, clrTable));
-   }
+        start_x = -aspect;
+        width = 2 * aspect;
+        fillFrom = start_x;
+        fillTo = start_x + width;
+        scale = width / (dataHigh - dataLow);
+        offset = dataLow;
 
-   public void updateRange(double start, double end) throws VisADException, RemoteException {
-      clrLowRef.setData(new Real(xType, start));
-      clrHighRef.setData(new Real(xType, end));
-      lastLowRef.setData(new Real(xType, start));
-      lastHighRef.setData(new Real(xType, end));
-   }
-   
-   void computeColorBarDisplayXCoords(double start, double end) {
-      double loc_scale = 0;
-      double loc_offset= 0;
-      if ((start < dataLow) && (end > dataHigh)) {
-         start_x = -aspect;
-         width = 2*aspect;
-      }
-      else if ((start >= dataLow) && (end <= dataHigh)) {
-         loc_scale = scale;
-         loc_offset = offset;
-         start_x = (float) (-aspect + loc_scale * (start - dataLow));
-         float xb = (float) (-aspect + loc_scale * (end - dataLow));
-         width = xb - start_x;
-      }
-      else if ((start > dataLow) && (end > dataHigh)) {
-         loc_scale = 2*aspect/(end - dataLow);
-         loc_offset = offset;
-         
-         start_x = (float) (-aspect + loc_scale * (start - dataLow));
-         width = (float) (aspect - start_x);
-      }
-      else if ((start < dataLow) && (end <= dataHigh)) {
-         loc_scale = 2*aspect/(dataHigh - start);
-         loc_offset = start;
-         start_x = (float) -aspect;
-         width = (float) (loc_scale * (end - start));
-      }
-   }
+        clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f, width, cbHght, fillFrom, fillTo, clrTable));
+    }
 
-   public void updateColorBarForRange(double start, double end) throws VisADException, RemoteException {
-      updateRange(start, end);
-      computeColorBarDisplayXCoords(start, end);
-      clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f, width, cbHght, fillFrom, fillTo, clrTable));
-   }
+    public void updateColorBar(float[][] clrTable) throws VisADException, RemoteException {
+        fixTable(clrTable);
+        this.clrTable = clrTable;
+        clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f, width, cbHght, fillFrom, fillTo, clrTable));
+    }
 
-   void makeColorBar(double start, double end) throws VisADException, RemoteException {
-      computeColorBarDisplayXCoords(start, end);
-      clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f, width, cbHght, fillFrom, fillTo, clrTable));
-   }
+    public void updateRange(double start, double end) throws VisADException, RemoteException {
+        clrLowRef.setData(new Real(xType, start));
+        clrHighRef.setData(new Real(xType, end));
+        lastLowRef.setData(new Real(xType, start));
+        lastHighRef.setData(new Real(xType, end));
+    }
 
-   public Component makeDisplay(float[][] clrTable) throws VisADException, RemoteException {
-      fixTable(clrTable);
-      this.clrTable = clrTable;
-      display = new DisplayImplJ2D("histogram");
-      display.disableAction();
-      
-      MouseHelper mouseHelp = display.getDisplayRenderer().getMouseBehavior().getMouseHelper();
-      int[][][] funcMap =
-        {{{MouseHelper.DIRECT, MouseHelper.ZOOM}, {MouseHelper.TRANSLATE, MouseHelper.NONE}},
-         {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}},
-         {{MouseHelper.DIRECT, MouseHelper.DIRECT}, {MouseHelper.DIRECT, MouseHelper.DIRECT}}};
+    void computeColorBarDisplayXCoords(double start, double end) {
+        double loc_scale = 0;
+        double loc_offset = 0;
+        if ((start < dataLow) && (end > dataHigh)) {
+            start_x = -aspect;
+            width = 2 * aspect;
+        } else if ((start >= dataLow) && (end <= dataHigh)) {
+            loc_scale = scale;
+            loc_offset = offset;
+            start_x = (float) (-aspect + loc_scale * (start - dataLow));
+            float xb = (float) (-aspect + loc_scale * (end - dataLow));
+            width = xb - start_x;
+        } else if ((start > dataLow) && (end > dataHigh)) {
+            loc_scale = 2 * aspect / (end - dataLow);
+            loc_offset = offset;
 
-      mouseHelp.setFunctionMap(funcMap);
+            start_x = (float) (-aspect + loc_scale * (start - dataLow));
+            width = (float) (aspect - start_x);
+        } else if ((start < dataLow) && (end <= dataHigh)) {
+            loc_scale = 2 * aspect / (dataHigh - start);
+            loc_offset = start;
+            start_x = (float) -aspect;
+            width = (float) (loc_scale * (end - start));
+        }
+    }
 
-      display.addDisplayListener(this);
-      display.getProjectionControl().setAspectCartesian(new double[] {aspect, 1.0, 1.0});
-      GraphicsModeControl mode = display.getGraphicsModeControl();
-      mode.setScaleEnable(true);
-      display.setAlwaysAutoScale(true);
+    public void updateColorBarForRange(double start, double end) throws VisADException, RemoteException {
+        updateRange(start, end);
+        computeColorBarDisplayXCoords(start, end);
+        clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f, width, cbHght, fillFrom, fillTo, clrTable));
+    }
 
-      start_x = -aspect;
-      width = 2*aspect;
-      fillFrom = start_x;
-      fillTo = start_x + width;
-      scale = width/(dataHigh - dataLow);
-      offset = dataLow;
+    void makeColorBar(double start, double end) throws VisADException, RemoteException {
+        computeColorBarDisplayXCoords(start, end);
+        clrScaleCntrl.setShape(0, MyColorScale.createColorBar(start_x, 0.0f, width, cbHght, fillFrom, fillTo, clrTable));
+    }
 
-      graphRef = new DataReferenceImpl("histoRef");
-      graphRef.setData(graph);
+    public Component makeDisplay(float[][] clrTable) throws VisADException, RemoteException {
+        fixTable(clrTable);
+        this.clrTable = clrTable;
+        display = new DisplayImplJ2D("histogram");
+        display.disableAction();
+
+        MouseHelper mouseHelp = display.getDisplayRenderer().getMouseBehavior().getMouseHelper();
+        int[][][] funcMap =
+                {{{MouseHelper.DIRECT, MouseHelper.ZOOM}, {MouseHelper.TRANSLATE, MouseHelper.NONE}},
+                        {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}},
+                        {{MouseHelper.DIRECT, MouseHelper.DIRECT}, {MouseHelper.DIRECT, MouseHelper.DIRECT}}};
+
+        mouseHelp.setFunctionMap(funcMap);
+
+        display.addDisplayListener(this);
+        display.getProjectionControl().setAspectCartesian(new double[]{aspect, 1.0, 1.0});
+        GraphicsModeControl mode = display.getGraphicsModeControl();
+        mode.setScaleEnable(true);
+        display.setAlwaysAutoScale(true);
+
+        start_x = -aspect;
+        width = 2 * aspect;
+        fillFrom = start_x;
+        fillTo = start_x + width;
+        scale = width / (dataHigh - dataLow);
+        offset = dataLow;
+
+        graphRef = new DataReferenceImpl("histoRef");
+        graphRef.setData(graph);
 
 
-      RealTupleType type = (RealTupleType) ((SetType)graph.getType()).getDomain();
-      xType = (RealType) (type.getComponents())[0];
-      yType = (RealType) (type.getComponents())[1];
-      
-      xMap = new ScalarMap(xType, Display.XAxis);
-      ScalarMap yMap = new ScalarMap(yType, Display.YAxis);
+        RealTupleType type = (RealTupleType) ((SetType) graph.getType()).getDomain();
+        xType = (RealType) (type.getComponents())[0];
+        yType = (RealType) (type.getComponents())[1];
 
-      display.addMap(xMap);
-      display.addMap(yMap);
-      xMap.setScaleEnable(true);
-      yMap.setScaleEnable(false);
-      xMap.setScalarName(xAxisName);
- 
-      AxisScale xAxis = xMap.getAxisScale();
-      xAxis.setLabelSize(24);
-      xAxis.setLabelAllTicks(true);
+        xMap = new ScalarMap(xType, Display.XAxis);
+        ScalarMap yMap = new ScalarMap(yType, Display.YAxis);
 
-      display.addReference(graphRef, new ConstantMap[] { new ConstantMap(cbHght, Display.YAxisOffset)});
+        display.addMap(xMap);
+        display.addMap(yMap);
+        xMap.setScaleEnable(true);
+        yMap.setScaleEnable(false);
+        xMap.setScalarName(xAxisName);
 
-      clrLowRef = new DataReferenceImpl("clrLowRef");
-      clrHighRef = new DataReferenceImpl("clrHighRef");
-      lastLowRef = new DataReferenceImpl("lineLowRef");
-      lastHighRef = new DataReferenceImpl("lineHighRef");
+        AxisScale xAxis = xMap.getAxisScale();
+        xAxis.setLabelSize(24);
+        xAxis.setLabelAllTicks(true);
 
-      updateRange(dataLow, dataHigh);
+        display.addReference(graphRef, new ConstantMap[]{new ConstantMap(cbHght, Display.YAxisOffset)});
 
-      display.addReferences(new DirectManipulationRendererJ2D(), clrLowRef,
-             new ConstantMap[] {new ConstantMap(1.0f, Display.YAxis), new ConstantMap(7.0f, Display.PointSize), 
-             new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
+        clrLowRef = new DataReferenceImpl("clrLowRef");
+        clrHighRef = new DataReferenceImpl("clrHighRef");
+        lastLowRef = new DataReferenceImpl("lineLowRef");
+        lastHighRef = new DataReferenceImpl("lineHighRef");
 
-      display.addReferences(new DirectManipulationRendererJ2D(), clrHighRef,
-             new ConstantMap[] {new ConstantMap(1.0f, Display.YAxis), new ConstantMap(7.0f, Display.PointSize), 
-             new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
+        updateRange(dataLow, dataHigh);
 
-      lineLowRef = new DataReferenceImpl("lineLowRef");
-      lineHighRef = new DataReferenceImpl("lineHighRef");
-   
-      display.addReference(lineLowRef, 
-          new ConstantMap[] {new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
-      display.addReference(lineHighRef, 
-          new ConstantMap[] {new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
+        display.addReferences(new DirectManipulationRendererJ2D(), clrLowRef,
+                new ConstantMap[]{new ConstantMap(1.0f, Display.YAxis), new ConstantMap(7.0f, Display.PointSize),
+                        new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
 
-      RangeChangeListener listnr = new RangeChangeListener(clrLowRef, lineLowRef);
-      listnr.addReference(clrLowRef);
+        display.addReferences(new DirectManipulationRendererJ2D(), clrHighRef,
+                new ConstantMap[]{new ConstantMap(1.0f, Display.YAxis), new ConstantMap(7.0f, Display.PointSize),
+                        new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
 
-      listnr = new RangeChangeListener(clrHighRef, lineHighRef);
-      listnr.addReference(clrHighRef);
+        lineLowRef = new DataReferenceImpl("lineLowRef");
+        lineHighRef = new DataReferenceImpl("lineHighRef");
+
+        display.addReference(lineLowRef,
+                new ConstantMap[]{new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
+        display.addReference(lineHighRef,
+                new ConstantMap[]{new ConstantMap(1.0f, Display.Green), new ConstantMap(0.0f, Display.Blue), new ConstantMap(0.0f, Display.Red)});
+
+        RangeChangeListener listnr = new RangeChangeListener(clrLowRef, lineLowRef);
+        listnr.addReference(clrLowRef);
+
+        listnr = new RangeChangeListener(clrHighRef, lineHighRef);
+        listnr.addReference(clrHighRef);
 
 
-      RealType csType = RealType.getRealType("colorScale");
-      ScalarMap shapeMap = new ScalarMap(csType, Display.Shape);
-      display.addMap(shapeMap);
-      DataReferenceImpl csRef = new DataReferenceImpl("colorScale");
-      csRef.setData(new Integer1DSet(csType, 2));
-      clrScaleCntrl = (ShapeControl)shapeMap.getControl();
-      clrScaleCntrl.setShapeSet(new Integer1DSet(csType, 2));
-      clrScaleCntrl.setShape(0, MyColorScale.createColorBar(-aspect, 0.0f ,2*aspect, cbHght, clrTable));
-      display.addReference(csRef, new ConstantMap[] {new ConstantMap(-1.0f, Display.YAxisOffset)});
+        RealType csType = RealType.getRealType("colorScale");
+        ScalarMap shapeMap = new ScalarMap(csType, Display.Shape);
+        display.addMap(shapeMap);
+        DataReferenceImpl csRef = new DataReferenceImpl("colorScale");
+        csRef.setData(new Integer1DSet(csType, 2));
+        clrScaleCntrl = (ShapeControl) shapeMap.getControl();
+        clrScaleCntrl.setShapeSet(new Integer1DSet(csType, 2));
+        clrScaleCntrl.setShape(0, MyColorScale.createColorBar(-aspect, 0.0f, 2 * aspect, cbHght, clrTable));
+        display.addReference(csRef, new ConstantMap[]{new ConstantMap(-1.0f, Display.YAxisOffset)});
 
-      display.enableAction();
-      
-      return display.getComponent();
-   }
+        display.enableAction();
+
+        return display.getComponent();
+    }
 
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
-        }
-        else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
-        }
-        else if (e.getId() == DisplayEvent.MOUSE_RELEASED) {
-           double lo = ((Real)clrLowRef.getData()).getValue();
-           double hi = ((Real)clrHighRef.getData()).getValue();
-           double lastLow = ((Real)lastLowRef.getData()).getValue();
-           double lastHigh = ((Real)lastHighRef.getData()).getValue();
-           if ((lo != lastLow) || (hi != lastHigh)) {
-              if (listener != null) {
-                 PropertyChangeEvent evt = new PropertyChangeEvent(this, "range", null, new double[] {lo, hi});
-                 listener.propertyChange(evt);
-              }
-              makeColorBar(lo,hi);
-              lastLowRef.setData(clrLowRef.getData());
-              lastHighRef.setData(clrHighRef.getData());
-           }
+        } else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
+        } else if (e.getId() == DisplayEvent.MOUSE_RELEASED) {
+            double lo = ((Real) clrLowRef.getData()).getValue();
+            double hi = ((Real) clrHighRef.getData()).getValue();
+            double lastLow = ((Real) lastLowRef.getData()).getValue();
+            double lastHigh = ((Real) lastHighRef.getData()).getValue();
+            if ((lo != lastLow) || (hi != lastHigh)) {
+                if (listener != null) {
+                    PropertyChangeEvent evt = new PropertyChangeEvent(this, "range", null, new double[]{lo, hi});
+                    listener.propertyChange(evt);
+                }
+                makeColorBar(lo, hi);
+                lastLowRef.setData(clrLowRef.getData());
+                lastHighRef.setData(clrHighRef.getData());
+            }
         }
     }
 
     private void fixTable(float[][] clrTable) {
-        for (int k=0; k<clrTable[0].length; k++) {
-           if (clrTable[0][k] > 1.0f) clrTable[0][k] = 1.0f;
-           if (clrTable[1][k] > 1.0f) clrTable[1][k] = 1.0f;
-           if (clrTable[2][k] > 1.0f) clrTable[2][k] = 1.0f;
+        for (int k = 0; k < clrTable[0].length; k++) {
+            if (clrTable[0][k] > 1.0f) clrTable[0][k] = 1.0f;
+            if (clrTable[1][k] > 1.0f) clrTable[1][k] = 1.0f;
+            if (clrTable[2][k] > 1.0f) clrTable[2][k] = 1.0f;
         }
     }
 
-   Gridded2DSet makeSelectorLine(float xval) throws VisADException, RemoteException {
-      float[][] points = new float[][] {{xval, xval}, {countLow, countHi}};
-      Gridded2DSet line = new Gridded2DSet(new RealTupleType(xType, yType), points, 2);
-      return line;
-   }
-
-  public void destroy() {
-    try {
-      if (display != null) {
-         display.removeDisplayListener(this);
-         display.destroy();
-      }
+    Gridded2DSet makeSelectorLine(float xval) throws VisADException, RemoteException {
+        float[][] points = new float[][]{{xval, xval}, {countLow, countHi}};
+        Gridded2DSet line = new Gridded2DSet(new RealTupleType(xType, yType), points, 2);
+        return line;
     }
-    catch (Exception e) {
-      e.printStackTrace();
+
+    public void destroy() {
+        try {
+            if (display != null) {
+                display.removeDisplayListener(this);
+                display.destroy();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-  }
-  
-  public DisplayImpl getDisplay() {
-     return display;
-  }
 
-   private class RangeChangeListener extends CellImpl {
-      boolean init = true;
-      DataReferenceImpl valueRef;
-      DataReferenceImpl lineRef;
+    public DisplayImpl getDisplay() {
+        return display;
+    }
 
-      public RangeChangeListener(DataReferenceImpl valueRef, DataReferenceImpl lineRef) {
-         this.valueRef = valueRef;
-         this.lineRef = lineRef;
-      }
+    private class RangeChangeListener extends CellImpl {
+        boolean init = true;
+        DataReferenceImpl valueRef;
+        DataReferenceImpl lineRef;
 
-      public void doAction() throws VisADException, RemoteException {
-         if (init) {
-            float val = (float) ((Real)valueRef.getData()).getValue();
-            lineRef.setData(makeSelectorLine(val));
-         }
-         else {
-            init = true;
-         }
-      }
-   }
+        public RangeChangeListener(DataReferenceImpl valueRef, DataReferenceImpl lineRef) {
+            this.valueRef = valueRef;
+            this.lineRef = lineRef;
+        }
+
+        public void doAction() throws VisADException, RemoteException {
+            if (init) {
+                float val = (float) ((Real) valueRef.getData()).getValue();
+                lineRef.setData(makeSelectorLine(val));
+            } else {
+                init = true;
+            }
+        }
+    }
 
 }

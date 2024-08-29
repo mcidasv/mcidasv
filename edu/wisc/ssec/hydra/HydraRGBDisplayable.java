@@ -39,15 +39,15 @@ import visad.georef.EarthLocationTuple;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.ScalarMapSet;
 import ucar.unidata.util.Range;
-                                                                                                                                      
+
 import visad.RealType;
 import visad.ScalarMap;
 import visad.BadMappingException;
 import visad.VisADException;
 import visad.bom.ImageRendererJ3D;
 import visad.java3d.DefaultRendererJ3D;
+
 import java.rmi.RemoteException;
-                                                                                                                                      
 
 
 public class HydraRGBDisplayable extends DisplayableData {
@@ -84,60 +84,96 @@ public class HydraRGBDisplayable extends DisplayableData {
 
     private String colorPaletteName = null;
 
-    /** color ScalarMap */
+    /**
+     * color ScalarMap
+     */
     private volatile ScalarMap colorMap;
 
-    /** field index to Animation ScalarMap */
+    /**
+     * field index to Animation ScalarMap
+     */
     private volatile ScalarMap animMap;
 
-    /** control for ScalarMap */
+    /**
+     * control for ScalarMap
+     */
     private volatile BaseColorControl colorControl;
 
-    /** RealType for the ScalarMap */
+    /**
+     * RealType for the ScalarMap
+     */
     private volatile RealType rgbRealType;
 
-    /** RealType for the SelectRange ScalarMap */
+    /**
+     * RealType for the SelectRange ScalarMap
+     */
     private ScalarMap selectMap = null;
 
-    /** RealType for the Animation ScalarMap */
+    /**
+     * RealType for the Animation ScalarMap
+     */
     private RealType indexRealType;
 
-    /** Control for select range */
+    /**
+     * Control for select range
+     */
     private RangeControl selectControl;
 
-    /** RealType for the SelectRange ScalarMap */
+    /**
+     * RealType for the SelectRange ScalarMap
+     */
     private RealType selectRealType = null;
 
-    /** flag for whether alpha is used or not */
+    /**
+     * flag for whether alpha is used or not
+     */
     private boolean alphaflag;
 
-    /** local point size */
+    /**
+     * local point size
+     */
     private float myPointSize;
 
-    /** low range for colors */
+    /**
+     * low range for colors
+     */
     //private double lowRange = 315;           // low range for scalarmap
     private double lowRange = Double.NaN;           // low range for scalarmap
 
-    /** high range for colors */
+    /**
+     * high range for colors
+     */
     //private double highRange = 230;          // high range for scalarmap
     private double highRange = Double.NaN;          // high range for scalarmap
 
-    /** default polygonMode */
+    /**
+     * default polygonMode
+     */
     private int polygonMode = POLYGON_FILL;
 
-    /** default curvedSize */
+    /**
+     * default curvedSize
+     */
     private int curvedSize = 10;
 
-    /** low range for select */
+    /**
+     * low range for select
+     */
     private double lowSelectedRange = Double.NaN;   // low range for scalarmap
 
-    /** high range for select */
+    /**
+     * high range for select
+     */
     private double highSelectedRange = Double.NaN;  // high range for scalarmap
 
-    /** low range for select map */
+    /**
+     * low range for select map
+     */
     private double minSelect = Double.NaN;          // low range for scalarmap
 
-    /** high range for select map */
+    /**
+     * high range for select map
+     */
     private double maxSelect = Double.NaN;          // high range for scalarmap
 
     private boolean useDefaultRenderer = false;
@@ -149,20 +185,20 @@ public class HydraRGBDisplayable extends DisplayableData {
     float dataMax;
 
     EarthLocationTuple maxLoc;
-    
+
     public DataRenderer theRenderer;
-    
+
     /**
      * Constructs from a name for the Displayable and the type of the
      * RGB parameter.
      *
-     * @param name              The name for the displayable.
-     * @param rgbRealType       The type of the RGB parameter.  May be
-     *                          <code>null</code>.
-     * @param alphaflag         boolean - will use Display.RBGA if true
-     *                            otherwise only Display.RGB
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     * @param name        The name for the displayable.
+     * @param rgbRealType The type of the RGB parameter.  May be
+     *                    <code>null</code>.
+     * @param alphaflag   boolean - will use Display.RBGA if true
+     *                    otherwise only Display.RGB
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, boolean alphaflag)
             throws VisADException, RemoteException {
@@ -178,32 +214,32 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Constructs from a name for the Displayable and the type of the
      * RGB parameter.
      *
-     * @param name              The name for the displayable.
-     * @param rgbRealType       The type of the RGB parameter.  May be
-     *                          <code>null</code>.
-     * @param colorPalette      The initial colorPalette to use. May be
-     *                          <code>null</code> (Vis5D palette used
-     *                          as default).
-     * @param alphaflag         boolean - use Display.RBGA if true
-     * @param initRange         Range to use as initial or first min,max
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     * @param name         The name for the displayable.
+     * @param rgbRealType  The type of the RGB parameter.  May be
+     *                     <code>null</code>.
+     * @param colorPalette The initial colorPalette to use. May be
+     *                     <code>null</code> (Vis5D palette used
+     *                     as default).
+     * @param alphaflag    boolean - use Display.RBGA if true
+     * @param initRange    Range to use as initial or first min,max
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, String colorPaletteName, boolean alphaflag, Range initRange)
             throws VisADException, RemoteException {
 
         super(name);
-        
-        this.rgbRealType  = rgbRealType;
+
+        this.rgbRealType = rgbRealType;
         this.selectRealType = rgbRealType;
-        this.indexRealType  = indexRealType;
+        this.indexRealType = indexRealType;
         this.colorPalette = colorPalette;
         this.colorPaletteName = colorPaletteName;
-        this.alphaflag    = alphaflag;
+        this.alphaflag = alphaflag;
 
         if (initRange != null) {
-          this.lowRange = initRange.getMin();
-          this.highRange = initRange.getMax();
+            this.lowRange = initRange.getMin();
+            this.highRange = initRange.getMax();
         }
 
         if (rgbRealType != null) {
@@ -216,20 +252,21 @@ public class HydraRGBDisplayable extends DisplayableData {
         }
 
         if (indexRealType != null) {
-          //-setAnimationMap();
-          setSelectMap();
+            //-setAnimationMap();
+            setSelectMap();
         }
 
         if (selectRealType != null) {
-          //setSelectMaps();
+            //setSelectMaps();
         }
     }
-    
+
     /**
      * Does this object use the displayUnit (or the colorUnit) for its
      * display unit. The default is true.  This allows derived classes
      * to have this class use the colorUnit.
-     * @return  true if the display unit is the same as the color unit
+     *
+     * @return true if the display unit is the same as the color unit
      */
     protected boolean useDisplayUnitForColor() {
         return true;
@@ -239,60 +276,63 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Constructs from another instance.  The following attributes are set from
      * the other instance: color palette, the color RealType.
-     * @param that              The other instance.
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     *
+     * @param that The other instance.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     protected HydraRGBDisplayable(HydraRGBDisplayable that)
             throws VisADException, RemoteException {
 
         super(that);
         colorPalette = that.colorPalette;
-        rgbRealType  = that.rgbRealType;  // immutable object
-        alphaflag    = that.alphaflag;
+        rgbRealType = that.rgbRealType;  // immutable object
+        alphaflag = that.alphaflag;
 
         if (rgbRealType != null) {
             setColorMaps();
         }
     }
-    
+
     /**
      * Sets the RealType of the RGB parameter.
-     * @param realType          The RealType of the RGB parameter.  May
-     *                          not be <code>null</code>.
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     *
+     * @param realType The RealType of the RGB parameter.  May
+     *                 not be <code>null</code>.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public void setRGBRealType(RealType realType)
             throws RemoteException, VisADException {
-       setRGBRealType(realType, null);
+        setRGBRealType(realType, null);
     }
 
     /**
      * Sets the RealType of the RGB parameter.
-     * @param realType          The RealType of the RGB parameter.  May
-     *                          not be <code>null</code>.
-     * @param clrTbl            New color table to use. Can be null.
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     *
+     * @param realType The RealType of the RGB parameter.  May
+     *                 not be <code>null</code>.
+     * @param clrTbl   New color table to use. Can be null.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public void setRGBRealType(RealType realType, ucar.unidata.util.ColorTable clrTbl)
             throws RemoteException, VisADException {
 
-        if ( !realType.equals(rgbRealType)) {
+        if (!realType.equals(rgbRealType)) {
             if (clrTbl != null) {
-               colorPalette = (ucar.unidata.util.ColorTable.addAlpha(clrTbl.getTable()));
-               colorPaletteName = clrTbl.getName();
+                colorPalette = (ucar.unidata.util.ColorTable.addAlpha(clrTbl.getTable()));
+                colorPaletteName = clrTbl.getName();
             }
             RealType oldValue = rgbRealType;
             rgbRealType = realType;
             setColorMaps();
             if (useDisplayUnitForColor()) {
-                if ( !isUnitCompatible(rgbRealType, getDisplayUnit())) {
+                if (!isUnitCompatible(rgbRealType, getDisplayUnit())) {
                     setDisplayUnit(null);
                 }
             } else {
-                if ( !isUnitCompatible(rgbRealType, getColorUnit())) {
+                if (!isUnitCompatible(rgbRealType, getColorUnit())) {
                     setColorUnit(null);
                 }
             }
@@ -301,18 +341,19 @@ public class HydraRGBDisplayable extends DisplayableData {
     }
 
     public ScalarMap getColorMap() {
-      return colorMap;
+        return colorMap;
     }
 
     public ScalarMap getAnimationMap() {
-      return animMap;
+        return animMap;
     }
 
 
     /**
      * Returns the RealType of the RGB parameter.
-     * @return                  The RealType of the color parameter.  May
-     *                          be <code>null</code>.
+     *
+     * @return The RealType of the color parameter.  May
+     * be <code>null</code>.
      */
     public RealType getRGBRealType() {
         return rgbRealType;
@@ -320,8 +361,9 @@ public class HydraRGBDisplayable extends DisplayableData {
 
     /**
      * Returns the RealType of the SelectRange parameter.
-     * @return                  The RealType of the select range parameter.  May
-     *                          be <code>null</code>.
+     *
+     * @return The RealType of the select range parameter.  May
+     * be <code>null</code>.
      */
     public RealType getSelectRealType() {
         return selectRealType;
@@ -329,26 +371,23 @@ public class HydraRGBDisplayable extends DisplayableData {
 
     @Override
     protected DataRenderer getDataRenderer() throws VisADException {
-      if (useDefaultRenderer) {
-        theRenderer = new DefaultRendererJ3D();
-        return theRenderer;
-      }
-      else {
-        theRenderer = new ImageRendererJ3D();
-        return theRenderer;
-      }
+        if (useDefaultRenderer) {
+            theRenderer = new DefaultRendererJ3D();
+            return theRenderer;
+        } else {
+            theRenderer = new ImageRendererJ3D();
+            return theRenderer;
+        }
     }
-    
+
     /**
-     *
      * @param yesno
      */
     @Override
     public void setVisible(boolean yesno) {
         if (theRenderer != null) {
             theRenderer.toggle(yesno);
-        }
-        else {
+        } else {
             try {
                 super.setVisible(yesno);
             } catch (Exception e) {
@@ -358,11 +397,11 @@ public class HydraRGBDisplayable extends DisplayableData {
     }
 
     public void setDefaultRenderer() {
-      useDefaultRenderer = true;
+        useDefaultRenderer = true;
     }
 
     public void setImageRenderer() {
-      useDefaultRenderer = false;
+        useDefaultRenderer = false;
     }
 
     /**
@@ -373,18 +412,19 @@ public class HydraRGBDisplayable extends DisplayableData {
      * set of ScalarMap-s for the new Value.  Intermediate subclasses that
      * have their own ScalarMap-s should override this method and invoke
      * <code>super.setScalarMaps(ScalarMapSet)</code>.
-     * @param maps              The set of ScalarMap-s to be added.
-     * @throws BadMappingException      The RealType of the color parameter
-     *                          has not been set or its ScalarMap is alread in
-     *                          the set.
+     *
+     * @param maps The set of ScalarMap-s to be added.
+     * @throws BadMappingException The RealType of the color parameter
+     *                             has not been set or its ScalarMap is alread in
+     *                             the set.
      */
     protected void setScalarMaps(ScalarMapSet maps)
             throws BadMappingException {
 
         if (colorMap == null) {
             throw new BadMappingException(getClass().getName()
-                                          + ".setScalarMaps(ScalarMapSet): "
-                                          + "Color not yet set");
+                    + ".setScalarMaps(ScalarMapSet): "
+                    + "Color not yet set");
         }
 
         maps.add(colorMap);
@@ -425,7 +465,7 @@ public class HydraRGBDisplayable extends DisplayableData {
      * a fixed association of color table and range of values;
      * asigns null (doesn't have a name) for the name.
      *
-     * @param colorPalette     the color table or color-alpha table desired
+     * @param colorPalette the color table or color-alpha table desired
      * @throws VisADException  if a core VisAD failure occurs.
      * @throws RemoteException if a Java RMI failure occurs.
      */
@@ -451,15 +491,15 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Make a color palette representing this color and set it as the
      * color pallete.
      *
-     * @param  color  color to use
-     * @throws VisADException     VisAD failure.
-     * @throws RemoteException    Java RMI failure.
+     * @param color color to use
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public void setColor(Color color) throws RemoteException, VisADException {
-        int       len   = 5;
+        int len = 5;
         float[][] table = new float[(alphaflag == true)
-                                    ? 4
-                                    : 3][len];
+                ? 4
+                : 3][len];
         for (int m = 0; m < len; m++) {
             table[0][m] = color.getRed() / 255.f;    // Red amount  
             table[1][m] = color.getGreen() / 255.f;  // Green
@@ -502,12 +542,11 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Set the upper and lower limit of the range values associated
      * with a color table.
      *
-     * @param low    the minimun value
-     * @param hi     the maximum value
-     * @deprecated   use setRangeForColor
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param low the minimun value
+     * @param hi  the maximum value
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
+     * @deprecated use setRangeForColor
      */
     public void setRange(double low, double hi)
             throws VisADException, RemoteException {
@@ -518,20 +557,19 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Set the upper and lower limit of the range values associated
      * with a color table.
-     *
+     * <p>
      * Matches method name in Contour2DDisplayable
      *
-     * @param low               The minimum value of the parameter matched to
-     *                          the low end of the color table.
-     * @param hi                The maximum value of the parameter matched to
-     *                          the high end of the color table.
-     *
-     * @exception VisADException   VisAD failure.
-     * @exception RemoteException  Java RMI failure.
+     * @param low The minimum value of the parameter matched to
+     *            the low end of the color table.
+     * @param hi  The maximum value of the parameter matched to
+     *            the high end of the color table.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public void setRangeForColor(double low, double hi)
             throws VisADException, RemoteException {
-        lowRange  = low;
+        lowRange = low;
         highRange = hi;
         if ((colorMap != null) && hasRange()) {
             colorMap.setRange(low, hi);
@@ -542,7 +580,7 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Get the color range
      *
      * @return an array of the low and high values for the range
-     * @deprecated  use #getRangeForColor()
+     * @deprecated use #getRangeForColor()
      */
     public double[] getRangeforColor() {
         return getRangeForColor();
@@ -554,18 +592,17 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @return an array of the low and high values for the range
      */
     public double[] getRangeForColor() {
-        return new double[]{ lowRange, highRange };
+        return new double[]{lowRange, highRange};
     }
 
     /**
      * Apply the correct unit (either the displayUnit or the colorUnit)
      * to the scalar map
      *
-     * @param colorMap   ScalarMap to apply to
-     * @param rgbRealType  RealType for default Unit
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param colorMap    ScalarMap to apply to
+     * @param rgbRealType RealType for default Unit
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     private void applyUnit(ScalarMap colorMap, RealType rgbRealType)
             throws VisADException, RemoteException {
@@ -581,9 +618,8 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Set the units for the displayed range
      *
      * @param unit Unit for display
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setDisplayUnit(Unit unit)
             throws VisADException, RemoteException {
@@ -602,18 +638,17 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Set the units for the displayed range
      *
      * @param unit Unit for display
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setColorUnit(Unit unit)
             throws VisADException, RemoteException {
-        if ( !useDisplayUnitForColor()) {
+        if (!useDisplayUnitForColor()) {
             //Make sure this unit is ok
             checkUnit(rgbRealType, unit);
         }
         super.setColorUnit(unit);
-        if ( !useDisplayUnitForColor()) {
+        if (!useDisplayUnitForColor()) {
             applyUnit(colorMap, rgbRealType);
         }
     }
@@ -626,17 +661,16 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @return true if range has been set
      */
     public boolean hasRange() {
-        return ( !Double.isNaN(lowRange) && !Double.isNaN(highRange));
+        return (!Double.isNaN(lowRange) && !Double.isNaN(highRange));
     }
 
 
     /**
      * Sets the size of points in this Displayable.
      *
-     * @param   pointSize     Size of points (2 = normal)
-     *
-     * @throws VisADException     VisAD failure.
-     * @throws RemoteException    Java RMI failure.
+     * @param pointSize Size of points (2 = normal)
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public void setPointSize(float pointSize)
             throws VisADException, RemoteException {
@@ -656,7 +690,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Gets the point size associated with this LineDrawing
      *
-     * @return  point size
+     * @return point size
      */
     public float getPointSize() {
         return myPointSize;
@@ -665,40 +699,39 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Set the type of polygon display that should be used
      *
-     * @param polygonMode  polygon mode
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param polygonMode polygon mode
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setPolygonMode(int polygonMode)
             throws VisADException, RemoteException {
         this.polygonMode = polygonMode;
         addConstantMap(new ConstantMap(convertToVisADPolygonMode(polygonMode),
-                                       Display.PolygonMode));
+                Display.PolygonMode));
     }
 
     /**
      * Converts an RGBDisplayable Polygon mode to the appropriate
      * (or default) VisAD mode
      *
-     * @param myMode  polygon mode
-     * @return  Java3D mode
+     * @param myMode polygon mode
+     * @return Java3D mode
      */
     private int convertToVisADPolygonMode(int myMode) {
         if (visad.util.Util.canDoJava3D()) {
             switch (myMode) {
 
-              case POLYGON_FILL :
-                  return visad.java3d.DisplayImplJ3D.POLYGON_FILL;
+                case POLYGON_FILL:
+                    return visad.java3d.DisplayImplJ3D.POLYGON_FILL;
 
-              case POLYGON_LINE :
-                  return visad.java3d.DisplayImplJ3D.POLYGON_LINE;
+                case POLYGON_LINE:
+                    return visad.java3d.DisplayImplJ3D.POLYGON_LINE;
 
-              case POLYGON_POINT :
-                  return visad.java3d.DisplayImplJ3D.POLYGON_POINT;
+                case POLYGON_POINT:
+                    return visad.java3d.DisplayImplJ3D.POLYGON_POINT;
 
-              default :
-                  return visad.java3d.DisplayImplJ3D.POLYGON_FILL;
+                default:
+                    return visad.java3d.DisplayImplJ3D.POLYGON_FILL;
             }
         } else {
             return 0;
@@ -718,9 +751,8 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Set the curved size for textured displays
      *
      * @param curvedSize size to use (> 0)
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setCurvedSize(int curvedSize)
             throws VisADException, RemoteException {
@@ -731,11 +763,10 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Create the ConstantMap for the texture curve size
      *
-     * @param curvedSize   size for texture curve
-     * @return  ConstantMap
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param curvedSize size for texture curve
+     * @return ConstantMap
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     protected ConstantMap makeCurvedSizeMap(int curvedSize)
             throws VisADException, RemoteException {
@@ -744,6 +775,7 @@ public class HydraRGBDisplayable extends DisplayableData {
 
     /**
      * Return the size of a curved texture
+     *
      * @return curved size
      */
     public int getCurvedSize() {
@@ -753,14 +785,14 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * creates the ScalarMap for color and ColorControl for this Displayable.
      *
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     private void setColorMaps() throws RemoteException, VisADException {
 
         // ScalarMap is either mapping to Display.RGB (color only)
         // or to Display.RGBA color plus transparency.
-        if ( !alphaflag) {
+        if (!alphaflag) {
             colorMap = new ScalarMap(rgbRealType, Display.RGB);
         } else {
             colorMap = new ScalarMap(rgbRealType, Display.RGBA);
@@ -769,7 +801,7 @@ public class HydraRGBDisplayable extends DisplayableData {
         applyUnit(colorMap, rgbRealType);
 
         if (hasRange()) {
-           colorMap.setRange(lowRange, highRange);
+            colorMap.setRange(lowRange, highRange);
         }
 
         colorMap.addScalarMapListener(new ScalarMapListener() {
@@ -796,7 +828,7 @@ public class HydraRGBDisplayable extends DisplayableData {
             public void mapChanged(ScalarMapEvent event)
                     throws RemoteException, VisADException {
                 if ((event.getId() == event.AUTO_SCALE) && hasRange()) {
-                  double[] rng = colorMap.getRange();
+                    double[] rng = colorMap.getRange();
                 }
             }
         });
@@ -806,39 +838,40 @@ public class HydraRGBDisplayable extends DisplayableData {
     }
 
     private void setAnimationMap() throws RemoteException, VisADException {
-      animMap = new ScalarMap(indexRealType, Display.Animation);
-      ScalarMapSet maps = getScalarMapSet();
-      maps.add(animMap);
-      setScalarMapSet(maps);
+        animMap = new ScalarMap(indexRealType, Display.Animation);
+        ScalarMapSet maps = getScalarMapSet();
+        maps.add(animMap);
+        setScalarMapSet(maps);
     }
 
     private void setSelectMap() throws RemoteException, VisADException {
-      animMap = new ScalarMap(indexRealType, Display.SelectValue);
-      ScalarMapSet maps = getScalarMapSet();
-      maps.add(animMap);
-      setScalarMapSet(maps);
+        animMap = new ScalarMap(indexRealType, Display.SelectValue);
+        ScalarMapSet maps = getScalarMapSet();
+        maps.add(animMap);
+        setScalarMapSet(maps);
     }
 
     /**
      * Sets the RealType of the select parameter.
-     * @param realType          The RealType of the RGB parameter.  May
-     *                          not be <code>null</code>.
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     *
+     * @param realType The RealType of the RGB parameter.  May
+     *                 not be <code>null</code>.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     protected void setSelectRealType(RealType realType)
             throws RemoteException, VisADException {
 
-        if ( !realType.equals(selectRealType)) {
+        if (!realType.equals(selectRealType)) {
             RealType oldValue = selectRealType;
             selectRealType = realType;
             setSelectMaps();
             if (useDisplayUnitForColor()) {
-                if ( !isUnitCompatible(selectRealType, getDisplayUnit())) {
+                if (!isUnitCompatible(selectRealType, getDisplayUnit())) {
                     setDisplayUnit(null);
                 }
             } else {
-                if ( !isUnitCompatible(selectRealType, getColorUnit())) {
+                if (!isUnitCompatible(selectRealType, getColorUnit())) {
                     setColorUnit(null);
                 }
             }
@@ -852,26 +885,25 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @return true if range has been set
      */
     public boolean hasSelectedRange() {
-        return ( !Double.isNaN(lowSelectedRange)
-                 && !Double.isNaN(highSelectedRange));
+        return (!Double.isNaN(lowSelectedRange)
+                && !Double.isNaN(highSelectedRange));
     }
 
     /**
      * Set selected range with the range for select
      *
-     * @param low  low select value
-     * @param hi   hi select value
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param low low select value
+     * @param hi  hi select value
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setSelectedRange(double low, double hi)
             throws VisADException, RemoteException {
 
-        lowSelectedRange  = low;
+        lowSelectedRange = low;
         highSelectedRange = hi;
         if ((selectControl != null) && hasSelectedRange()) {
-            selectControl.setRange(new double[]{ low, hi });
+            selectControl.setRange(new double[]{low, hi});
         }
 
     }
@@ -880,11 +912,10 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Set the upper and lower limit of the range values associated
      * with a color table.
      *
-     * @param low    the minimun value
-     * @param hi     the maximum value
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param low the minimun value
+     * @param hi  the maximum value
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setRangeForSelect(double low, double hi)
             throws VisADException, RemoteException {
@@ -902,14 +933,14 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @return true if it has
      */
     private boolean hasSelectMinMax() {
-        return ( !Double.isNaN(minSelect) && !Double.isNaN(maxSelect));
+        return (!Double.isNaN(minSelect) && !Double.isNaN(maxSelect));
     }
 
     /**
      * creates the ScalarMap for SelectRange and control for this Displayable.
      *
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     private void setSelectMaps() throws RemoteException, VisADException {
 
@@ -934,8 +965,8 @@ public class HydraRGBDisplayable extends DisplayableData {
                         || (id == event.CONTROL_REPLACED)) {
                     selectControl = (RangeControl) selectMap.getControl();
                     if (hasSelectedRange()) {
-                        selectControl.setRange(new double[]{ lowSelectedRange,
-                                                             highSelectedRange });
+                        selectControl.setRange(new double[]{lowSelectedRange,
+                                highSelectedRange});
                     }
                 }
             }

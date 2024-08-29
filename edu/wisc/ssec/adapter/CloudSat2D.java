@@ -30,6 +30,7 @@
 package edu.wisc.ssec.adapter;
 
 import visad.RealType;
+
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -40,86 +41,85 @@ import java.io.InputStreamReader;
 
 public class CloudSat2D extends ProfileAlongTrack {
 
-      public CloudSat2D() {
-      }
+    public CloudSat2D() {
+    }
 
-      public CloudSat2D(MultiDimensionReader reader, HashMap metadata) {
+    public CloudSat2D(MultiDimensionReader reader, HashMap metadata) {
         super(reader, metadata);
-      }
+    }
 
-      public float[] getVertBinAltitude() throws Exception {
+    public float[] getVertBinAltitude() throws Exception {
         String propertyFileName = null;
         float[] altitude = new float[VertLen];
         try {
-        propertyFileName = (String) metadata.get(ancillary_file_name);
-        InputStream ios = getClass().getResourceAsStream(propertyFileName);
-        BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
+            propertyFileName = (String) metadata.get(ancillary_file_name);
+            InputStream ios = getClass().getResourceAsStream(propertyFileName);
+            BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
 
-        int line_cnt = 0;
-        while (true) {
-          String line = ancillaryReader.readLine();
-          if (line == null) break;
-          if (line.startsWith("!")) continue;
-          StringTokenizer strTok = new StringTokenizer(line);
-          String[] tokens = new String[strTok.countTokens()];
-          int tokCnt = 0;
-          while (strTok.hasMoreElements()) {
-            tokens[tokCnt++] = strTok.nextToken();
-          }
-          altitude[line_cnt] = (Float.valueOf(tokens[0]))*1000f;
-          line_cnt++;
-        }
-        ios.close();
-        }
-        catch (Exception e) {
-          System.out.println("fail on ancillary file read: "+propertyFileName);
+            int line_cnt = 0;
+            while (true) {
+                String line = ancillaryReader.readLine();
+                if (line == null) break;
+                if (line.startsWith("!")) continue;
+                StringTokenizer strTok = new StringTokenizer(line);
+                String[] tokens = new String[strTok.countTokens()];
+                int tokCnt = 0;
+                while (strTok.hasMoreElements()) {
+                    tokens[tokCnt++] = strTok.nextToken();
+                }
+                altitude[line_cnt] = (Float.valueOf(tokens[0])) * 1000f;
+                line_cnt++;
+            }
+            ios.close();
+        } catch (Exception e) {
+            System.out.println("fail on ancillary file read: " + propertyFileName);
         }
         return altitude;
-      }
+    }
 
-      public float[] getTrackTimes() throws Exception {
+    public float[] getTrackTimes() throws Exception {
         return null;
-      }
+    }
 
-      public RealType makeVertLocType() throws Exception {
+    public RealType makeVertLocType() throws Exception {
         return RealType.Altitude;
-      }
+    }
 
-      public RealType makeTrackTimeType() throws Exception {
+    public RealType makeTrackTimeType() throws Exception {
         return null;
-      }
+    }
 
-      public float[] getTrackLongitude() throws Exception {
-        int[] start = new int[] {0};
-        int[] count = new int[] {TrackLen};
-        int[] stride = new int[] {1};
-        float[] vals = reader.getFloatArray((String)metadata.get(longitude_name), start, count, stride);
+    public float[] getTrackLongitude() throws Exception {
+        int[] start = new int[]{0};
+        int[] count = new int[]{TrackLen};
+        int[] stride = new int[]{1};
+        float[] vals = reader.getFloatArray((String) metadata.get(longitude_name), start, count, stride);
         return vals;
-      }
+    }
 
-      public float[] getTrackLatitude() throws Exception {
-        int[] start = new int[] {0};
-        int[] count = new int[] {TrackLen};
-        int[] stride = new int[] {1};
-        float[] vals = reader.getFloatArray((String)metadata.get(latitude_name), start, count, stride);
+    public float[] getTrackLatitude() throws Exception {
+        int[] start = new int[]{0};
+        int[] count = new int[]{TrackLen};
+        int[] stride = new int[]{1};
+        float[] vals = reader.getFloatArray((String) metadata.get(latitude_name), start, count, stride);
         return vals;
-      }
+    }
 
-      public HashMap getDefaultSubset() {
+    public HashMap getDefaultSubset() {
         HashMap subset = ProfileAlongTrack.getEmptySubset();
 
-        double[] coords = (double[])subset.get("TrackDim");
+        double[] coords = (double[]) subset.get("TrackDim");
         coords[0] = 1000.0;
         coords[1] = (TrackLen - 1000.0) - 1;
         coords[2] = 5.0;
         subset.put("TrackDim", coords);
 
-        coords = (double[])subset.get("VertDim");
+        coords = (double[]) subset.get("VertDim");
         coords[0] = 10.0;
         coords[1] = (VertLen) - 1;
         coords[2] = 2.0;
         subset.put("VertDim", coords);
         return subset;
-      }
+    }
 
 }

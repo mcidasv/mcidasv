@@ -58,68 +58,107 @@ import ucar.visad.display.ProfileLine;
 public class MyCrossSectionSelector extends SelectorDisplayable {
 
 
-    /** position property */
+    /**
+     * position property
+     */
     public static final String PROPERTY_STARTPOINT =
-        "SelectorDisplay.startpoint";
+            "SelectorDisplay.startpoint";
 
-    /** position property */
+    /**
+     * position property
+     */
     public static final String PROPERTY_ENDPOINT = "SelectorDisplay.endpoint";
 
-    /** position property */
+    /**
+     * position property
+     */
     public static final String PROPERTY_MIDPOINT = "SelectorDisplay.midpoint";
 
 
-
-    /** Real for the number 2 */
+    /**
+     * Real for the number 2
+     */
     private final static Real TWO = new Real(2.0);
 
-    /** the profile line */
+    /**
+     * the profile line
+     */
     private ProfileLine line;
 
 
-    /** flag for initialization */
+    /**
+     * flag for initialization
+     */
     private boolean beenInitialized = false;
 
-    /** start point selector point */
+    /**
+     * start point selector point
+     */
     private SelectorPoint startSp;
 
-    /** end point selector point */
+    /**
+     * end point selector point
+     */
     private SelectorPoint endSp;
 
-    /** mid point selector point */
+    /**
+     * mid point selector point
+     */
     private SelectorPoint midSp;
 
-    /** start point location */
+    /**
+     * start point location
+     */
     private RealTuple startPoint;
 
-    /** end point location */
+    /**
+     * end point location
+     */
     private RealTuple endPoint;
 
-    /** mid point location */
+    /**
+     * mid point location
+     */
     private RealTuple midPoint;
 
-    /** The tuple type */
+    /**
+     * The tuple type
+     */
     private RealTupleType tupleType;
 
-    /** RealTuple for zero */
+    /**
+     * RealTuple for zero
+     */
     private RealTuple ZERO2D;
 
-    /** base tuple */
+    /**
+     * base tuple
+     */
     private RealTuple ZERO3D;
 
-    /** flag for whether the selector is moving */
+    /**
+     * flag for whether the selector is moving
+     */
     private boolean amMoving = false;
 
-    /** start point id */
+    /**
+     * start point id
+     */
     public static final int POINT_START = 0;
 
-    /** end point id */
+    /**
+     * end point id
+     */
     public static final int POINT_END = 1;
 
-    /** mid point id */
+    /**
+     * mid point id
+     */
     public static final int POINT_MID = 2;
 
-    /** Should we interpolate the line */
+    /**
+     * Should we interpolate the line
+     */
     private boolean interpolateLinePoints = false;
 
     private int numInterpLinePts = 100;
@@ -128,35 +167,33 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Construct a CrossSectionSelector with default.  Line will run
      * from (-1, 0) to (1,0) in (X,Y) space.
      *
-     * @throws VisADException   VisAD error
-     * @throws RemoteException  remote error
-     *
+     * @throws VisADException  VisAD error
+     * @throws RemoteException remote error
      */
     public MyCrossSectionSelector(Color color, int numInterpLinePoints) throws VisADException, RemoteException {
-        this(color, 1.0, new double[] {0.0, 0.0, 0.0}, numInterpLinePoints);
+        this(color, 1.0, new double[]{0.0, 0.0, 0.0}, numInterpLinePoints);
     }
 
     public MyCrossSectionSelector(Color color, double scaleFactor, double[] trans, int numInterpLinePoints) throws VisADException, RemoteException {
         this(new RealTuple(RealTupleType.SpatialCartesian2DTuple,
-                           new double[] { (-0.72 - trans[0])*scaleFactor,
-                                          (0.0 - trans[1])*scaleFactor }), new RealTuple(
-                                          RealTupleType.SpatialCartesian2DTuple,
-                                          new double[] { (0.72 - trans[0])*scaleFactor,
-                (0.0 - trans[1])*scaleFactor}), color, numInterpLinePoints);
+                new double[]{(-0.72 - trans[0]) * scaleFactor,
+                        (0.0 - trans[1]) * scaleFactor}), new RealTuple(
+                RealTupleType.SpatialCartesian2DTuple,
+                new double[]{(0.72 - trans[0]) * scaleFactor,
+                        (0.0 - trans[1]) * scaleFactor}), color, numInterpLinePoints);
     }
 
     public MyCrossSectionSelector() throws VisADException, RemoteException {
-      this(Color.white, 100);
+        this(Color.white, 100);
     }
 
     /**
      * Construct a CrossSectionSelector along the points specified.
      *
-     * @param   startPoint    XY position of starting point
-     * @param   endPoint      XY position of ending point
-     *
-     * @throws VisADException   VisAD error
-     * @throws RemoteException  remote error
+     * @param startPoint XY position of starting point
+     * @param endPoint   XY position of ending point
+     * @throws VisADException  VisAD error
+     * @throws RemoteException remote error
      */
     public MyCrossSectionSelector(RealTuple startPoint, RealTuple endPoint)
             throws VisADException, RemoteException {
@@ -167,51 +204,50 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Construct a CrossSectionSelector along the points specified in the
      * Color specified.
      *
-     * @param   startPoint    XY position of starting point
-     * @param   endPoint      XY position of ending point
-     * @param   color    color for all components of this composite
-     *
-     * @throws VisADException   VisAD error
-     * @throws RemoteException  remote error
+     * @param startPoint XY position of starting point
+     * @param endPoint   XY position of ending point
+     * @param color      color for all components of this composite
+     * @throws VisADException  VisAD error
+     * @throws RemoteException remote error
      */
     public MyCrossSectionSelector(RealTuple startPoint, RealTuple endPoint,
-                                Color color, int numInterpLinePts)
+                                  Color color, int numInterpLinePts)
             throws VisADException, RemoteException {
 
-        this.tupleType  = (RealTupleType) startPoint.getType();
+        this.tupleType = (RealTupleType) startPoint.getType();
         this.startPoint = startPoint;
-        this.endPoint   = endPoint;
+        this.endPoint = endPoint;
         this.numInterpLinePts = numInterpLinePts;
-        midPoint        = calculateMidpoint();
+        midPoint = calculateMidpoint();
 
-        startSp         = makeSelectorPoint(POINT_START, "Start", startPoint);
-        endSp           = makeSelectorPoint(POINT_END, "End", endPoint);
+        startSp = makeSelectorPoint(POINT_START, "Start", startPoint);
+        endSp = makeSelectorPoint(POINT_END, "End", endPoint);
 
-        midSp           = makeSelectorPoint(POINT_MID, "Middle", midPoint);
+        midSp = makeSelectorPoint(POINT_MID, "Middle", midPoint);
 
-        line            = makeLine();
+        line = makeLine();
         ZERO2D = new RealTuple(RealTupleType.SpatialEarth2DTuple,
-                               new double[] { 0.0,
-                0.0 });
+                new double[]{0.0,
+                        0.0});
         ZERO3D = new RealTuple(RealTupleType.SpatialEarth3DTuple,
-                               new double[] { 0.0,
-                0.0, 0.0 });
+                new double[]{0.0,
+                        0.0, 0.0});
         setColor(color);
         beenInitialized = true;
     }
 
-  public MyCrossSectionSelector(RealTuple startPoint, RealTuple endPoint,
+    public MyCrossSectionSelector(RealTuple startPoint, RealTuple endPoint,
                                   Color color) throws VisADException, RemoteException {
-    this(startPoint, endPoint, color, 100);
-  }
+        this(startPoint, endPoint, color, 100);
+    }
 
 
-   public void resize(double baseScale, double scale) throws VisADException, RemoteException {
-      double baseSize = startSp.getScale();
-      startSp.setScale((float) ((baseScale/scale)*baseSize));
-      endSp.setScale((float) ((baseScale/scale)*baseSize));
-      midSp.setScale((float) ((baseScale/scale)*baseSize));
-   }
+    public void resize(double baseScale, double scale) throws VisADException, RemoteException {
+        double baseSize = startSp.getScale();
+        startSp.setScale((float) ((baseScale / scale) * baseSize));
+        endSp.setScale((float) ((baseScale / scale) * baseSize));
+        midSp.setScale((float) ((baseScale / scale) * baseSize));
+    }
 
 
     /**
@@ -247,7 +283,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Remove the start point
      *
      * @throws RemoteException On badness
-     * @throws VisADException On badness
+     * @throws VisADException  On badness
      */
     public void dontShowStartPoint() throws VisADException, RemoteException {
         removeDisplayable(startSp);
@@ -257,7 +293,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Remove the mid point
      *
      * @throws RemoteException On badness
-     * @throws VisADException On badness
+     * @throws VisADException  On badness
      */
     public void dontShowMiddlePoint() throws VisADException, RemoteException {
         removeDisplayable(midSp);
@@ -267,7 +303,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Remove the end point
      *
      * @throws RemoteException On badness
-     * @throws VisADException On badness
+     * @throws VisADException  On badness
      */
     public void dontShowEndPoint() throws VisADException, RemoteException {
         removeDisplayable(endSp);
@@ -277,10 +313,9 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Construct a CrossSectionSelector from another instance
      *
-     * @param   that   other instance
-     *
-     * @throws VisADException   VisAD error
-     * @throws RemoteException  remote error
+     * @param that other instance
+     * @throws VisADException  VisAD error
+     * @throws RemoteException remote error
      */
     public MyCrossSectionSelector(MyCrossSectionSelector that)
             throws VisADException, RemoteException {
@@ -290,10 +325,10 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
 
     /**
      * Make the line
-     * @return  the line.
      *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @return the line.
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     private ProfileLine makeLine() throws VisADException, RemoteException {
         line = new ProfileLine("CrossSectionLine");
@@ -305,22 +340,22 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set the data depicting the line
      *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     private void setLineData() throws VisADException, RemoteException {
-        RealTuple startRt   = startSp.getPoint();
-        RealTuple endRt     = endSp.getPoint();
+        RealTuple startRt = startSp.getPoint();
+        RealTuple endRt = endSp.getPoint();
 
-        int       numPoints = (interpolateLinePoints
-                               ? numInterpLinePts 
-                               : 2);
-        int       length    = startRt.getDimension();
-        float[][] values    = new float[length][numPoints];
+        int numPoints = (interpolateLinePoints
+                ? numInterpLinePts
+                : 2);
+        int length = startRt.getDimension();
+        float[][] values = new float[length][numPoints];
         for (int i = 0; i < length; i++) {
             float start = (float) ((Real) startRt.getComponent(i)).getValue();
-            float end   = (float) ((Real) endRt.getComponent(i)).getValue();
-            values[i][0]             = start;
+            float end = (float) ((Real) endRt.getComponent(i)).getValue();
+            values[i][0] = start;
             values[i][numPoints - 1] = end;
             for (int j = 1; j < numPoints - 1; j++) {
                 double percent = j / (double) numPoints;
@@ -335,7 +370,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
         } else {
             lineData = new Gridded3DSet(tupleType, values, numPoints);
         }
-        if ( !lineData.equals(line.getData())) {
+        if (!lineData.equals(line.getData())) {
             line.setData(lineData);
         }
     }
@@ -343,9 +378,10 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set the size of the selector points.  The middle point is
      * always just a little bigger than the end points
-     * @param  size  point size in pixels
-     * @throws VisADException   VisAD error
-     * @throws RemoteException  remote error
+     *
+     * @param size point size in pixels
+     * @throws VisADException  VisAD error
+     * @throws RemoteException remote error
      */
     public void setPointSize(float size)
             throws VisADException, RemoteException {
@@ -356,9 +392,10 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set the color of the selector points.  The middle point is
      * always just a little darker than the end points
-     * @param  newColor  color for components
-     * @throws VisADException   VisAD error
-     * @throws RemoteException  remote error
+     *
+     * @param newColor color for components
+     * @throws VisADException  VisAD error
+     * @throws RemoteException remote error
      */
     public void setColor(Color newColor)
             throws VisADException, RemoteException {
@@ -369,8 +406,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set whether the marker should automatically resize as the
      * display is zoomed.
-     * @param yesorno  true to automatically resize the marker.
      *
+     * @param yesorno true to automatically resize the marker.
      * @throws RemoteException
      * @throws VisADException
      */
@@ -385,9 +422,10 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set the location along the Z Axis that you want to have
      * the line and points displayed
-     * @param  zValue  position along Z axis where components should be located
-     * @throws VisADException   VisAD error
-     * @throws RemoteException  remote error
+     *
+     * @param zValue position along Z axis where components should be located
+     * @throws VisADException  VisAD error
+     * @throws RemoteException remote error
      */
     public void setZValue(double zValue)
             throws VisADException, RemoteException {
@@ -402,10 +440,9 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Override base class method
      *
      * @param value Value
-     * @param type Type
-     *
+     * @param type  Type
      * @throws RemoteException On badness
-     * @throws VisADException On badness
+     * @throws VisADException  On badness
      */
     public void setConstantPosition(double value, visad.DisplayRealType type)
             throws VisADException, RemoteException {
@@ -413,13 +450,12 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     }
 
 
-
     /**
      * Calculate the midpoint position from the endpoints
-     * @return  mid point position
      *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @return mid point position
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     private RealTuple calculateMidpoint()
             throws VisADException, RemoteException {
@@ -429,12 +465,11 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
 
     /**
      * set whether the start point can be moved or not by user; true=yes
+     *
+     * @param value true to be fixed
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      * @deprecated Should use setStartPointFixed
-     *
-     * @param value  true to be fixed
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
      */
     public void setStartPtFixed(boolean value)
             throws VisADException, RemoteException {
@@ -444,10 +479,9 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * set whether the start point can be moved or not by user; true=yes
      *
-     * @param value  true to be fixed
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param value true to be fixed
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setStartPointFixed(boolean value)
             throws VisADException, RemoteException {
@@ -457,10 +491,9 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * set whether the end point can be moved or not by user; true=yes
      *
-     * @param value  true to be fixed
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param value true to be fixed
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setEndPointFixed(boolean value)
             throws VisADException, RemoteException {
@@ -471,10 +504,9 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set whether the start point is visible; true=yes
      *
-     * @param value  true to be fixed
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param value true to be fixed
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setStartPointVisible(boolean value)
             throws VisADException, RemoteException {
@@ -484,10 +516,9 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set whether the end point is visible; true=yes
      *
-     * @param value  true for visible
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param value true for visible
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setEndPointVisible(boolean value)
             throws VisADException, RemoteException {
@@ -497,10 +528,9 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set whether the mid point is visible; true=yes
      *
-     * @param value  true for visible
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @param value true for visible
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     public void setMidPointVisible(boolean value)
             throws VisADException, RemoteException {
@@ -511,8 +541,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set the position of the starting point of the line.
      *
-     * @param point  XY position as a RealTuple
-     *
+     * @param point XY position as a RealTuple
      * @throws VisADException  bad point
      * @throws RemoteException Java RMI error
      */
@@ -523,7 +552,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
 
     /**
      * Get the position of the starting point of the line
-     * @return  XY position as a RealTuple
+     *
+     * @return XY position as a RealTuple
      */
     public RealTuple getStartPoint() {
         return startPoint;
@@ -533,16 +563,15 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Set the position of the ending point of the line;
      * using current start and end points (ie "does nothing" -for persistence)
      *
-     * @param point  XY position as a RealTuple
-     *
+     * @param point XY position as a RealTuple
      * @throws VisADException  bad point
      * @throws RemoteException Java RMI error
      */
     public void setMidPoint(RealTuple point)
             throws VisADException, RemoteException {
         startPoint = startSp.getPoint();
-        endPoint   = endSp.getPoint();
-        midPoint   = calculateMidpoint();
+        endPoint = endSp.getPoint();
+        midPoint = calculateMidpoint();
         midSp.setPoint(midPoint);
     }
 
@@ -550,7 +579,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Get the position of the middle point of the line.
      *
-     * @return  XY position as a RealTuple
+     * @return XY position as a RealTuple
      */
     public RealTuple getMidPoint() {
         return midSp.getPoint();
@@ -559,8 +588,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Set the position of the ending point of the line.
      *
-     * @param point  XY position as a RealTuple
-     *
+     * @param point XY position as a RealTuple
      * @throws VisADException  bad point
      * @throws RemoteException Java RMI error
      */
@@ -572,7 +600,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Get the position of the ending point of the line.
      *
-     * @return  XY position as a RealTuple
+     * @return XY position as a RealTuple
      */
     public RealTuple getEndPoint() {
         return endPoint;
@@ -584,9 +612,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      *
      * @param which either CrossSectionSelector.POINT_START or POINT_END
      * @param point point position
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   bad point
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  bad point
      */
     public void setPoint(int which, RealTuple point)
             throws VisADException, RemoteException {
@@ -602,9 +629,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Set the position of the ending point of the line.
      *
      * @param position an array of size 2 that holds the start and end points
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   bad point
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  bad point
      */
     public void setPosition(RealTuple[] position)
             throws VisADException, RemoteException {
@@ -615,24 +641,21 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * Get the position of the ending point of the line.
      *
      * @return an array of size 2 that holds the start and end points
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   bad point
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  bad point
      */
     public RealTuple[] getPosition() throws VisADException, RemoteException {
-        return new RealTuple[] { getStartPoint(), getEndPoint() };
+        return new RealTuple[]{getStartPoint(), getEndPoint()};
     }
-
 
 
     /**
      * Set the position of the ending point of the line.
      *
-     * @param startPosition   starting position for the selector line
-     * @param endPosition     ending position for the selector line
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   bad point
+     * @param startPosition starting position for the selector line
+     * @param endPosition   ending position for the selector line
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  bad point
      */
     public void setPosition(RealTuple startPosition, RealTuple endPosition)
             throws VisADException, RemoteException {
@@ -644,13 +667,12 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Create a selector point for this cross section selector
      *
-     * @param which     which point to create (start, end, middle)
-     * @param name      name of the point
-     * @param initialPoint  initial location
+     * @param which        which point to create (start, end, middle)
+     * @param name         name of the point
+     * @param initialPoint initial location
      * @return
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     private SelectorPoint makeSelectorPoint(final int which, String name,
                                             RealTuple initialPoint)
@@ -661,7 +683,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
             marker = ShapeUtility.setSize(marker, .03f);
         } else if (which == POINT_END) {
             marker = SelectorPoint.reduce(
-                ShapeUtility.makeShape(ShapeUtility.CUBE));
+                    ShapeUtility.makeShape(ShapeUtility.CUBE));
         } else {
             marker = ShapeUtility.makeShape(ShapeUtility.FILLED_TRIANGLE);
             marker = ShapeUtility.setSize(marker, .03f);
@@ -669,8 +691,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
 
         SelectorPoint point = new SelectorPoint(name, marker, initialPoint);
         if (which == POINT_START) {
-            point.addConstantMaps(new ConstantMap[] {
-                new ConstantMap(2.0f, Display.LineWidth) });
+            point.addConstantMaps(new ConstantMap[]{
+                    new ConstantMap(2.0f, Display.LineWidth)});
 
         }
         point.setManipulable(true);
@@ -678,10 +700,11 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
         addDisplayable(point);
         point.addAction(new ActionImpl(name + " Point Selector Listener") {
             boolean first = true;
+
             public void doAction() throws VisADException, RemoteException {
                 if (first) {
-                  first = false;
-                  return;
+                    first = false;
+                    return;
                 }
                 if (amMoving) {
                     return;
@@ -706,14 +729,13 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Called when the endpoint moves
      *
-     *
      * @param which Which end point
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     private synchronized void moveEndpoint(int which)
             throws VisADException, RemoteException {
-        if ( !beenInitialized) {
+        if (!beenInitialized) {
             return;
         }
         if ((startPoint.equals(startSp.getPoint())
@@ -721,11 +743,11 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
             return;
         }
         boolean wasMoving = amMoving;
-        amMoving   = true;
+        amMoving = true;
 
         startPoint = startSp.getPoint();
-        endPoint   = endSp.getPoint();
-        midPoint   = calculateMidpoint();
+        endPoint = endSp.getPoint();
+        midPoint = calculateMidpoint();
         midSp.setPoint(midPoint);
         positionHasChanged();
         /*
@@ -742,12 +764,12 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Called when the midpoint moves
      *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     private synchronized void moveMidpoint()
             throws VisADException, RemoteException {
-        if ( !beenInitialized) {
+        if (!beenInitialized) {
             return;
         }
         if ((midPoint.equals(midSp.getPoint()))) {
@@ -760,8 +782,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
         }
 
         startPoint = (RealTuple) startSp.getPoint().add(delta);
-        endPoint   = (RealTuple) endSp.getPoint().add(delta);
-        midPoint   = midSp.getPoint();
+        endPoint = (RealTuple) endSp.getPoint().add(delta);
+        midPoint = midSp.getPoint();
 
         boolean wasMoving = amMoving;
         amMoving = true;
@@ -778,8 +800,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Called when the position has changed
      *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   problem creating VisAD object
+     * @throws RemoteException Java RMI error
+     * @throws VisADException  problem creating VisAD object
      */
     protected void positionHasChanged()
             throws VisADException, RemoteException {
@@ -791,9 +813,10 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Returns a clone of this instance suitable for another VisAD display.
      * Underlying data objects are not cloned.
-     * @return                  A semi-deep clone of this instance.
-     * @throws VisADException   VisAD failure.
-     * @throws RemoteException  Java RMI failure.
+     *
+     * @return A semi-deep clone of this instance.
+     * @throws VisADException  VisAD failure.
+     * @throws RemoteException Java RMI failure.
      */
     public Displayable cloneForDisplay()
             throws VisADException, RemoteException {
@@ -803,8 +826,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Adds a listener for data changes.
      *
-     * @param action              The listener for changes to the underlying
-     *                            data.
+     * @param action The listener for changes to the underlying
+     *               data.
      */
     public void addStartPropertyChangeListener(
             PropertyChangeListener action) {
@@ -814,8 +837,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Removes a listener for data changes.
      *
-     * @param action              The listener for changes to the underlying
-     *                            data.
+     * @param action The listener for changes to the underlying
+     *               data.
      */
     public void removeStartPropertyChangeListener(
             PropertyChangeListener action) {
@@ -826,8 +849,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Adds a listener for data changes.
      *
-     * @param action              The listener for changes to the underlying
-     *                            data.
+     * @param action The listener for changes to the underlying
+     *               data.
      */
     public void addEndPropertyChangeListener(PropertyChangeListener action) {
         super.addPropertyChangeListener(PROPERTY_ENDPOINT, action);
@@ -836,8 +859,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Removes a listener for data changes.
      *
-     * @param action              The listener for changes to the underlying
-     *                            data.
+     * @param action The listener for changes to the underlying
+     *               data.
      */
     public void removeEndPropertyChangeListener(
             PropertyChangeListener action) {
@@ -845,12 +868,11 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     }
 
 
-
     /**
      * Adds a listener for data changes.
      *
-     * @param action              The listener for changes to the underlying
-     *                            data.
+     * @param action The listener for changes to the underlying
+     *               data.
      */
     public void addMidPropertyChangeListener(PropertyChangeListener action) {
         super.addPropertyChangeListener(PROPERTY_MIDPOINT, action);
@@ -859,8 +881,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     /**
      * Removes a listener for data changes.
      *
-     * @param action              The listener for changes to the underlying
-     *                            data.
+     * @param action The listener for changes to the underlying
+     *               data.
      */
     public void removeMidPropertyChangeListener(
             PropertyChangeListener action) {
@@ -872,9 +894,8 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
      * SHould we interpolate the line points
      *
      * @param value interpolate
-     *
      * @throws RemoteException on badness
-     * @throws VisADException on badness
+     * @throws VisADException  on badness
      */
     public void setInterpolateLinePoints(boolean value)
             throws VisADException, RemoteException {
@@ -885,7 +906,7 @@ public class MyCrossSectionSelector extends SelectorDisplayable {
     }
 
     public void setNumInterpLinePoints(int num) {
-      numInterpLinePts = num;
+        numInterpLinePts = num;
     }
 
 

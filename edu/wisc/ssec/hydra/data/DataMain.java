@@ -35,6 +35,7 @@ import edu.wisc.ssec.hydra.HyperToBroadBand;
 import visad.FlatField;
 
 import java.io.File;
+
 import edu.wisc.ssec.adapter.MultiSpectralData;
 import visad.RealTuple;
 
@@ -87,7 +88,7 @@ public class DataMain {
 
             // Create a DataSource specific to the file(s). For adjoining, time consecutive granules, specify multiple
             // files in the list. Uses filename pattern matching internally to determine the correct DataSource.
-            DataSource dataSource = dataSourceFactory.createDataSource(new File[] {new File(filePath)});
+            DataSource dataSource = dataSourceFactory.createDataSource(new File[]{new File(filePath)});
             System.out.println(dataSource);
 
             // The list of DataChoices, or data fields, the DataSource can adapt.
@@ -120,7 +121,7 @@ public class DataMain {
 
 
                 // Get the Earth coordinates from the swath or grid coordinates:
-                RealTuple latlon = msd.getEarthCoordinates(new float[] {20, 20});
+                RealTuple latlon = msd.getEarthCoordinates(new float[]{20, 20});
                 FlatField spectrum = msd.getSpectrum(latlon);
 
 

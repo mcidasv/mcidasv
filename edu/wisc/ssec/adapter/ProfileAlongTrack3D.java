@@ -28,7 +28,9 @@
  */
 
 package edu.wisc.ssec.adapter;
+
 import java.util.HashMap;
+
 import visad.Set;
 import visad.RealTupleType;
 import visad.RealType;
@@ -37,118 +39,117 @@ import visad.Gridded3DSet;
 
 public class ProfileAlongTrack3D extends MultiDimensionAdapter {
 
-  public ProfileAlongTrack adapter2D;
-  MultiDimensionReader reader;
-  float[] vertLocs;
-  RealTupleType domain3D;
+    public ProfileAlongTrack adapter2D;
+    MultiDimensionReader reader;
+    float[] vertLocs;
+    RealTupleType domain3D;
 
 
-  public ProfileAlongTrack3D(ProfileAlongTrack adapter2D) {
-    super(adapter2D.getReader(), (HashMap) adapter2D.getMetadata());
-    this.adapter2D = adapter2D;
-    this.reader = adapter2D.getReader();
-    rangeProcessor = adapter2D.getRangeProcessor();
-    try {
-      init();
-    } catch (Exception e) {
-      System.out.println("init failed");
-    }
-  }
-
-  void init() throws Exception {
-    vertLocs = adapter2D.getVertBinAltitude();
-    domain3D = RealTupleType.SpatialEarth3DTuple;
-    rangeType = adapter2D.getRangeType();
-  }
-
-
-  public Set makeDomain(Object subset) throws Exception {
-    double[] vert_coords = (double[]) ((HashMap)subset).get(ProfileAlongTrack.vertDim_name);
-    double[] track_coords = (double[])  ((HashMap)subset).get(ProfileAlongTrack.trackDim_name);
-
-    int vert_idx = adapter2D.getVertIdx();
-    int track_idx = adapter2D.getTrackIdx();
-
-    float[] lonValues = null;
-    float[] latValues = null;
-
-    String lonArrayName = (String) ((HashMap)getMetadata()).get(ProfileAlongTrack.longitude_name);
-    String latArrayName = (String) ((HashMap)getMetadata()).get(ProfileAlongTrack.latitude_name);
-
-    int[] start = null;
-    int[] count = null;
-    int[] stride = null;
-
-    int rank = (reader.getDimensionLengths(lonArrayName)).length;
-
-    if (rank == 2) {
-      start = new int[2];
-      count = new int[2];
-      stride = new int[2];
-
-      start[vert_idx] = (int) 0;
-      count[vert_idx] = (int) 1;
-      stride[vert_idx] = (int) vert_coords[2];
-
-      start[track_idx] = (int) track_coords[0];
-      count[track_idx] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
-      stride[track_idx] = (int) track_coords[2];
-    }
-    else if (rank == 1) {
-      start = new int[1];
-      count = new int[1];
-      stride = new int[1];
-      start[0] = (int) track_coords[0];
-      count[0] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
-      stride[0] = (int) track_coords[2];
+    public ProfileAlongTrack3D(ProfileAlongTrack adapter2D) {
+        super(adapter2D.getReader(), (HashMap) adapter2D.getMetadata());
+        this.adapter2D = adapter2D;
+        this.reader = adapter2D.getReader();
+        rangeProcessor = adapter2D.getRangeProcessor();
+        try {
+            init();
+        } catch (Exception e) {
+            System.out.println("init failed");
+        }
     }
 
-    if (reader.getArrayType(lonArrayName) == Float.TYPE ) {
-      lonValues = reader.getFloatArray(lonArrayName, start, count, stride);
-      latValues = reader.getFloatArray(latArrayName, start, count, stride);
+    void init() throws Exception {
+        vertLocs = adapter2D.getVertBinAltitude();
+        domain3D = RealTupleType.SpatialEarth3DTuple;
+        rangeType = adapter2D.getRangeType();
     }
 
-    int vert_len = (int) ((vert_coords[1] - vert_coords[0])/vert_coords[2] + 1f);
-    int track_len = count[track_idx];
 
-    float[] altitudes = new float[vert_len];
-    for (int k=0; k<vert_len;k++) {
-      altitudes[k] = vertLocs[(int)vert_coords[0] + k*((int)vert_coords[2])];
+    public Set makeDomain(Object subset) throws Exception {
+        double[] vert_coords = (double[]) ((HashMap) subset).get(ProfileAlongTrack.vertDim_name);
+        double[] track_coords = (double[]) ((HashMap) subset).get(ProfileAlongTrack.trackDim_name);
+
+        int vert_idx = adapter2D.getVertIdx();
+        int track_idx = adapter2D.getTrackIdx();
+
+        float[] lonValues = null;
+        float[] latValues = null;
+
+        String lonArrayName = (String) ((HashMap) getMetadata()).get(ProfileAlongTrack.longitude_name);
+        String latArrayName = (String) ((HashMap) getMetadata()).get(ProfileAlongTrack.latitude_name);
+
+        int[] start = null;
+        int[] count = null;
+        int[] stride = null;
+
+        int rank = (reader.getDimensionLengths(lonArrayName)).length;
+
+        if (rank == 2) {
+            start = new int[2];
+            count = new int[2];
+            stride = new int[2];
+
+            start[vert_idx] = (int) 0;
+            count[vert_idx] = (int) 1;
+            stride[vert_idx] = (int) vert_coords[2];
+
+            start[track_idx] = (int) track_coords[0];
+            count[track_idx] = (int) ((track_coords[1] - track_coords[0]) / track_coords[2] + 1f);
+            stride[track_idx] = (int) track_coords[2];
+        } else if (rank == 1) {
+            start = new int[1];
+            count = new int[1];
+            stride = new int[1];
+            start[0] = (int) track_coords[0];
+            count[0] = (int) ((track_coords[1] - track_coords[0]) / track_coords[2] + 1f);
+            stride[0] = (int) track_coords[2];
+        }
+
+        if (reader.getArrayType(lonArrayName) == Float.TYPE) {
+            lonValues = reader.getFloatArray(lonArrayName, start, count, stride);
+            latValues = reader.getFloatArray(latArrayName, start, count, stride);
+        }
+
+        int vert_len = (int) ((vert_coords[1] - vert_coords[0]) / vert_coords[2] + 1f);
+        int track_len = count[track_idx];
+
+        float[] altitudes = new float[vert_len];
+        for (int k = 0; k < vert_len; k++) {
+            altitudes[k] = vertLocs[(int) vert_coords[0] + k * ((int) vert_coords[2])];
+        }
+
+        float[][] alt_lon_lat = new float[3][vert_len * track_len];
+        oneD_threeDfill(lonValues, latValues, track_len, altitudes, vert_len, alt_lon_lat);
+
+        return new Gridded3DSet(domain3D, alt_lon_lat, vert_len, track_len);
     }
 
-    float[][] alt_lon_lat = new float[3][vert_len*track_len];
-    oneD_threeDfill(lonValues, latValues, track_len, altitudes, vert_len, alt_lon_lat);
 
-    return new Gridded3DSet(domain3D, alt_lon_lat, vert_len, track_len);
-  }
-  
+    public HashMap getDefaultSubset() {
+        return adapter2D.getDefaultSubset();
+    }
 
-  public HashMap getDefaultSubset() {
-    return adapter2D.getDefaultSubset();
-  }
+    public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon) {
+        return adapter2D.getSubsetFromLonLatRect(subset, minLat, maxLat, minLon, maxLon);
+    }
 
-  public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon) {
-    return adapter2D.getSubsetFromLonLatRect(subset, minLat, maxLat, minLon, maxLon);
-  }
+    public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
+        return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon);
+    }
 
-  public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
-    return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon);
-  }
+    public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon, int xStride, int yStride, int zStride) {
+        return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon, xStride, yStride, zStride);
+    }
 
-  public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon, int xStride, int yStride, int zStride) {
-    return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon, xStride, yStride, zStride);
-  }
-
-  public static void oneD_threeDfill(float[] b, float[] c, int leny, float[] a, int lenx, float[][] abc) {
-    int cnt = 0;
-    for (int i=0; i<leny; i++) {
-      for (int j=0; j<lenx; j++) {
-        abc[0][cnt] = b[i];
-        abc[1][cnt] = c[i];
-        abc[2][cnt] = a[j];
-        cnt++;
-       }
-     }
-   }
+    public static void oneD_threeDfill(float[] b, float[] c, int leny, float[] a, int lenx, float[][] abc) {
+        int cnt = 0;
+        for (int i = 0; i < leny; i++) {
+            for (int j = 0; j < lenx; j++) {
+                abc[0][cnt] = b[i];
+                abc[1][cnt] = c[i];
+                abc[2][cnt] = a[j];
+                cnt++;
+            }
+        }
+    }
 
 }

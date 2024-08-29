@@ -34,122 +34,120 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class DataSourceFactory {
-   
-   /* DataSources currently created by the application */
-   private static final ArrayList<DataSource> dataSourceList = new ArrayList<>();
-   
-   /* DataSources supported by this Factory */
-   private final ArrayList<String> dataSourceClassList;
-   
-   public DataSourceFactory() {
-      dataSourceClassList = new ArrayList();
-      
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.ABIDirectory");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.AHIDirectory");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.GEOSDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.VIIRSDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.CMIP_MultiBand_DataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.NOAA_SNPP_DataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.NOAA_VIIRS_Products_DataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.AIRSv1_SoundingDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.AIRSv2_SoundingDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.IASI_SoundingDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.CrIS_SoundingDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.NASA_CrIS_DataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.MultiDimensionDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.MultiSpectralDataSource");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_SVM");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_SVI");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_DNB");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_FSN");
-      dataSourceClassList.add("edu.wisc.ssec.hydra.data.CLAVRX_VIIRS_DataSource");
-   }
-   
-   public DataSource createDataSource(File[] files) throws Exception {
+
+    /* DataSources currently created by the application */
+    private static final ArrayList<DataSource> dataSourceList = new ArrayList<>();
+
+    /* DataSources supported by this Factory */
+    private final ArrayList<String> dataSourceClassList;
+
+    public DataSourceFactory() {
+        dataSourceClassList = new ArrayList();
+
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.ABIDirectory");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.AHIDirectory");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.GEOSDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.VIIRSDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.CMIP_MultiBand_DataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.NOAA_SNPP_DataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.NOAA_VIIRS_Products_DataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.AIRSv1_SoundingDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.AIRSv2_SoundingDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.IASI_SoundingDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.CrIS_SoundingDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.NASA_CrIS_DataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.MultiDimensionDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.MultiSpectralDataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_SVM");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_SVI");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_DNB");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_FSN");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.CLAVRX_VIIRS_DataSource");
+    }
+
+    public DataSource createDataSource(File[] files) throws Exception {
         DataSource dataSource = null;
-        
+
         ArrayList<File> fal = new ArrayList();
-        for (int k=0; k<files.length; k++) {
-          if (files[k] == null) {
-             throw new Exception("files can't be null");
-          }
-          fal.add(files[k]);
-        }
-        
-        Iterator<String> iter = dataSourceClassList.iterator();
-        while (iter.hasNext()) {
-           Class ds = Class.forName(iter.next());
-           try {
-              dataSource = (DataSource) ds.getConstructor(new Class[] {ArrayList.class}).newInstance(fal);
-              break;
-           }
-           catch (Exception e) {
-           }
-        }
-        if (dataSource == null) {
-           throw new Exception("No suitable DataSource fournd for: "+files[0]);
+        for (int k = 0; k < files.length; k++) {
+            if (files[k] == null) {
+                throw new Exception("files can't be null");
+            }
+            fal.add(files[k]);
         }
 
-        synchronized(dataSourceList) {
-           dataSourceList.add(dataSource);
+        Iterator<String> iter = dataSourceClassList.iterator();
+        while (iter.hasNext()) {
+            Class ds = Class.forName(iter.next());
+            try {
+                dataSource = (DataSource) ds.getConstructor(new Class[]{ArrayList.class}).newInstance(fal);
+                break;
+            } catch (Exception e) {
+            }
         }
-        return dataSource;      
-   }
-   
-   public DataSource createDataSource(File dir) throws Exception {
+        if (dataSource == null) {
+            throw new Exception("No suitable DataSource fournd for: " + files[0]);
+        }
+
+        synchronized (dataSourceList) {
+            dataSourceList.add(dataSource);
+        }
+        return dataSource;
+    }
+
+    public DataSource createDataSource(File dir) throws Exception {
         Iterator<String> iter = dataSourceClassList.iterator();
         DataSource dataSource = null;
         while (iter.hasNext()) {
-           Class ds = Class.forName(iter.next());
-           try {
-              dataSource = (DataSource) ds.getConstructor(new Class[] {File.class}).newInstance(dir);
-              break;
-           }
-           catch (Exception e) {
-           }
+            Class ds = Class.forName(iter.next());
+            try {
+                dataSource = (DataSource) ds.getConstructor(new Class[]{File.class}).newInstance(dir);
+                break;
+            } catch (Exception e) {
+            }
         }
         if (dataSource == null) {
-           throw new Exception("No suitable DataSource fournd for: "+dir);
+            throw new Exception("No suitable DataSource fournd for: " + dir);
         }
-        synchronized(dataSourceList) {
-           dataSourceList.add(dataSource);
+        synchronized (dataSourceList) {
+            dataSourceList.add(dataSource);
         }
-        return dataSource;      
-   }
-   
-   public static void removeDataSource(DataSource dataSource) {
-      synchronized(dataSourceList) {
-         dataSourceList.remove(dataSource);
-      }
-   }
-   
-   public static ArrayList<DataSource> getDataSourcesByDescription(String description) {
-      ArrayList<DataSource> list = new ArrayList();
-      
-      synchronized(dataSourceList) {
-         Iterator iter = dataSourceList.iterator();
-         while (iter.hasNext()) {
-            DataSource ds = (DataSource) iter.next();
-            if (ds.getDescription().equals(description)) {
-               list.add(ds);
+        return dataSource;
+    }
+
+    public static void removeDataSource(DataSource dataSource) {
+        synchronized (dataSourceList) {
+            dataSourceList.remove(dataSource);
+        }
+    }
+
+    public static ArrayList<DataSource> getDataSourcesByDescription(String description) {
+        ArrayList<DataSource> list = new ArrayList();
+
+        synchronized (dataSourceList) {
+            Iterator iter = dataSourceList.iterator();
+            while (iter.hasNext()) {
+                DataSource ds = (DataSource) iter.next();
+                if (ds.getDescription().equals(description)) {
+                    list.add(ds);
+                }
             }
-         }
-      }
-      
-      return list;
-   }
-   
-   public static ArrayList<DataSource> getDataSources() {
-      ArrayList<DataSource> list = new ArrayList();
-     
-      synchronized(dataSourceList) {
-         Iterator iter = dataSourceList.iterator();
-         while (iter.hasNext()) {
-            list.add((DataSource)iter.next());
-         }
-      }
-      
-      return list;
-   }
-   
+        }
+
+        return list;
+    }
+
+    public static ArrayList<DataSource> getDataSources() {
+        ArrayList<DataSource> list = new ArrayList();
+
+        synchronized (dataSourceList) {
+            Iterator iter = dataSourceList.iterator();
+            while (iter.hasNext()) {
+                list.add((DataSource) iter.next());
+            }
+        }
+
+        return list;
+    }
+
 }

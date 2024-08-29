@@ -30,9 +30,9 @@
 /*
  *    GeoTools - The Open Source Java GIS Toolkit
  *    http://geotools.org
- * 
+ *
  *    (C) 2001-2008, Open Source Geospatial Foundation (OSGeo)
- *   
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -49,6 +49,7 @@
 package edu.wisc.ssec.adapter;
 
 // J2SE dependencies
+
 import java.awt.geom.Point2D;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -64,22 +65,22 @@ import java.util.TimeZone;
  * <TABLE border='0'><TR><TD valign="top">
  * &nbsp;<BR>
  * <UL>
- *   <LI>La longitude (en degrÃ©es) de l'observateur;</LI>
- *   <LI>La latitude (en degrÃ©es) de l'observateur;</LI>
- *   <LI>La date et heure en heure universelle (GMT).</LI>
+ * <LI>La longitude (en degrÃ©es) de l'observateur;</LI>
+ * <LI>La latitude (en degrÃ©es) de l'observateur;</LI>
+ * <LI>La date et heure en heure universelle (GMT).</LI>
  * </UL>
- *
+ * <p>
  * La position du soleil calculÃ©e en sortie comprend les valeurs suivantes:
  *
  * <UL>
- *   <LI>L'azimuth du soleil (en degrÃ©s dans le sens des aiguilles d'une montre depuis le nord);</LI>
- *   <LI>L'Ã©lÃ©vation du soleil (en degrÃ©s par rapport a l'horizon).</LI>
+ * <LI>L'azimuth du soleil (en degrÃ©s dans le sens des aiguilles d'une montre depuis le nord);</LI>
+ * <LI>L'Ã©lÃ©vation du soleil (en degrÃ©s par rapport a l'horizon).</LI>
  * </UL>
  * </TD>
  *
  * <TD><img src="doc-files/CelestialSphere.png"></TD>
  * </TR></TABLE>
- *
+ * <p>
  * Les algorithmes utilisÃ©s dans cette classe sont des adaptations des algorithmes
  * en javascript Ã©crit par le "National Oceanic and Atmospheric Administration,
  * Surface Radiation Research Branch". L'application original est le
@@ -92,19 +93,17 @@ import java.util.TimeZone;
  * from -1000 to 3000. Outside of this range, results will be given, but the
  * potential for error is higher.
  *
- * @since 2.1
- *
- *
- * @source $URL$
- * @version $Id$
  * @author Remi Eve
  * @author Martin Desruisseaux (IRD)
+ * @version $Id$
+ * @source $URL$
+ * @since 2.1
  */
 public class SunRelativePosition {
     /**
      * Number of milliseconds in a day.
      */
-    private static final int DAY_MILLIS = 24*60*60*1000;
+    private static final int DAY_MILLIS = 24 * 60 * 60 * 1000;
 
     /**
      * Valeur affectÃ©e lorsque un resultat n'est pas calculable du
@@ -152,7 +151,7 @@ public class SunRelativePosition {
      * Ã©coulÃ©es depuis le 1er janvier 1970.
      */
     private long noonTime;
-    
+
     /**
      * Azimuth du soleil, en degrÃ©s dans le sens des
      * aiguilles d'une montre depuis le nord.
@@ -188,14 +187,14 @@ public class SunRelativePosition {
      * to add to the geometric mean longitude in order to get the "true" longitude
      * of the sun.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Equation of center in degrees.
      */
     private static double sunEquationOfCenter(final double t) {
         final double m = Math.toRadians(sunGeometricMeanAnomaly(t));
-        return Math.sin(1*m) * (1.914602 - t*(0.004817 + 0.000014*t)) +
-               Math.sin(2*m) * (0.019993 - t*(0.000101             )) +
-               Math.sin(3*m) * (0.000289);
+        return Math.sin(1 * m) * (1.914602 - t * (0.004817 + 0.000014 * t)) +
+                Math.sin(2 * m) * (0.019993 - t * (0.000101)) +
+                Math.sin(3 * m) * (0.000289);
     }
 
     /**
@@ -204,13 +203,13 @@ public class SunRelativePosition {
      * 90Â° at the summer solstice, 180Â° at the automne equinox
      * and 270Â° at the winter solstice.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Geometric Mean Longitude of the Sun in degrees,
-     *         in the range 0Â° (inclusive) to 360Â° (exclusive).
+     * in the range 0Â° (inclusive) to 360Â° (exclusive).
      */
     private static double sunGeometricMeanLongitude(final double t) {
-        double L0 = 280.46646 + t*(36000.76983 + 0.0003032*t);
-        L0 = L0 - 360*Math.floor(L0/360);
+        double L0 = 280.46646 + t * (36000.76983 + 0.0003032 * t);
+        L0 = L0 - 360 * Math.floor(L0 / 360);
         return L0;
     }
 
@@ -219,7 +218,7 @@ public class SunRelativePosition {
      * longitude plus a correction factor ("equation of center" for the
      * sun).
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Sun's true longitude in degrees.
      */
     private static double sunTrueLongitude(final double t) {
@@ -229,7 +228,7 @@ public class SunRelativePosition {
     /**
      * Calculate the apparent longitude of the sun.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Sun's apparent longitude in degrees.
      */
     private static double sunApparentLongitude(final double t) {
@@ -240,17 +239,17 @@ public class SunRelativePosition {
     /**
      * Calculate the Geometric Mean Anomaly of the Sun.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Geometric Mean Anomaly of the Sun in degrees.
      */
     private static double sunGeometricMeanAnomaly(final double t) {
-        return 357.52911 + t * (35999.05029 - 0.0001537*t);
+        return 357.52911 + t * (35999.05029 - 0.0001537 * t);
     }
 
     /**
      * Calculate the true anamoly of the sun.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Sun's true anamoly in degrees.
      */
     private static double sunTrueAnomaly(final double t) {
@@ -263,46 +262,46 @@ public class SunRelativePosition {
      * length and <var>b</var> is the semi-minor axis length.   Value
      * is 0 for a circular orbit.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return The unitless eccentricity.
      */
     private static double eccentricityEarthOrbit(final double t) {
-        return 0.016708634 - t*(0.000042037 + 0.0000001267*t);
+        return 0.016708634 - t * (0.000042037 + 0.0000001267 * t);
     }
 
     /**
      * Calculate the distance to the sun in Astronomical Units (AU).
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Sun radius vector in AUs.
      */
     private static double sunRadiusVector(final double t) {
         final double v = Math.toRadians(sunTrueAnomaly(t));
         final double e = eccentricityEarthOrbit(t);
-        return (1.000001018 * (1 - e*e)) / (1 + e*Math.cos(v));
+        return (1.000001018 * (1 - e * e)) / (1 + e * Math.cos(v));
     }
 
     /**
      * Calculate the mean obliquity of the ecliptic.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Mean obliquity in degrees.
      */
     private static double meanObliquityOfEcliptic(final double t) {
-        final double seconds = 21.448 - t*(46.8150 + t*(0.00059 - t*(0.001813)));
-        return 23.0 + (26.0 + (seconds/60.0))/60.0;
+        final double seconds = 21.448 - t * (46.8150 + t * (0.00059 - t * (0.001813)));
+        return 23.0 + (26.0 + (seconds / 60.0)) / 60.0;
     }
 
 
     /**
      * Calculate the corrected obliquity of the ecliptic.
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Corrected obliquity in degrees.
      */
     private static double obliquityCorrected(final double t) {
         final double e0 = meanObliquityOfEcliptic(t);
-        final double omega = Math.toRadians(125.04 - 1934.136*t);
+        final double omega = Math.toRadians(125.04 - 1934.136 * t);
         return e0 + 0.00256 * Math.cos(omega);
     }
 
@@ -343,15 +342,15 @@ public class SunRelativePosition {
         return Math.toDegrees(theta);
     }
 
-   /**
-    * Calculate the Universal Coordinated Time (UTC) of solar noon for the given day
-    * at the given location on earth.
-    *
-    * @param  lon       longitude of observer in degrees.                               
-    * @param  eqTime    Equation of time.
-    * @return Time in minutes from beginnning of day in UTC.
-    */
-    private static double solarNoonTime(final double lon, final double eqTime) { 
+    /**
+     * Calculate the Universal Coordinated Time (UTC) of solar noon for the given day
+     * at the given location on earth.
+     *
+     * @param lon    longitude of observer in degrees.
+     * @param eqTime Equation of time.
+     * @return Time in minutes from beginnning of day in UTC.
+     */
+    private static double solarNoonTime(final double lon, final double eqTime) {
         return 720.0 + (lon * 4.0) - eqTime;
     }
 
@@ -366,27 +365,27 @@ public class SunRelativePosition {
      *
      * <P align="center"><img src="doc-files/EquationOfTime.png"></P>
      *
-     * @param  t number of Julian centuries since J2000.
+     * @param t number of Julian centuries since J2000.
      * @return Equation of time in minutes of time.
      */
     private static double equationOfTime(final double t) {
         double eps = Math.toRadians(obliquityCorrected(t));
-        double l0  = Math.toRadians(sunGeometricMeanLongitude(t));
-        double m   = Math.toRadians(sunGeometricMeanAnomaly(t));
-        double e   = eccentricityEarthOrbit(t);
-        double y   = Math.tan(eps/2);
+        double l0 = Math.toRadians(sunGeometricMeanLongitude(t));
+        double m = Math.toRadians(sunGeometricMeanAnomaly(t));
+        double e = eccentricityEarthOrbit(t);
+        double y = Math.tan(eps / 2);
         y *= y;
 
         double sin2l0 = Math.sin(2 * l0);
         double cos2l0 = Math.cos(2 * l0);
         double sin4l0 = Math.sin(4 * l0);
-        double sin1m  = Math.sin(m);
-        double sin2m  = Math.sin(2 * m);
+        double sin1m = Math.sin(m);
+        double sin2m = Math.sin(2 * m);
 
-        double etime = y*sin2l0 - 2*e*sin1m + 4*e*y*sin1m*cos2l0
-                       - 0.5*y*y*sin4l0 - 1.25*e*e*sin2m;
+        double etime = y * sin2l0 - 2 * e * sin1m + 4 * e * y * sin1m * cos2l0
+                - 0.5 * y * y * sin4l0 - 1.25 * e * e * sin2m;
 
-        return Math.toDegrees(etime)*4.0;
+        return Math.toDegrees(etime) * 4.0;
     }
 
     /**
@@ -397,7 +396,7 @@ public class SunRelativePosition {
      * because the sun rises and sets at a very shallow angle. Small variations
      * in the atmosphere can have a larger effect.
      *
-     * @param  zenith The sun zenith angle in degrees.
+     * @param zenith The sun zenith angle in degrees.
      * @return The refraction correction in degrees.
      */
     private static double refractionCorrection(final double zenith) {
@@ -408,14 +407,14 @@ public class SunRelativePosition {
         final double refractionCorrection; // In minute of degrees
         final double te = Math.tan(Math.toRadians(exoatmElevation));
         if (exoatmElevation > 5.0) {
-            refractionCorrection = 58.1/te - 0.07/(te*te*te) + 0.000086/(te*te*te*te*te);
+            refractionCorrection = 58.1 / te - 0.07 / (te * te * te) + 0.000086 / (te * te * te * te * te);
         } else {
             if (exoatmElevation > -0.575) {
-                refractionCorrection =  1735.0 + exoatmElevation *
-                                       (-518.2 + exoatmElevation *
-                                       ( 103.4 + exoatmElevation *
-                                       (-12.79 + exoatmElevation *
-                                         0.711)));
+                refractionCorrection = 1735.0 + exoatmElevation *
+                        (-518.2 + exoatmElevation *
+                                (103.4 + exoatmElevation *
+                                        (-12.79 + exoatmElevation *
+                                                0.711)));
             } else {
                 refractionCorrection = -20.774 / te;
             }
@@ -446,7 +445,7 @@ public class SunRelativePosition {
      * Results are reported in azimuth and elevation in degrees.
      */
     private void compute() {
-        double latitude  = this.latitude;
+        double latitude = this.latitude;
         double longitude = this.longitude;
 
         // NOAA convention use positive longitude west, and negative east.
@@ -456,45 +455,45 @@ public class SunRelativePosition {
         // Compute: 1) Julian day (days ellapsed since January 1, 4723 BC at 12:00 GMT).
         //          2) Time as the centuries ellapsed since January 1, 2000 at 12:00 GMT.
         final double julianDay = Calendar.julianDay(this.time);
-        final double time      = (julianDay-2451545)/36525;
+        final double time = (julianDay - 2451545) / 36525;
 
         double solarDec = sunDeclination(time);
-        double eqTime   = equationOfTime(time);
-        this.noonTime   = Math.round(solarNoonTime(longitude, eqTime) * (60*1000)) +
-                          (this.time/DAY_MILLIS)*DAY_MILLIS;
+        double eqTime = equationOfTime(time);
+        this.noonTime = Math.round(solarNoonTime(longitude, eqTime) * (60 * 1000)) +
+                (this.time / DAY_MILLIS) * DAY_MILLIS;
 
         // Formula below use longitude in degrees. Steps are:
         //   1) Extract the time part of the date, in minutes.
         //   2) Apply a correction for longitude and equation of time.
         //   3) Clamp in a 24 hours range (24 hours == 1440 minutes).
-        double trueSolarTime = ((julianDay+0.5) - Math.floor(julianDay+0.5)) * 1440;
-        trueSolarTime += (eqTime - 4.0*longitude); // Correction in minutes.
-        trueSolarTime -= 1440*Math.floor(trueSolarTime/1440);
+        double trueSolarTime = ((julianDay + 0.5) - Math.floor(julianDay + 0.5)) * 1440;
+        trueSolarTime += (eqTime - 4.0 * longitude); // Correction in minutes.
+        trueSolarTime -= 1440 * Math.floor(trueSolarTime / 1440);
 
         // Convert all angles to radians.  From this point until
         // the end of this method, local variables are always in
         // radians. Output variables ('azimuth' and 'elevation')
         // will still computed in degrees.
         longitude = Math.toRadians(longitude);
-        latitude  = Math.toRadians(latitude );
-        solarDec  = Math.toRadians(solarDec );
+        latitude = Math.toRadians(latitude);
+        solarDec = Math.toRadians(solarDec);
 
         double csz = Math.sin(latitude) *
-                     Math.sin(solarDec) +
-                     Math.cos(latitude) *
-                     Math.cos(solarDec) *
-                     Math.cos(Math.toRadians(trueSolarTime/4 - 180));
+                Math.sin(solarDec) +
+                Math.cos(latitude) *
+                        Math.cos(solarDec) *
+                        Math.cos(Math.toRadians(trueSolarTime / 4 - 180));
         if (csz > +1) csz = +1;
         if (csz < -1) csz = -1;
 
-        final double zenith  = Math.acos(csz);
+        final double zenith = Math.acos(csz);
         final double azDenom = Math.cos(latitude) * Math.sin(zenith);
 
         //////////////////////////////////////////
         ////    Compute azimuth in degrees    ////
         //////////////////////////////////////////
         if (Math.abs(azDenom) > 0.001) {
-            double azRad = ((Math.sin(latitude)*Math.cos(zenith)) - Math.sin(solarDec)) / azDenom;
+            double azRad = ((Math.sin(latitude) * Math.cos(zenith)) - Math.sin(solarDec)) / azDenom;
             if (azRad > +1) azRad = +1;
             if (azRad < -1) azRad = -1;
 
@@ -503,9 +502,9 @@ public class SunRelativePosition {
                 azimuth = -azimuth;
             }
         } else {
-            azimuth = (latitude>0) ? 180 : 0;
+            azimuth = (latitude > 0) ? 180 : 0;
         }
-        azimuth -= 360*Math.floor(azimuth/360);
+        azimuth -= 360 * Math.floor(azimuth / 360);
 
         ////////////////////////////////////////////
         ////    Compute elevation in degrees    ////
@@ -516,7 +515,7 @@ public class SunRelativePosition {
         elevation = 90 - solarZen;
         if (elevation < twilight) {
             // do not report azimuth & elevation after twilight
-            azimuth   = DARK;
+            azimuth = DARK;
             elevation = DARK;
         }
         updated = true;
@@ -533,9 +532,9 @@ public class SunRelativePosition {
         if (latitude > +89.8) latitude = +89.8;
         if (latitude < -89.8) latitude = -89.8;
         if (latitude != this.latitude || longitude != this.longitude) {
-            this.latitude  = latitude;
+            this.latitude = latitude;
             this.longitude = longitude;
-            this.updated   = false;
+            this.updated = false;
         }
     }
 
@@ -552,7 +551,7 @@ public class SunRelativePosition {
     /**
      * Returns the coordinate used for {@linkplain #getElevation elevation} and
      * {@linkplain #getAzimuth azimuth} computation. This is the coordinate
-     * specified during the last call to a {@link #setCoordinate(double,double)
+     * specified during the last call to a {@link #setCoordinate(double, double)
      * setCoordinate(...)} method.
      */
     public Point2D getCoordinate() {
@@ -597,7 +596,7 @@ public class SunRelativePosition {
      * @throws IllegalArgumentException if the twilight value is illegal.
      */
     public void setTwilight(final double twilight) throws IllegalArgumentException {
-        if (twilight<-90 || twilight>-90) {
+        if (twilight < -90 || twilight > -90) {
             // TODO: provides a better (localized) message.
             throw new IllegalArgumentException(String.valueOf(twilight));
         }
@@ -636,16 +635,15 @@ public class SunRelativePosition {
         }
         return elevation;
     }
-    
+
     /**
-     * 
-     * @return solar zenith angle in degrees 
+     * @return solar zenith angle in degrees
      */
     public double getZenith() {
-       if (!updated) {
-          compute();
-       }
-       return 90.0 - elevation;
+        if (!updated) {
+            compute();
+        }
+        return 90.0 - elevation;
     }
 
     /**
@@ -677,29 +675,38 @@ public class SunRelativePosition {
      * Cette application peut Ãªtre lancÃ©e avec la syntaxe suivante:
      *
      * <pre>SunRelativePosition <var>[longitude]</var> <var>[latitude]</var> <var>[date]</var></pre>
-     *
+     * <p>
      * oÃ¹ <var>date</var> est un argument optionel spÃ©cifiant la date et l'heure.
      * Si cet argument est omis, la date et heure actuelles seront utilisÃ©es.
      */
     public static void main(final String[] args) throws ParseException {
-        final DateFormat format=DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        final DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         double longitude = 0;
-        double latitude  = 0;
+        double latitude = 0;
         Date time = new Date();
         switch (args.length) {
-            case 3: time      = format.parse      (args[2]); // fall through
-            case 2: latitude  = Double.parseDouble(args[1]); // fall through
-            case 1: longitude = Double.parseDouble(args[0]); // fall through
+            case 3:
+                time = format.parse(args[2]); // fall through
+            case 2:
+                latitude = Double.parseDouble(args[1]); // fall through
+            case 1:
+                longitude = Double.parseDouble(args[0]); // fall through
         }
         final SunRelativePosition calculator = new SunRelativePosition();
         calculator.setDate(time);
         calculator.setCoordinate(longitude, latitude);
-        System.out.print("Date (UTC): "); System.out.println(format.format(time));
-        System.out.print("Longitude:  "); System.out.println(longitude);
-        System.out.print("Latitude:   "); System.out.println(latitude);
-        System.out.print("Elevation:  "); System.out.println(calculator.getElevation());
-        System.out.print("Azimuth:    "); System.out.println(calculator.getAzimuth());
-        System.out.print("Noon date:  "); System.out.println(format.format(calculator.getNoonDate()));
+        System.out.print("Date (UTC): ");
+        System.out.println(format.format(time));
+        System.out.print("Longitude:  ");
+        System.out.println(longitude);
+        System.out.print("Latitude:   ");
+        System.out.println(latitude);
+        System.out.print("Elevation:  ");
+        System.out.println(calculator.getElevation());
+        System.out.print("Azimuth:    ");
+        System.out.println(calculator.getAzimuth());
+        System.out.print("Noon date:  ");
+        System.out.println(format.format(calculator.getNoonDate()));
     }
 }

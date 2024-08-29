@@ -45,7 +45,7 @@ import visad.FlatField;
 
 public class BasicSelection extends SelectionAdapter {
     private JLabel picture;
-    public  DefaultMutableTreeNode root;
+    public DefaultMutableTreeNode root;
     private JComponent list;
 
     private JTree browserTree;
@@ -75,7 +75,7 @@ public class BasicSelection extends SelectionAdapter {
     private String sourceDescription;
 
     TreePath lastSelectedLeafPath = null;
-    
+
     private MouseListener ml = null;
 
 
@@ -84,7 +84,7 @@ public class BasicSelection extends SelectionAdapter {
 
         this.dataSource = dataSource;
         this.dataSourceId = dataSourceId;
-        
+
         dataBrowser = hydra.getDataBrowser();
         sourceDescription = hydra.getSourceDescription();
 
@@ -92,9 +92,9 @@ public class BasicSelection extends SelectionAdapter {
         dataChoiceNames = new String[dataChoices.size()];
         dataChoiceDescs = new String[dataChoices.size()];
         previewSelects = new PreviewSelection[dataChoices.size()];
-        for (int k=0; k<dataChoiceNames.length; k++) {
-          dataChoiceNames[k] = ((DataChoice)dataChoices.get(k)).getName();
-          dataChoiceDescs[k] = dataSource.getDescription((DataChoice)dataChoices.get(k));
+        for (int k = 0; k < dataChoiceNames.length; k++) {
+            dataChoiceNames[k] = ((DataChoice) dataChoices.get(k)).getName();
+            dataChoiceDescs[k] = dataSource.getDescription((DataChoice) dataChoices.get(k));
         }
         selectedIdx = dataSource.getDefaultChoice();
         defaultIdx = selectedIdx;
@@ -103,131 +103,128 @@ public class BasicSelection extends SelectionAdapter {
         buildTreeSelectionComponent(hydra.toString());
 
         SwingUtilities.invokeLater(new Runnable() {
-           public void run() {
-              makeGeoTimeSelect(getSelectedDataChoice(), selectedIdx);
-              previewDisplay = DataBrowser.getPreviewDisplay();
-              dataBrowser.addDataSetTree(root, firstPath, hydra, previewSelects[defaultIdx]);
-           }
+            public void run() {
+                makeGeoTimeSelect(getSelectedDataChoice(), selectedIdx);
+                previewDisplay = DataBrowser.getPreviewDisplay();
+                dataBrowser.addDataSetTree(root, firstPath, hydra, previewSelects[defaultIdx]);
+            }
         });
 
 
         final JTree tree = browserTree;
         final Object thisObj = this;
         ml = new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-            int selRow = tree.getRowForLocation(e.getX(), e.getY());
-            TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-            if(selRow > 0) {
-              if(e.getClickCount() == 1) {
-                  DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-                  if (node == null) return;
-                  setSelected(node);
-               }
-               else if(e.getClickCount() == 2) {
-                  //pass
-               }
+            public void mousePressed(MouseEvent e) {
+                int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                if (selRow > 0) {
+                    if (e.getClickCount() == 1) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                        if (node == null) return;
+                        setSelected(node);
+                    } else if (e.getClickCount() == 2) {
+                        //pass
+                    }
+                }
             }
-          }
         };
         tree.addMouseListener(ml);
     }
-    
+
     public void remove() {
-       super.remove();
-       browserTree.removeMouseListener(ml);
+        super.remove();
+        browserTree.removeMouseListener(ml);
     }
-    
+
     public void setSelected(Object obj) {
-       DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
-       Object nodeInfo = node.getUserObject();
-       if (node.isLeaf()) {
-            LeafInfo leaf = (LeafInfo)nodeInfo;
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
+        Object nodeInfo = node.getUserObject();
+        if (node.isLeaf()) {
+            LeafInfo leaf = (LeafInfo) nodeInfo;
             if (leaf.source == this) {
-               selectedIdx = leaf.index;
-               lastSelectedLeafPath = new TreePath(node.getPath());
-               updateSelectionDisplay(selectedIdx);
+                selectedIdx = leaf.index;
+                lastSelectedLeafPath = new TreePath(node.getPath());
+                updateSelectionDisplay(selectedIdx);
             }
-       }
+        }
     }
 
     public void buildTreeSelectionComponent(String topName) {
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(new NodeInfo(this, topName));
         root = top;
-   
-        for (int k=0; k<dataChoiceNames.length; k++) {
-            DefaultMutableTreeNode leafNode = 
-                  new DefaultMutableTreeNode(new LeafInfo(this, dataChoiceNames[k], dataChoiceDescs[k], k));
+
+        for (int k = 0; k < dataChoiceNames.length; k++) {
+            DefaultMutableTreeNode leafNode =
+                    new DefaultMutableTreeNode(new LeafInfo(this, dataChoiceNames[k], dataChoiceDescs[k], k));
             top.add(leafNode);
             if (k == selectedIdx) {
-               firstPath = new TreePath(new Object[] {top, leafNode});
+                firstPath = new TreePath(new Object[]{top, leafNode});
             }
         }
     }
 
     protected void updateSelectionDisplay(int idx) {
-       if (previewSelects[idx] == null) {
-          dataBrowser.setCursorToWait();
-          makeGeoTimeSelect((DataChoice) dataChoices.get(idx), idx);
-          dataBrowser.updateSpatialTemporalSelectionComponent(previewSelects[idx]);
-          dataBrowser.setCursorToDefault();
-          fireSelectionEvent();
-       }
-       else {
-          try {
-             dataBrowser.updateSpatialTemporalSelectionComponent(previewSelects[idx]);
-          } catch (Exception e) {
-             e.printStackTrace();
-          }
-          fireSelectionEvent();
-       }
+        if (previewSelects[idx] == null) {
+            dataBrowser.setCursorToWait();
+            makeGeoTimeSelect((DataChoice) dataChoices.get(idx), idx);
+            dataBrowser.updateSpatialTemporalSelectionComponent(previewSelects[idx]);
+            dataBrowser.setCursorToDefault();
+            fireSelectionEvent();
+        } else {
+            try {
+                dataBrowser.updateSpatialTemporalSelectionComponent(previewSelects[idx]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            fireSelectionEvent();
+        }
     }
 
     void makeGeoTimeSelect(DataChoice choice, int idx) {
-       try {
-          FlatField image = PreviewSelection.makePreviewImage(dataSource, choice, sourceDescription);
-          PreviewSelection preview = new PreviewSelection(choice, image, null);
-          previewSelects[idx] = preview;
-       }
-       catch (Exception e) {
-          System.out.println(e);
-          e.printStackTrace();
-       }
+        try {
+            FlatField image = PreviewSelection.makePreviewImage(dataSource, choice, sourceDescription);
+            PreviewSelection preview = new PreviewSelection(choice, image, null);
+            previewSelects[idx] = preview;
+        } catch (Exception e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
     }
 
     public int applyToDataSelection(DataChoice dataChoice, DataSelection dataSelection) {
-       int index = -1;
-       for (int k=0; k<dataChoices.size(); k++) {
-           if (((DataChoice)dataChoices.get(k)) == dataChoice) {
-              index = k;
-           }
-       }
-       if (index != -1) {
-          if (previewSelects[index] == null) { // We haven't created one yet, go ahead and do so now.
-             makeGeoTimeSelect(dataChoice, index);          
-          }
-          previewSelects[index].applyToDataSelection(dataSelection);
-       }
-       return index;
+        int index = -1;
+        for (int k = 0; k < dataChoices.size(); k++) {
+            if (((DataChoice) dataChoices.get(k)) == dataChoice) {
+                index = k;
+            }
+        }
+        if (index != -1) {
+            if (previewSelects[index] == null) { // We haven't created one yet, go ahead and do so now.
+                makeGeoTimeSelect(dataChoice, index);
+            }
+            previewSelects[index].applyToDataSelection(dataSelection);
+        }
+        return index;
     }
 
     public void applyToDataSelection(DataSelection dataSelection) {
-       previewSelects[selectedIdx].applyToDataSelection(dataSelection);
+        previewSelects[selectedIdx].applyToDataSelection(dataSelection);
     }
 
     public DataChoice getSelectedDataChoice() {
-      return (DataChoice) dataChoices.get(selectedIdx);
+        return (DataChoice) dataChoices.get(selectedIdx);
     }
 
     public String getSelectedName() {
-       String str = dataSourceId+":"+dataChoiceNames[selectedIdx];
-       return str;
+        String str = dataSourceId + ":" + dataChoiceNames[selectedIdx];
+        return str;
     }
 
     public Object getLastSelectedLeafPath() {
-       return lastSelectedLeafPath;
+        return lastSelectedLeafPath;
     }
 
     public Object getLastSelectedComp() {
-       return previewSelects[selectedIdx];
+        return previewSelects[selectedIdx];
     }
 }

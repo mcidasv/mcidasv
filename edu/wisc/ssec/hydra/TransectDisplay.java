@@ -34,6 +34,7 @@ import visad.*;
 
 import visad.util.Util;
 import visad.util.HersheyFont;
+
 import java.rmi.RemoteException;
 
 import java.awt.Dimension;
@@ -53,31 +54,31 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-    public class TransectDisplay extends HydraDisplay implements ActionListener {
+public class TransectDisplay extends HydraDisplay implements ActionListener {
 
-      DataReference transectDataRef = null;
-      RealType rangeType = null;
-      RealType domainType = null;
-      TupleType valueType;
+    DataReference transectDataRef = null;
+    RealType rangeType = null;
+    RealType domainType = null;
+    TupleType valueType;
 
-      LocalDisplay display = null;
+    LocalDisplay display = null;
 
-      ScalarMap ymap = null;
+    ScalarMap ymap = null;
 
-      ArrayList<ScalarMap> yAxisMaps = new ArrayList<ScalarMap>();
-      
-      DragLine drgline;
-      
-      JFrame frame;
-      
-      double markerDist = Double.NaN;
-      
-      private HashMap<Transect, DataReference> transectToDataRef = new HashMap();
-      private HashMap<Transect, NumberFormat> transectToNumFmt = new HashMap();
-      
-      private int numTransects = 0;
-      
-      public TransectDisplay(Transect transect, Color color, Point loc) throws VisADException, RemoteException {
+    ArrayList<ScalarMap> yAxisMaps = new ArrayList<ScalarMap>();
+
+    DragLine drgline;
+
+    JFrame frame;
+
+    double markerDist = Double.NaN;
+
+    private HashMap<Transect, DataReference> transectToDataRef = new HashMap();
+    private HashMap<Transect, NumberFormat> transectToNumFmt = new HashMap();
+
+    private int numTransects = 0;
+
+    public TransectDisplay(Transect transect, Color color, Point loc) throws VisADException, RemoteException {
 
         transectDataRef = transect.getTransectDataRef();
         FlatField data = (FlatField) transectDataRef.getData();
@@ -88,13 +89,13 @@ import javax.swing.JMenuItem;
 
         display = new visad.java3d.DisplayImplJ3D("2D disp", new visad.java3d.TwoDDisplayRendererJ3D());
         display.getDisplayRenderer().getMouseBehavior().getMouseHelper().setFunctionMap(ucar.visad.display.DisplayMaster.defaultMouseFunctions);
-        ((DisplayImpl)display).disableAction();
+        ((DisplayImpl) display).disableAction();
         display.getDisplayRenderer().setBackgroundColor(new Color(0.92f, 0.92f, 0.92f)); // off-white
         display.getDisplayRenderer().setForegroundColor(Color.black);
         ScalarMap xMapA = new ScalarMap(RealType.XAxis, Display.XAxis);
         ScalarMap yMapA = new ScalarMap(RealType.YAxis, Display.YAxis);
-        xMapA.setRange(-2.5,2.5);
-        yMapA.setRange(-0.75,0.75);
+        xMapA.setRange(-2.5, 2.5);
+        yMapA.setRange(-0.75, 0.75);
         xMapA.setScaleEnable(false);
         yMapA.setScaleEnable(false);
         display.addMap(xMapA);
@@ -106,7 +107,7 @@ import javax.swing.JMenuItem;
         proj[5] = 0.286;
         proj[10] = 0.286;
         pCntrl.setMatrix(proj);
-        
+
         ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
 
         /** Use addTransect in the initialization? */
@@ -117,8 +118,8 @@ import javax.swing.JMenuItem;
         ScalarMap txtMap = new ScalarMap(TextType.Generic, Display.Text);
 
         pCntrl = display.getProjectionControl();
-        pCntrl.setAspectCartesian(new double[] {2.50, 0.75, 1.0});
-        ((DisplayImpl)display).setAlwaysAutoScale(true);
+        pCntrl.setAspectCartesian(new double[]{2.50, 0.75, 1.0});
+        ((DisplayImpl) display).setAlwaysAutoScale(true);
         //display.getGraphicsModeControl().setLineWidth(1.5f);
         //((visad.java3d.GraphicsModeControlJ3D)display.getGraphicsModeControl()).setSceneAntialiasingEnable(true);
         display.addMap(xmap);
@@ -126,8 +127,8 @@ import javax.swing.JMenuItem;
         display.addMap(txtMap);
         TextControl txtCntrl = (TextControl) txtMap.getControl();
         txtCntrl.setJustification(TextControl.Justification.CENTER);
-        
-        valueType = new TupleType(new MathType[] {TextType.Generic, domainType});
+
+        valueType = new TupleType(new MathType[]{TextType.Generic, domainType});
 
         HersheyFont font = new HersheyFont("timesr");
 
@@ -144,121 +145,121 @@ import javax.swing.JMenuItem;
         yAxis.setSnapToBox(true);
         yAxis.setLabelSize(Hydra.getFontSize());
         ymap.setScaleEnable(true);
-        
+
         display.getGraphicsModeControl().setScaleEnable(true);
 
         ConstantMap lineWidth = new ConstantMap(1.5, Display.LineWidth);
-        ConstantMap[] constantMaps = new ConstantMap[] {lineWidth};
+        ConstantMap[] constantMaps = new ConstantMap[]{lineWidth};
 
         if (color != null) {
-           color = getGraphColor(color);
-           ConstantMap[] clrs = Util.getColorMaps(color);
-           constantMaps = Hydra.makeConstantMapArray(clrs, lineWidth);
-           display.addReference(transectDataRef, constantMaps);
+            color = getGraphColor(color);
+            ConstantMap[] clrs = Util.getColorMaps(color);
+            constantMaps = Hydra.makeConstantMapArray(clrs, lineWidth);
+            display.addReference(transectDataRef, constantMaps);
         } else {
-           display.addReference(transectDataRef);
+            display.addReference(transectDataRef);
         }
-        ((DisplayImpl)display).enableAction();
-        
+        ((DisplayImpl) display).enableAction();
+
         float[][] vals = data.getFloats(false);
         float[] minmax = Hydra.minmax(vals[0]);
         try {
-          drgline = new DragLine(display, (Gridded1DSet)data.getDomainSet(), domainType, rangeType, Hydra.makeColorMap(Color.BLACK), minmax, 0f, xmap);
-          drgline.addListener(transect);
+            drgline = new DragLine(display, (Gridded1DSet) data.getDomainSet(), domainType, rangeType, Hydra.makeColorMap(Color.BLACK), minmax, 0f, xmap);
+            drgline.addListener(transect);
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
         addValueLabel(transect, color);
-        
-        frame = Hydra.createAndShowFrameFromEDT("Transect Display", doMakeComponent(), buildMenuBar(), new Dimension(400,180), loc);
+
+        frame = Hydra.createAndShowFrameFromEDT("Transect Display", doMakeComponent(), buildMenuBar(), new Dimension(400, 180), loc);
         frame.toFront();
         frame.addWindowListener(this);
-     }
-      
-     void addValueLabel(Transect transect, Color color) throws VisADException, RemoteException {
+    }
+
+    void addValueLabel(Transect transect, Color color) throws VisADException, RemoteException {
         DataReference dataRef = transect.getTransectDataRef();
         FlatField data = (FlatField) dataRef.getData();
-        
+
         //- text readout for index selector
         final DataReference txtRef = new DataReferenceImpl("text");
         float[][] vals = data.getFloats(false);
         float[] minmax = Hydra.minmax(vals[0]);
-        
+
         NumberFormat numFmt = Hydra.getDecimalFormat(minmax[1]);
         transectToDataRef.put(transect, txtRef);
         transectToNumFmt.put(transect, numFmt);
-        
-        TupleType tupType = new TupleType(new MathType[] {TextType.Generic, domainType});
+
+        TupleType tupType = new TupleType(new MathType[]{TextType.Generic, domainType});
         double selectorLoc = drgline.getSelectedValue();
         Real selectorX = new Real(domainType, selectorLoc);
-        double rngVal = ((Real)data.evaluate(selectorX)).getValue();
+        double rngVal = ((Real) data.evaluate(selectorX)).getValue();
 
-        txtRef.setData(new Tuple(tupType, new Data[] {new Text(TextType.Generic, numFmt.format(rngVal)), selectorX}));
-        
+        txtRef.setData(new Tuple(tupType, new Data[]{new Text(TextType.Generic, numFmt.format(rngVal)), selectorX}));
+
         ConstantMap[] clrs = Util.getColorMaps(color);
         ConstantMap ypos = new ConstantMap(0.9, Display.YAxis);
         ConstantMap[] constantMaps = Hydra.makeConstantMapArray(clrs, ypos);
-        ConstantMap offset = new ConstantMap(numTransects*0.34, Display.XAxisOffset);
+        ConstantMap offset = new ConstantMap(numTransects * 0.34, Display.XAxisOffset);
         constantMaps = Hydra.makeConstantMapArray(constantMaps, offset);
         display.addReference(txtRef, constantMaps);
-     }
-     
-     void updateValueLabel(Transect transect) throws VisADException, RemoteException {
+    }
+
+    void updateValueLabel(Transect transect) throws VisADException, RemoteException {
         DataReference dataRef = transect.getTransectDataRef();
         FlatField data = (FlatField) dataRef.getData();
         if (!transectToDataRef.containsKey(transect)) {
-           return;
+            return;
         }
         DataReference ref = transectToDataRef.get(transect);
         NumberFormat numFmt = transectToNumFmt.get(transect);
-        
+
         double selectorLoc = drgline.getSelectedValue();
         Real selectorX = new Real(domainType, selectorLoc);
-        double rngVal = ((Real)data.evaluate(selectorX)).getValue();
+        double rngVal = ((Real) data.evaluate(selectorX)).getValue();
 
-        ref.setData(new Tuple(valueType, new Data[] {new Text(TextType.Generic, numFmt.format(rngVal)), selectorX}));       
-     }
-     
-     void makeValueText() {
+        ref.setData(new Tuple(valueType, new Data[]{new Text(TextType.Generic, numFmt.format(rngVal)), selectorX}));
+    }
+
+    void makeValueText() {
         //??
-     }
+    }
 
-     public void addTransect(Transect transect, Color color) throws VisADException, RemoteException {
-       FlatField dataTransect = (FlatField) transect.getTransectDataRef().getData();
-       RealType rangeType = (RealType) ((FunctionType)dataTransect.getType()).getRange();
+    public void addTransect(Transect transect, Color color) throws VisADException, RemoteException {
+        FlatField dataTransect = (FlatField) transect.getTransectDataRef().getData();
+        RealType rangeType = (RealType) ((FunctionType) dataTransect.getType()).getRange();
 
-       addScalarMapForRangeType(rangeType);
-       
-       color = getGraphColor(color);
-       ConstantMap lineWidth = new ConstantMap(1.5, Display.LineWidth);
-       ConstantMap[] constantMaps = Hydra.makeConstantMapArray(Util.getColorMaps(color), lineWidth);
-       
-       if (drgline != null) {
-          drgline.addListener(transect);
-       }
+        addScalarMapForRangeType(rangeType);
 
-       this.display.addReference(transect.getTransectDataRef(), constantMaps);
-       numTransects++;
-       
-       addValueLabel(transect, color);
-     }
+        color = getGraphColor(color);
+        ConstantMap lineWidth = new ConstantMap(1.5, Display.LineWidth);
+        ConstantMap[] constantMaps = Hydra.makeConstantMapArray(Util.getColorMaps(color), lineWidth);
 
-     public void transectRangeChanged(RealType rangeType) throws VisADException, RemoteException {
-         addScalarMapForRangeType(rangeType);
-     }
+        if (drgline != null) {
+            drgline.addListener(transect);
+        }
 
-     private void addScalarMapForRangeType(RealType rangeType) throws VisADException, RemoteException {
-         boolean hasMap = false;
-         for (int k=0; k<yAxisMaps.size(); k++) {
+        this.display.addReference(transect.getTransectDataRef(), constantMaps);
+        numTransects++;
+
+        addValueLabel(transect, color);
+    }
+
+    public void transectRangeChanged(RealType rangeType) throws VisADException, RemoteException {
+        addScalarMapForRangeType(rangeType);
+    }
+
+    private void addScalarMapForRangeType(RealType rangeType) throws VisADException, RemoteException {
+        boolean hasMap = false;
+        for (int k = 0; k < yAxisMaps.size(); k++) {
             ScalarMap map = yAxisMaps.get(k);
             if (rangeType.equals(map.getScalar())) {
-               hasMap = true;
-               break;
+                hasMap = true;
+                break;
             }
-         }
+        }
 
-         if (!hasMap) {
+        if (!hasMap) {
             ScalarMap map = new ScalarMap(rangeType, Display.YAxis);
 
             AxisScale yAxis = map.getAxisScale();
@@ -266,77 +267,77 @@ import javax.swing.JMenuItem;
             yAxis.setLabelSize(24);
             yAxis.setSide(AxisScale.SECONDARY);
             if (yAxisMaps.size() < 2) {
-            yAxis.setSnapToBox(true);
+                yAxis.setSnapToBox(true);
             }
 
             this.display.addMap(map);
             yAxisMaps.add(map);
-         }
-     }
+        }
+    }
 
-     public void removeTransect(Transect transect) throws VisADException, RemoteException {
-       this.display.removeReference(transect.getTransectDataRef());
-       this.display.removeReference(transectToDataRef.get(transect));
-       transectToDataRef.remove(transect);
-       
-       numTransects--;
-       
-       //- rescale the display to account for removed data
-       ((DisplayImpl)this.display).reDisplayAll();
-     }
+    public void removeTransect(Transect transect) throws VisADException, RemoteException {
+        this.display.removeReference(transect.getTransectDataRef());
+        this.display.removeReference(transectToDataRef.get(transect));
+        transectToDataRef.remove(transect);
 
-     private Color getGraphColor(Color color) {
+        numTransects--;
+
+        //- rescale the display to account for removed data
+        ((DisplayImpl) this.display).reDisplayAll();
+    }
+
+    private Color getGraphColor(Color color) {
         if (color.equals(Color.green)) {
-          color = new Color(34, 190, 24);
+            color = new Color(34, 190, 24);
         }
         return color;
-     }
+    }
 
-     public Component doMakeComponent() {
-       return display.getComponent();
-     }
+    public Component doMakeComponent() {
+        return display.getComponent();
+    }
 
-     public void windowClosing(WindowEvent e) {
+    public void windowClosing(WindowEvent e) {
         Transect.removeAll();
-     }
-     
-     public void setMarkerDist(double dist, Gridded1DSet dset) throws VisADException, RemoteException {
-         if (markerDist != dist && drgline != null) {
+    }
+
+    public void setMarkerDist(double dist, Gridded1DSet dset) throws VisADException, RemoteException {
+        if (markerDist != dist && drgline != null) {
             drgline.updateSelector(dist, dset);
             markerDist = dist;
-         }
-     }
-     
-     public JMenuBar buildMenuBar() {
-         JMenuBar menuBar = new JMenuBar();
+        }
+    }
 
-         JMenu toolsMenu = new JMenu("Tools");
-         toolsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-         menuBar.add(toolsMenu);
+    public JMenuBar buildMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
 
-         JMenu captureMenu = new JMenu("Capture");
-         captureMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-         JMenuItem jpegItem = new JMenuItem("JPEG");
-         jpegItem.addActionListener(this);
-         jpegItem.setActionCommand("captureToJPEG");
-         captureMenu.add(jpegItem);
+        JMenu toolsMenu = new JMenu("Tools");
+        toolsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+        menuBar.add(toolsMenu);
 
-         toolsMenu.add(captureMenu);
+        JMenu captureMenu = new JMenu("Capture");
+        captureMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+        JMenuItem jpegItem = new JMenuItem("JPEG");
+        jpegItem.addActionListener(this);
+        jpegItem.setActionCommand("captureToJPEG");
+        captureMenu.add(jpegItem);
 
-         JMenu settingsMenu = new JMenu("Settings");
-         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+        toolsMenu.add(captureMenu);
 
-         menuBar.add(settingsMenu);
+        JMenu settingsMenu = new JMenu("Settings");
+        settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 
-         return menuBar;
-   }
+        menuBar.add(settingsMenu);
 
-   @Override
-   public void actionPerformed(ActionEvent e) {
-      String cmd = e.getActionCommand();
-      if (cmd.equals("captureToJPEG")) {
-         DisplayCapture.capture(frame, display, "jpeg");
-      }
-   }
-     
-   }
+        return menuBar;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        if (cmd.equals("captureToJPEG")) {
+            DisplayCapture.capture(frame, display, "jpeg");
+        }
+    }
+
+}

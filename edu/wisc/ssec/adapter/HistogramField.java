@@ -30,6 +30,7 @@
 package edu.wisc.ssec.adapter;
 
 import visad.*;
+
 import java.rmi.RemoteException;
 
 public class HistogramField {
@@ -52,10 +53,10 @@ public class HistogramField {
     public FlatField scatterDensityField;
 
     public HistogramField(FlatField field_0, FlatField field_1,
-            FlatField mask_field,
-            int n_bins, int bin_size)
+                          FlatField mask_field,
+                          int n_bins, int bin_size)
             throws VisADException, RemoteException {
-        
+
         this.field_0 = field_0;
         this.field_1 = field_1;
         this.mask_field = mask_field;
@@ -84,7 +85,7 @@ public class HistogramField {
         double[] minmax_1 = {Double.MAX_VALUE, -Double.MAX_VALUE};
 
         if (rangeType == Integer.TYPE) {
-          //Ghansham: Dont do any allocation here. Do based on the individual ranges of fieldX and fieldY respectively
+            //Ghansham: Dont do any allocation here. Do based on the individual ranges of fieldX and fieldY respectively
         } else {
             indexes = new int[n_bins * n_bins][];
             count = new int[n_bins * n_bins];
@@ -198,15 +199,14 @@ public class HistogramField {
 
         Linear2DSet dSet = (Linear2DSet) histSet.changeMathType(new RealTupleType(RealType.XAxis, RealType.YAxis));
         scatterDensityField = new FlatField(
-            new FunctionType(((SetType)dSet.getType()).getDomain(), RealType.getRealType("ScatterDensity")), dSet);
+                new FunctionType(((SetType) dSet.getType()).getDomain(), RealType.getRealType("ScatterDensity")), dSet);
         float[][] fltCount = new float[1][count.length];
-        for (int i=0; i<count.length; i++) { 
+        for (int i = 0; i < count.length; i++) {
             fltCount[0][i] = (float) count[i];
             if (count[i] == 0) {
-               fltCount[0][i] = Float.NaN;
-            }
-            else {
-               fltCount[0][i] = (float) java.lang.Math.log((double)fltCount[0][i]);
+                fltCount[0][i] = Float.NaN;
+            } else {
+                fltCount[0][i] = (float) java.lang.Math.log((double) fltCount[0][i]);
             }
         }
         scatterDensityField.setSamples(fltCount, false);
@@ -218,10 +218,10 @@ public class HistogramField {
 
     public void markMaskFieldByRange(double[] lowhi_0, double[] lowhi_1, float maskVal)
             throws Exception {
-        reorder((byte)maskVal);
+        reorder((byte) maskVal);
 
-        int[] hist0 = set0.doubleToIndex(new double[][] {{lowhi_0[0], lowhi_0[1]}});
-        int[] hist1 = set1.doubleToIndex(new double[][] {{lowhi_1[0], lowhi_1[1]}});
+        int[] hist0 = set0.doubleToIndex(new double[][]{{lowhi_0[0], lowhi_0[1]}});
+        int[] hist1 = set1.doubleToIndex(new double[][]{{lowhi_1[0], lowhi_1[1]}});
 
         if (hist0[0] < 0) {
             if (lowhi_0[0] < lowhi_0[1]) {
@@ -280,7 +280,7 @@ public class HistogramField {
                 int idx = col_factor + i;
                 for (int k = 0; k < count[idx]; k++) {
                     maskRange[0][indexes[idx][k]] = maskVal;
-                    mask[(byte)maskVal][indexes[idx][k]] = (byte)maskVal;
+                    mask[(byte) maskVal][indexes[idx][k]] = (byte) maskVal;
                 }
             }
         }
@@ -289,7 +289,7 @@ public class HistogramField {
     }
 
     public void markMaskFieldByCurve(float[][] curve, float maskVal) throws Exception {
-        reorder((byte)maskVal);
+        reorder((byte) maskVal);
         float[][] samples0 = set0.getSamples();
         float[][] samples1 = set1.getSamples();
 
@@ -450,7 +450,7 @@ public class HistogramField {
 
                                 for (int k = 0; k < count[idx]; k++) {
                                     maskRange[0][indexes[idx][k]] = maskVal;
-                                    mask[(byte)maskVal][indexes[idx][k]] = (byte)maskVal;
+                                    mask[(byte) maskVal][indexes[idx][k]] = (byte) maskVal;
                                 }
                             }
                             if (inside_cnt > 0 && inside_cnt < 4) {
@@ -460,7 +460,7 @@ public class HistogramField {
                                     float yy = vals_1[0][indexes[idx][k]];
                                     if (DelaunayCustom.inside(curve, xx, yy)) {
                                         maskRange[0][indexes[idx][k]] = maskVal;
-                                        mask[(byte)maskVal][indexes[idx][k]] = (byte)maskVal;
+                                        mask[(byte) maskVal][indexes[idx][k]] = (byte) maskVal;
                                     }
                                 }
                             }
@@ -470,7 +470,7 @@ public class HistogramField {
                             if (inside_cnt == 4) {
                                 for (int k = 0; k < count[idx]; k++) {
                                     maskRange[0][indexes[idx][k]] = maskVal;
-                                    mask[(byte)maskVal][indexes[idx][k]] = (byte)maskVal;
+                                    mask[(byte) maskVal][indexes[idx][k]] = (byte) maskVal;
                                 }
                             }
                             if (inside_cnt > 0 && inside_cnt < 4) {
@@ -480,7 +480,7 @@ public class HistogramField {
                                     double yy = vals_1[0][indexes[idx][k]];
                                     if (DelaunayCustom.inside(curve, (float) xx, (float) yy)) {
                                         maskRange[0][indexes[idx][k]] = maskVal;
-                                        mask[(byte)maskVal][indexes[idx][k]] = (byte)maskVal;
+                                        mask[(byte) maskVal][indexes[idx][k]] = (byte) maskVal;
                                     }
                                 }
                             }
@@ -494,46 +494,43 @@ public class HistogramField {
     }
 
     private void reorder(byte maskVal) {
-       if (order[0] == maskVal) {
-          return;
-       }
-       else if (maskVal == order[1]) {
-          order[1] = order[0];
-          order[0] = maskVal;
-       }
-       else if (maskVal == order[2]) {
-          order[2] = order[1];
-          order[1] = order[0];
-          order[0] = maskVal;
-       }
-       else {
-          order[2] = order[1];
-          order[1] = order[0];
-          order[0] = maskVal;          
-       }
+        if (order[0] == maskVal) {
+            return;
+        } else if (maskVal == order[1]) {
+            order[1] = order[0];
+            order[0] = maskVal;
+        } else if (maskVal == order[2]) {
+            order[2] = order[1];
+            order[1] = order[0];
+            order[0] = maskVal;
+        } else {
+            order[2] = order[1];
+            order[1] = order[0];
+            order[0] = maskVal;
+        }
     }
 
     public void clearMaskField(float maskVal) {
         for (int k = 0; k < maskRange[0].length; k++) {
             maskRange[0][k] = Float.NaN;
-            mask[(byte)maskVal][k] = Byte.MAX_VALUE;
-        }
-  
-        byte[] lcl_order = new byte[3];
-        System.arraycopy(order, 0, lcl_order, 0, 3);
-        for (int t=0; t<lcl_order.length; t++) {
-           if (lcl_order[t] == (byte)maskVal) {
-               lcl_order[t] = Byte.MAX_VALUE;
-           }
+            mask[(byte) maskVal][k] = Byte.MAX_VALUE;
         }
 
-        for (int t=order.length-1; t >=0; t--) {
+        byte[] lcl_order = new byte[3];
+        System.arraycopy(order, 0, lcl_order, 0, 3);
+        for (int t = 0; t < lcl_order.length; t++) {
+            if (lcl_order[t] == (byte) maskVal) {
+                lcl_order[t] = Byte.MAX_VALUE;
+            }
+        }
+
+        for (int t = order.length - 1; t >= 0; t--) {
             if (lcl_order[t] != Byte.MAX_VALUE) {
-               for (int k=0; k<maskRange[0].length; k++) {
-                   if (mask[lcl_order[t]][k] != Byte.MAX_VALUE) {
-                      maskRange[0][k] = (float) lcl_order[t];
-                   }
-               }
+                for (int k = 0; k < maskRange[0].length; k++) {
+                    if (mask[lcl_order[t]][k] != Byte.MAX_VALUE) {
+                        maskRange[0][k] = (float) lcl_order[t];
+                    }
+                }
             }
         }
     }

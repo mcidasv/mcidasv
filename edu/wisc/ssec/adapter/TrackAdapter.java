@@ -40,88 +40,86 @@ import visad.VisADException;
 import visad.Set;
 
 public class TrackAdapter extends MultiDimensionAdapter {
-   RealTupleType domainType;
-   ArrayAdapter rngAdapter;
-   TrackDomain trackDomain;
+    RealTupleType domainType;
+    ArrayAdapter rngAdapter;
+    TrackDomain trackDomain;
 
-   int listIndex = 0;
+    int listIndex = 0;
 
-   String adapterName = null;
+    String adapterName = null;
 
-   public TrackAdapter() {
-   }
+    public TrackAdapter() {
+    }
 
-   public TrackAdapter(TrackDomain trackDomain, ArrayAdapter rangeAdapter) throws VisADException {
-     this.trackDomain = trackDomain;
-     this.rngAdapter = rangeAdapter;
-   }
+    public TrackAdapter(TrackDomain trackDomain, ArrayAdapter rangeAdapter) throws VisADException {
+        this.trackDomain = trackDomain;
+        this.rngAdapter = rangeAdapter;
+    }
 
-   public Set makeDomain(Object subset) throws Exception {
-     throw new Exception("Unimplemented");
-   } 
+    public Set makeDomain(Object subset) throws Exception {
+        throw new Exception("Unimplemented");
+    }
 
-   public FlatField getData(Object subset) throws VisADException, RemoteException {
-     
-     float[] rngValues = null;
+    public FlatField getData(Object subset) throws VisADException, RemoteException {
 
-     Set set = trackDomain.makeDomain(subset);
+        float[] rngValues = null;
 
-     domainType = ((SetType)set.getType()).getDomain();
+        Set set = trackDomain.makeDomain(subset);
 
-     try {
-       rngValues = (rngAdapter.getData(subset).getFloats())[0];
-     }
-     catch (Exception e) {
-       e.printStackTrace();
-       return null;
-     }
+        domainType = ((SetType) set.getType()).getDomain();
 
-     FlatField field = new FlatField(new FunctionType(domainType, rngAdapter.getMathType().getRange()), set);
-     field.setSamples(new float[][] {rngValues}, false);
+        try {
+            rngValues = (rngAdapter.getData(subset).getFloats())[0];
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
-     return field;
-   }
+        FlatField field = new FlatField(new FunctionType(domainType, rngAdapter.getMathType().getRange()), set);
+        field.setSamples(new float[][]{rngValues}, false);
 
-   public void setName(String name) {
-     adapterName = name;
-   }
+        return field;
+    }
 
-   public String getArrayName() {
-     if (adapterName != null) {
-       return adapterName;
-     }
-     else {
-       return rngAdapter.getArrayName();
-     }
-   }
+    public void setName(String name) {
+        adapterName = name;
+    }
 
-   void setListIndex(int idx) {
-     listIndex = idx;
-   }
+    public String getArrayName() {
+        if (adapterName != null) {
+            return adapterName;
+        } else {
+            return rngAdapter.getArrayName();
+        }
+    }
 
-   public HashMap getDefaultSubset() {
-     HashMap subset = rngAdapter.getDefaultSubset();
-     if (subset.containsKey("VertDim")) {
-       double[] coords = (double[]) ((HashMap)subset).get("VertDim");
-       if (coords != null) {
-         coords[0] = listIndex;
-         coords[1] = listIndex;
-         coords[2] = 1;
-       }
-     }
-     return subset;
-   }
+    void setListIndex(int idx) {
+        listIndex = idx;
+    }
 
-   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
-                                          double minLon, double maxLon) {
-      return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon);
-   }
+    public HashMap getDefaultSubset() {
+        HashMap subset = rngAdapter.getDefaultSubset();
+        if (subset.containsKey("VertDim")) {
+            double[] coords = (double[]) ((HashMap) subset).get("VertDim");
+            if (coords != null) {
+                coords[0] = listIndex;
+                coords[1] = listIndex;
+                coords[2] = 1;
+            }
+        }
+        return subset;
+    }
 
-   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
-                                          double minLon, double maxLon,
-                                          int xStride, int yStride, int zStride) {
-      return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon,
-                                                 xStride, yStride, zStride);
-   }
+    public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+                                           double minLon, double maxLon) {
+        return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon);
+    }
+
+    public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+                                           double minLon, double maxLon,
+                                           int xStride, int yStride, int zStride) {
+        return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon,
+                xStride, yStride, zStride);
+    }
 
 }

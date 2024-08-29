@@ -28,83 +28,83 @@
  */
 
 package edu.wisc.ssec.adapter;
-                                                                                                                                                           
+
 import java.util.HashMap;
+
 import visad.FlatField;
 
 
 public class IASI_L1C_NCDF_Spectrum extends SpectrumAdapter {
 
-  public static int[][] ifov_order2 = new int[][] {new int[] {1,1}, new int[] {0,-1}, new int[] {0,0}, new int[] {-1,0}};
+    public static int[][] ifov_order2 = new int[][]{new int[]{1, 1}, new int[]{0, -1}, new int[]{0, 0}, new int[]{-1, 0}};
 
-  public HashMap new_subset = new HashMap();
-  
-  private float[] scaleFactors = null;
+    public HashMap new_subset = new HashMap();
 
-  public IASI_L1C_NCDF_Spectrum(MultiDimensionReader reader, HashMap metadata) {
-    super(reader, metadata);
-    try {
-        scaleFactors = reader.getFloatArray("scale_factor", new int[] {0}, new int[] {numChannels} ,new int[] {1});
+    private float[] scaleFactors = null;
+
+    public IASI_L1C_NCDF_Spectrum(MultiDimensionReader reader, HashMap metadata) {
+        super(reader, metadata);
+        try {
+            scaleFactors = reader.getFloatArray("scale_factor", new int[]{0}, new int[]{numChannels}, new int[]{1});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    catch (Exception e) {
-        e.printStackTrace();
+
+    public float[] getChannels() throws Exception {
+        float[] chans = super.getChannels();
+        int cnt = 0;
+        for (int k = 0; k < chans.length; k++) {
+            chans[k] /= 100f; // m-1 to cm-1
+            if (chans[k] > 0f) cnt++;
+        }
+        // remove zeros at the end, reset numChannels
+        float[] new_chans = new float[cnt];
+        System.arraycopy(chans, 0, new_chans, 0, cnt);
+        numChannels = cnt;
+        return new_chans;
     }
-  }
-  
-  public float[] getChannels() throws Exception {
-      float[] chans = super.getChannels();
-      int cnt=0;
-      for (int k=0; k<chans.length; k++) {
-          chans[k] /= 100f; // m-1 to cm-1
-          if (chans[k] > 0f) cnt++;
-      }
-      // remove zeros at the end, reset numChannels
-      float[] new_chans = new float[cnt];
-      System.arraycopy(chans, 0, new_chans, 0, cnt);
-      numChannels = cnt;
-      return new_chans;
-  }
-   
-  public FlatField getData(Object subset) throws Exception {
-     new_subset.putAll((HashMap) subset);
 
-     double[] xx = (double[]) ((HashMap)subset).get(SpectrumAdapter.x_dim_name);
-     double[] yy = (double[]) ((HashMap)subset).get(SpectrumAdapter.y_dim_name);
-     double[] new_xx = new double[3];
-     double[] new_yy = new double[3];
+    public FlatField getData(Object subset) throws Exception {
+        new_subset.putAll((HashMap) subset);
 
-     int i = (int) xx[0]/2;
-     int j = (int) yy[0]/2;
+        double[] xx = (double[]) ((HashMap) subset).get(SpectrumAdapter.x_dim_name);
+        double[] yy = (double[]) ((HashMap) subset).get(SpectrumAdapter.y_dim_name);
+        double[] new_xx = new double[3];
+        double[] new_yy = new double[3];
 
-     int ii = ((int)xx[0]) - i*2;
-     int jj = ((int)yy[0]) - j*2;
+        int i = (int) xx[0] / 2;
+        int j = (int) yy[0] / 2;
 
-     int k = jj*2 + ii;
-     int idx = j*120 + i*4 + (jj+ifov_order2[k][0])*2 + (ii+ifov_order2[k][1]);
+        int ii = ((int) xx[0]) - i * 2;
+        int jj = ((int) yy[0]) - j * 2;
 
-     double y = (double) ((int)(idx/120));
-     double x = idx - (int) y*120;
-     
-     new_yy[0] = y;
-     new_yy[1] = y;
-     new_yy[2] = 1;
+        int k = jj * 2 + ii;
+        int idx = j * 120 + i * 4 + (jj + ifov_order2[k][0]) * 2 + (ii + ifov_order2[k][1]);
 
-     new_xx[0] = x;
-     new_xx[1] = x;
-     new_xx[2] = 1;
+        double y = (double) ((int) (idx / 120));
+        double x = idx - (int) y * 120;
 
-     new_subset.put(SpectrumAdapter.x_dim_name, new_xx);
-     new_subset.put(SpectrumAdapter.y_dim_name, new_yy);
+        new_yy[0] = y;
+        new_yy[1] = y;
+        new_yy[2] = 1;
 
-     return super.getData(new_subset);
-   }
+        new_xx[0] = x;
+        new_xx[1] = x;
+        new_xx[2] = 1;
 
-  public float[] processRange(short[] range, Object subset) {
-      float[] new_range = new float[numChannels];
-      for (int k=0; k<numChannels; k++) {
-          new_range[k] = (100000f*range[k])/(scaleFactors[k]);
-      }
-      return new_range;
-  }
+        new_subset.put(SpectrumAdapter.x_dim_name, new_xx);
+        new_subset.put(SpectrumAdapter.y_dim_name, new_yy);
+
+        return super.getData(new_subset);
+    }
+
+    public float[] processRange(short[] range, Object subset) {
+        float[] new_range = new float[numChannels];
+        for (int k = 0; k < numChannels; k++) {
+            new_range[k] = (100000f * range[k]) / (scaleFactors[k]);
+        }
+        return new_range;
+    }
 
 }

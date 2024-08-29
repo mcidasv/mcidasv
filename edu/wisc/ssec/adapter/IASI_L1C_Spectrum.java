@@ -28,74 +28,75 @@
  */
 
 package edu.wisc.ssec.adapter;
-                                                                                                                                                           
+
 import java.util.HashMap;
+
 import visad.FlatField;
 
 
 public class IASI_L1C_Spectrum extends SpectrumAdapter {
 
-  public static float IDefSpectDWn1b = 25f;  //- m-1
-  public static float IDefNsfirst1b = 2581f;
-  public static float IDefNslast1b = 11041f;
-  public static int[][] ifov_order2 = new int[][] {new int[] {1,1}, new int[] {0,-1}, new int[] {0,0}, new int[] {-1,0}};
+    public static float IDefSpectDWn1b = 25f;  //- m-1
+    public static float IDefNsfirst1b = 2581f;
+    public static float IDefNslast1b = 11041f;
+    public static int[][] ifov_order2 = new int[][]{new int[]{1, 1}, new int[]{0, -1}, new int[]{0, 0}, new int[]{-1, 0}};
 
-  public HashMap new_subset = new HashMap();
+    public HashMap new_subset = new HashMap();
 
-  public IASI_L1C_Spectrum(MultiDimensionReader reader, HashMap metadata) {
-    super(reader, metadata);
-  }
-
-  public int computeNumChannels() {
-    int numChannels = (int) (IDefNslast1b + 1f - IDefNsfirst1b);
-    return numChannels;
-  }
-
-  public float[] getChannels() throws Exception {
-    float[] spectrum = new float[numChannels];
-    for (int k=0; k<numChannels; k++) {
-      spectrum[k] = (IDefSpectDWn1b*(IDefNsfirst1b+k-1))/100;  //- m-1 to cm-1
+    public IASI_L1C_Spectrum(MultiDimensionReader reader, HashMap metadata) {
+        super(reader, metadata);
     }
-    return spectrum;
-  }
 
-   
-  public FlatField getData(Object subset) throws Exception {
-     new_subset.putAll((HashMap) subset);
+    public int computeNumChannels() {
+        int numChannels = (int) (IDefNslast1b + 1f - IDefNsfirst1b);
+        return numChannels;
+    }
 
-     double[] xx = (double[]) ((HashMap)subset).get(SpectrumAdapter.x_dim_name);
-     double[] yy = (double[]) ((HashMap)subset).get(SpectrumAdapter.y_dim_name);
-     double[] new_xx = new double[3];
-     double[] new_yy = new double[3];
+    public float[] getChannels() throws Exception {
+        float[] spectrum = new float[numChannels];
+        for (int k = 0; k < numChannels; k++) {
+            spectrum[k] = (IDefSpectDWn1b * (IDefNsfirst1b + k - 1)) / 100;  //- m-1 to cm-1
+        }
+        return spectrum;
+    }
 
-     int i = (int) xx[0]/2;
-     int j = (int) yy[0]/2;
 
-     int ii = ((int)xx[0]) - i*2;
-     int jj = ((int)yy[0]) - j*2;
+    public FlatField getData(Object subset) throws Exception {
+        new_subset.putAll((HashMap) subset);
 
-     int k = jj*2 + ii;
-     int idx = j*120 + i*4 + (jj+ifov_order2[k][0])*2 + (ii+ifov_order2[k][1]);
+        double[] xx = (double[]) ((HashMap) subset).get(SpectrumAdapter.x_dim_name);
+        double[] yy = (double[]) ((HashMap) subset).get(SpectrumAdapter.y_dim_name);
+        double[] new_xx = new double[3];
+        double[] new_yy = new double[3];
 
-     double y = (double) ((int)(idx/120));
-     double x = idx - (int) y*120;
-     
-     new_yy[0] = y;
-     new_yy[1] = y;
-     new_yy[2] = 1;
+        int i = (int) xx[0] / 2;
+        int j = (int) yy[0] / 2;
 
-     new_xx[0] = x;
-     new_xx[1] = x;
-     new_xx[2] = 1;
+        int ii = ((int) xx[0]) - i * 2;
+        int jj = ((int) yy[0]) - j * 2;
 
-     new_subset.put(SpectrumAdapter.x_dim_name, new_xx);
-     new_subset.put(SpectrumAdapter.y_dim_name, new_yy);
+        int k = jj * 2 + ii;
+        int idx = j * 120 + i * 4 + (jj + ifov_order2[k][0]) * 2 + (ii + ifov_order2[k][1]);
 
-     return super.getData(new_subset);
-   }
+        double y = (double) ((int) (idx / 120));
+        double x = idx - (int) y * 120;
 
-  public float[] processRange(short[] range, Object subset) {
-    return IASI_L1C_Utility.getDecodedIASISpectra(range, null);
-  }
+        new_yy[0] = y;
+        new_yy[1] = y;
+        new_yy[2] = 1;
+
+        new_xx[0] = x;
+        new_xx[1] = x;
+        new_xx[2] = 1;
+
+        new_subset.put(SpectrumAdapter.x_dim_name, new_xx);
+        new_subset.put(SpectrumAdapter.y_dim_name, new_yy);
+
+        return super.getData(new_subset);
+    }
+
+    public float[] processRange(short[] range, Object subset) {
+        return IASI_L1C_Utility.getDecodedIASISpectra(range, null);
+    }
 
 }

@@ -31,51 +31,52 @@ package edu.wisc.ssec.adapter;
 
 import visad.FlatField;
 import visad.Set;
+
 import java.util.HashMap;
 
 
 public class IASI_L1C_SwathAdapter extends SwathAdapter {
 
-   public IASI_L1C_SwathAdapter(MultiDimensionReader reader, HashMap metadata) {
-     super(reader, metadata);
-   }
+    public IASI_L1C_SwathAdapter(MultiDimensionReader reader, HashMap metadata) {
+        super(reader, metadata);
+    }
 
-   protected void setLengths() {
-     int len = getTrackLength();
-     setTrackLength(len *= 2);
-     len = getXTrackLength();
-     setXTrackLength( len /= 2);
-   }
+    protected void setLengths() {
+        int len = getTrackLength();
+        setTrackLength(len *= 2);
+        len = getXTrackLength();
+        setXTrackLength(len /= 2);
+    }
 
-   public FlatField getData(Object subset) throws Exception {
+    public FlatField getData(Object subset) throws Exception {
 
-     HashMap new_subset = (HashMap) ((HashMap)subset).clone();
-     new_subset.putAll((HashMap)subset);
+        HashMap new_subset = (HashMap) ((HashMap) subset).clone();
+        new_subset.putAll((HashMap) subset);
 
-     // reform subset to integral numbers of EFOV (FORs)
-     // you may not get exactly what you ask for in this case.
+        // reform subset to integral numbers of EFOV (FORs)
+        // you may not get exactly what you ask for in this case.
 
-     double[] coords = (double[]) new_subset.get(SwathAdapter.track_name);
-     double[] new_trk_coords = new double[] {2.0*Math.floor((coords[0])/2), 2.0*Math.floor((coords[1]+1)/2)-1, 1.0};
-     new_subset.put(SwathAdapter.track_name, new_trk_coords);
+        double[] coords = (double[]) new_subset.get(SwathAdapter.track_name);
+        double[] new_trk_coords = new double[]{2.0 * Math.floor((coords[0]) / 2), 2.0 * Math.floor((coords[1] + 1) / 2) - 1, 1.0};
+        new_subset.put(SwathAdapter.track_name, new_trk_coords);
 
-     coords = (double[]) new_subset.get(SwathAdapter.xtrack_name);
-     double[] new_xtrk_coords = new double[] {2.0*Math.floor((coords[0])/2), 2.0*Math.floor((coords[1]+1)/2)-1, 1.0};
-     new_subset.put(SwathAdapter.xtrack_name, new_xtrk_coords);
- 
-     Set domainSet = makeDomain(new_subset);
+        coords = (double[]) new_subset.get(SwathAdapter.xtrack_name);
+        double[] new_xtrk_coords = new double[]{2.0 * Math.floor((coords[0]) / 2), 2.0 * Math.floor((coords[1] + 1) / 2) - 1, 1.0};
+        new_subset.put(SwathAdapter.xtrack_name, new_xtrk_coords);
 
-     // transform the integral swath EFOV coordinates to dataset storage indexes.
+        Set domainSet = makeDomain(new_subset);
 
-     new_subset = (HashMap) ((HashMap)subset).clone();
-     new_subset.putAll((HashMap)subset);
+        // transform the integral swath EFOV coordinates to dataset storage indexes.
 
-     new_trk_coords = new double[] {new_trk_coords[0]/2, ((new_trk_coords[1]+1)/2)-1, 1.0};
-     new_subset.put(SwathAdapter.track_name, new_trk_coords);
+        new_subset = (HashMap) ((HashMap) subset).clone();
+        new_subset.putAll((HashMap) subset);
 
-     new_xtrk_coords = new double[] {2.0*new_xtrk_coords[0], (2.0*(new_xtrk_coords[1]+1))-1, 1.0};
-     new_subset.put(SwathAdapter.xtrack_name, new_xtrk_coords);
+        new_trk_coords = new double[]{new_trk_coords[0] / 2, ((new_trk_coords[1] + 1) / 2) - 1, 1.0};
+        new_subset.put(SwathAdapter.track_name, new_trk_coords);
 
-     return makeFlatField(domainSet, new_subset);
-   }
+        new_xtrk_coords = new double[]{2.0 * new_xtrk_coords[0], (2.0 * (new_xtrk_coords[1] + 1)) - 1, 1.0};
+        new_subset.put(SwathAdapter.xtrack_name, new_xtrk_coords);
+
+        return makeFlatField(domainSet, new_subset);
+    }
 }

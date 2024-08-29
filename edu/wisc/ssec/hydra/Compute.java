@@ -50,287 +50,284 @@ import visad.Data;
 
 
 public abstract class Compute implements SelectionListener {
- 
-   int activeIndex;
-   Operand[] operands;
-   int numOperands;
-   String[] operators;
-   int numOperators;
 
-   String title;
-   DataBrowser dataBrowser;
-   
-   private static ArrayList<Compute> listOfComputes = new ArrayList();
+    int activeIndex;
+    Operand[] operands;
+    int numOperands;
+    String[] operators;
+    int numOperators;
 
-   public Compute(int numOperands, int numOperators, String title) {
-      this.numOperands = numOperands;
-      this.numOperators = numOperators;
-      this.title = title;
+    String title;
+    DataBrowser dataBrowser;
 
-      operands = new Operand[numOperands];
-      for (int k=0; k<numOperands; k++) {
-         operands[k] = new Operand();
-      }
+    private static ArrayList<Compute> listOfComputes = new ArrayList();
 
-      if (numOperators > 0) {
-         operators = new String[numOperators];
-         for (int k=0; k<numOperators; k++) {
-            operators[k] = new String();
-         }
-      }
-   }
+    public Compute(int numOperands, int numOperators, String title) {
+        this.numOperands = numOperands;
+        this.numOperators = numOperators;
+        this.title = title;
 
-   public Compute(int numOperands, String title) {
-      this(numOperands, 0, title);
-   }
-
-   public Compute() {
-   }
-
-   public abstract JComponent buildGUI();
-
-   public abstract Data compute() throws Exception;
-
-   public abstract void createDisplay(Data data, int mode, int windowNumber) throws Exception;
-
-   public abstract String getOperationName();
-   
-   public abstract void updateUI(SelectionEvent e);
-   
-   public void updateOperandComp(int idx, Object obj) {      
-   }
-
-   public JComponent makeActionComponent() {
-      JButton create = new JButton("Create");
-      class MyListener implements ActionListener {
-         Compute compute;
-
-         public MyListener(Compute compute) {
-            this.compute = compute;
-         }
-
-         public void actionPerformed(ActionEvent e) {
-             try {
-                Compute clonedCompute = compute.clone();
-                if (Hydra.getReplicateCompute()) {
-                   replicateCompute(clonedCompute, dataBrowser);
-                }
-                else {
-                   listOfComputes.add(clonedCompute);
-                   LeafInfo info = new LeafInfo(clonedCompute, getOperationName(), 0);
-                   DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
-                   dataBrowser.addUserTreeNode(node);
-                }
-             } catch (Exception exc) {
-                exc.printStackTrace();
-             }
-         }
-      };
-      create.addActionListener(new MyListener(this));
-
-      JPanel panel = new JPanel();
-      panel.add(create);
-      return panel;
-   }
-
-   public void show(int x, int y, String title) {
-      JComponent gui = buildGUI();
-      gui.add(makeActionComponent());
-      SelectionAdapter.addSelectionListenerToAll(this);   
-      
-      JFrame frame = Hydra.createAndShowFrame(title, gui);
-      frame.setLocation(x,y);
-      final Compute compute = this;
-      frame.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-             SelectionAdapter.removeSelectionListenerFromAll(compute);
-          }
+        operands = new Operand[numOperands];
+        for (int k = 0; k < numOperands; k++) {
+            operands[k] = new Operand();
         }
-      );
 
-   }
-
-   public void show(int x, int y) {
-      show(x,y,title);
-   }
-
-   public void selectionPerformed(SelectionEvent e) {
-      Operand operand = operands[activeIndex];
-
-      if (!e.fromCompute) {
-         operand.dataSource = e.getDataSource();
-         operand.dataSourceId = operand.dataSource.getDataSourceId();
-         operand.selection = e.getSelection();
-         operand.dataChoice = e.getSelection().getSelectedDataChoice();
-
-         DataSelection dataSelection = new MultiDimensionSubset();
-         operand.selection.applyToDataSelection(dataSelection);
-         operand.dataSelection = dataSelection;
-         operand.compute = null;
-      }
-      else {
-         operand = new Operand();
-         operand.dataSource = e.compute.operands[0].dataSource;
-         operand.dataSourceId = e.compute.operands[0].dataSourceId;
-         operand.selection = e.compute.operands[0].selection;
-         operand.dataChoice = e.compute.operands[0].dataChoice;
-         operand.compute = e.compute;
-         operands[activeIndex] = operand;
-      }
-
-      operand.name = e.getName();
-      operand.isEmpty = false;
-      
-      updateUI(e);
-   }
-   
-   public void setActive(int idx) {
-      activeIndex = idx;
-   }
-
-   public Compute copy(Compute compute) {
-      compute.numOperands = numOperands;
-      compute.operands = new Operand[numOperands];
-      for (int k=0; k<numOperands; k++) {
-         compute.operands[k] = operands[k].clone();
-      }
-
-      compute.numOperators = numOperators;
-      compute.operators = new String[numOperators];
-      for (int k=0; k<numOperators; k++) {
-         compute.operators[k] = new String(operators[k]);
-      }
-
-      return compute;
-   }
-
-   public Compute clone() throws CloneNotSupportedException {
-      throw new CloneNotSupportedException("Can't clone abstract Compute");
-   }
-   
-   public Compute cloneForDataSource(DataSource dataSource, Selection selection) throws CloneNotSupportedException {
-      Compute aclone = clone();
-      
-      for (int k=0; k<numOperators; k++) {
-         aclone.operators[k] = operators[k];
-      }
-      
-      for (int k=0; k<numOperands; k++) {
-         Operand operand = operands[k];
-         if (!operand.isEmpty) {
-            aclone.operands[k] = operand.clone();
-            if (operand.dataSource.getDescription().equals(dataSource.getDescription())) {
-               aclone.operands[k].dataChoice = dataSource.getDataChoiceByName(operand.dataChoice.getName());
-               aclone.operands[k].dataSource = dataSource;
-               aclone.operands[k].dataSourceId = dataSource.getDataSourceId();
-               aclone.operands[k].name = dataSource.getDataSourceId()+":"+operand.dataChoice.getName();
-               aclone.operands[k].selection = selection;
+        if (numOperators > 0) {
+            operators = new String[numOperators];
+            for (int k = 0; k < numOperators; k++) {
+                operators[k] = new String();
             }
-         }
-      }
-      
-      return aclone;
-   }
-   
-   public static void replicateCompute(DataBrowser dataBrowser, DataSource dataSource, Selection selection) {
-      if (listOfComputes.isEmpty()) return;
-      Compute compute = null;
-      
-      Iterator<Compute> iter = listOfComputes.iterator();
-      while (iter.hasNext()) { 
-         compute = iter.next();
-         boolean all = true;
-         for (int k=0; k<compute.numOperands; k++) {
-            Operand operand = compute.operands[k];
-            if (!operand.isEmpty()) {
-               if (!(operand.dataSource.getDescription().equals(dataSource.getDescription()))) {
-                  all = false;
-               }
-            }
-         }
-         if (!all) {
-            compute = null;
-         }
-      
-      
-         if (compute != null) {
-            try {
-               compute = compute.cloneForDataSource(dataSource, selection);
-            }
-            catch (CloneNotSupportedException exc) {
-               exc.printStackTrace();
+        }
+    }
+
+    public Compute(int numOperands, String title) {
+        this(numOperands, 0, title);
+    }
+
+    public Compute() {
+    }
+
+    public abstract JComponent buildGUI();
+
+    public abstract Data compute() throws Exception;
+
+    public abstract void createDisplay(Data data, int mode, int windowNumber) throws Exception;
+
+    public abstract String getOperationName();
+
+    public abstract void updateUI(SelectionEvent e);
+
+    public void updateOperandComp(int idx, Object obj) {
+    }
+
+    public JComponent makeActionComponent() {
+        JButton create = new JButton("Create");
+        class MyListener implements ActionListener {
+            Compute compute;
+
+            public MyListener(Compute compute) {
+                this.compute = compute;
             }
 
-            LeafInfo info = new LeafInfo(compute, compute.getOperationName(), 0);
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
-            dataBrowser.addUserTreeNode(node);
-         }
-      
-      }
-   }
-   
-   public static void replicateCompute(Compute compute, DataBrowser dataBrowser) {
-      
-      Iterator<DataSource> iter = DataSourceFactory.getDataSources().iterator();
-      ArrayList<DefaultMutableTreeNode> nodes = new ArrayList();
-      
-      while (iter.hasNext()) {
-         DataSource dataSource = iter.next();
-      
-         boolean all = true;
-         for (int k=0; k<compute.numOperands; k++) {
-            Operand operand = compute.operands[k];
-            if (!operand.isEmpty()) {
-               if (!(operand.dataSource.getDescription().equals(dataSource.getDescription()))) {
-                  all = false;
-               }
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Compute clonedCompute = compute.clone();
+                    if (Hydra.getReplicateCompute()) {
+                        replicateCompute(clonedCompute, dataBrowser);
+                    } else {
+                        listOfComputes.add(clonedCompute);
+                        LeafInfo info = new LeafInfo(clonedCompute, getOperationName(), 0);
+                        DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
+                        dataBrowser.addUserTreeNode(node);
+                    }
+                } catch (Exception exc) {
+                    exc.printStackTrace();
+                }
             }
-         }
-         
-         if (all) {
-            try {
-               compute = compute.cloneForDataSource(dataSource, Hydra.dataSourceIdToSelector.get(dataSource.getDataSourceId()));
+        }
+        ;
+        create.addActionListener(new MyListener(this));
+
+        JPanel panel = new JPanel();
+        panel.add(create);
+        return panel;
+    }
+
+    public void show(int x, int y, String title) {
+        JComponent gui = buildGUI();
+        gui.add(makeActionComponent());
+        SelectionAdapter.addSelectionListenerToAll(this);
+
+        JFrame frame = Hydra.createAndShowFrame(title, gui);
+        frame.setLocation(x, y);
+        final Compute compute = this;
+        frame.addWindowListener(new WindowAdapter() {
+                                    public void windowClosing(WindowEvent e) {
+                                        SelectionAdapter.removeSelectionListenerFromAll(compute);
+                                    }
+                                }
+        );
+
+    }
+
+    public void show(int x, int y) {
+        show(x, y, title);
+    }
+
+    public void selectionPerformed(SelectionEvent e) {
+        Operand operand = operands[activeIndex];
+
+        if (!e.fromCompute) {
+            operand.dataSource = e.getDataSource();
+            operand.dataSourceId = operand.dataSource.getDataSourceId();
+            operand.selection = e.getSelection();
+            operand.dataChoice = e.getSelection().getSelectedDataChoice();
+
+            DataSelection dataSelection = new MultiDimensionSubset();
+            operand.selection.applyToDataSelection(dataSelection);
+            operand.dataSelection = dataSelection;
+            operand.compute = null;
+        } else {
+            operand = new Operand();
+            operand.dataSource = e.compute.operands[0].dataSource;
+            operand.dataSourceId = e.compute.operands[0].dataSourceId;
+            operand.selection = e.compute.operands[0].selection;
+            operand.dataChoice = e.compute.operands[0].dataChoice;
+            operand.compute = e.compute;
+            operands[activeIndex] = operand;
+        }
+
+        operand.name = e.getName();
+        operand.isEmpty = false;
+
+        updateUI(e);
+    }
+
+    public void setActive(int idx) {
+        activeIndex = idx;
+    }
+
+    public Compute copy(Compute compute) {
+        compute.numOperands = numOperands;
+        compute.operands = new Operand[numOperands];
+        for (int k = 0; k < numOperands; k++) {
+            compute.operands[k] = operands[k].clone();
+        }
+
+        compute.numOperators = numOperators;
+        compute.operators = new String[numOperators];
+        for (int k = 0; k < numOperators; k++) {
+            compute.operators[k] = new String(operators[k]);
+        }
+
+        return compute;
+    }
+
+    public Compute clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException("Can't clone abstract Compute");
+    }
+
+    public Compute cloneForDataSource(DataSource dataSource, Selection selection) throws CloneNotSupportedException {
+        Compute aclone = clone();
+
+        for (int k = 0; k < numOperators; k++) {
+            aclone.operators[k] = operators[k];
+        }
+
+        for (int k = 0; k < numOperands; k++) {
+            Operand operand = operands[k];
+            if (!operand.isEmpty) {
+                aclone.operands[k] = operand.clone();
+                if (operand.dataSource.getDescription().equals(dataSource.getDescription())) {
+                    aclone.operands[k].dataChoice = dataSource.getDataChoiceByName(operand.dataChoice.getName());
+                    aclone.operands[k].dataSource = dataSource;
+                    aclone.operands[k].dataSourceId = dataSource.getDataSourceId();
+                    aclone.operands[k].name = dataSource.getDataSourceId() + ":" + operand.dataChoice.getName();
+                    aclone.operands[k].selection = selection;
+                }
             }
-            catch (CloneNotSupportedException exc) {
-               exc.printStackTrace();
+        }
+
+        return aclone;
+    }
+
+    public static void replicateCompute(DataBrowser dataBrowser, DataSource dataSource, Selection selection) {
+        if (listOfComputes.isEmpty()) return;
+        Compute compute = null;
+
+        Iterator<Compute> iter = listOfComputes.iterator();
+        while (iter.hasNext()) {
+            compute = iter.next();
+            boolean all = true;
+            for (int k = 0; k < compute.numOperands; k++) {
+                Operand operand = compute.operands[k];
+                if (!operand.isEmpty()) {
+                    if (!(operand.dataSource.getDescription().equals(dataSource.getDescription()))) {
+                        all = false;
+                    }
+                }
             }
-            listOfComputes.add(compute);
-            LeafInfo info = new LeafInfo(compute, compute.getOperationName(), 0);
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
-            nodes.add(node);
-         }
-      }
-      
-      if (!nodes.isEmpty()) {
-         dataBrowser.addUserTreeNodes((DefaultMutableTreeNode[]) nodes.toArray(new DefaultMutableTreeNode[1]));
-      }
-   }
-   
-   public static void removeCompute(Compute compute) {
-      listOfComputes.remove(compute);
-   }
-   
-   public static void removeCompute(int dataSourceId) {
-      ArrayList<Compute> removeThese = new ArrayList<>();
-      Iterator<Compute> iter = listOfComputes.iterator();
-      while (iter.hasNext()) { 
-         Compute compute = iter.next();
-         
-         for (int k=0; k<compute.numOperands; k++) {
-            Operand operand = compute.operands[k];
-            if (!operand.isEmpty()) {
-               if (operand.dataSource.getDataSourceId() == dataSourceId) {
-                  removeThese.add(compute);
-                  break;
-               }
+            if (!all) {
+                compute = null;
             }
-         }
-      }
-      
-      iter = removeThese.iterator();
-      while (iter.hasNext()) {
-         Compute compute = iter.next();
-         listOfComputes.remove(compute);
-      }
-   }
+
+
+            if (compute != null) {
+                try {
+                    compute = compute.cloneForDataSource(dataSource, selection);
+                } catch (CloneNotSupportedException exc) {
+                    exc.printStackTrace();
+                }
+
+                LeafInfo info = new LeafInfo(compute, compute.getOperationName(), 0);
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
+                dataBrowser.addUserTreeNode(node);
+            }
+
+        }
+    }
+
+    public static void replicateCompute(Compute compute, DataBrowser dataBrowser) {
+
+        Iterator<DataSource> iter = DataSourceFactory.getDataSources().iterator();
+        ArrayList<DefaultMutableTreeNode> nodes = new ArrayList();
+
+        while (iter.hasNext()) {
+            DataSource dataSource = iter.next();
+
+            boolean all = true;
+            for (int k = 0; k < compute.numOperands; k++) {
+                Operand operand = compute.operands[k];
+                if (!operand.isEmpty()) {
+                    if (!(operand.dataSource.getDescription().equals(dataSource.getDescription()))) {
+                        all = false;
+                    }
+                }
+            }
+
+            if (all) {
+                try {
+                    compute = compute.cloneForDataSource(dataSource, Hydra.dataSourceIdToSelector.get(dataSource.getDataSourceId()));
+                } catch (CloneNotSupportedException exc) {
+                    exc.printStackTrace();
+                }
+                listOfComputes.add(compute);
+                LeafInfo info = new LeafInfo(compute, compute.getOperationName(), 0);
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
+                nodes.add(node);
+            }
+        }
+
+        if (!nodes.isEmpty()) {
+            dataBrowser.addUserTreeNodes((DefaultMutableTreeNode[]) nodes.toArray(new DefaultMutableTreeNode[1]));
+        }
+    }
+
+    public static void removeCompute(Compute compute) {
+        listOfComputes.remove(compute);
+    }
+
+    public static void removeCompute(int dataSourceId) {
+        ArrayList<Compute> removeThese = new ArrayList<>();
+        Iterator<Compute> iter = listOfComputes.iterator();
+        while (iter.hasNext()) {
+            Compute compute = iter.next();
+
+            for (int k = 0; k < compute.numOperands; k++) {
+                Operand operand = compute.operands[k];
+                if (!operand.isEmpty()) {
+                    if (operand.dataSource.getDataSourceId() == dataSourceId) {
+                        removeThese.add(compute);
+                        break;
+                    }
+                }
+            }
+        }
+
+        iter = removeThese.iterator();
+        while (iter.hasNext()) {
+            Compute compute = iter.next();
+            listOfComputes.remove(compute);
+        }
+    }
 }
