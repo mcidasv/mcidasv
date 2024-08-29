@@ -29,6 +29,8 @@
 
 package edu.wisc.ssec.hydra;
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
+
 import edu.wisc.ssec.hydra.data.DataSource;
 import edu.wisc.ssec.hydra.data.DataSourceFactory;
 
@@ -50,6 +52,8 @@ import java.text.DecimalFormat;
 import java.lang.Float;
 
 
+import edu.wisc.ssec.mcidasv.Constants;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.ColorTable;
 import edu.wisc.ssec.hydra.data.DataChoice;
@@ -93,6 +97,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -105,8 +110,6 @@ import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
-
-
 
 public class Hydra {
 
@@ -827,6 +830,10 @@ public class Hydra {
                 if (menuBar != null) {
                   frame.setJMenuBar(menuBar);
                 }
+
+                String iconPath = getStaticMcv().getProperty(Constants.PROP_APP_ICON, null);
+                ImageIcon icon = GuiUtils.getImageIcon(iconPath, getClass(), true);
+                frame.setIconImage(icon.getImage());
 
                 frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
