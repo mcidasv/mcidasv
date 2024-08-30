@@ -931,7 +931,6 @@
 
             <!-- required for jython stuff to work without jigsaw-specific changes -->
             <!--<jvmarg value="&#45;&#45;permit-illegal-access"/>-->
-            <jvmarg value="--illegal-access=warn" />
             <!-- add-exports allows reading from public types -->
             <jvmarg value="--add-exports" />
             <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
@@ -1158,7 +1157,6 @@
             <jvmarg value="java.naming/javax.naming.ldap=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
-            <jvmarg value="-noverify" />
             <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
             <!--      <jvmarg value="-XX:+UnlockExperimentalVMOptions" />-->
             <!--      <jvmarg value="-XX:+UseZGC" />-->
@@ -1196,10 +1194,8 @@
         <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv-${mcv.version}.jar">
             <classpath refid="app.classpath" />
             <assertions refid="mcv.assertions"/>
-
             <!-- required for jython stuff to work without jigsaw-specific changes -->
             <!--<jvmarg value="&#45;&#45;permit-illegal-access"/>-->
-            <jvmarg value="--illegal-access=warn" />
             <!-- add-exports allows reading from public types -->
             <jvmarg value="--add-exports" />
             <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
@@ -1426,7 +1422,6 @@
             <jvmarg value="java.naming/javax.naming.ldap=ALL-UNNAMED" />
             <jvmarg value="--add-opens" />
             <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
-            <jvmarg value="-noverify" />
             <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
             <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
             <jvmarg value="-Xdock:icon=../release/icons/mcidasv.icns" if:set="build.macos" />
