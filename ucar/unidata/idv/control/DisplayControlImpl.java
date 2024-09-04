@@ -851,8 +851,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     private boolean collapseLegend = false;
 
-
-    private String[] satNames = {"POES", "EWS", "METEOSAT7","TIROS","GALILEO","METEOSAT9","METEOSAT4","RMET","HIMAWARI","TERRA","NOAA20","GOES","METEOSAT IR","METEOSAT12","METEOSAT WV","HIM","GMS IR","AMSR","MTSAT","DMSP","ERBE","VENUS","VOYAGER1","NOAA22","SP COMP","DERIVED DATA","NOAA","KALPANA","AIRS","METEOSAT5","LANDSAT","METEOSAT13","METEOSAT11","GMS","SMS","NPP","NOAA23","MISC","GMS","AMSU","METOP","METEOSAT6","MEGHA","HUBBLE ST","NOAA21","FY","METEOSAT10","METEOSAT3","MTG","GK","METEOSAT VIS","RADAR","METEOSAT8","INSAT3D","COMPOSITE","ATS","TEST IMAGE","VOYAGER2","SNPP","NP COMP","COMS","AQUA","METEOSAT14","ACFT","GRAPHICS","TRMM","HCAST","MODIS"};
+    /**
+     * McIDAS Inquiry #2766-3141 -> satellite names
+     */
+    private String[] satNames = {"MET", "POES", "EWS", "METEOSAT","TIROS","GALILEO","METEOSAT9","METEOSAT4","RMET","HIMAWARI", "FY2G","TERRA","NOAA20","GOES","METEOSAT IR","METEOSAT12","METEOSAT WV","HIM","GMS IR","AMSR","MTSAT","DMSP","ERBE","VENUS","VOYAGER1","NOAA22","SP COMP","DERIVED DATA","NOAA","KALPANA","AIRS","METEOSAT5","LANDSAT","METEOSAT13","METEOSAT11","GMS","SMS","NPP","NOAA23","MISC","GMS","AMSU","METOP","METEOSAT6","MEGHA","HUBBLE ST","NOAA21","FY","METEOSAT10","METEOSAT3","MTG","GK","METEOSAT VIS","RADAR","METEOSAT8","INSAT3D","COMPOSITE","ATS","TEST IMAGE","VOYAGER2","SNPP","NP COMP","COMS","AQUA","METEOSAT14","ACFT","GRAPHICS","TRMM","HCAST","MODIS"};
     /** locking object */
     private Object MUTEX_CONTROLCHANGE = new Object();
 
@@ -12455,8 +12457,17 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     String satelliteName = src.getName();
                     for (String satName : satNames) {
                         for (String seg : expName) {
-                            if (seg.equals(satName) || seg.contains(satName + "-")) {
+                            if (seg.equals(satName)) {
                                 satelliteName = seg;
+                                break;
+                            }
+                            String reg = "(?i)" + satName + ".*";
+                            if (seg.matches(reg)) {
+                                if (seg.length() > (satName + "-").length()) {
+                                    satelliteName = seg;
+                                    break;
+                                }
+                                satelliteName = satName;
                                 break;
                             }
                         }
@@ -12633,8 +12644,17 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     String satelliteName = src.getName();
                     for (String satName : satNames) {
                         for (String seg : expName) {
-                            if (seg.equals(satName) || seg.contains(satName + "-")) {
+                            if (seg.equals(satName)) {
                                 satelliteName = seg;
+                                break;
+                            }
+                            String reg = "(?i)" + satName + ".*";
+                            if (seg.matches(reg)) {
+                                if (seg.length() > (satName + "-").length()) {
+                                    satelliteName = seg;
+                                    break;
+                                }
+                                satelliteName = satName;
                                 break;
                             }
                         }
