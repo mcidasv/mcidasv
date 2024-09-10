@@ -37,6 +37,7 @@ import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 
 import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.EventMap;
 import ucar.visad.display.LineDrawing;
 
 import visad.*;
@@ -86,10 +87,18 @@ public class PreviewDisplay {
 
     HashMap<PreviewSelection, SubsetRubberBandBox> rbb_s = new HashMap<PreviewSelection, SubsetRubberBandBox>();
 
+    // this is to help Bob during his demo. the right thing to do is fix mouse wheel
+    // zooming.
+    public static final int[][] NO_SCROLL_ZOOM_WHEEL_FUNCTIONS = {
+        { EventMap.WHEEL_NONE, EventMap.WHEEL_ROTATEX },
+        { EventMap.WHEEL_ROTATEY, EventMap.WHEEL_ROTATEZ }
+    };
+
     public PreviewDisplay() throws VisADException, RemoteException {
         this.mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
         this.mapProjDsp.enableRubberBanding(false);
         this.dspMaster = mapProjDsp;
+        this.dspMaster.setWheelEventMap(NO_SCROLL_ZOOM_WHEEL_FUNCTIONS);
 
         // region outline box
         outlineDsp = new LineDrawing("outline");
