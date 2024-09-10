@@ -29,13 +29,14 @@
 
 package edu.wisc.ssec.hydra;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import edu.wisc.ssec.hydra.data.MultiSpectralDataSource;
 import edu.wisc.ssec.adapter.MultiSpectralData;
@@ -71,6 +72,22 @@ public class RGBComposite extends Compute {
         this.dataBrowser = dataBrowser;
     }
 
+    @Override public void show(int x, int y, String title) {
+        JComponent gui = buildGUI();
+        gui.add(makeActionComponent());
+        SelectionAdapter.addSelectionListenerToAll(this);
+
+        Dimension windowSize = new Dimension(475, 85);
+        JFrame frame = Hydra.createAndShowFrame(title, gui, windowSize);
+        frame.setLocation(x, y);
+        final Compute compute = this;
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                SelectionAdapter.removeSelectionListenerFromAll(compute);
+            }
+        });
+    }
+
     public JComponent buildGUI() {
         LineBorder blackBorder = new LineBorder(Color.black);
         LineBorder redBorder = new LineBorder(Color.red);
@@ -84,8 +101,11 @@ public class RGBComposite extends Compute {
         borders3 = new LineBorder[]{redBorder3, greenBorder3, blueBorder3};
 
         JPanel panel = new JPanel(new FlowLayout());
+//        JPanel panel = new JPanel();
+//        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        final String[] compNames = {"           ", "           ", "           "};
+
+        final String[] compNames = {"                      ", "                      ", "                      "};
         colorComponents = new JLabel[compNames.length];
 
         for (int k = 0; k < colorComponents.length; k++) {

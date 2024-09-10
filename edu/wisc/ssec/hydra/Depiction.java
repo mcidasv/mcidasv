@@ -143,7 +143,8 @@ public class Depiction {
             show.addMouseListener(new java.awt.event.MouseAdapter() {
                                       public void mouseClicked(java.awt.event.MouseEvent e) {
                                           dialog.setLocation(show.getLocationOnScreen());
-                                          dialog.setSize(dialog.getPreferredSize());
+//                                          dialog.setSize(dialog.getPreferredSize());
+                                          dialog.pack();
                                           dialog.setVisible(true);
                                           if (!isVisible) {
                                               setWhichVisible();
