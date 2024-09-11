@@ -9,12 +9,17 @@
 
 package visad.java3d;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Method;
 
 import javax.media.j3d.*;
 import javax.vecmath.*;
 
 public class UniverseBuilderJ3D extends Object {
+
+    private static final Logger logger = LoggerFactory.getLogger(UniverseBuilderJ3D.class);
 
     // User-specified canvas
     private Canvas3D canvas;
@@ -107,11 +112,12 @@ public class UniverseBuilderJ3D extends Object {
       }
       try {
         view.attachViewPlatform(null);
+        universe.removeAllLocales();
       } catch (RuntimeException why) {
-    	// Apparently this might throw a NPE.
-    	// Ignore because we're just trying to conform to best practice.  
+        // Apparently these calls throw NPEs sometimes. We're just going to
+        // log any exceptions for now.
+        logger.error("Exception occurred while destroying j3d comps", why);
       }
-      universe.removeAllLocales();
 
       canvas = null;
       universe = null;
