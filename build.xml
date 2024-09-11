@@ -628,8 +628,8 @@
             <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
             <fileset dir="${nativelib.dir}/macos-aarch64" includes="**/*.dylib" if:set="build.macos-aarch64" />
             <fileset dir="${nativelib.dir}/macos-intel" includes="**/*.dylib" if:set="build.macos-x86_64" />
-            <fileset dir="${nativelib.dir}/linux" includes="**/*.dylib" if:set="build.linux" />
-            <fileset dir="${nativelib.dir}/windows" includes="**/*.dylib" if:set="build.windows" />
+            <fileset dir="${nativelib.dir}/linux" includes="**/*.so" if:set="build.linux" />
+            <fileset dir="${nativelib.dir}/windows" includes="**/*.dll" if:set="build.windows" />
         </copy>
 
         <javac fork="true" srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
