@@ -28,44 +28,45 @@
 
 package ucar.unidata.idv.chooser.adde;
 
-
-import edu.wisc.ssec.mcidas.McIDASUtil;
-
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
-
-
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-
 import ucar.unidata.ui.symbol.StationModel;
-import ucar.unidata.ui.symbol.StationModelManager;
-
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.TwoFacedObject;
-
 import ucar.visad.UtcDate;
 
 import visad.DateTime;
 import visad.VisADException;
 
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 
-import java.beans.*;
-
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.*;
-
+import java.util.SortedSet;
+import java.util.TimeZone;
+import java.util.TreeSet;
 
 /**
  * Selection widget for ADDE point data
@@ -651,10 +652,10 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
         };
         List     l    = new ArrayList();
         for (int i = 0; i < nums.length; i++) {
-            l.add(new TwoFacedObject(nums[i], new Float(vals[i])));
+            l.add(new TwoFacedObject(nums[i], Float.valueOf(vals[i])));
         }
         relTimeIncBox = GuiUtils.getEditableBox(l,
-                new Float(getRelativeTimeIncrement()));
+                Float.valueOf(getRelativeTimeIncrement()));
         relTimeIncBox.addActionListener(listener);
         relTimeIncBox.setToolTipText(
             "Set the increment between most recent times");
@@ -713,7 +714,7 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
             //ht.put(DATASET_NAME_KEY, getDatasetName());
             ht.put(DATA_NAME_KEY, getDataName());
             ht.put(AddeUtil.RELATIVE_TIME_INCREMENT,
-                    new Double(getRelativeTimeIncrement()/60.0));
+                    Double.valueOf(getRelativeTimeIncrement() / 60.0));
             if (source.indexOf(AddeUtil.RELATIVE_TIME) >= 0) {
                 ht.put(AddeUtil.NUM_RELATIVE_TIMES, getRelativeTimeIndices());
             }
