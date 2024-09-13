@@ -29,6 +29,9 @@
 package ucar.unidata.idv.ui;
 
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -42,6 +45,7 @@ import ucar.unidata.data.DescriptorDataSource;
 import ucar.unidata.data.grid.GeoGridDataSource;
 import ucar.unidata.idv.*;
 
+import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.unidata.ui.ButtonTabbedPane;
 
 import ucar.unidata.util.GuiUtils;
@@ -56,11 +60,8 @@ import java.awt.event.*;
 
 import java.io.File;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -129,6 +130,9 @@ public class DataSelector extends DataSourceHolder {
 
     /** The list of data source wrappers */
     private List wrappers = new ArrayList();
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(DataSelector.class);
 
 
 
@@ -754,7 +758,7 @@ public class DataSelector extends DataSourceHolder {
                 JButton createBtn = new JButton("Create Display");
                 createBtn.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent ae) {
-                        dcd.doOk();
+                        doOk();
                     }
                 });
                 dcd.addCreateButton(createBtn);
@@ -764,6 +768,21 @@ public class DataSelector extends DataSourceHolder {
             }
 
 
+        }
+
+        /**
+         * McIDAS Inquiry #2827-3141
+         * It should no longer be possible to create a display if no tabs exist
+         */
+
+        private void doOk() {
+            if (McVGuiUtils.getAllComponentHolders().size() > 0) {
+                dcd.doOk();
+            } else {
+                JOptionPane.showMessageDialog(null,
+                        "There are no display tabs to create this display!",
+                        "Unable to Create Display", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
 
