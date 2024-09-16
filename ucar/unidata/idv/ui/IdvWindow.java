@@ -568,10 +568,10 @@ public class IdvWindow extends MultiFrame {
      *
      * @return Was closed
      */
-    protected boolean doClose() {
+    public boolean doClose() {
         if (isAMainWindow && mainWindows.contains(this)
                 && (mainWindows.size() == 1)) {
-            if ( !idv.quit()) {
+            if (!idv.quit()) {
                 return false;
             }
         }
