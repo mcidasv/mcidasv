@@ -1298,10 +1298,10 @@ public class McVGuiUtils implements Constants {
             return holders;
         }
         for (ComponentHolder comp : comps) {
-            if (comp instanceof IdvComponentGroup) {
-                holders.addAll(getComponentHolders((IdvComponentGroup) comp));
-            } else if (comp instanceof IdvComponentHolder) {
-                holders.add((IdvComponentHolder)comp);
+            if (comp instanceof IdvComponentGroup idvGroup) {
+                holders.addAll(getComponentHolders(idvGroup));
+            } else if (comp instanceof IdvComponentHolder idvHolder) {
+                holders.add(idvHolder);
             }
         }
         return holders;
@@ -1320,8 +1320,8 @@ public class McVGuiUtils implements Constants {
             return groups;
         }
         for (ComponentHolder comp : comps) {
-            if (comp instanceof IdvComponentGroup) {
-                groups.addAll(getComponentGroups((IdvComponentGroup)comp));
+            if (comp instanceof IdvComponentGroup idvHolder) {
+                groups.addAll(getComponentGroups(idvHolder));
             }
         }
         return groups;
@@ -1333,9 +1333,9 @@ public class McVGuiUtils implements Constants {
      */
     public static List<IdvComponentGroup> getComponentGroups(final WindowInfo window) {
         Collection<Object> comps = (Collection<Object>)window.getPersistentComponents().values();
-        for (Object comp : comps) {
-            if (comp instanceof IdvComponentGroup) {
-                return getComponentGroups((IdvComponentGroup)comp);
+        for (Object obj : comps) {
+            if (obj instanceof IdvComponentGroup comp) {
+                return getComponentGroups(comp);
             }
         }
         return Collections.emptyList();
@@ -1359,14 +1359,13 @@ public class McVGuiUtils implements Constants {
     public static IdvComponentGroup getComponentGroup(final IdvWindow window) {
         List<IdvComponentGroup> groups = window.getComponentGroups();
         if (!groups.isEmpty()) {
-            return groups.get(0);
+            return groups.getFirst();
         }
         return null;
     }
 
     /**
-     * @return Whether or not {@code group} contains any component
-     *         groups.
+     * @return Whether {@code group} contains any component groups.
      */
     public static boolean hasNestedGroups(final IdvComponentGroup group) {
         List<ComponentHolder> comps = (List<ComponentHolder>)group.getDisplayComponents();
@@ -1379,6 +1378,10 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
+     * Get the list of all active component holders in a McIDAS-V session.
+     *
+     * <p>This method is a essentially a {@literal "get all tabs"} method.</p>
+     *
      * @return All active component holders in McIDAS-V.
      */
     // TODO: needs update for nested groups
@@ -1391,6 +1394,12 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
+     * Get the list of all active component groups in a McIDAS-V session.
+     *
+     * <p>There is a single component group per window, so this method could be
+     * used as a way to get all display windows. That said, you probably want to
+     * look at {@link #getAllDisplayWindows()} first.</p>
+     *
      * @return All active component groups in McIDAS-V.
      */
     // TODO: needs update for nested groups
@@ -1403,6 +1412,9 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
+     * Get the list of all {@link IdvWindow IdvWindows} that contain at least
+     * one of what McIDAS-V would consider a {@literal "main display"}.
+     *
      * @return All windows that contain at least one component group.
      */
     public static List<IdvWindow> getAllDisplayWindows() {
@@ -1845,7 +1857,7 @@ public class McVGuiUtils implements Constants {
      * @param container the container at which to begin the search
      * @param property the className of the bound property, exactly as expressed in
      * the accessor e.g. {@literal "Text"} for getText(), {@literal "Value"}
-     * for getValue(). This parameter is case sensitive.
+     * for getValue(). This parameter is case-sensitive.
      * @param value the value of the bound property
      *
      * @return the component, or null if no such component exists in the
@@ -2047,7 +2059,7 @@ public class McVGuiUtils implements Constants {
     /**
      * Exclude methods that return values that are meaningless to the user
      */
-    static Set<String> setExclude = new HashSet<>(10);
+    static Set<String> setExclude = HashSet.newHashSet(10);
     static {
         setExclude.add("getFocusCycleRootAncestor");
         setExclude.add("getAccessibleContext");
@@ -2057,7 +2069,7 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Convenience method for obtaining most non-null human readable properties
+     * Convenience method for obtaining most non-null human-readable properties
      * of a JComponent.  Array properties are not included.
      * <P>
      * Implementation note:  The returned value is a HashMap.  This is subject
