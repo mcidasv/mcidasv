@@ -28,6 +28,10 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.getAllComponentHolders;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.getComponentHolders;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.getWindowForHolder;
+
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -38,6 +42,7 @@ import org.w3c.dom.Element;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.WrapperException;
@@ -145,6 +150,34 @@ public class McvComponentHolder extends IdvComponentHolder {
     @Override public void doRemove() {
         super.doRemove();
         uiManager = null;
+    }
+
+    /**
+     * Handles the user attempting to remove this {@code ComponentHolder}.
+     *
+     * <p>Overridden in McIDAS-V to intercept what happens when this holder is
+     * either the last tab in the current window, or the last tab in the application
+     * session.</p>
+     *
+     * <p>If either of the above are true, we hand control off to {@link IdvWindow#doClose()},
+     * which knows when to close the current window vs the entire application.</p>
+     *
+     * <p>Otherwise, we proceed as normal using {@link IdvComponentHolder#removeDisplayComponent()}.</p>
+     *
+     * @return {@code true} if the user decided to close the tab, {@code false} otherwise.
+     */
+    @Override public boolean removeDisplayComponent() {
+        IdvWindow currentWindow = getWindowForHolder(this);
+        List<IdvComponentHolder> localTabs = getComponentHolders(currentWindow);
+        List<IdvComponentHolder> allTabs = getAllComponentHolders();
+        if (allTabs.size() == 1 || localTabs.size() == 1) {
+            // current holder is either the last tab in the app,
+            // or merely the last tab in current window.
+            return currentWindow.doClose();
+        } else {
+            // we only need to worry about closing the current tab
+            return super.removeDisplayComponent();
+        }
     }
 
     /**

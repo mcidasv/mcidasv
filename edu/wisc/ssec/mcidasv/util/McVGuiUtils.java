@@ -1377,6 +1377,28 @@ public class McVGuiUtils implements Constants {
         return false;
     }
 
+
+    /**
+     * Find the window associated with the given {@code IdvComponentHolder} (aka tab).
+     *
+     * @param holder Holder whose {@code IdvWindow} we need to find. Should not be {@code null}.
+     *
+     * @return Either the {@code IdvWindow} containing the tab associated with the given {@code holder},
+     * or {@code null} if there was somehow no window associated with the holder.
+     */
+    public static IdvWindow getWindowForHolder(final IdvComponentHolder holder) {
+        List<IdvWindow> allWindows = getAllDisplayWindows();
+        IdvWindow result = null;
+        for (IdvWindow window : allWindows) {
+            List<IdvComponentHolder> holders = getComponentHolders(window);
+            if (holders.contains(holder)) {
+                result = window;
+                break;
+            }
+        }
+        return result;
+    }
+
     /**
      * Get the list of all active component holders in a McIDAS-V session.
      *
