@@ -861,6 +861,7 @@ public abstract class NavigatedViewManager extends ViewManager {
      * @param props list to add them to.
      */
     protected void getInitialBooleanProperties(List props) {
+        // props.clear();
         super.getInitialBooleanProperties(props);
         props.add(new BooleanProperty(PREF_3DCLIP, "Clip View At Box", "",
                                       false));
@@ -868,6 +869,17 @@ public abstract class NavigatedViewManager extends ViewManager {
                                       "", true));
         props.add(new BooleanProperty(PREF_SHOWDISPLAYLIST,
                                       "Show Display List", "", false));
+
+        // McIDAS Inquiry #2321-3141
+        props.add(new BooleanProperty(PREF_SHOWSCALES,
+                "mcv2321-3141", "", false));
+
+//        for (int i = 0; i < props.size(); i++) {
+//            logger.info(props.get(i).toString());
+//
+//        }
+//
+        // props.removeLast();
     }
 
     /**

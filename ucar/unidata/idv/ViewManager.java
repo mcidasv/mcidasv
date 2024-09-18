@@ -1419,6 +1419,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         List props = new ArrayList();
 
         for (int i = 0; i < booleanProperties.size(); i++) {
+            // McIDAS Inquiry #2321-3141
+            if (((BooleanProperty) booleanProperties.get(i)).getName().equals("mcv2321-3141")) continue;
+
             BooleanProperty bp  = (BooleanProperty) booleanProperties.get(i);
             JCheckBox       cbx = new JCheckBox(bp.getName(), bp.getValue());
 
