@@ -134,14 +134,16 @@ public final class CapeCell extends EnergyFeatureCell {
 
                     //Data num = VisADMath.subtract(energyProfile.evaluate(lfc), energyProfile.evaluate(lnb));
                     //logger.info("Num: " + num);
-                    Data num = VisADMath.subtract(energyProfile.evaluate(lfc), energyProfile.evaluate(lnb));
+                    //Data num = VisADMath.subtract(energyProfile.evaluate(lfc), energyProfile.evaluate(lnb));
                     // logger.info("{} ", num);
-                    Data frac = VisADMath.divide(num, energyProfile.evaluate(lfc));
+                    //Data frac = VisADMath.divide(num, energyProfile.evaluate(lfc));
                     //logger.info("{} ", frac);
-                    Real value = (Real) Util.clone(frac, ucar.visad.quantities.CAPE.getRealType());
+                    //Real value = (Real) Util.clone(frac, ucar.visad.quantities.CAPE.getRealType());
+
+                    Real value = (Real) Util.clone(VisADMath.subtract(energyProfile.evaluate(lfc), energyProfile.evaluate(lnb)), ucar.visad.quantities.CAPE.getRealType());
 
                     logger.info("Val: {}", value);
-                    cape = value;
+                    //cape = value;
                     if (value.getValue() >= 0) {
                         cape = value;
                     }
