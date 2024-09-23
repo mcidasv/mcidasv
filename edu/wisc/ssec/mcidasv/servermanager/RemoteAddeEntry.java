@@ -679,6 +679,11 @@ public class RemoteAddeEntry implements AddeEntry {
         // AddeServerInfo#setUserIDAndProjString(String) was not a good API 
         // decision.
         serverInfo.setUserIDandProjString("user="+username+"&proj="+project);
+        // TJJ Sep 2024
+        // We now set the group as well, because to verify accounting we
+        // switched from 1) looking for PUBLIC.SRV to 2) a DSINFO call
+        // ...because we found cases where PUBLIC.SRV does not exist
+        serverInfo.setSelectedGroup(entry.getGroup());
         int status = serverInfo.setSelectedServer(server, type);
         if (status == -2) {
             return AddeStatus.NO_METADATA;

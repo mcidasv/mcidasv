@@ -969,7 +969,6 @@ public class RemoteEntryEditor extends JDialog {
     {
         return new Thread() {
             @Override public void run() {
-                logger.trace("checking entries...");
                 checkGroups(action, entries);
             }
         };
@@ -1061,9 +1060,10 @@ public class RemoteEntryEditor extends JDialog {
 
         if (!statuses.contains(AddeStatus.OK)) {
             if (statuses.contains(AddeStatus.BAD_ACCOUNTING)) {
-                setStatus("Incorrect accounting information.");
+                setStatus("Incorrect accounting and/or group information.");
                 setBadField(userField, true);
                 setBadField(projField, true);
+                setBadField(datasetField, true);
             } else if (statuses.contains(AddeStatus.BAD_GROUP)) {
                 setStatus("Dataset does not appear to be valid.");
                 setBadField(datasetField, true);

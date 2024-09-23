@@ -53,6 +53,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.EOFException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.ConnectException;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -1381,7 +1384,15 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         try {
             StringBuffer buff = getUrl(REQ_TEXT);
             appendKeyValue(buff, PROP_FILE, FILE_PUBLICSRV);
-//            URL           url  = new URL(buff.toString());
+
+            // TJJ Sep 2024
+            // Some ADDE servers return an Invalid Accounting error if they can't find a PUBLIC.SRV file
+            // This should not result in an error, it should not imply the accounting is not valid
+            if (buff.toString().toUpperCase().contains("PUBLIC.SRV")) {
+                // We are requesting the PUBLIC.SRV file
+                logger.info("bailing out early, no PUBLIC.SRV");
+                return STATUS_OK;
+            }
             URLConnection urlc = IOUtil.getUrlConnection(buff.toString());
             InputStream   is   = urlc.getInputStream();
             is.close();

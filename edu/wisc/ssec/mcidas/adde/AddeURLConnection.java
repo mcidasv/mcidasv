@@ -765,7 +765,9 @@ public class AddeURLConnection extends URLConnection
       }
     }
 
-    if (numBinaryBytes > 0) dos.write(binaryData, 0, numBinaryBytes);
+    if (numBinaryBytes > 0) {
+      dos.write(binaryData, 0, numBinaryBytes);
+    }
 
     is = (compressionType == GZIP) 
         ? new GZIPInputStream(t.getInputStream())
@@ -1639,6 +1641,8 @@ public class AddeURLConnection extends URLConnection
         String testString;
         String lctestString;
         String groupString = null;
+        String userString = null;
+        String projString = null;
         String filenameString = null;
         String descrString = null;
         String traceString = "TRACE=0";
@@ -1656,6 +1660,16 @@ public class AddeURLConnection extends URLConnection
             else if (lctestString.startsWith("file"))
             {
                 filenameString = "FILE="+
+                        testString.substring(testString.indexOf("=") + 1);
+            }
+            else if (lctestString.startsWith("user"))
+            {
+                userString = "USER="+
+                        testString.substring(testString.indexOf("=") + 1);
+            }
+            else if (lctestString.startsWith("proj"))
+            {
+                projString = "PROJ="+
                     testString.substring(testString.indexOf("=") + 1);
             }
             else if (lctestString.startsWith("grou"))
@@ -1670,13 +1684,31 @@ public class AddeURLConnection extends URLConnection
 
         }
 
-        buf.append(groupString);
-        buf.append(" ");
-        buf.append(descrString);
-        buf.append(" ");
-        buf.append(filenameString);
-        buf.append(" ");
-        buf.append(traceString.toUpperCase());
+        if (groupString != null) {
+            buf.append(groupString);
+            buf.append(" ");
+        }
+        if (userString != null) {
+            buf.append(userString);
+            buf.append(" ");
+        }
+        if (projString != null) {
+            buf.append(projString);
+            buf.append(" ");
+        }
+        if (descrString != null) {
+            buf.append(descrString);
+            buf.append(" ");
+        }
+        if (filenameString != null) {
+            buf.append(filenameString);
+            buf.append(" ");
+        }
+        if (traceString != null) {
+            buf.append(traceString.toUpperCase());
+            buf.append(" ");
+        }
+
         return buf;
     }
 
@@ -1965,6 +1997,8 @@ public class AddeURLConnection extends URLConnection
         String lctestString;
         String tempString;
         String groupString = null;
+        String userString = null;
+        String projString = null;
         String typeString = "ALA.";
 
         StringTokenizer cmdTokens = new StringTokenizer(uCmd, "&");
@@ -1973,10 +2007,21 @@ public class AddeURLConnection extends URLConnection
             testString = cmdTokens.nextToken();
             lctestString = testString.toLowerCase();
             // group, descr and pos are mandatory
+
             if (lctestString.startsWith("grou"))
             {
                 groupString = 
                     testString.substring(testString.indexOf("=") + 1);
+            }
+            else if (lctestString.startsWith("user"))
+            {
+                userString = "USER="+
+                        testString.substring(testString.indexOf("=") + 1);
+            }
+            else if (lctestString.startsWith("proj"))
+            {
+                projString = "PROJ="+
+                        testString.substring(testString.indexOf("=") + 1);
             }
             if (lctestString.startsWith("type"))
             {
@@ -1997,8 +2042,13 @@ public class AddeURLConnection extends URLConnection
             }
 
         }
+
         buf.append(typeString);
         buf.append(groupString);
+        buf.append(" ");
+        buf.append(userString);
+        buf.append(" ");
+        buf.append(projString);
         return buf;
     }
 
