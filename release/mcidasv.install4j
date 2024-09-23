@@ -29,6 +29,8 @@
         <entry>jna-*</entry>
         <entry>swt-*</entry>
         <entry>ncIdv-*</entry>
+        <entry>jython-*</entry>
+        <entry>jansi-*</entry>
       </macSearchedJars>
     </codeSigning>
     <jreBundles jdkProviderId="JBR" release="21/21-b212.1">
