@@ -33,10 +33,12 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import edu.wisc.ssec.mcidas.adde.ReadTextFile;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.McIDASException;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** 
  * All things related to ADDE servers, groups and datasets
@@ -75,6 +77,9 @@ public class AddeServerInfo extends Object {
 
   private boolean isArchive = false;
   private String archiveDate = null;
+
+  private static final Logger logger = LoggerFactory.getLogger(AddeServerInfo.class);
+
 
   /** 
    * Creates new AddeServerInfo. This collects information about
@@ -145,17 +150,15 @@ public class AddeServerInfo extends Object {
     return selectedServer;
   }
 
-  /** 
+  /**
    * define which server to select, and the type of ADDE data group
    * (image, point, grid, text) to get group and descriptor info for
-   *
+   * <p>
    * This is the workhorse of the code.
    *
-   * @param s the name of the ADDE server to be selected
-   * @param type the type of data to select.
-   *
+   * @param s     the name of the ADDE server to be selected
+   * @param type  the type of data to select.
    * @return status code: 0=ok, -1=invalid accounting, -2=didn't get metadata
-   *
    */
   
   public int setSelectedServer(String s, String type) {
@@ -165,26 +168,47 @@ public class AddeServerInfo extends Object {
     groups = new Vector();
     status = "Failed to get PUBLIC.SRV file from from server "+s+".";
 
+    boolean pubServPresent = true;
     try {
-      // go get the modified PUBLIC.SRV file from the server...
-      String req = "adde://"+selectedServer+"/text?file=PUBLIC.SRV";
-
+       // go get the PUBLIC.SRV file from the server...
+       String req = "adde://"+selectedServer+"/text?file=PUBLIC.SRV";
       if (userproj != null) {
         String req2 = req+"&"+userproj+"&version=1";
         req = req2;
       }
-
-      if (debug) System.out.println("Req:"+req);
-
       ReadTextFile rtf = new ReadTextFile(req);
-      if (debug) System.out.println("Status from RTF="+rtf.getStatus());
-      
-      // see if accounting data is required but not provided...
-      if (rtf.getStatusCode() == -3) {
-        return -1;
+
+    } catch (Exception e) {
+      pubServPresent = false;
+    }
+
+    try {
+
+      // go get the PUBLIC.SRV file from the server...
+      String req = "adde://"+selectedServer+"/text?file=PUBLIC.SRV";
+
+      if (! pubServPresent) {
+        req = "adde://" + selectedServer + "/datasetinfo?" + "&type=" + type;
       }
 
-/* do we really want to do this????? */
+      if (userproj != null) {
+          String req2 = req + "&" + userproj + "&version=1";
+          req = req2;
+      }
+
+      if (selectedGroup != null) {
+          String req2 = req + "&GROUP=" + selectedGroup;
+          req = req2;
+      }
+
+      ReadTextFile rtf = new ReadTextFile(req);
+
+      // see if accounting data is required but not provided...
+      if (rtf.getStatusCode() == -3) {
+          return -1;
+      }
+
+      /* do we really want to do this????? */
 
       // if that fails, try to get RESOLV.SRV, but keep it hidden...
       if (!rtf.getStatus().equals("OK")) { // try again
