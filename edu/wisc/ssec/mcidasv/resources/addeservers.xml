@@ -42,25 +42,25 @@ This file overrides IDV addeservers.xml
 
   <server name="adde.ucar.edu" active="true">
     <group
-       names="RTIMAGES,BLIZZARD,CIMSS,GINIALL,GINIEAST,GINIWEST,GINICOMP,GLOBAL,IMAGEALL,L2GOESR,L2GOESS,NEXRCALL,NEXRCOMP,NPGOESR,NPGOESS,RTGOESR,RTGOESS,RTGOEST,TOPO,RTGEOC,RTSNCL,RTDDST,EAST,WEST,L2GEAST,L2GWEST,EASTALL,GLOBALL,L2GEALL,L2GWALL,NPGRALL,NPGSALL,NPGWALL,GOESRALL,GOESSALL,GOESTALL,DDSTALL,GEOCALL,SNCLALL,WESTALL"
-       type="image"/>
+      names="BLIZZARD,DDSTALL,EAST,EASTALL,GEOCALL,GLOBAL,GLOBALL,GOESRALL,GOESSALL,GOESTALL,IMAGEALL,L2GEALL,L2GEAST,L2GOESR,L2GOESS,L2GWALL,L2GWEST,NEXRCOMP,NPGEALL,NPGEAST,NPGOESR,NPGOESS,NPGRALL,NPGSALL,NPGWALL,NPGWEST,RTDDST,RTGEOC,RTGOESR,RTGOESS,RTGOEST,RTIMAGES,RTSNCL,SNCLALL,TOPO,WEST,WESTALL"
+      type="image"/>
     <group
-       names="RTNEXRAD,NEXRALL"
-       type="radar"/>
-     <group
-       names="RTPTSRC,PTSRCALL"
-       type="point"/>
-     <group
-       names="RTWXTEXT"
-       type="text"/>
+      names="RTNEXRAD,NEXRALL"
+      type="radar"/>
     <group
-        names="RTGOESR,RTGOESS"
-        type="point"/>
+      names="RTPTSRC,PTSRCALL"
+      type="point"/>
+    <group
+      names="RTWXTEXT"
+      type="text"/>
+    <group
+      names="RTGOESR,RTGOESS"
+      type="point"/>
   </server>
 
   <server name="lead.unidata.ucar.edu">
     <group
-      names="CIMSS,EAST,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,NPGOESR,NPGOESS,RTGOESR,RTGOESS,RTGOEST,RTIMAGES,TOPO,RTGEOC,RTSNCL,RTDDST,EAST,WEST,L2GOESR,L2GEAST,L2GWEST,L2GOESS,EASTALL,GLOBALL,L2GEALL,L2GWALL,NPGRALL,NPGSALL,NPGWALL,GOESRALL,GOESSALL,GOESTALL,DDSTALL,GEOCALL,SNCLALL,WESTALL,IMAGEALL"
+      names="BLIZZARD,DDSTALL,EAST,EASTALL,GEOCALL,GLOBAL,GLOBALL,GOESRALL,GOESSALL,GOESTALL,IMAGEALL,L2GEALL,L2GEAST,L2GOESR,L2GOESS,L2GWALL,L2GWEST,NEXRCOMP,NPGEALL,NPGEAST,NPGOESR,NPGOESS,NPGRALL,NPGSALL,NPGWALL,NPGWEST,RTDDST,RTGEOC,RTGOESR,RTGOESS,RTGOEST,RTIMAGES,RTSNCL,SNCLALL,TOPO,WEST,WESTALL"
       type="image" />
     <group
       names="RTGRIDS"
@@ -78,22 +78,23 @@ This file overrides IDV addeservers.xml
       names="RTWXTEXT"
       type="wxtext" />
   </server>
+  
   <server name="atm.ucar.edu" active="true">
     <group
-            names="RTIMAGES,RTGOESR,RTGOESS,RTGOEST,NPGOESR,NPGOESS,L2GOESR,L2GOESS,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO,GLOBAL,GINIALL,IMAGEALL,NEXRCALL,RTGEOC,RTSNCL,RTDDST,EAST,WEST,L2GEAST,L2GWEST,EASTALL,GLOBALL,L2GEALL,L2GWALL,NPGRALL,NPGSALL,NPGWALL,GOESRALL,GOESSALL,GOESTALL,DDSTALL,GEOCALL,SNCLALL,WESTALL"
-            type="image"/>
+      names="BLIZZARD,DDSTALL,EAST,EASTALL,GEOCALL,GLOBAL,GLOBALL,GOESRALL,GOESSALL,GOESTALL,IMAGEALL,L2GEALL,L2GEAST,L2GOESR,L2GOESS,L2GWALL,L2GWEST,NEXRCOMP,NPGEALL,NPGEAST,NPGOESR,NPGOESS,NPGRALL,NPGSALL,NPGWALL,NPGWEST,RTDDST,RTGEOC,RTGOESR,RTGOESS,RTGOEST,RTIMAGES,RTSNCL,SNCLALL,TOPO,WEST,WESTALL"
+      type="image"/>
     <group
-            names="RTNEXRAD,NEXRALL"
-            type="radar"/>
-     <group
-            names="RTPTSRC,PTSRCALL"
-            type="point"/>
+      names="RTNEXRAD,NEXRALL"
+      type="radar"/>
     <group
-            names="RTWXTEXT"
-            type="wxtext"/>
+      names="RTPTSRC,PTSRCALL"
+      type="point"/>
     <group
-            names="RTWXTEXT"
-            type="text"/>
+      names="RTWXTEXT"
+      type="wxtext"/>
+    <group
+      names="RTWXTEXT"
+      type="text"/>
   </server>
   <!-- Removing as part of inq 2736 - RMC 10/25/18
   <server name="goessouth.unidata.ucar.edu">
@@ -116,21 +117,23 @@ This file overrides IDV addeservers.xml
        names="RTWXTEXT"
        type="text"/>
   </server> -->
-  
+
+  <!-- Bob Sep 2024 - Inq 3165
   <server name="rci.ssec.wisc.edu">
     <group
        names="CIMSSP"
        type="image"/>
-  </server>
+  </server> -->
 
   <!-- satepsanone.nesdis.noaa.gov is changing to an IP address
   from inq 2731 - RMC 10/25/18
   <server name="satepsanone.nesdis.noaa.gov">  -->
+  <!-- Bob Sep 2024 - Inq 3165
   <server name="140.90.213.161">
     <group
        names="PUB"
        type="image"/>
-  </server>
+  </server> -->
   
 <!--  Removed by RMC 10/24/18 with inq 2735
   <server name="stratus.al.noaa.gov">
@@ -150,7 +153,8 @@ This file overrides IDV addeservers.xml
        names="RTWXTEXT"
        type="text"/>
   </server>  -->
-  
+
+  <!-- Bob Sep 2024 - Inq 3165
   <server name="weather2.admin.niu.edu">
      <group
        names="RTPTSRC"
@@ -158,7 +162,7 @@ This file overrides IDV addeservers.xml
      <group
        names="RTWXTEXT"
        type="text"/>
-  </server>
+  </server> -->
   
 <!--   <server name="twister.millersville.edu">
     <group
