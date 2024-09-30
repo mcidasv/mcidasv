@@ -708,7 +708,7 @@ public class WMSControl extends ImageControl implements ImageObserver {
     protected Container doMakeContents()
             throws VisADException, RemoteException {
 
-        JComponent zPositionPanel  = doMakeZPositionSlider();
+        JComponent zPositionPanel  = doMakeZPositionSlider(-0.006);
 
         JComponent alphaSliderComp = doMakeAlphaSlider();
 
