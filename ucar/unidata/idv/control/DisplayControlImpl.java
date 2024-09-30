@@ -11609,7 +11609,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 retVal = -1 + 2 * pcnt;
             }
         }
-        return retVal;
+        // McIDAS Inquiry #2151-3141 -> Need it to be set to -0.006
+        // For some reason, whatever value is sent from here is adjusted
+        // before it is used for the scale slider
+
+        // TODO: I'm not sure why I have to do this weird math to set to
+        // TODO: -0.006 but this is it for now - 3141
+        return -0.004 / 3;
     }
 
     /**
