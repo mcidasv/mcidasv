@@ -201,6 +201,8 @@ public class WMSControl extends ImageControl implements ImageObserver {
     /** scale property widget */
     private JSlider scaleSlider;
 
+    private final double initialZ = -0.006;
+
     /**
      * Default constructor.
      */
@@ -708,7 +710,11 @@ public class WMSControl extends ImageControl implements ImageObserver {
     protected Container doMakeContents()
             throws VisADException, RemoteException {
 
-        JComponent zPositionPanel  = doMakeZPositionSlider(-0.006);
+
+        // McIDAS Inquiry #2151-3141 -> Set the initial slider to -0.006 {initialZ}
+        // and update the actual display
+        JComponent zPositionPanel  = doMakeZPositionSlider(initialZ);
+        setZPosition(initialZ);
 
         JComponent alphaSliderComp = doMakeAlphaSlider();
 
