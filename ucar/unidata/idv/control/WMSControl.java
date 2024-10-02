@@ -29,6 +29,8 @@
 package ucar.unidata.idv.control;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.GeoLocationInfo;
@@ -44,6 +46,7 @@ import ucar.unidata.geoloc.Bearing;
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IdvResourceManager;
 
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.CacheManager;
 
 import ucar.unidata.util.ColorTable;
@@ -202,6 +205,8 @@ public class WMSControl extends ImageControl implements ImageObserver {
     private JSlider scaleSlider;
 
     private final double initialZ = -0.006;
+
+    private static final Logger logger = LoggerFactory.getLogger(WMSControl.class);
 
     /**
      * Default constructor.
@@ -694,10 +699,21 @@ public class WMSControl extends ImageControl implements ImageObserver {
         }
     }
 
-
-
-
-
+    /**
+     * McIDAS Inquiry #2151-3141 -> Globe display initial z = -0.006 otherwise,
+     * create the z slider as before.
+     * @return
+     * @throws VisADException
+     * @throws RemoteException
+     */
+    private JComponent makeZSlider() throws VisADException, RemoteException {
+        if (inGlobeDisplay()) {
+            setZPosition(initialZ);
+            return doMakeZPositionSlider(initialZ);
+        } else {
+            return doMakeZPositionSlider();
+        }
+    }
 
     /**
      * Make the gui
@@ -710,11 +726,7 @@ public class WMSControl extends ImageControl implements ImageObserver {
     protected Container doMakeContents()
             throws VisADException, RemoteException {
 
-
-        // McIDAS Inquiry #2151-3141 -> Set the initial slider to -0.006 {initialZ}
-        // and update the actual display
-        JComponent zPositionPanel  = doMakeZPositionSlider(initialZ);
-        setZPosition(initialZ);
+        JComponent zPositionPanel = makeZSlider();
 
         JComponent alphaSliderComp = doMakeAlphaSlider();
 
