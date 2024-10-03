@@ -30,11 +30,14 @@ package ucar.unidata.idv.chooser.adde;
 
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
+import edu.wisc.ssec.mcidasv.chooser.TLEFileChooser;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.point.AddePointDataSource;
+import ucar.unidata.idv.chooser.FileChooser;
+import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.ui.symbol.StationModel;
 import ucar.unidata.util.GuiUtils;
@@ -46,12 +49,9 @@ import ucar.visad.UtcDate;
 import visad.DateTime;
 import visad.VisADException;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -354,7 +354,16 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
      */
     protected JComponent doMakeContents() {
 
+        JLabel lbl = new JLabel();
+        JPanel localPanel = new JPanel();
+        String path = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
+        JFileChooser fch = new JFileChooser(path);
+        fch.setPreferredSize(new Dimension(815,300));
+        localPanel.add(fch);
+
         List allComps = new ArrayList();
+        allComps.add(lbl);
+        allComps.add(localPanel);
         clearOnChange(dataTypes);
         addTopComponents(allComps, "Group:", dataTypes);
 
