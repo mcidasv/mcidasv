@@ -55,7 +55,7 @@ box corresponding to the current time is colored blue. Click on a box to select 
 <div class="pagesubtitle"><a name="animationprop" id="animationprop"></a>Time Animation Properties Dialog</div>
 <p>Click on the <img src="images/Information16.gif" alt="Properties button" align=absmiddle> in the animation controls to see the Time Animation Properties Dialog box. This dialog has two tabs: <strong>Settings</strong> and <strong>Define Animation Times</strong>.</p>
 <p>The <strong>Settings</strong> tab allows for defining how looping will work for the display:</p>
-<div class="images"><img src="images/AnimationProperties1.gif" alt="Image 2: Settings Tab of the Time Animation Properties Dialog"><br>
+<div class="images"><img src="images/AnimationProperties1.gif" width="495" height="373" alt="Image 2: Settings tab of the Time Animation Properties Dialog"/><br>
 <span class="caption">Image 2: Settings Tab of the Time Animation Properties Dialog</span></div>
 <p>By pressing <img src="../tools/images/Apply.gif" alt="Apply button" width="65" height="26 "align=absmiddle> or <img src="../tools/images/Ok.gif" alt="OK button" width="51" height="26"align=absmiddle>, the properties will be set in the Animation Widget. If the <strong>Save
   As Default</strong> checkbox checked, then the properties will be saved and
@@ -95,7 +95,7 @@ box corresponding to the current time is colored blue. Click on a box to select 
 </ul>
 <div class="pagesubtitle"><a name="animationset" id="animationset"></a>Define Animation Times Tab</div>
 <p>The <strong>Define Animation Times</strong> tab allows for defining a custom animation time set:</p>
-<div class="images"><img src="images/AnimationProperties2.gif" width="535" height="477" alt="Image 3: Define Animation Times Tab of the Time Animation Properties Dialog"><br>
+<div class="images"><img src="images/AnimationProperties2.gif" width="539" height="485" alt="Image 3: Define Animation Times Tab of the Time Animation Properties Dialog"/><br>
 <span class="caption">Image 3: Define Animation Times Tab of the Time Animation Properties Dialog</span></div>
 <p>By default, the times used in the animation time set are all of the times from
 the data that is being displayed. However, a specific time set can be defined by
@@ -108,6 +108,7 @@ selecting the <strong>Define your own list of times</strong> button.</p>
 <li class="propertylistitem"><strong>Relative to End/Start time -</strong> Allows you to specify the beginning/end of your loop at a time relative to the end/beginning time. For example, you could set the end time to be the Current Time, and set the start time to be relative to the end time minus 1 hour (using the start time offset field). This would have a loop of data over the last hour, with a time step as defined in the interval field. Note: You cannot have start and end times both be relative to one another.</li>
 <li class="propertylistitem"><strong>Interval -</strong> Sets the time interval between time steps in the loop.</li>
 <li class="propertylistitem"><strong>Round To -</strong> Sets the rounding factor for the end time in the loop. The <strong>Round To</strong> field always rounds down to ensure that no future times are used in the loop. For example, if the ending time was 10:23, a 10 minute <strong>Round To</strong> would end the loop at 10:20, and a 30 minute <strong>Round To</strong> would end the loop at 10:00.</li>
+<li class="propertylistitem"><strong>Disable data refresh -</strong> Prevents data from being reloaded and redisplayed if new data becomes available.</li>
 <li class="propertylistitem"><strong>Refresh Rate -</strong> Sets the number of minutes that the Time Animation Widget will check the current time to see if the timesteps should be updated. This is used if the<strong> End Time</strong> is set to <strong>Current Time (Now)</strong> and is used in conjunction with the <strong>Round To</strong> field. For example, if the time is 10:10 with a <strong>Round To</strong> value of 15 minutes, the end time of the loop would be 10:00. With a <strong>Refresh Rate</strong> of 5 minutes, at 10:15, the Time Animation Widget would update itself to have an end time of 10:15.</li>
 <li class="propertylistitem"><strong>Set as Time Driver -</strong> Defines the current timesteps in the Main Display to be the time driver. Now, any other field selected to match the time driver will select times that match the Time Animation Widget times. For example, if <strong>End Time</strong> is set to <strong>Current Time (Now)</strong>, that rounds down to the nearest hour, and the <strong>Start Time</strong> is <strong>Relative to End Time</strong> with an offset of -4 hours, there would be 5 timesteps in hourly increments. If these times are set as the time driver, any fields selected to match the time driver will load in data for the times that match closest to the hourly timesteps defined in the Time Animation Widget. For more information, see <a href="../misc/TimeMatching.html">Time Matching</a>.</li>
 </ul>

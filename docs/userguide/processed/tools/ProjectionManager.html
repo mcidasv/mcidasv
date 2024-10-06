@@ -36,7 +36,7 @@ use in McIDAS-V.</p>
 <div class="pagesubtitle">Projection Manager Window</div>
 <p>You can bring up the Projection Manager with the <strong>Projections-></strong> <img src="images/NewEditMenuButton.gif" alt="New/Edit Projection button" width="20" height="20"align=absmiddle><strong>New/Edit...</strong> menu item in the Main Display window, or through the <strong>Tools-&gt;Projections-&gt;Edit Map Projections </strong>menu option in the Main Display window. Projections supplied with McIDAS-V are shown in the list. There may be additional projections you have created and named. In the figure, the US-&gt;CONUS projection is highlighted, and displayed on the left.</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/ProjectionManager.gif" alt="Image 1: Projection Manager"> <br> <span class="caption">Image 1: Projection Manager</span></div>
+<div class="images"><img src="images/ProjectionManager.gif" width="704" height="359" alt="Image 1: Projection Manager"/><br> <span class="caption">Image 1: Projection Manager</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><img src="images/Edit.gif" alt="Edit button" width="55" height="26"align=absmiddle><strong> -</strong> Opens a Define/Edit Projection window, where you can edit the map boundaries, type, and name of the existing map.</li>
@@ -47,10 +47,8 @@ use in McIDAS-V.</p>
   <li class="propertylistitem"><strong>Type -</strong> Lists the type of projection that is used to display the map.</li>
   <li class="propertylistitem"><strong>Parameters -</strong> Lists the lat/lon origin of the display, as well as the parallels.</li>
   <li class="propertylistitem"><strong>Default Zoom -</strong> Represents the zoom level and size of the map.</li>
-  <li class="propertylistitem"><img src="images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle> <strong> -</strong> Changes the map projected in the Main Display window to the selected map</li>
   <li class="propertylistitem"><img src="images/Ok.gif" alt="OK button" width="51" height="26"align=absmiddle> <strong> -</strong> Changes the map projected in the Main Display window to the selected map and closes the Projection Manager.</li>
   <li class="propertylistitem"><img src="../images/Help.gif" alt="Help button" width="59" height="26"align=absmiddle> <strong> -</strong> Opens the McIDAS-V User's Guide to this page.</li>
-  <li class="propertylistitem"><img src="../images/Cancel.gif" alt="Cancel button" width="73" height="26"align=absmiddle> <strong> -</strong> Closes the Projection Manager window without making any changes to the Main Display window.</li>
 </ul>
 <p>McIDAS-V starts with a default projection. Use the <strong>Default</strong> pulldown menu to select the projection that will be shown each time your McIDAS-V starts. (The default projection may not be used if you are starting McIDAS-V with a <a href="../Bundles.html">Bundle</a> of configuration information).</p>
 <div class="pagesubtitle">Define/Edit Projection Window</div>
@@ -89,6 +87,10 @@ use in McIDAS-V.</p>
   <ul  class="propertylist">
   <li class="propertylistitem"><strong>False easting - </strong>Moves the map boundaries east and west. A negative value in this field moves the boundaries of the map east, and a positive value moves the map's boundaries west.</li>
   <li class="propertylistitem"><strong>False northing -</strong> Moves the map boundaries north and south. A negative value in this field moves the boundaries north, and a positive value moves the map's boundaries south.</li>
+  <li class="propertylistitem"><strong>Latitude0 - </strong>Defines the maximum latitude value.</li>
+  <li class="propertylistitem"><strong>Latitude1 -</strong> Defines the minimum latitude value.</li>
+  <li class="propertylistitem"><strong>Longitude0 -</strong> Defines the maximum longitude value.</li>
+  <li class="propertylistitem"><strong>Longitude1 -</strong> Defines the minimum longitude value.</li>
   <li class="propertylistitem"><strong>Origin lat -</strong> Represents the center of the map's boundaries with respect to latitude.</li>
   <li class="propertylistitem"><strong>Origin lon -</strong> Represents the center of the map's boundaries with respect to longitude.</li>
     <li class="propertylistitem"><strong>Height -</strong> Sets the zoom level of the display in the Define/Edit Projection window. The larger the value, the more zoomed in you will be. This is an option with the Lambert conformal conic map type.</li>
