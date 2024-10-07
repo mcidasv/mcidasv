@@ -30,7 +30,11 @@ package ucar.unidata.idv.chooser.adde;
 
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
+import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
 import edu.wisc.ssec.mcidasv.chooser.TLEFileChooser;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
@@ -44,18 +48,22 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.UtcDate;
 
 import visad.DateTime;
 import visad.VisADException;
 
 import javax.swing.*;
+import javax.swing.plaf.FileChooserUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,8 +87,14 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
     /** _more_ */
     private JComponent descriptorLabel;
 
+    private String ICON_REFRESH = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png";
+
+    private String ICON_HELP = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png";
+
     /** _more_ */
     protected JComboBox descriptorComboBox;
+
+    private static final Logger logger = LoggerFactory.getLogger(AddeGLMDataChooser.class);
 
     /** _more_ */
     private boolean ignoreDescriptorChange = false;
@@ -96,6 +110,10 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
 
     /** _more_ */
     protected Hashtable descriptorTable;
+
+    private JRadioButton localBtn;
+    private JRadioButton addeBtn;
+    private JRadioButton urlBtn;
 
 
     /** box for the relative time */
@@ -349,11 +367,11 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
 
     /**
      * Make the contents for this chooser
-     *
+     * Left for reference, DO NOT DELETE UNTIL #2607 IS RESOLVED
      * @return  a panel with the UI
      */
-    protected JComponent doMakeContents() {
-
+    protected JComponent doMakeContentsOld() {
+        JPanel outerPanel = new JPanel();
         JLabel lbl = new JLabel();
         JPanel localPanel = new JPanel();
         String path = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
@@ -389,8 +407,124 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
         //        allComps.add(addServerComp(GuiUtils.rLabel("Layout Model:")));
         //        allComps.add(addServerComp(GuiUtils.left(lastPanel)));
         JComponent top = GuiUtils.formLayout(allComps, GRID_INSETS);
-        return GuiUtils.top(GuiUtils.centerBottom(top, getDefaultButtons()));
+        outerPanel.add(top);
+        outerPanel.add(getDefaultButtons(), BorderLayout.PAGE_END);
+
+//        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+//        JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
+//        helpButton.setActionCommand(GuiUtils.CMD_HELP);
+//        helpButton.addActionListener(this);
+//        controlPanel.add(helpButton);
+//        controlPanel.add(Box.createHorizontalStrut(5));
+//
+//        JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
+//        refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
+//        controlPanel.add(refreshButton);
+//        controlPanel.add(Box.createHorizontalStrut(5));
+//
+//        controlPanel.add(cancelButton);
+//        controlPanel.add(Box.createHorizontalStrut(5));
+//
+//        controlPanel.add(loadButton);
+//        outerPanel.add(controlPanel, BorderLayout.PAGE_END);
+
+        return outerPanel;
+//        top = GuiUtils.formLayout(allComps, GRID_INSETS);
+//        return GuiUtils.top(GuiUtils.centerBottom(top, controlPanel));
     }
+
+    /**
+     * Make the Chooser
+     * Reworked under McIDAS Inquiry #2607-3141
+     *
+     * @return Chooser Panel
+     */
+
+    protected JComponent doMakeContents() {
+        logger.debug("doMakeContents() in...");
+        JPanel outerPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+        JPanel localPanel = new JPanel(new BorderLayout());
+        JPanel choicePanel = new JPanel(new BorderLayout());
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+        JPanel addePanel = new JPanel();
+
+        localPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Local"),
+                BorderFactory.createEmptyBorder(6, 6, 6, 6)));
+
+        String path = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
+        JFileChooser fch = new JFileChooser(path);
+        fch.setPreferredSize(new Dimension(800,210));
+        localBtn = new JRadioButton("File", false);
+        localPanel.add(localBtn, BorderLayout.NORTH);
+        localPanel.add(fch);
+
+
+        JPanel remotePanel = new JPanel();
+        remotePanel.setBorder(BorderFactory.createTitledBorder("Remote"));
+
+
+        JButton helpButton = McVGuiUtils. makeImageButton(ICON_HELP, "Show help");
+        JButton refreshButton = McVGuiUtils. makeImageButton(ICON_REFRESH, "Refresh");
+
+
+        List remoteComps = new ArrayList();
+        clearOnChange(dataTypes);
+        addTopComponents(remoteComps, "Group:", dataTypes);
+
+        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
+                + ":"));
+        descriptorComboBox = new JComboBox();
+
+        descriptorComboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if ( !ignoreDescriptorChange
+                        && (e.getStateChange() == e.SELECTED)) {
+                    descriptorChanged();
+                }
+            }
+        });
+
+        remoteComps.add(descriptorLabel);
+        remoteComps.add(descriptorComboBox);
+        remoteComps.add(addServerComp(GuiUtils.valignLabel(LABEL_TIMES)));
+        JPanel timesComp = makeTimesPanel();
+        timesComp.setPreferredSize(new Dimension(800,180));
+        remoteComps.add(addServerComp(timesComp));
+
+        JComponent top = GuiUtils.formLayout(remoteComps, GRID_INSETS);
+        addePanel = GuiUtils.top(top);
+
+
+        remotePanel.add(addePanel);
+        centerPanel.add(localPanel);
+        centerPanel.add(remotePanel);
+        choicePanel.add(centerPanel, BorderLayout.CENTER);
+
+        outerPanel.add(choicePanel, BorderLayout.CENTER);
+        outerPanel.add(getDefaultButtons(), BorderLayout.PAGE_END);
+
+        String file = (String) getIdv().getStateManager().getPreference(IdvChooser. PREF_DEFAULTDIR + getId() + ".file");
+        if (localBtn.isSelected()) {
+            File tmp = new File(path + File.separatorChar + file);
+
+            try {
+                FileChooserUI fcUi = fch.getUI();
+                fch.setSelectedFile(tmp);
+                Class<? extends FileChooserUI> fcClass = fcUi.getClass();
+                Method setFileName = fcClass.getMethod("setFileName", String.class);
+                setFileName.invoke(fcUi, tmp.getName());
+                remotePanel.disable();
+            } catch (Exception e) {
+                logger.warn("Could not dynamically invoke setFileName", e);
+            }
+        }
+
+        return outerPanel;
+    }
+
 
     /**
      * _more_
