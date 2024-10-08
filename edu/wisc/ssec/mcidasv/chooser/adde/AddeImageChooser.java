@@ -46,6 +46,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2317,6 +2321,7 @@ public class AddeImageChooser extends AddeChooser implements
             if (satBandInfo == null) {
                 return "Band: " + band;
             }
+
             String[] descrs = satBandInfo.getBandDescr(ad.getSensorID(), ad
                     .getSourceType());
             if (descrs != null) {
@@ -2427,7 +2432,20 @@ public class AddeImageChooser extends AddeChooser implements
             appendKeyValue(buff, PROP_FILE, FILE_SATBAND);
             lines = readTextLines(buff.toString());
             if (lines == null) {
-                return;
+
+                // Look for SATBAND first in a development environment, then application install dir
+                String addeRoot = null;
+                Path p;
+                if (System.getProperty("debug.localadde.rootdir") != null) {
+                    addeRoot = System.getProperty("debug.localadde.rootdir");
+                    p = Paths.get(addeRoot, "data", "SATBAND");
+                } else {
+                    // We are in an install directory, go up and over from lib to adde/data to grab SATBAND
+                    p = Paths.get("..", "adde", "data", "SATBAND");
+                }
+
+                // Read the whole SATBAND file in one go, love this Files API, thx Jon!
+                lines = Files.readAllLines(p, Charset.defaultCharset());
             }
             if (useSatBandInfo) {
                 satBandInfo = new AddeSatBands(StringUtil.listToStringArray(lines));
