@@ -55,6 +55,7 @@ import visad.DateTime;
 import visad.VisADException;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FileChooserUI;
 
 import java.awt.*;
@@ -75,6 +76,9 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
+
+import static edu.wisc.ssec.mcidasv.Constants.ICON_ACCEPT_SMALL;
+import static edu.wisc.ssec.mcidasv.Constants.ICON_CANCEL;
 
 /**
  * Selection widget for ADDE point data
@@ -111,7 +115,7 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
     /** _more_ */
     protected Hashtable descriptorTable;
 
-    private JRadioButton localBtn;
+    private JButton localBtn;
     private JRadioButton addeBtn;
     private JRadioButton urlBtn;
 
@@ -456,9 +460,16 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
 
         String path = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
         JFileChooser fch = new JFileChooser(path);
-        fch.setPreferredSize(new Dimension(800,210));
-        localBtn = new JRadioButton("File", false);
-        localPanel.add(localBtn, BorderLayout.NORTH);
+        fch.setControlButtonsAreShown(false);
+        fch.setPreferredSize(new Dimension(600,250));
+
+        // TODO: Find out what the file extensions are for GLM data
+        FileNameExtensionFilter eventFilter = new FileNameExtensionFilter("GLM_EVENTS Data files", "TBD");
+        fch.addChoosableFileFilter(eventFilter);
+        FileNameExtensionFilter flashFilter = new FileNameExtensionFilter("GLM_FLASHES Data files", "TBD");
+        fch.addChoosableFileFilter(flashFilter);
+        FileNameExtensionFilter groupFilter = new FileNameExtensionFilter("GLM_GROUPS Data files", "TBD");
+        fch.addChoosableFileFilter(groupFilter);
         localPanel.add(fch);
 
 
@@ -491,7 +502,7 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
         remoteComps.add(descriptorComboBox);
         remoteComps.add(addServerComp(GuiUtils.valignLabel(LABEL_TIMES)));
         JPanel timesComp = makeTimesPanel();
-        timesComp.setPreferredSize(new Dimension(800,180));
+        timesComp.setPreferredSize(new Dimension(600,200));
         remoteComps.add(addServerComp(timesComp));
 
         JComponent top = GuiUtils.formLayout(remoteComps, GRID_INSETS);
@@ -504,24 +515,44 @@ public class AddeGLMDataChooser extends AddePointDataChooser {
         choicePanel.add(centerPanel, BorderLayout.CENTER);
 
         outerPanel.add(choicePanel, BorderLayout.CENTER);
-        outerPanel.add(getDefaultButtons(), BorderLayout.PAGE_END);
 
-        String file = (String) getIdv().getStateManager().getPreference(IdvChooser. PREF_DEFAULTDIR + getId() + ".file");
-        if (localBtn.isSelected()) {
-            File tmp = new File(path + File.separatorChar + file);
-
-            try {
-                FileChooserUI fcUi = fch.getUI();
-                fch.setSelectedFile(tmp);
-                Class<? extends FileChooserUI> fcClass = fcUi.getClass();
-                Method setFileName = fcClass.getMethod("setFileName", String.class);
-                setFileName.invoke(fcUi, tmp.getName());
-                remotePanel.disable();
-            } catch (Exception e) {
-                logger.warn("Could not dynamically invoke setFileName", e);
+        localBtn = new JButton("Local");
+        localBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (localBtn.getText().equals("Local")) {
+                    localBtn.setText("Remote");
+//                    localPanel.setVisible(false);
+//                    remotePanel.setVisible(true);
+                } else {
+                    localBtn.setText("Local");
+//                    localPanel.setVisible(true);
+//                    remotePanel.setVisible(false);
+                }
             }
-        }
+        });
 
+        controlPanel.add(localBtn);
+        controlPanel.add(Box.createHorizontalStrut(5));
+
+        controlPanel.add(helpButton);
+        controlPanel.add(Box.createHorizontalStrut(5));
+        controlPanel.add(refreshButton);
+        controlPanel.add(Box.createHorizontalStrut(5));
+
+        cancelButton = McVGuiUtils.makeImageButton(ICON_CANCEL, "Cancel");
+        cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
+        cancelButton.addActionListener(this);
+        cancelButton.setEnabled(false);
+        controlPanel.add(cancelButton);
+
+        controlPanel.add(Box.createHorizontalStrut(5));
+
+        loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
+        loadButton.setActionCommand(getLoadCommandName());
+        loadButton.addActionListener(this);
+        controlPanel.add(loadButton);
+
+        outerPanel = GuiUtils.top(GuiUtils.centerBottom(outerPanel, controlPanel));
         return outerPanel;
     }
 
