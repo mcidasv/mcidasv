@@ -41,6 +41,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
   <li><a href="#ensemble">Ensemble</a></li>
   <li><a href="#timeMeanAnomaly">Time Mean and Anomaly</a>
   <li><a href="#time">Time Steps</a></li>
+  <li><a href="#wrf">WRF</a></li>
 </ul>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Change Unit of a parameter (grid, unit,multiplyfactor)* -</strong> Changes the unit of the field being displayed and optionally scales the output values.
@@ -973,6 +974,237 @@ levels. Note that you must select a 3D field to use this formula.
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>The option for unsmoothed end points. 0 = set to missing; 1 = use symmetry; -1= assume cyclic</p>
+   </td>
+   </tr>
+</table></li>
+</ul>
+    <div class="pagesubtitle">WRF<a name="wrf" id="wrf"></a></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>WRF Dewpoint (T, QVAPOR, P, PB, flag) -</strong> Calculates dewpoint from WRF forecast model data.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The pertubation potential temperature (theta-t0).</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>QVAPOR</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The water vapor mixing ratio.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>P</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The pertubation pressure.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>PB</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The base state pressure.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>flag</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>Used to calculate saturation vapor pressure. Default=1.</p>
+   <p>flag=1 water, flag=-1 ice, flag=0 mix</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>WRF Equivalent Potential Temperature (P, PB, T, QVAPOR) - </strong>Calculates equivalent potential temperature from WRF forecast model data.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>P</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The pertubation pressure.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>PB</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The base state pressure.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The pertubation potential temperature (theta-t0).</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>QVAPOR</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The waver vapor mixing pressure.</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>WRF MSLP (PSFC, HGT, T2) - </strong>Calculates mean sea level pressure from WRF forecast model data.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>PSFC</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The surface pressure.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>HGT</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The terrain height.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>T2</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The temperature at 2 meters.</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>WRF Potential Temperature (P, PB, T)  -</strong> Calculates potential temperature from WRF forecast model data.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>P</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The pertubation pressure.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>PB</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The base state pressure.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The pertubation potential temperature (theta-t0).</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>WRF Relative Humidity (T, QVAPOR, P, PB, flag) -</strong> Calculates relative humidity from WRF forecast model data.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The pertubation potential temperature (theta-t0).</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>QVAPOR</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The water vapor mixing ratio.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>P</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The pertubation pressure.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>PB</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The base state pressure.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>flag</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>Used to calculate saturation vapor pressure. Default=1.</p>
+   <p>flag=1 water, flag=-1 ice, flag=0 mix</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>WRF Saturation Equivalent Potential Temperature (P, PB, T) - </strong>Calculates saturation equivalent potential temperature from WRF forecast model data.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>P</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The pertubation pressure.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>PB</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The base state pressure.</p>
+   </td>
+   </tr>
+    <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>T</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The pertubation potential temperature (theta-t0).</p>
    </td>
    </tr>
 </table></li>
