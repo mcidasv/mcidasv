@@ -29,6 +29,7 @@
 package ucar.unidata.idv.ui;
 
 
+import edu.wisc.ssec.mcidasv.ui.PopupMessage;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import ucar.unidata.idv.*;
 import ucar.unidata.ui.ComponentGroup;
@@ -562,6 +563,36 @@ public class IdvWindow extends MultiFrame {
         return (JLabel) getComponent(IdvUIManager.COMP_WAITLABEL);
     }
 
+
+    /**
+     * Close this window with an alert.
+     * Overloaded doClose() for McIDAS Inquiry #2827-3141
+     *
+     * @return Was closed
+     */
+    public boolean doClose(boolean tab) {
+        if (!tab) doClose();
+
+        if (isAMainWindow && mainWindows.contains(this) && (mainWindows.size() == 1)) {
+            if (idv.getStore().get("idv.ui.showquitconfirm", true)) {
+                if (!idv.quit()) return false;
+            } else {
+                JOptionPane pane = new JOptionPane("McIDAS-V is closing!", JOptionPane.WARNING_MESSAGE);
+                JDialog dialog = pane.createDialog(null, "McIDAS-V");
+                Timer timer = new Timer(3000, new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.dispose();
+                    }
+                });
+                timer.setRepeats(false);
+                timer.start();
+                dialog.setVisible(true);
+                idv.quit();
+            }
+        }
+        dispose();
+        return true;
+    }
 
     /**
      * Close this window. If it is the last main window then ask to exit

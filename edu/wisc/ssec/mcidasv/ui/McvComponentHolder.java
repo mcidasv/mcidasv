@@ -32,6 +32,7 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.getAllComponentHolders;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.getComponentHolders;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.getWindowForHolder;
 
+import java.awt.*;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -173,7 +174,7 @@ public class McvComponentHolder extends IdvComponentHolder {
         if (allTabs.size() == 1 || localTabs.size() == 1) {
             // current holder is either the last tab in the app,
             // or merely the last tab in current window.
-            return currentWindow.doClose();
+            return currentWindow.doClose(true);
         } else {
             // we only need to worry about closing the current tab
             return super.removeDisplayComponent();
