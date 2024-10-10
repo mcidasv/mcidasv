@@ -460,6 +460,19 @@ else if (disallowed_file.exists()) {
 }
 
 return allowed;</validation>
+            <actions>
+              <action id="9694" beanClass="com.install4j.runtime.beans.actions.control.SetVariableAction" rollbackBarrierExitCode="0">
+                <serializedBean>
+                  <property name="script">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">File installPath = context.getInstallationDirectory();
+return installPath.getParent();</property>
+                    </object>
+                  </property>
+                  <property name="variableName" type="string">defaultApplicationsPath</property>
+                </serializedBean>
+              </action>
+            </actions>
             <formComponents>
               <formComponent id="8879" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetBottom="25">
                 <serializedBean>
@@ -551,11 +564,19 @@ return allowed;</validation>
                   <property name="labelText" type="string">Select the folder where you would like McIDAS-V to create shortcuts, then click Next.</property>
                 </serializedBean>
               </formComponent>
-              <formComponent id="7786" beanClass="com.install4j.runtime.beans.formcomponents.DirectoryChooserComponent">
+              <formComponent id="7786" beanClass="com.install4j.runtime.beans.formcomponents.DirectoryChooserComponent" resetInitOnPrevious="true">
                 <serializedBean>
-                  <property name="initialFile" type="string">/Applications</property>
+                  <property name="initialFile" type="string">${installer:defaultApplicationsPath}</property>
                   <property name="variableName" type="string">macosShortcutDirectory</property>
                 </serializedBean>
+                <initScript>// The "set a variable" action associated with the "createApplicationsLinkAction"
+// sets the defaultApplicationsPath to the parent directory of the user's
+// choice of install directory.
+
+// If you're looking for where the user has decided to place the shortcut apps
+// you want to look at the "macosShortcutDirectory" variable.
+String shortcut = (String)context.getVariable("defaultApplicationsPath");
+context.setVariable("macosShortcutDirectory", shortcut);</initScript>
               </formComponent>
             </formComponents>
           </screen>
