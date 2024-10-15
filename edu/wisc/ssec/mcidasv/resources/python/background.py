@@ -1142,33 +1142,17 @@ class _Display(_JavaProxy):
     # McIDAS Inquiry #2920-3141
     @gui_invoke_later
     def loadStations(self):
-        stationsDBrel = "../edu/wisc/ssec/mcidasv/resources/orbittrack_groundstations_db.csv"
+        stationsDBrel = "../edu/wisc/ssec/mcidasv/resources/stations.csv"
         stationsDB = os.path.abspath(stationsDBrel)
         log = open(stationsDB, "r")
         inCSV = csv.reader(log)
 
         out = {}
         for l in inCSV:
-            name = l[1]
-            cord = (float(l[2]), float(l[3]))
-            out[name] = cord
-
-        out = self.loadNEXRADstns(out)
-
-        return out
-
-    def loadNEXRADstns(self, stationTable):
-        stationsDBrel = "../edu/wisc/ssec/mcidasv/resources/nexradstns.csv" # insert path here
-        stationsDB = os.path.abspath(stationsDBrel)
-        log = open(stationsDB, "r")
-        inCSV = csv.reader(log)
-
-        for l in inCSV:
             name = l[0]
             cord = (float(l[1]), float(l[2]))
-            stationTable[name] = cord
-
-        return stationTable
+            out[name] = cord
+        return out
 
     @gui_invoke_later
     def setCenterAtStation(self, name, scale = 1.0):
