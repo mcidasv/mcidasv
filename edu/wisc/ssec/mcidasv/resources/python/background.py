@@ -1145,23 +1145,34 @@ class _Display(_JavaProxy):
         stationsDBrel = "../edu/wisc/ssec/mcidasv/resources/stations.csv"
         stationsDB = os.path.abspath(stationsDBrel)
         log = open(stationsDB, "r")
-        inCSV = csv.reader(log)
+        lines = log.readlines()
 
         out = {}
-        for l in inCSV:
+        for li in lines:
+            l = li.split(",")
             name = l[0]
+            types = l[3] if len(l[3]) > 0 else "X"
+
+            if "X" not in types:
+                types += "X"
+
             cord = (float(l[1]), float(l[2]))
-            out[name] = cord
+
+            for i in range(len(types)):
+                out[name+":"+types[i]] = cord
+
         return out
 
     @gui_invoke_later
-    def setCenterAtStation(self, name, scale = 1.0):
+    def setCenterAtStation(self, name, type = "X", scale = 1.0):
         stations = self.loadStations()
 
-        if name not in stations:
+        id = name + ":" + type
+
+        if id not in stations:
             return "Not a valid station"
         else:
-            lat, lon = stations.get(name)
+            lat, lon = stations.get(id)
             self.setCenter(lat, lon, scale)
 
 
@@ -1665,15 +1676,16 @@ class _Display(_JavaProxy):
 
 
     # McIDAS Inquiry #2920-3141
-    def annotateAtStation(self, text, station, font=None, color='red', size=None, style=None, alignment=None,
+    def annotateAtStation(self, text, station, type = "X", font=None, color='red', size=None, style=None, alignment=None,
                           bgColor=None):
 
         if station is not None:
             stations = self.loadStations()
-            if station not in stations:
+            id = station + ":" + type
+            if id not in stations:
                 return "Not a valid station"
             else:
-                lat, lon = stations.get(station)
+                lat, lon = stations.get(id)
                 for _ in range(2):
                     try:
                         return self.annotate(text = text, lat = lat, lon = lon, font = font, color = color, size = size, style = style, alignment=alignment, bgColor=bgColor)
