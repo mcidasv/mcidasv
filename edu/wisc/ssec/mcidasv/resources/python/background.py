@@ -46,6 +46,8 @@ from ucar.unidata.ui.colortable import ColorTableDefaults
 from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
 from ucar.visad.data import GeoGridFlatField
+from ucar.unidata.util import IOUtil
+from ucar.unidata.util import StringUtil
 
 from visad import Data
 from visad import FieldImpl
@@ -1139,17 +1141,15 @@ class _Display(_JavaProxy):
     def center(self, lat, lon, scale=1.0):
         self.setCenter(lat, lon)
         #self.setScaleFactor(scale)
+
     # McIDAS Inquiry #2920-3141
     @gui_invoke_later
     def loadStations(self):
-        stationsDBrel = "../edu/wisc/ssec/mcidasv/resources/stations.csv"
-        stationsDB = os.path.abspath(stationsDBrel)
-        log = open(stationsDB, "r")
-        lines = log.readlines()
+        contents = IOUtil.readContents('/edu/wisc/ssec/mcidasv/resources/stations.csv')
+        lines = StringUtil.parseCsv(contents, False)
 
         out = {}
-        for li in lines:
-            l = li.split(",")
+        for l in lines:
             name = l[0]
             types = l[3] if len(l[3]) > 0 else "X"
 
