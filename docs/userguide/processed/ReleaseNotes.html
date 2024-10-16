@@ -42,197 +42,145 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   Version 2.0</div>
 <hr size="4" noshade>
 <p>The items below reflect the changes since the 1.9 release.</p>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_1.9">Documentation
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_2.0">Documentation
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#doc1.9">McIDAS-V User's
+    <li><strong><a class="faq-question-link" href="#doc2.0">McIDAS-V User's
           Guide</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.9">Data
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_2.0">Data
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#orbitTracks1.9">Orbit Tracks Chooser</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#localServers1.9">Local Servers</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#remoteServers1.9">Remote Servers/Datasets</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#archivePoint1.9">Remote Archive Point Data</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#absolute1.9">Absolute Times in Choosers</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#aliases1.9">Gridded Aliases</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#tropomi1.9">TROPOMI</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#nucaps1.9">Gridded NUCAPS</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#warning1.9">NWS Warnings</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#cycle1.9">Layer Cycling Speed</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#remoteServers2.0">Remote Imagery Servers and Datasets</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#localServers2.0">Local Servers</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#gridFormulas2.0">Gridded Data Functions and Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#modis2.0">MODIS Functions and Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#griddedABI2.0">Gridded ABI Functions and Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#multispectral2.0">MultiSpectral CSV Output</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#McXNetcdf2.0">McIDAS-X netCDF File Compatibility</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#probSevere2.0">ProbSevere Data</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.9">Display
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_2.0">Display
     Changes</a></div>
 <div class="faq-category">
   
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#dateline1_1.9">MODIS and JPSS Dateline Improvements</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#awips_1.9">New AWIPS Color Tables</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#star_1.9">New NOAA STAR Color Tables</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#rh_1.9">Improved Relative Humidity Enhancement</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#dark_1.9">Dark Mode</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#drawingControl2.0">Drawing Controls Shapes</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#declutter2.0">Improved Point Data Decluttering</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#layerLabels2.0">Updated Layer Labels</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#ospo2.0">OSPO Satellite Enhancements</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.9">Other
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_2.0">Other
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#font_1.9">Improved Layer Label Font Quality</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#rgbs_1.9">RGB and Channel Combination Formulas</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#mpeg4_1.9">MPEG-4 Movie Capture</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#borders_1.9">Image and Animation Borders</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#alphabetical_1.9">Alphabetical Field Listing</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#labels_1.9">Location Labels</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#sum_1.9">Vertical Sum Formula</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#minmax_1.9">Vertical Min and Max Formulas</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#scripting1.9">Scripting</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#java1.9">Java/Jython Update</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#satband2.0">Updated SATBAND</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#wireframe2.0">Wireframe Box Corner Specification</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#autoRefresh">Disable Auto Refresh of Data</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#labels2.0">Location Labels</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#movie2.0">Movie Capture Performance</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#polling2.0">Polling Update Notifications</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#mp42.0">mp4 Metadata</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#java2.0">Java/Jython Update</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#globe2.0">Globe Rotation</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.9">Under Development</a></div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_2.0">Under Development</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#jpss1.9">JPSS Chooser</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#glm1.9">GLM Chooser</a></strong></li></ul>
+    <li><strong><a class="faq-question-link" href="#jpss2.0">JPSS Chooser</a></strong></li></ul>
   </div>
 <hr>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat1_1.9" id="faq1_cat1_1.9"></a>Documentation
+  <div class="faq-category-title"><a name="faq1_cat1_2.0" id="faq1_cat1_2.0"></a>Documentation
     Changes</div>
-  <div class="faq-category"><a name="doc1.9" id="doc1.9"></a>
+  <div class="faq-category"><a name="doc2.0" id="doc2.0"></a>
     <h4>McIDAS-V User's Guide</h4>
     <div class="faq-answer">Updated the McIDAS-V User's Guide to contain new
       features and more detailed content.</div>
   </div>
 </div>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat2_1.9" id="faq1_cat2_1.9"></a>Data
+  <div class="faq-category-title"><a name="faq1_cat2_2.0" id="faq1_cat2_2.0"></a>Data
     Changes</div>
-    <div class="faq-category"><a name="orbitTracks1.9" id="orbitTracks1.9"></a>
-    <h4>Orbit Tracks Chooser</h4>
-    <div class="faq-answer">Promoted the Under Development > Satellite Orbit Tracks chooser to a supported chooser (Satellite &gt; Orbit Tracks). This chooser can load and display TLE (Two Line Elements) data loaded through a local file, ADDE, or a URL. For more information, see <a href="data/choosers/OrbitTrackChooser.html">Choosing Orbit Tracks Data</a>, <a href="quickstart/OrbitTracks.html">Displaying Satellite Orbit Tracks</a>, and <a href="controls/OrbitTrackControl.html">Satellite Orbit Track Controls</a>.</div>
+    <div class="faq-category"><a name="remoteServers2.0" id="remoteServers2.0"></a>
+    <h4><strong>Remote Imagery Servers and Datasets</strong></h4>
+    <div class="faq-answer">Updated the list of available imagery servers and datasets available through the Satellite&gt;Imagery chooser.</div>
 	</div>
-    <div class="faq-category"><a name="localServers1.9" id="localServers1.9"></a>
+    <div class="faq-category"><a name="localServers2.0" id="localServers2.0"></a>
     <h4>Local Servers</h4>
-    <div class="faq-answer">Updated local ADDE servers on Linux and OS X/macOS platforms. New servers include HimawariCast (WARC) as well as VIIRS for M, I, and Day/Night Band SDRs, and M and I band Imagery EDRs.</div>
+    <div class="faq-answer">Updated local ADDE servers on Linux and OS X/macOS platforms.</div>
 	</div>
-  <div class="faq-category"><a name="remoteServers1.9" id="remoteServers1.9"></a>
-    <h4>Remote Servers/Datasets</h4>
+  <div class="faq-category"><a name="gridFormulas2.0" id="gridFormulas2.0"></a>
+    <h4>Gridded Data Functions and Formulas</h4>
     <div class="faq-answer">
-      <p>Added new imagery datasets for GOES-R series data. These servers/datasets are:</p>
-      <ul>
-     <li>adde.ssec.wisc.edu/adde.ucar.edu/atm.ucar.edu/lead.unidata.ucar.edu:</li>
-      	  <ul>
-      	    <li>DDSTALL - GOES East/West Debra Dust data rolling archive</li>
-      	    <li>EAST - GOES East L1b imagery</li>
-      	    <li>EASTALL - GOES East L1b imagery rolling archive</li>
-      	    <li>GEOCALL - GOES East/West GeoColor data rolling archive</li>
-      	    <li>GOESRALL - GOES-R imagery rolling archive</li>
-      	    <li>GOESSALL - GOES-S imagery rolling archive</li>
-      	    <li>GOESTALL - GOES-T imagery rolling archive</li>
-      	    <li>L2GEALL - Goes East L2 imagery rolling archive</li>
-      	    <li>L2GEAST - GOES East L2 imagery</li>
-      	    <li>L2GOESR - GOES-R L2 imagery</li>
-      	    <li>L2GOESS - GOES-S L2 imagery</li>
-      	    <li>L2GWALL - GOES West L2 imagery rolling archive</li>
-      	    <li>L2GWEST - GOES West L2 imagery</li>
-      	    <li>NPGOESR - GOES-R L1b and L2 imagery</li>
-            <li>NPGOESS - GOES-S L1b and L2 imagery</li>
-            <li>NPGRALL - GOES-R L1b and L2 imagery rolling archive</li>
-            <li>NPGSALL - GOES-S L1b and L2 imagery rolling archive</li>
-            <li>NPGWALL - GOES West L1b and L2 imagery rolling archive</li>
-      	    <li>RTDDST - GOES East/West Debra Dust data</li>
-      	    <li>RTGEOC - GOES East/West GeoColor data</li>
-      	    <li>RTGOESR - GOES-R L1b imagery</li>
-      	 	<li>RTGOESS - GOES-S L1b imagery</li>
-      	 	<li>RTGOEST - GOES-T L1b imagery</li>
-      	 	<li>RTSNCL - GOES East/West Cloud Snow data</li>
-      	 	<li>SNCALL - GOES East/West Cloud Snow data rolling archive</li>
-      	 	<li>WEST - GOES West L1b imagery</li>
-      	 	<li>WESTALL - GOES West L1b imagery rolling archive</li>
-      	  </ul>
+      <p>Added a variety of functions and derived formulas designed for use with WRF forecast model data.  Added a variety of stability functions and formulas. Also added functions and formulas for heat index, accumulated precipitation, and virtual temperature.</p><ul>
       </ul>
     </div>
     </div>
-    <div class="faq-category"><a name="archivePoint1.9" id="archivePoint1.9"></a>
-    <h4>Remote Archive Point Data</h4>
+    <div class="faq-category"><a name="modis2.0" id="modis2.0"></a>
+    <h4>MODIS Functions and Formulas</h4>
     <div class="faq-answer">
-      <p>Added the ability to work with remote archive point data through the Point Observations&gt;Plot/Contour chooser. Once the Point Type is selected, a window will appear prompting for a day to search for. This day can be changed in the Absolute Times tab of the chooser.</p>
+      <p>Updated the MODIS True and False Color RGB functions and formulas to use Reflectivity instead of Brightness. Added several new burn and land-use index functions and formulas.</p>
     </div>
     </div>
-      <div class="faq-category"><a name="absolute1.9" id="absolute1.9"></a>
-    <h4>Absolute Times in Choosers</h4>
+      <div class="faq-category"><a name="griddedABI2.0" id="griddedABI2.0"></a>
+    <h4>Gridded ABI Functions and Formulas</h4>
     <div class="faq-answer">
-      <p>Added new functionality to the Absolute Times tab of the Radar&gt;Level II&gt; Remote, Radar&gt;Level III, and Point Observations&gt;Plot/Contour choosers to allow the user to specify a day, range of times, and number of times to list.</p>
+      <p>Added the ability to calculate and display temperature from L1b ABI netCDF files loaded as a gridded data source. Also added the ability to calculate radiance from L2 CMIP ABI netCDF files loaded as a gridded data source.</p>
     </div>
     </div>
-    <div class="faq-category"><a name="aliases1.9" id="aliases1.9"></a>
-    <h4>Gridded Aliases</h4>
-    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), <span id="value_summary_text">FNMOC COAMPS (Fleet Numerical Meteorology and Oceanography Center </span>Coupled Ocean/Atmosphere Mesoscale Prediction System), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog, as well as the General &gt;Files/Directories chooser with local gridded data.  Adding these variables to the list of aliases allows for McIDAS-V to recognize them and therefore create derived fields and display the variables using the parameter defaults.</div>
+	<div class="faq-category"><a name="multispectral2.0" id="multispectral2.0"></a>
+    <h4>MultiSpectral CSV Output</h4>
+    <div class="faq-answer">Added the ability to export a CSV or text file containing the wavelength or wavenumber and parameter values from a MultiSpectral display. To write the file, after creating a MultiSpectral display, click the Save button at the bottom of the Layer Controls tab of the Data Explorer. The resultant file contains columns for wavelength/wavenumber, and the calibrated value at all probe locations.</div>
 	</div>
-	<div class="faq-category"><a name="tropomi1.9" id="tropomi1.9"></a>
-    <h4>TROPOMI</h4>
-    <div class="faq-answer">Added support for L2 TROPOMI (TROPOspheric Monitoring Instrument) netCDF files downloaded from the Sentinel-5P Pre-Operations Data Hub or NASA Earthdata. These files can be loaded through the General -&gt; Files/Directories chooser as a gridded data source (Grid files (netCDF/GRIB/OPeNDAP/GEMPAK). A variety of derived fields for the L2 products are also available, allowing easy access to different units available for many variables.</div>
+    <div class="faq-category"><a name="McXNetcdf2.0" id="McXNetcdf2.0"></a>
+    <h4>McIDAS-X netCDF File Compatibility</h4>
+    <div class="faq-answer">Added improved support for reading and displaying netCDF files written by McIDAS-X. Previously, off-Earth pixels weren't being written correctly in the files, but this issue has been resolved.</div>
 	</div>
-    <div class="faq-category"><a name="nucaps1.9" id="nucaps1.9"></a>
-    <h4>Gridded NUCAPS</h4>
-    <div class="faq-answer">Added support for NUCAPS (NOAA Unique Combined Atmospheric Processing System) gridded data files, which can be loaded through the General -&gt; Files/Directories chooser or General -&gt; Catalogs chooser as a gridded data source (Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)). </div>
-	</div>
-	<div class="faq-category"><a name="warning1.9" id="warning1.9"></a>
-    <h4>NWS Warnings</h4>
-    <div class="faq-answer">Added a new menu item to the Main Display window (Display &gt; Text Data &gt; NWS Hazard Warning (from server)) that allows for plotting currently active severe weather warning (e.g. Severe Thunderstorm Warning, Tornado Warning) polygons in the Main Display window. This menu item adds a data source for the warnings to the Field Selector, and Create Display must be clicked in order for the polygons to be drawn in the Main Display.</div>
-	</div>
-    <div class="faq-category"><a name="cycle1.9" id="cycle1.9"></a>
-    <h4>Layer Cycling Speed</h4>
-    <div class="faq-answer">Added the ability to control the cycling speed when switching between displayed layers of 2D levels of a 3D variable.  For example, a 2D contour display of a 3D temperature variable.  There is now a Dwell setting in the Layer Controls to control the speed that the display cycles through the various 2D levels in the 3D variable. This is available for various gridded, point data, and radar displays.</div>
+	<div class="faq-category"><a name="probSevere2.0" id="probSevere2.0"></a>
+    <h4>ProbSevere Data</h4>
+    <div class="faq-answer">Added the ability to read and display ProbSevere data. This can be done with local files through the General&gt;Files/Directories chooser or remotely through the Display&gt;Text Data&gt;ProbSevere menu item in the Layer Controls. ProbSevere uses radar, satellite, and forecast model data to identify locations susceptible to severe hail, severe straight-line winds, and tornadoes.</div>
 	</div>
 </div>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat3_1.9" id="faq1_cat3_1.9"></a>Display
+  <div class="faq-category-title"><a name="faq1_cat3_2.0" id="faq1_cat3_2.0"></a>Display
     Changes</div>
-  <div class="faq-category"><a name="dateline1_1.9" id="dateline1_1.9"></a>
-    <h4>MODIS and JPSS Dateline Improvements</h4>
-    <div class="faq-answer">Improvements were made in the Region tab of the Field Selector to allow for subsetting across the dateline for MODIS data loaded through the HYDRA chooser, as well as VIIRS SDRs and imagery EDRs loaded through the Under Development &gt; JPSS chooser. Additionally, probing in the Main Display now works on both sides of the dateline.</div>
+  <div class="faq-category"><a name="drawingControl2.0" id="drawingControl2.0"></a>
+    <h4>Drawing Controls Shapes</h4>
+    <div class="faq-answer">Added a new closed polygon shape. Also added a wave line shape.</div>
   </div>
-  <div class="faq-category"><a name="multispectral_probe1_1.9" id="multispectral_probe1_1.9"></a>
-    <h4><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></h4>
-    <div class="faq-answer">Added a space between the probe (square) and numerical output value of a MultiSpectral Display in the Main Display window. Previously, an overlap between the probe and numerical values could make the value difficult to read. Additionally, probes now remain at the same latitude/longitude location after a projection change in the display. The probe and numerical output also work in sync when changing the vertical positioning of the probe.</div>
+  <div class="faq-category"><a name="declutter2.0" id="declutter2.0"></a>
+    <h4><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">Improved Point Data Decluttering</a></strong></h4>
+    <div class="faq-answer">Added the ability to declutter displays of point data further than previously allowed.</div>
   </div>
-    <div class="faq-category"><a name="awips_1.9" id="awips_1.9"></a>
-    <h4><strong><a class="faq-question-link" href="#nucaps_1.9">New AWIPS Color Tables</a></strong></h4>
+    <div class="faq-category"><a name="layerLabels2.0" id="layerLabels2.0"></a>
+    <h4><strong><a class="faq-question-link" href="#nucaps_1.9">Updated Layer Labels</a></strong></h4>
     <div class="faq-answer">Added several new color tables used to display gridded NUCAPS data from NASA SPoRT. These enhancements can be found under the &quot;Satellite &gt; NUCAPS&quot; menu of the Color Table Editor. The color tables in this category are the defaults for any variable displayed from NASA SPoRT gridded NUCAPS files, though they can be applied to any displayed layer that uses an enhancement. A variety of additional AWIPS enhancements were added to the &quot;AWIPS&quot; menu of the enhancements. Many of these enhancements are under the &quot;AWIPS &gt; Grid&quot; menu.</div>
 </div>
-<div class="faq-category"><a name="star_1.9" id="star_1.9"></a>
-    <h4><strong><a class="faq-question-link" href="#nucaps_1.9">New NOAA STAR Color Tables</a></strong></h4>
-    <div class="faq-answer">Added several new color tables used by NOAA STAR to display GOES-R series level 1b imagery data. These can be found under the &quot;Satellite &gt; GOES-R &gt; STAR&quot; menu of the Color Table Editor. Note that these enhancements are designed to display correctly on Brightness (0 - 255) calibration data.</div></div>
-    <div class="faq-category"><a name="rh_1.9" id="rh_1.9"></a>
-    <h4>Improved Relative Humidity Enhancement</h4>
-    <div class="faq-answer">Improved the System &gt; Relative Humidity enhancement. Prior to McIDAS-V 1.9, the Relative Humidity enhancement had 20 color bins. The enhancement in version 1.9 now has 100 bins. The increase in the number of bins allows for a smoother transition of color between values and the ability to see more variation in displays.</div>
-	</div>
-    <div class="faq-category"><a name="dark_1.9" id="dark_1.9"></a>
-    <h4>Dark Mode</h4>
-    <div class="faq-answer">Added the ability to run McIDAS-V in dark mode.  This functionality, currently available on macOS, can be enabled through the Advanced tab of the User Preferences.</div>
+    <div class="faq-category"><a name="ospo2.0" id="ospo2.0"></a>
+    <h4>OSPO Satellite Enhancements</h4>
+    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), <span id="value_summary_text">FNMOC COAMPS (Fleet Numerical Meteorology and Oceanography Center </span>Coupled Ocean/Atmosphere Mesoscale Prediction System), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog, as well as the General &gt;Files/Directories chooser with local gridded data.  Adding these variables to the list of aliases allows for McIDAS-V to recognize them and therefore create derived fields and display the variables using the parameter defaults.</div>
 	</div>
 </div>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat4_1.9" id="faq1_cat4_1.9"></a>Other
+  <div class="faq-category-title"><a name="faq1_cat4_2.0" id="faq1_cat4_2.0"></a>Other
     Changes</div>
-    <div class="faq-category"><a name="font_1.9" id="font_1.9"></a>
-    <h4>Improved Layer Label Font Quality</h4>
+    <div class="faq-category"><a name="satband2.0" id="satband2.0"></a>
+    <h4>Updated SATBAND</h4>
     <div class="faq-answer">Layer labels now use java font rendering.  In previous releases, VisAD font rendering was used.  Java font rendering allows for an improved quality of layer labels, especially with rounded characters.</div>
 	</div>
-    <div class="faq-category"><a name="borders_1.9" id="borders_1.9"></a>
-    <h4>Image and Movie Borders</h4>
+    <div class="faq-category"><a name="wireframe2.0" id="wireframe2.0"></a>
+    <h4>Wireframe Box Corner Specification</h4>
     <div class="faq-answer">Added the ability to add borders between panels when capturing a movie or animation of a multi-paneled display using All Views.</div>
 	</div>
-    <div class="faq-category"><a name="rgbs_1.9" id="rgbs_1.9"></a>
-    <h4><strong><a class="faq-question-link" href="#rgbs_1.9">RGB and Channel Combination Formulas</a></strong></h4>
+    <div class="faq-category"><a name="autoRefresh" id="autoRefresh"></a>
+    <h4><strong><a class="faq-question-link" href="#rgbs_1.9">Disable Auto Refresh of Data</a></strong></h4>
     <div class="faq-answer">
       Added a variety of formulas specific to:
         <ul>
@@ -247,51 +195,35 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <p>These formulas will appear in the Field Selector tab of the Data Explorer when Formulas is selected. To evaluate the formulas, select the formula, the desired display type, and click Create Display. From here, an additional Field Selector window will appear where the user will manually select the bands/calibrations needed. Many of these formulas are also set up to be derived fields. This means that if a data source containing all of the required bands/calibrations is added, they will list in the Field Selector under an Imagery tree. Displaying the output of a formula through a derived field means that the manual band/calibration selection isn't necessary. For more information, see <a href="tools/ImageryFormulas.html">Description of Formulas - Imagery</a>.</p>
     <p>Note that not all of the RGBs and channel combination functions are considered to be operational, and therefore the functions may change in the future.</p></div>
 	</div>
-    <div class="faq-category"><a name="mpeg4_1.9" id="mpeg4_1.9"></a>
-    <h4>MPEG-4 Movie Capture</h4>
+    <div class="faq-category"><a name="labels2.0" id="labels2.0"></a>
+    <h4>Location Labels</h4>
     <div class="faq-answer">Added the ability to save movies in MPEG-4 (*.mp4) format, which is now available under the Files of Type dropdown menu when saving a movie.</div>
 	</div>
-    <div class="faq-category"><a name="borders_1.9" id="borders_1.9"></a>
-    <h4>Image and Movie Borders</h4>
+    <div class="faq-category"><a name="movie2.0" id="movie2.0"></a>
+    <h4>Movie Capture Performance</h4>
     <div class="faq-answer">Added the ability to add borders between panels when capturing a movie or animation of a multi-paneled display using All Views.</div>
 	</div>
-    <div class="faq-category"><a name="alphabetical_1.9" id="alphabetical_1.9"></a>
-    <h4>Alphabetical Field Listing</h4>
+    <div class="faq-category"><a name="polling2.0" id="polling2.0"></a>
+    <h4>Polling Update Notifications</h4>
     <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This makes the list of variables/fields more organized and easier to navigate through.</div>
 	</div>
-	<div class="faq-category"><a name="labels_1.9" id="labels_1.9"></a>
-    <h4>Location Labels</h4>
+    <div class="faq-category"><a name="mp42.0" id="mp42.0"></a>
+    <h4>mp4 Metadata</h4>
+    <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This makes the list of variables/fields more organized and easier to navigate through.</div>
+	</div>
+	<div class="faq-category"><a name="java2.0" id="java2.0"></a>
+    <h4>Java/Jython Update</h4>
     <div class="faq-answer">Added location labels for countries, world cities, and Canada provinces that can be found in the Display &gt; Plot Location Labels &gt; World menu in the Main Display. Added location labels for counties that can be found in the Display &gt; Plot Location Labels &gt; US menu in the Main Display. Updated the Volcanos location labels under Earth &gt; Volcanos so the labels only contain ASCII characters, which makes many labels more readable.</div>
 	</div>
-    	<div class="faq-category"><a name="sum_1.9" id="sum_1.9"></a>
-    <h4>Vertical Sum Formula</h4>
+    <div class="faq-category"><a name="globe2.0" id="globe2.0"></a>
+    <h4>Globe Rotation</h4>
     <div class="faq-answer">Added a vertical sum formula that can be found under &quot;Formulas &gt; Grids &gt; Vertical Sum&quot; that calculates the vertical sum of a 3D grid at the levels defined by the user. This formula uses the zsum() function that can be used in foreground and background scripts.</div>
 	</div>
-	<div class="faq-category"><a name="minmax_1.9" id="minmax_1.9"></a>
-    <h4>Vertical Min and Max Formulas</h4>
-    <div class="faq-answer">Added Max over grid levels and Min over grid levels formulas that can be found under &quot;Formulas &gt; Grids&quot;.  These formulas calculate the vertical minimum and maximum value of a 3D grid at each x/y pixel across the vertical levels defined by the user.</div>
-	</div>
-  <div class="faq-category"><a name="scripting1.9" id="scripting1.9"></a>
-    <h4>Scripting</h4>
-    <div class="faq-answer">
-    Added a variety of functionality related to scripting since the release of 1.8. Below is a list of significant changes: 
-      <ul>
-    <li>New functionality with existing functions:</li>
-      <ul>
-      <li>Added a new keyword to captureImage(), verbose, which allows the user to silence the a line printed to the Jython Shell letting the user know the image is being written.</li>
-      <li>Added the ability for listGridFieldsInFile() to work when the variables in the file don't include long_name attributes.</li>
-      <li>Added shorter server descriptions for ABI (ABIN), Sectorized CMI (SCMI), and Himawari (WARI) that can be specified in the format keyword of makeLocalADDEEntry().</li>
-      <li>Added the ability to specify coordinateSystem= and size='ALL' in loadADDEImage(). This is necessary to get the full domain and resolution of each  image of a LEO or floating GEO sector loop where the sector moves between timesteps.</li>
-      </ul>
-        </ul></div></div>
-      <div class="faq-category"><a name="java1.9" id="java1.9"></a>
-    <h4>Java/Jython Update</h4>
-    <div class="faq-answer">Updated Java from 1.8.0_112 to 1.8.0_352, Java 3D from 1.6.0 to 1.6.2, and Jython from 2.7.1 to 2.7.2.</div>
-	</div>
+  
     </div>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat5_1.9" id="faq1_cat5_1.9"></a>Under Development</div>
-  <div class="faq-category"><a name="jpss1.9" id="jpss1.9"></a>
+  <div class="faq-category-title"><a name="faq1_cat5_2.0" id="faq1_cat5_2.0"></a>Under Development</div>
+  <div class="faq-category"><a name="jpss2.0" id="jpss2.0"></a>
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
       <ul>
@@ -311,12 +243,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li>VIIRS EDR M-Band</li>
             </ul></li>
       <p>With local datasets, the data and geolocation must be in separate files in the same directory, follow the standard NOAA CLASS naming convention, and use terrain-corrected geolocation.</p></ul>
-    </div>
-  </div>
-  <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
-    <h4>GLM Chooser</h4>
-    <div class="faq-answer">
-      <p>Added a GLM (Geostationary Lightning Mapper) chooser to the list of Under Development choosers. This chooser is capable of loading GOES-R series GLM (Group, Event, Flash) data through remote ADDE. From the Increment option in the Data Sources tab, the user can specify the number of minutes of data to bin together into one timestep. This defaults to 5 minutes. To display the data, a gridded display or point data can be drawn.</p>
     </div>
   </div>
 </div>
