@@ -1318,6 +1318,24 @@ def listADDEImages(localEntry=None,
         
     return temp
 
+def loadStations():
+    contents = IOUtil.readContents('/edu/wisc/ssec/mcidasv/resources/stations.csv')
+    lines = StringUtil.parseCsv(contents, False)
+
+    out = {}
+    for l in lines:
+        name = l[0]
+        types = l[3] if len(l[3]) > 0 else "X"
+
+        if "X" not in types:
+            types += "X"
+
+        cord = (float(l[1]), float(l[2]))
+
+        for i in range(len(types)):
+            out[name+":"+types[i]] = cord
+
+    return out
 
 def loadADDEImage(*args, **kwargs):
     """Load data from an ADDE Image server - returns a _MappedAreaImageFlatField object that contains data and metadata.
@@ -1382,6 +1400,7 @@ def _getADDEImage(localEntry=None,
                   debug=False,
                   track=False,
                   band=None,
+                  station=None,
                   size=DEFAULT_SIZE,
                   showUrls=True,
                   **kwargs):
@@ -1433,6 +1452,14 @@ def _getADDEImage(localEntry=None,
         place = '&PLACE=ULEFT'
     else:
         place = ''
+
+    if station is not None:
+        stations = loadStations();
+        coordinateSystem = CoordinateSystems.LATLON
+        if isinstance(station, tuple):
+            location = stations.get(station[0] + ":" + station[1])
+        else:
+            location = stations.get(station + ":X")
         
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
