@@ -87,7 +87,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#polling2.0">Polling Update Notifications</a></strong></li>
     <li><strong><a class="faq-question-link" href="#mp42.0">mp4 Metadata</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java2.0">Java/Jython Update</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#globe2.0">Globe Rotation</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#globe2.0">Globe Display and Rotation</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_2.0">Under Development</a></div>
@@ -161,11 +161,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   </div>
     <div class="faq-category"><a name="layerLabels2.0" id="layerLabels2.0"></a>
     <h4><strong><a class="faq-question-link" href="#nucaps_1.9">Updated Layer Labels</a></strong></h4>
-    <div class="faq-answer">Added several new color tables used to display gridded NUCAPS data from NASA SPoRT. These enhancements can be found under the &quot;Satellite &gt; NUCAPS&quot; menu of the Color Table Editor. The color tables in this category are the defaults for any variable displayed from NASA SPoRT gridded NUCAPS files, though they can be applied to any displayed layer that uses an enhancement. A variety of additional AWIPS enhancements were added to the &quot;AWIPS&quot; menu of the enhancements. Many of these enhancements are under the &quot;AWIPS &gt; Grid&quot; menu.</div>
+    <div class="faq-answer">Updated the layer label template for satellite, grid, radar, and point data. These improved layer labels are more descriptive and concise than in previous iterations.</div>
 </div>
     <div class="faq-category"><a name="ospo2.0" id="ospo2.0"></a>
     <h4>OSPO Satellite Enhancements</h4>
-    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), <span id="value_summary_text">FNMOC COAMPS (Fleet Numerical Meteorology and Oceanography Center </span>Coupled Ocean/Atmosphere Mesoscale Prediction System), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog, as well as the General &gt;Files/Directories chooser with local gridded data.  Adding these variables to the list of aliases allows for McIDAS-V to recognize them and therefore create derived fields and display the variables using the parameter defaults.</div>
+    <div class="faq-answer">Added a variety of enhancements provided by NOAA OSPO (The Office of Satellite and Product Operations). These enhancements can be found under Satellite&gt;OSPO when setting the enhancement of a displayed layer.</div>
 	</div>
 </div>
 <div class="faq-bottom">
@@ -173,51 +173,40 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</div>
     <div class="faq-category"><a name="satband2.0" id="satband2.0"></a>
     <h4>Updated SATBAND</h4>
-    <div class="faq-answer">Layer labels now use java font rendering.  In previous releases, VisAD font rendering was used.  Java font rendering allows for an improved quality of layer labels, especially with rounded characters.</div>
+    <div class="faq-answer">Updated SATBAND, SATANNOT, and MODIS.CORE on all platforms. These updated files allow for proper band descriptions of satellite data in the Field Selector when working with data loaded via local ADDE. These local files are also used with data from remote imagery server does not have these files locally.</div>
 	</div>
     <div class="faq-category"><a name="wireframe2.0" id="wireframe2.0"></a>
     <h4>Wireframe Box Corner Specification</h4>
-    <div class="faq-answer">Added the ability to add borders between panels when capturing a movie or animation of a multi-paneled display using All Views.</div>
+    <div class="faq-answer">Added the ability to set the latitude and longitude bounds of the wireframe box. This is done through the Projections&gt;Custom Viewpoint menu item in the Main Display, where the user provides a name for the viewpoint along with the latitude and longitude values.  This viewpoint will be saved and available for future use through the Projections&gt;Viewpoints menu item.</div>
 	</div>
     <div class="faq-category"><a name="autoRefresh" id="autoRefresh"></a>
     <h4><strong><a class="faq-question-link" href="#rgbs_1.9">Disable Auto Refresh of Data</a></strong></h4>
     <div class="faq-answer">
-      Added a variety of formulas specific to:
-        <ul>
-        <li>ABI - Advanced Baseline Imager</li>
-        <li>AHI - Advanced Himawari Imager</li>
-        <li>AVHRR - Advanced Very High Resolution Radiometer</li>
-        <li>CLAVRx - NOAA Clouds from AVHRR Extended</li>
-        <li>MSG - Meteosat Second Generation (SEVIRI)</li>
-        <li>MODIS - Moderate Resolution Imaging Spectroradiometer</li>
-        <li>JPSS - Joint Polar Satellite System (VIIRS) - Under Development</li>
-        </ul>
-      <p>These formulas will appear in the Field Selector tab of the Data Explorer when Formulas is selected. To evaluate the formulas, select the formula, the desired display type, and click Create Display. From here, an additional Field Selector window will appear where the user will manually select the bands/calibrations needed. Many of these formulas are also set up to be derived fields. This means that if a data source containing all of the required bands/calibrations is added, they will list in the Field Selector under an Imagery tree. Displaying the output of a formula through a derived field means that the manual band/calibration selection isn't necessary. For more information, see <a href="tools/ImageryFormulas.html">Description of Formulas - Imagery</a>.</p>
-    <p>Note that not all of the RGBs and channel combination functions are considered to be operational, and therefore the functions may change in the future.</p></div>
+      Added a new option to the Define Animation Times tab of the Time Animation Properties window called Disable Data Refresh. This prevents McIDAS-V from updating the displayed data at a specified time interval, and is used when the Time Animation Properties window sets the time driver for the display. When unchecked, McIDAS-V will contact the server/catalog the data were loaded from at a given interval (defined by Refresh Rate). When checked, McIDAS-V will not update the display.</div>
 	</div>
     <div class="faq-category"><a name="labels2.0" id="labels2.0"></a>
     <h4>Location Labels</h4>
-    <div class="faq-answer">Added the ability to save movies in MPEG-4 (*.mp4) format, which is now available under the Files of Type dropdown menu when saving a movie.</div>
+    <div class="faq-answer">Updated volcano and world city location labels. Also added Mexico state labele. Location labels can be found under the Display&gt;Plot Location Labels menu item in the Main Display window.</div>
 	</div>
     <div class="faq-category"><a name="movie2.0" id="movie2.0"></a>
     <h4>Movie Capture Performance</h4>
-    <div class="faq-answer">Added the ability to add borders between panels when capturing a movie or animation of a multi-paneled display using All Views.</div>
+    <div class="faq-answer">Improved the speed of capturing movies through the User Interface. When capturing movies through View&gt;Capture&gt;Movie in the Main Display, the process of saving each frame is now quicker than it was previously.</div>
 	</div>
     <div class="faq-category"><a name="polling2.0" id="polling2.0"></a>
     <h4>Polling Update Notifications</h4>
-    <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This makes the list of variables/fields more organized and easier to navigate through.</div>
+    <div class="faq-answer">Added the ability to show a notification when the data source has been updated via polling.  Polling is a feature that allows McIDAS-V to check for new data every x-number of minutes and automatically refresh displays. Through the Properties window of the data source there is a new option that can be enabled, called Notifications. When enabled, along with Automatically Reload, a notification window will appear when the new data is available.</div>
 	</div>
     <div class="faq-category"><a name="mp42.0" id="mp42.0"></a>
     <h4>mp4 Metadata</h4>
-    <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This makes the list of variables/fields more organized and easier to navigate through.</div>
+    <div class="faq-answer">Added new metadata to mp4 animations captured in McIDAS-V. This includes software (McIDAS-V), developer (SSEC), MD5_hash, display_rate, and frame_count.</div>
 	</div>
 	<div class="faq-category"><a name="java2.0" id="java2.0"></a>
     <h4>Java/Jython Update</h4>
-    <div class="faq-answer">Added location labels for countries, world cities, and Canada provinces that can be found in the Display &gt; Plot Location Labels &gt; World menu in the Main Display. Added location labels for counties that can be found in the Display &gt; Plot Location Labels &gt; US menu in the Main Display. Updated the Volcanos location labels under Earth &gt; Volcanos so the labels only contain ASCII characters, which makes many labels more readable.</div>
+    <div class="faq-answer">Updated the Java packaged with McIDAS-V from java 8 to java 21. Also updated Jython from version 2.7.2 to 2.7.4.</div>
 	</div>
     <div class="faq-category"><a name="globe2.0" id="globe2.0"></a>
-    <h4>Globe Rotation</h4>
-    <div class="faq-answer">Added a vertical sum formula that can be found under &quot;Formulas &gt; Grids &gt; Vertical Sum&quot; that calculates the vertical sum of a 3D grid at the levels defined by the user. This formula uses the zsum() function that can be used in foreground and background scripts.</div>
+    <h4>Globe Display and Rotation</h4>
+    <div class="faq-answer">Modified globe display panels so the globe is now centered over North and South America instead of the North Pole. Globe background visibility has now been enabled as well. Now, there is a gray background on the globe instead of the background being 100% transparent. This prevents map lines on the opposite side of the globe from being seen. Globe rotation is also smoother than it was previously, especially at slow speeds.</div>
 	</div>
   
     </div>
@@ -227,22 +216,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
       <ul>
-        <li>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display.</li>
-        <li>Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.</li>
-        <li>Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported.</li>
-        <li>A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well.</li>
-        <li>Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS.</li>
-        <li>Fixed a bug where certain imagery SDR bands/calibrations would not display correctly in multi-banded files or data sources.</li>
-        <li>The ability to access remote VIIRS (SDR and imagery EDR) datasets is available on all platforms.</li>
-        <li>Local servers have been added for VIIRS data on macOS and Linux platforms. When adding local VIIRS datasets, there are individual formats for:
-      <ul>
-    <li>VIIRS SDR I-Band</li>
-    <li>VIIRS SDR M-Band</li>
-    <li>VIIRS SDR Day/Night Band</li>
-    <li>VIIRS EDR I-Band</li>
-    <li>VIIRS EDR M-Band</li>
-            </ul></li>
-      <p>With local datasets, the data and geolocation must be in separate files in the same directory, follow the standard NOAA CLASS naming convention, and use terrain-corrected geolocation.</p></ul>
+      <li>Added parameter groups and aliases for VIIRS/JPSS products from NASA EarthData.  This allows for easily displaying the output of derived formulas, and for different variables to use the expected enhancement and enhancement range.</li>
+      <li>Added new functions and formulas to allow for the creation of burn and land-use indices for VIIRS data.  This includes:
+        <ul>
+          <li>Burn Area Index</li>
+          <li>Normalized Burn Ratio</li>
+          <li>Normalized Built-up Index</li>
+          <li>Visible Atmospherically Resistant Index</li>
+        </ul>
+      </li>
+      </ul>
     </div>
   </div>
 </div>
