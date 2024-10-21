@@ -1416,7 +1416,10 @@ def _getADDEImage(localEntry=None,
         port = EntryStore.getLocalPort()
     else:
         port = "112"
-        
+
+    if station is not None and (coordinateSystem is not None and location is not None):
+        raise ValueError("Conflicting keywords: station, coordinateSytem, location.")
+
     # still need to handle dates+times
     # todo: don't break!
     
