@@ -43,12 +43,7 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 
-import javax.swing.GroupLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +68,8 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     /** a thread */
     private Thread thread;
+
+    private boolean isWarned = false;
 
     /** percent threshold */
     private final int percentThreshold;
@@ -354,6 +351,25 @@ public class MemoryMonitor extends JPanel implements Runnable {
             + fmt.format(highWaterMark) + '/'
             + fmt.format(totalMemory) + ' ' + mbString
             + ' ');
+
+        // McIDAS Inquiry #2608-3141
+        // Warn the user if memory util is beyond certain limit and give them the option to quit
+        if (usedMemory > 0.8 * totalMemory && isWarned == false) {
+            isWarned = true;
+            int resp = JOptionPane.showConfirmDialog(null,
+                    "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to continue?",
+                    "Warning",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+            if (resp == JOptionPane.YES_OPTION) {
+                logger.info("3141 - You take the red pill—you stay in Wonderland, and I show you how deep the rabbit hole goes.");
+            } else {
+                logger.info("3141 - Everything that has a beginning has an end.");
+                stateManager.getIdv().quit();
+            }
+
+        }
 
         repaint();
     }
