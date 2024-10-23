@@ -71,6 +71,8 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     private boolean isWarned = false;
 
+    private int warnTimer = 1;
+
     /** percent threshold */
     private final int percentThreshold;
 
@@ -357,12 +359,12 @@ public class MemoryMonitor extends JPanel implements Runnable {
         if (usedMemory > 0.8 * totalMemory && isWarned == false) {
             isWarned = true;
             int resp = JOptionPane.showConfirmDialog(null,
-                    "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to continue?",
+                    "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to exit McIDAS-V?",
                     "Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
 
-            if (resp == JOptionPane.YES_OPTION) {
+            if (resp != JOptionPane.YES_OPTION) {
                 logger.info("3141 - You take the red pill—you stay in Wonderland, and I show you how deep the rabbit hole goes.");
             } else {
                 logger.info("3141 - Everything that has a beginning has an end.");
@@ -370,6 +372,13 @@ public class MemoryMonitor extends JPanel implements Runnable {
             }
 
         }
+
+        // Don't spam warnings but bring it back
+        // if the user is still in the same situation
+        if (isWarned) warnTimer += 1;
+        if (warnTimer % 50 == 0) isWarned = false;
+
+
 
         repaint();
     }
