@@ -88,6 +88,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#mp42.0">mp4 Metadata</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java2.0">Java/Jython Update</a></strong></li>
     <li><strong><a class="faq-question-link" href="#globe2.0">Globe Display and Rotation</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#scripting2.0">Scripting</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_2.0">Under Development</a></div>
@@ -186,7 +187,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 	</div>
     <div class="faq-category"><a name="labels2.0" id="labels2.0"></a>
     <h4>Location Labels</h4>
-    <div class="faq-answer">Updated volcano and world city location labels. Also added Mexico state labele. Location labels can be found under the Display&gt;Plot Location Labels menu item in the Main Display window.</div>
+    <div class="faq-answer">Updated volcano and world city location labels. Also added Mexico state labels. Location labels can be found under the Display&gt;Plot Location Labels menu item in the Main Display window.</div>
 	</div>
     <div class="faq-category"><a name="movie2.0" id="movie2.0"></a>
     <h4>Movie Capture Performance</h4>
@@ -207,6 +208,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-category"><a name="globe2.0" id="globe2.0"></a>
     <h4>Globe Display and Rotation</h4>
     <div class="faq-answer">Modified globe display panels so the globe is now centered over North and South America instead of the North Pole. Globe background visibility has now been enabled as well. Now, there is a gray background on the globe instead of the background being 100% transparent. This prevents map lines on the opposite side of the globe from being seen. Globe rotation is also smoother than it was previously, especially at slow speeds.</div>
+	</div>
+  <div class="faq-category"><a name="scripting2.0" id="Scripting2.0"></a>
+    <h4>Scripting</h4>
+    <div class="faq-answer">
+      Added two new functions:
+        <ul>
+            <li><strong>annotateAtStation() -</strong> Allows the user to add annotation text to the display at a station rather than specifying a latitude/longitude or line/element pair.</li>
+            <li><strong>setCenterAtStation() -</strong> Allows the user to center the display at a station rather than specifying a latitude/longitude or line/element pair.</li></ul>
+        Added new functionality to an existing function:
+        <ul>
+             <li><strong>loadADDEImage() -</strong> Added the ability for the user to specify a station to center the data rather than specifying a latitude/longitude or line/element pair.</li></ul>
+    </div>
 	</div>
   
     </div>
