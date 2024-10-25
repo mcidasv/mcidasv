@@ -1164,10 +1164,10 @@ class _Display(_JavaProxy):
         return out
 
     @gui_invoke_later
-    def setCenterAtStation(self, name, type = "X", scale = 1.0):
+    def setCenterAtStation(self, station, type = "X", scale = 1.0):
         stations = self.loadStations()
 
-        id = name + ":" + type
+        id = station + ":" + type
 
         if id not in stations:
             return "Not a valid station"
