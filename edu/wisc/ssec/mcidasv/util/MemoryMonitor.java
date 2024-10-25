@@ -70,8 +70,9 @@ public class MemoryMonitor extends JPanel implements Runnable {
     private Thread thread;
 
     private boolean isWarned = false;
-
+    private int sustainTimer = 1;
     private int warnTimer = 1;
+    private static JDialog dialog = null;
 
     /** percent threshold */
     private final int percentThreshold;
@@ -356,27 +357,38 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
         // McIDAS Inquiry #2608-3141
         // Warn the user if memory util is beyond certain limit and give them the option to quit
-        if (usedMemory > 0.8 * totalMemory && isWarned == false) {
-            isWarned = true;
-            int resp = JOptionPane.showConfirmDialog(null,
-                    "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to exit McIDAS-V?",
-                    "Warning",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE);
+        if (usedMemory > 0.90 * totalMemory && isWarned == false) {
+            sustainTimer += 1;
+            if (sustainTimer % 15 == 0) {
+                isWarned = true;
+                if (dialog == null || !dialog.isShowing()) {
+                    JOptionPane optionPane = new JOptionPane(
+                            "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to exit McIDAS-V?",
+                            JOptionPane.WARNING_MESSAGE,
+                            JOptionPane.YES_NO_OPTION);
 
-            if (resp != JOptionPane.YES_OPTION) {
-                logger.info("3141 - You take the red pill—you stay in Wonderland, and I show you how deep the rabbit hole goes.");
-            } else {
-                logger.info("3141 - Everything that has a beginning has an end.");
-                stateManager.getIdv().quit();
+                    dialog = optionPane.createDialog("Warning");
+                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    dialog.setModal(true);
+                    dialog.setAlwaysOnTop(true);
+                    dialog.setVisible(true);
+
+                    int resp = (int) optionPane.getValue();
+
+                    if (resp != JOptionPane.YES_OPTION) {
+                        logger.info("3141 - You take the red pill—you stay in Wonderland, and I show you how deep the rabbit hole goes.");
+                    } else {
+                        logger.info("3141 - Everything that has a beginning has an end.");
+                        stateManager.getIdv().quit();
+                    }
+                }
             }
-
         }
 
         // Don't spam warnings but bring it back
         // if the user is still in the same situation
         if (isWarned) warnTimer += 1;
-        if (warnTimer % 50 == 0) isWarned = false;
+        if (warnTimer % 60 == 0) isWarned = false;
 
 
 
