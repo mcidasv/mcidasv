@@ -112,10 +112,9 @@ public class AddeServerInfo extends Object {
     String[] list = l;
     if (list == null) {
       list = new String[] {
-    		  "adde.unidata.ucar.edu",
-    		  "adde.ssec.wisc.edu",
-    		  "unidata2.ssec.wisc.edu",
-    		  "uwamrc.ssec.wisc.edu"
+                "adde.ucar.edu",
+                "lead.unidata.ucar.edu",
+                "atm.ucar.edu"
     		 };
     }
     serverList = new String[list.length];
