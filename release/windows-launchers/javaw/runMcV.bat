@@ -219,6 +219,11 @@ SET MCV_FLAGS=-autoquit %MCV_FLAGS%
 REM Toggle the welcome window if MCV_USERPATH does not exist
 IF NOT EXIST "%MCV_USERPATH%" SET SHOW_WELCOME=1
 
+REM Don't show the welcome window if we're attempting to run a script
+IF "%BACKGROUND%"=="1" (
+SET SHOW_WELCOME="0"
+)
+
 REM Show the welcome window if needed
 IF "%SHOW_WELCOME%"=="1" (
 SET MCV_FLAGS=-welcomewindow %MCV_FLAGS%

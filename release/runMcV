@@ -47,6 +47,13 @@ MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
 
 USE_TEMPUSERPATH="0"
 
+HAS_SCRIPT="0"
+SCRIPT_PATH=""
+
+if [[ "$MCV_PARAMS" == *"-script"* ]]; then
+  HAS_SCRIPT="1"
+fi
+
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
   if [ "$1" = "-userpath" ]; then
@@ -137,6 +144,11 @@ elif [ "${USE_TEMPUSERPATH}" = "1" ]; then
   # temporary userpath will already exist, but we still need to show the 
   # welcome window?
   SHOW_WELCOME="1"
+fi
+
+# Don't show the welcome window if the user is trying to run a script.
+if [ "$HAS_SCRIPT" = "1" ]; then
+  SHOW_WELCOME="0"
 fi
 
 # Copy prefs to MCV_USERPATH directory if it doesn't already exist
