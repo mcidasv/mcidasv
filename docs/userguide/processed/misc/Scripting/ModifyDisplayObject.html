@@ -83,6 +83,72 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Green',alignment=(&quot;left&quot;,&quot;top&quot;)</em>)</div>
+<p><strong><a name="annotateAtStation" id="annotateAtStation"></a>annotateAtStation -</strong> Writes text to a panel</p>
+<div class="OneTabIndent">Usage: <em>panel[0].annotateAtStation(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">text=</td>
+      <td>annotation string. This string can contain HTML tags such as paragraph &lt;p&gt;, line break &lt;br&gt;, emphasize/italicize &lt;em&gt;, and bold &lt;b&gt;</td>
+    </tr>
+    <tr>
+      <td valign="top">station=</td>
+      <td>3 or 4 letter station identifier used to set the location of the annotated text</td>
+    </tr>
+</table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">type=</td>
+      <td>specifies the station type.  This is needed if the station specified has multiple types at different geographical locations.  The valid options are:<br>
+      'A' - Surface Airways Observations (SAO)<br>
+      'C' - CMAN Coastal Marine<br>
+      'E' - NAM MOS (formerly called ETA MOS)<br>
+      'F' - NGM MOS (formerly called FOUS14)<br>
+      'G' - GFS MOS<br>
+      'M' - METAR<br>
+      'N' - NEXRAD Doppler Radar<br>
+      'R' - RAOB<br>
+      'S' - VOR Site<br>
+      'T' - Terminal Aerodome Forecast (TAF)<br>
+      'V' - Weather Service Forecast Office (WSFO)</td></td>
+    </tr>
+    <tr>
+      <td valign="top">font=</td>
+      <td>name of font; default is system dependent, this uses the default defined in User Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">size=</td>
+      <td>size of font; default = size of font defined in user preferences</td>
+    </tr>
+        <tr>
+      <td valign="top">style=</td>
+      <td>style of font; default = style of font defined in user preferences<br>
+      'BOLD'<br>
+      'ITALIC'<br>
+      'NONE'</td>
+    </tr>
+    <tr>
+      <td valign="top">color=</td>
+      <td>sets the color of the text. There are two ways this can be set:<br>
+        'color name'; default = 'red'<br>
+      -or-<br>
+      [R,G,B] fractional scaling factor for each red, green and blue value (0 to 255). For example, [255,0,0]</td>
+    </tr>
+      <td valign="top">alignment=</td>
+      <td>sets the location of the text with respect to the latitude/longitude or line/element combination entered. The format is alignment=(horizontal,vertical).  For horizontal, values of "left", "right", and "center" can be used. For vertical, values of "top", "bottom" and "center" can be used.  The default is alignment=("center","center") which means the text will be centered at the location of the latitude/longitude or line/element values.</td>
+    </tr>
+        <tr>
+      <td valign="top">bgColor=</td>
+      <td>sets the background color of the text. default=None<br>
+      There are two ways this can be set:<br>
+      'color name'.  For example, 'green'
+          -or-<br>
+          [R,G,B] fractional scaling factor for each red, green and blue value (0 to 255).  For example, [0,255,0]</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].annotateAtStation('Doylestown',size=20, font='Source Code Pro Medium', station='KDYL', color='Green',alignment=(&quot;left&quot;,&quot;top&quot;)</em>)</div>
 <p><strong><a name="getMapLayer" id="getMapLayer"></a>getMapLayer -</strong> Obtains a reference to the map layer in the display</p>
 <div class="OneTabIndent">Usage: <em>panel[0].getMapLayer()</em></div>
 <div class="OneTabIndent">Example:</div>
@@ -104,6 +170,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
+    <tr>
       <td valign="top">scale=</td>
       <td>scale factor for map; default = current scale factor</td>
     </tr>
@@ -112,6 +179,42 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="TwoTabIndent">Scale factors between 0 and 1 zoom out centered on the specified latitude/longitude and scale factors greater than 1 zoom in.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setCenter(45, -75, scale=20</em>)</div>
+<p><strong><a name="setCenterAtStation" id="setCenterAtStation"></a>setCenterAtStation -</strong> Centers the display on a specified station and sets a scaling factor</p>
+<div class="OneTabIndent">Usage: <em>panel[0].setCenter(keywords) </em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<div class="ThreeTabIndent2"><table class="noborder">
+    
+    <tr>
+      <td valign="top">station=</td>
+      <td>3 or 4 letter station identifier used to set the location of the annotated text</td>
+    </tr>
+</table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <td valign="top">type=</td>
+      <td>specifies the station type.  This is needed if the station specified has multiple types at different geographical locations.  The valid options are:<br>
+      'A' - Surface Airways Observations (SAO)<br>
+      'C' - CMAN Coastal Marine<br>
+      'E' - NAM MOS (formerly called ETA MOS)<br>
+      'F' - NGM MOS (formerly called FOUS14)<br>
+      'G' - GFS MOS<br>
+      'M' - METAR<br>
+      'N' - NEXRAD Doppler Radar<br>
+      'R' - RAOB<br>
+      'S' - VOR Site<br>
+      'T' - Terminal Aerodome Forecast (TAF)<br>
+      'V' - Weather Service Forecast Office (WSFO)</td></td>
+    </tr>
+    <tr>
+      <td valign="top">scale=</td>
+      <td>scale factor for map; default = current scale factor</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Scale factors between 0 and 1 zoom out centered on the specified latitude/longitude and scale factors greater than 1 zoom in.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].setCenterAtStation(station='KDYL',type='M', scale=20</em>)</div>
 <p><strong><a name="setMapLayerVisibility" id="setMapLayerVisibility"></a>setMapLayerVisibility -</strong> Sets the visibility of the entire map layer in the display</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setMapLayerVisibility(keyword)</em></div>
 <div class="TwoTabIndent">Keyword - required:</div>
