@@ -744,7 +744,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         buttonPanel.add(toggleButtonPanel);
 
-        JButton computeStatsButton = new JButton("compute statistics");
+        JButton computeStatsButton = new JButton("Compute Statistics");
 
         computeStatsButton.addActionListener(e -> {
            if (statsTable == null) {
@@ -758,11 +758,11 @@ public class ScatterDisplay extends DisplayControlImpl {
         JButton reset = new JButton("Reset Selections");
         reset.addActionListener(e -> resetAllScatterSelectors());
 
+        buttonPanel.add(reset);
         buttonPanel.add(computeStatsButton);
         buttonPanel.add(new JLabel("Background Color:"));
         buttonPanel.add(bgColorBlack);
         buttonPanel.add(bgColorWhite);
-        buttonPanel.add(reset);
 
         //-container = pane;
         JPanel new_pane = new JPanel(new BorderLayout());
