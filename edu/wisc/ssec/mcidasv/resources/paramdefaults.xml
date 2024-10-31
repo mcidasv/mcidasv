@@ -13,6 +13,7 @@
   <param name="Total_Attenuated_Backscatter_532" range_max="0.1" range_min="0.0004" table="calipso_TAB"/>
   <param name="2B-GEOPROF_RadarReflectivity" range_max="40" range_min="-30" table="2B-GEOPROF_RadarReflectivity"/>
   <param name="HydrometeorClassification" range_max="140" range_min="0" table="Hydrometeor Class" />
+  <param ci_base="0.0" ci_interval="0.5" ci_max="8.0" ci_min="-8.0" ci_width="1" name="*.*DifferentialReflectivity" range_max="7.9" range_min="-7.9" table="Base Reflectivity - Transparent"/>
 
   <!-- mjh inquiry 1675 -->
   <param ci_base="0.0" 
