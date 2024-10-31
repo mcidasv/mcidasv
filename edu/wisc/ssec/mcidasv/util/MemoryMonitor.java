@@ -45,6 +45,7 @@ import java.util.Date;
 
 import javax.swing.*;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -362,24 +363,62 @@ public class MemoryMonitor extends JPanel implements Runnable {
             if (sustainTimer % 15 == 0) {
                 isWarned = true;
                 if (dialog == null || !dialog.isShowing()) {
-                    JOptionPane optionPane = new JOptionPane(
-                            "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to exit McIDAS-V?",
-                            JOptionPane.WARNING_MESSAGE,
-                            JOptionPane.YES_NO_OPTION);
+                    String[] options = {"No", "Clear data", "Exit McIDAS-V"};
 
-                    dialog = optionPane.createDialog("Warning");
+                    JOptionPane optionPane = new JOptionPane(
+                            "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to remove loaded data or exit McIDAS-V?",
+                            JOptionPane.WARNING_MESSAGE,
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            null,
+                            options,
+                            options[0]
+                    );
+
+                    JDialog dialog = optionPane.createDialog("Warning");
                     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                     dialog.setModal(true);
                     dialog.setAlwaysOnTop(true);
                     dialog.setVisible(true);
 
-                    int resp = (int) optionPane.getValue();
+                    Object selectedValue = optionPane.getValue();
+                    int resp = -1;
+                    if (selectedValue != null) {
+                        for (int i = 0; i < options.length; i++) {
+                            if (options[i].equals(selectedValue)) {
+                                resp = i;
+                                break;
+                            }
+                        }
+                    }
 
-                    if (resp != JOptionPane.YES_OPTION) {
-                        logger.info("3141 - You take the red pill—you stay in Wonderland, and I show you how deep the rabbit hole goes.");
-                    } else {
-                        logger.info("3141 - Everything that has a beginning has an end.");
-                        stateManager.getIdv().quit();
+                    switch (resp) {
+                        case 0:
+                            break;
+
+                        case 1:
+                            try {
+                                // Clear data
+                                McIDASV.getStaticMcv().removeAllLayers(false);
+                                McIDASV.getStaticMcv().removeAllData(false);
+                                // Prompt for confirmation (this is required)
+                                McIDASV.getStaticMcv().removeAllLayersAndData();
+                                // This is required
+                                McIDASV.getStaticMcv().getIdvUIManager().showDashboard();
+                                repaint();
+                                break;
+                            } catch (Exception e) {
+                                logger.error("Error while clearing memory: " + e.getMessage(), e);
+                            }
+                            break;
+
+                        case 2:
+                            // Kill the session
+                            stateManager.getIdv().quit();
+                            break;
+
+                        default:
+                            logger.info("No action taken.");
+
                     }
                 }
             }
@@ -389,8 +428,6 @@ public class MemoryMonitor extends JPanel implements Runnable {
         // if the user is still in the same situation
         if (isWarned) warnTimer += 1;
         if (warnTimer % 60 == 0) isWarned = false;
-
-
 
         repaint();
     }
