@@ -349,12 +349,16 @@ public class MemoryMonitor extends JPanel implements Runnable {
             triedToCancel = false;
         }
 
-        label.setText(' '
-            + memoryString + ' '
-            + fmt.format(usedMemory) + '/'
-            + fmt.format(highWaterMark) + '/'
-            + fmt.format(totalMemory) + ' ' + mbString
-            + ' ');
+        if ((!label.getText().equals("Attempted to clear data!")) || ((label.getText().equals("Attempted to clear data!")) && usedMemory < 0.80 * totalMemory)) {
+            label.setText(' '
+                    + memoryString + ' '
+                    + fmt.format(usedMemory) + '/'
+                    + fmt.format(highWaterMark) + '/'
+                    + fmt.format(totalMemory) + ' ' + mbString
+                    + ' ');
+        } else {
+            label.setBackground(doColorThing(0));
+        }
 
         // McIDAS Inquiry #2608-3141
         // Warn the user if memory util is beyond certain limit and give them the option to quit
@@ -363,10 +367,10 @@ public class MemoryMonitor extends JPanel implements Runnable {
             if (sustainTimer % 15 == 0) {
                 isWarned = true;
                 if (dialog == null || !dialog.isShowing()) {
-                    String[] options = {"No", "Clear data", "Exit McIDAS-V"};
+                    String[] options = {"No", "Clear data and layers", "Exit McIDAS-V"};
 
                     JOptionPane optionPane = new JOptionPane(
-                            "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to remove loaded data or exit McIDAS-V?",
+                            "McIDAS-V is using a lot of memory!\nIt may freeze, do you want to remove loaded data and layers or exit McIDAS-V?",
                             JOptionPane.WARNING_MESSAGE,
                             JOptionPane.YES_NO_CANCEL_OPTION,
                             null,
@@ -400,12 +404,15 @@ public class MemoryMonitor extends JPanel implements Runnable {
                                 // Clear data
                                 McIDASV.getStaticMcv().removeAllLayers(false);
                                 McIDASV.getStaticMcv().removeAllData(false);
+                                CacheManager.clearCache();
+                                runGC();
                                 // Prompt for confirmation (this is required)
-                                McIDASV.getStaticMcv().removeAllLayersAndData();
+                                // McIDASV.getStaticMcv().removeAllLayersAndData();
+                                label.setText("Attempted to clear data!");
+                                label.setBackground(doColorThing(0));
                                 // This is required
                                 McIDASV.getStaticMcv().getIdvUIManager().showDashboard();
                                 repaint();
-                                break;
                             } catch (Exception e) {
                                 logger.error("Error while clearing memory: " + e.getMessage(), e);
                             }
@@ -413,9 +420,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
                         case 2:
                             // Kill the session
-                            stateManager.getIdv().quit();
-                            break;
-
+                            McIDASV.getStaticMcv().quit();
                         default:
                             logger.info("No action taken.");
 
