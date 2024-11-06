@@ -3847,8 +3847,10 @@ public static void plot(final String name, final float[][] data)
       }
 
       field.setSamples(dv,false);
+      field.setMetadataMap(f.getMetadataMap());
       if (isFI) {
         fi.setSample(m, field);
+        fi.setMetadataMap(f.getMetadataMap());
       }
     }
 
