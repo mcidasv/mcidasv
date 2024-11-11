@@ -3715,6 +3715,9 @@ public class MapViewManager extends NavigatedViewManager {
             /**
              * McIDAS Inquiry #983-3141
              */
+            boolean wts = true;
+            if (getStore().get(PREF_SHOWGLOBEBACKGROUND) != null) wts = (boolean) getStore().get(PREF_SHOWGLOBEBACKGROUND);
+            setGlobeBackgroundShow(wts);
             backgroundColor = getStore().get(PREF_GLOBEBACKGROUND,
                                              new Color(20, 30, 50, 255));
         }

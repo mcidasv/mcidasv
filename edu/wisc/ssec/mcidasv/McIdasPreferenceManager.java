@@ -739,7 +739,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 public void propertyChange(final PropertyChangeEvent e) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            cb.setSelected(store.get(id, value));
+                            // logger.info(id + " <-> " + value);
+                            store.remove(id);
+                            store.put(id, cb.isSelected());
                         }
                     });
                 }
