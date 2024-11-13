@@ -103,7 +103,11 @@ public class FourChannelCombine extends Compute {
     }
 
     public JComponent buildGUI() {
-        JTextArea textPanel = new JTextArea("Select items in main window to update target (bold box) operand.\n" + "Target operand advances automatically, but can be manually selected.");
+        JTextArea textPanel = new JTextArea(" Select items in main window to update target (bold box) operand.\n" + " Target operand advances automatically, but can be manually selected.");
+        textPanel.setEditable(false);
+        textPanel.setCursor(null);
+        textPanel.setOpaque(false);
+        textPanel.setFocusable(false);
         JPanel outerPanel = new JPanel(new GridLayout(4, 1));
 
         LineBorder blackBorder = new LineBorder(Color.black);
