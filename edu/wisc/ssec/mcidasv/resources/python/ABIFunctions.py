@@ -269,6 +269,20 @@ def ABINightRocketRGB(b7T, b8T, b10T):
     blu = rescale(b10T, 230, 290, 0, 255)
     return combineRGB(red, grn, blu)
 
+# ABI Cloud Phase RGB
+def ABICloudPhaseRGB(b2A, b5A, b6A):
+    # https://resources.eumetrain.org/data/7/726/navmenu.php?tab=3&page=1.0.0
+    # red = band5; 0% to 50% rescaled to 0 to 255
+    # grn = band3; 0% to 50% rescaled to 0 to 255
+    # blu = band2; 0% to 100% rescaled to 0 to 255
+    time_steps = b5A.getLength()
+    for i in range(time_steps):
+       b5A.setSample(i, resampleGrid(b5A[i], b2A[i]))
+    red = rescale(b5A, 0, 50, 0, 255)
+    grn = rescale(b6A, 0, 50, 0, 255)
+    blu = rescale(b2A, 0, 100, 0, 255)
+    return combineRGB(red, grn, blu)
+
 # Split Ozone Channel Difference
 def ABIOzoneDifference(b12T, b13T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitOzoneDiff.pdf
