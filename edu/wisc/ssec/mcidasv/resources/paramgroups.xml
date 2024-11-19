@@ -123,6 +123,12 @@
     <params p1="192_Band7_TEMP" p2="192_Band8_TEMP" p3="192_Band10_TEMP"/>
     <params p1="CMI_C07" p2="CMI_C08" p3="CMI_C10"/>
   </paramgroup>
+  <paramgroup description="ABI Cloud Phase RGB" name="ABI_RGB_CloudPhase">
+    <params p1="186_Band2_ALB" p2="186_Band5_ALB" p3="186_Band6_ALB"/>
+    <params p1="188_Band2_ALB" p2="188_Band5_ALB" p3="188_Band6_ALB"/>
+    <params p1="190_Band2_ALB" p2="190_Band5_ALB" p3="190_Band6_ALB"/>
+    <params p1="192_Band2_ALB" p2="192_Band5_ALB" p3="192_Band6_ALB"/>
+  </paramgroup>
   <paramgroup description="AHI Natural Color RGB" name="AHI_RGB_NaturalColor">
     <params p1="86_Band3_ALB" p2="86_Band4_ALB" p3="86_Band5_ALB"/>
     <params p1="286_Band3_ALB" p2="286_Band4_ALB" p3="286_Band5_ALB"/>
@@ -251,6 +257,12 @@
     <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_14_brightness_temperature" p4="himawari_8_ahi_channel_15_brightness_temperature"/>
     <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_11_0um_nom" p4="temp_12_0um_nom"/>
   </paramgroup>
+  <paramgroup description="AHI Cloud Phase RGB" name="AHI_RGB_CloudPhase">
+    <params p1="86_Band3_ALB" p2="86_Band5_ALB" p3="86_Band6_ALB"/>
+    <params p1="286_Band3_ALB" p2="286_Band5_ALB" p3="286_Band6_ALB"/>
+    <params p1="287_Band3_ALB" p2="287_Band5_ALB" p3="287_Band6_ALB"/>
+    <params p1="288_Band3_ALB" p2="288_Band5_ALB" p3="288_Band6_ALB"/>
+  </paramgroup>
   <paramgroup description="JPSS Day Fire RGB" name="JPSS_RGB_DayFire">
     <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
   </paramgroup>
@@ -304,6 +316,9 @@
   </paramgroup>
   <paramgroup description="JPSS Normalized Burn Ratio" name="JPSS_SDR_NormBurnRatio">
     <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS Cloud Phase RGB" name="JPSS_RGB_CloudPhase">
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M10-SDR_All/Reflectance" p3="VIIRS-M11-SDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Day Fire RGB" name="JPSS_EDR_RGB_DayFire">
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
@@ -471,6 +486,16 @@
     <params p1="329_Band2_REF" p2="329_Band3_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I2" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I3"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SWIR2_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*SWIR3_reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS EDR Cloud Phase RGB" name="JPSS_EDR_RGB_CloudPhase">
+    <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M10-MOD-EDR_All/Reflectance" p3="VIIRS-M11-MOD-EDR_All/Reflectance"/>
+    <params p1="750m_Surface_Reflectance_Band_M5" p2="750m_Surface_Reflectance_Band_M10" p3="750m_Surface_Reflectance_Band_M11"/>
+    <params p1="325_Band5_REF" p2="325_Band10_REF" p3="325_Band11_REF"/>
+    <params p1="326_Band5_REF" p2="326_Band10_REF" p3="326_Band11_REF"/>
+    <params p1="327_Band5_REF" p2="327_Band10_REF" p3="327_Band11_REF"/>
+    <params p1="328_Band5_REF" p2="328_Band10_REF" p3="328_Band11_REF"/>
+    <params p1="329_Band5_REF" p2="329_Band10_REF" p3="329_Band11_REF"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M11"/>
   </paramgroup>
   <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
     <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>
