@@ -714,6 +714,17 @@
             <paramgroup categories="" name="ABI_RGB_NightRocketPlume"/>
         </operands>
     </derived>
+    <derived description="ABI Cloud Phase RGB" formula="ABICloudPhaseRGB(D1[label=Band 2 Albedo], D2[label=Band 5 Albedo], D3[label=Band 6 Albedo])" id="abicloudphase" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_CloudPhase"/>
+        </operands>
+    </derived>
     <derived description="AHI Airmass RGB" formula="AHIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahiairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
@@ -899,6 +910,17 @@
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_24HR"/>
+        </operands>
+    </derived>
+    <derived description="AHI Cloud Phase RGB" formula="AHICloudPhaseRGB(D1[label=Band 3 Albedo], D2[label=Band 5 Albedo], D3[label=Band 6 Albedo])" id="ahicloudphase" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AHI_RGB_CloudPhase"/>
         </operands>
     </derived>
     <!-- Adding JPSS formulas - RMC - INQ 2670 - Nov 2019 -->
@@ -1106,6 +1128,17 @@
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_SDR_RGB_DaySnowFogI"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR Cloud Phase RGB" formula="VIIRSCloudPhaseRGB(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M11 Reflectance])" id="viirsCloudPhase" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_RGB_CloudPhase"/>
         </operands>
     </derived>
     <derived description="VIIRS SDR Burn Area Index (BAI)" formula="VIIRSBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS SDR BAI" isdefault="true" isenduser="true" override="true">
@@ -1359,6 +1392,17 @@
         </categories>
         <operands>
             <paramgroup name="JPSS_EDR_RGB_DayCloudSnowFogI"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR Cloud Phase RGB" formula="VIIRSEdrCloudPhaseRGB(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M11 Reflectance])" id="VIIRS_EDR_CLOUDPHASE" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_EDR_RGB_CloudPhase"/>
         </operands>
     </derived>
     <derived description="VIIRS EDR Burn Area Index (BAI)" formula="VIIRSEdrBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS EDR BAI" isdefault="true" isenduser="true" override="true">
