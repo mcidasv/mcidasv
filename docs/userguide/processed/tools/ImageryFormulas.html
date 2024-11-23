@@ -399,6 +399,38 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
+    <li class="propertylistitem"><strong>ABI Cloud Phase RGB (Band 2 Albedo, Band 5 Albedo, Band 6 Albedo) -</strong> Distinguishes between thick water clouds and thick ice clouds, along with particle size.
+      <table id="miscformulas9" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+          </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 2 Albedo</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>ABI band 2 (0.64umum) albedo.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 5 Albedo</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>ABI band 5 (1.6um) albedo.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 6 Albedo </em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>ABI band 6 (2.2um) albedo</p>
+        </td>
+      </tr>
+  </table>
+</li>
     <li class="propertylistitem"><strong>ABI Cloud Type RGB (Band 4 Albedo, Band 2 Albedo, Band 5 Albedo) -</strong> Distinguishes between cirrus (red), opaque ice (yellow), water clouds (cyan), snow (green), and lofted water clouds (white).
   <table id="miscformulas9" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -1093,7 +1125,7 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Cloud Phase Distinction (Band 3 Albedo, Band 5 Albedo, Band 13 Temperature) -</strong> Allows for the analysis of cloud thickness, and phase.
+<li class="propertylistitem"><strong>AHI Cloud Phase Distinction RGB (Band 3 Albedo, Band 5 Albedo, Band 13 Temperature) -</strong> Allows for the analysis of cloud thickness, and phase.
   <table id="miscformulas29" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -1122,6 +1154,39 @@ of the latitudes at each point.</li>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 13 (10.4um) temperature.</p>
+        </td>
+      </tr>
+  </table>
+</li>
+<li class="propertylistitem"><strong>AHI Cloud Phase RGB (Band 3 Albedo, Band 5 Albedo, Band 6 Albedo) -</strong> Distinguishes between thick water clouds and thick ice clouds, along with particle size.
+  <table id="miscformulas29" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 3 Albedo</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AHI band 3 (0.64um) albedo.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 5 Albedo</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 5 (1.6um) albedo.</p>
+        </td>
+      </tr>
+      <tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 6 Albedo</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 6 (2.3um) albedo.</p>
         </td>
       </tr>
   </table>
@@ -2668,7 +2733,39 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
- <li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature) -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
+ <li class="propertylistitem"><strong>VIIRS EDR Cloud Phase RGB (SVM05 Reflectance, SVM10 Reflectance, SVM11 Reflectance) - </strong>Distinguishes between thick water clouds and thick ice clouds, along with particle size.
+   <table id="miscformulas62" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM11 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 11 (2.25um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+    <li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature) -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
   <table id="miscformulas62" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3331,6 +3428,38 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Cloud Phase RGB (SVM05 Reflectance, SVM10 Reflectance, SVM11 Reflectance) - </strong>Distinguishes between thick water clouds and thick ice clouds, along with particle size.
+   <table id="miscformulas62" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM11 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 11 (2.25um) reflectance.</p>
         </td>
       </tr>
 </table>
