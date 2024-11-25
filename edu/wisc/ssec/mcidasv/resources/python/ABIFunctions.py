@@ -210,9 +210,9 @@ def ABIDifferentialWaterVaporRGB(b8T, b10T):
     # red = band10 - band8 inverted; 30C to -3C rescaled to 0 to 255; gamma 0.2587
     # grn = band10 inverted; 5C to -60C rescaled to 0 to 255; gamma 0.4
     # blu = band8 inverted; -29.25C to -64.65C rescaled to 0 to 255; gamma 0.4
-    red = 255*(rescale(b10T-b8T, 30, -3, 0, 1)**(1/.2587))
-    grn = 255*(rescale(b10T, 278.15, 213.15, 0, 1)**(1/.4))
-    blu = 255*(rescale(b8T, 243.9, 208.5, 0, 1)**(1/.4))
+    red = 255*(rescale(b10T-b8T, 30, -3, 0, 1)**.2587)
+    grn = 255*(rescale(b10T, 278.15, 213.15, 0, 1)**.4)
+    blu = 255*(rescale(b8T, 243.9, 208.5, 0, 1)**.4)
     return combineRGB(red, grn, blu)
 
 # ABI Day Convection RGB
