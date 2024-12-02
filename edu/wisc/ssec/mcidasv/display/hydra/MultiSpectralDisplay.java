@@ -368,7 +368,8 @@ public class MultiSpectralDisplay implements DisplayListener {
         // deal with a super long if-statement and put an "OR MOUSE_RELEASED" 
         // up here?
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
-            float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
+            // McIDAS Inquiry #1057-3141
+            float val = getSelectorValue(channelSelector);
             setWaveNumber(val);
             if (displayControl != null)
                 displayControl.handleChannelChange(val);
