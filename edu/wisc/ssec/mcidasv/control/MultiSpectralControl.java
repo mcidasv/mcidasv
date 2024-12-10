@@ -785,11 +785,27 @@ public class MultiSpectralControl extends HydraControl {
         saveAsCsv.addActionListener(e-> writeToCSV());
 
         if (display.getBandSelectComboBox() == null) {
-          final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
+          final JButton nameLabel = new JButton("Wavenumber");
+          nameLabel.addActionListener(e -> {
+              if (nameLabel.getText().equals("Wavenumber")) {
+                  nameLabel.setText("Wavelength");
+                  String tmp = wavenumbox.getText().trim();
+                  wavenumbox.setText(String.valueOf(1/Float.valueOf(tmp)));
+              } else {
+                  nameLabel.setText("Wavenumber");
+                  String tmp = wavenumbox.getText().trim();
+                  wavenumbox.setText(String.valueOf(1/Float.valueOf(tmp)));
+              }
+          });
 
           wavenumbox.addActionListener(e -> {
-              String tmp = wavenumbox.getText().trim();
-              updateImage(Float.valueOf(tmp));
+              if (nameLabel.getText().equals("Wavenumber")) {
+                  String tmp = wavenumbox.getText().trim();
+                  updateImage(Float.valueOf(tmp));
+              } else {
+                  String tmp = wavenumbox.getText().trim();
+                  updateImage(1/Float.valueOf(tmp));
+              }
           });
 
           compList.add(nameLabel);
