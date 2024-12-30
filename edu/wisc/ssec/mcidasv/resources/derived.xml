@@ -383,6 +383,7 @@
             <params categories="" p1="192_Band14_TEMP" p2="192_Band11_TEMP"/>
             <params categories="" p1="CMI_C14" p2="CMI_C11"/>
             <params categories="" p1="temp_11_0um_nom" p2="temp_8_5um_nom"/>
+	    <params categories="" p1="brightness_temperature_11um2" p2="brightness_temperature_08um6"/>
         </operands>
     </derived>
     <derived description="ABI Split Ozone Difference" formula="ABIOzoneDifference(D1[label=Band 12 Temperature], D2[label=Band 13 Temperature])" id="abisplitozone" isdefault="true" isenduser="true" override="true">
@@ -487,6 +488,7 @@
             <params categories="" p1="192_Band13_TEMP" p2="192_Band15_TEMP"/>
             <params categories="" p1="CMI_C13" p2="CMI_C15"/>
             <params categories="" p1="temp_10_4um_nom" p2="temp_12_0um_nom"/>
+	    <params categories="" p1="brightness_temperature_10um4" p2="brightness_temperature_12um3"/>
         </operands>
     </derived>
     <derived description="ABI Split Window Difference (Dust)" formula="ABISplitWindowDifference(D1[label=Band 13 Temperature], D2[label=Band 15 Temperature])" id="abisplitwindowdust" isdefault="true" isenduser="true" override="true">
@@ -514,6 +516,7 @@
             <params categories="" p1="192_Band13_TEMP" p2="192_Band15_TEMP"/>
             <params categories="" p1="CMI_C13" p2="CMI_C15"/>
             <params categories="" p1="temp_10_4um_nom" p2="temp_12_0um_nom"/>
+	    <params categories="" p1="brightness_temperature_10um4" p2="brightness_temperature_12um3"/>
         </operands>
     </derived>
     <derived description="ABI Airmass RGB" formula="ABIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="abiairmass" isdefault="true" isenduser="true" override="true">
