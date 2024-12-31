@@ -85,7 +85,8 @@
      amsu_bt,
      hirs_ir_bt,
      mhs_bt,
-     Brightness_Temperature_*.*_GH*.*"/>
+     Brightness_Temperature_*.*_GH*.*,
+     brightness_temperature"/>
   
   <alias 
      name="Refl"
