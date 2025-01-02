@@ -2219,7 +2219,7 @@
                    version="${version.internal}"
                    icon="${bundle.icon}"
                    mainclassname="edu.wisc.ssec.mcidasv.McIDASV"
-                   copyright="2024"
+                   copyright="2025"
                    debug="true"
                    applicationCategory="public.app-category.weather">
 
