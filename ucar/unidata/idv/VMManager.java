@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2024
+ * Copyright 2007-2025
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -25,9 +25,8 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
+
 package ucar.unidata.idv;
-
-
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
