@@ -350,12 +350,7 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band13_TEMP" p2="186_Band7_TEMP"/>
-            <params categories="" p1="188_Band13_TEMP" p2="188_Band7_TEMP"/>
-            <params categories="" p1="190_Band13_TEMP" p2="190_Band7_TEMP"/>
-            <params categories="" p1="192_Band13_TEMP" p2="192_Band7_TEMP"/>
-            <params categories="" p1="CMI_C13" p2="CMI_C07"/>
-            <params categories="" p1="temp_10_4um_nom" p2="temp_3_9um_nom"/>
+            <paramgroup categories="" name="ABI_Difference_NightFog"/>
         </operands>
     </derived>
     <derived description="ABI Split Cloud Phase Difference" formula="ABISplitCloudPhaseDifference(D1[label=Band 14 Temperature], D2[label=Band 11 Temperature])" id="abisplitcloudphase" isdefault="true" isenduser="true" override="true">
@@ -377,13 +372,7 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band14_TEMP" p2="186_Band11_TEMP"/>
-            <params categories="" p1="188_Band14_TEMP" p2="188_Band11_TEMP"/>
-            <params categories="" p1="190_Band14_TEMP" p2="190_Band11_TEMP"/>
-            <params categories="" p1="192_Band14_TEMP" p2="192_Band11_TEMP"/>
-            <params categories="" p1="CMI_C14" p2="CMI_C11"/>
-            <params categories="" p1="temp_11_0um_nom" p2="temp_8_5um_nom"/>
-	    <params categories="" p1="brightness_temperature_11um2" p2="brightness_temperature_08um6"/>
+            <paramgroup categories="" name="ABI_Difference_SplitCloudPhase"/>
         </operands>
     </derived>
     <derived description="ABI Split Ozone Difference" formula="ABIOzoneDifference(D1[label=Band 12 Temperature], D2[label=Band 13 Temperature])" id="abisplitozone" isdefault="true" isenduser="true" override="true">
@@ -405,12 +394,7 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band12_TEMP" p2="186_Band13_TEMP"/>
-            <params categories="" p1="188_Band12_TEMP" p2="188_Band13_TEMP"/>
-            <params categories="" p1="190_Band12_TEMP" p2="190_Band13_TEMP"/>
-            <params categories="" p1="192_Band12_TEMP" p2="192_Band13_TEMP"/>
-            <params categories="" p1="CMI_C12" p2="CMI_C13"/>
-            <params categories="" p1="temp_9_7um_nom" p2="temp_10_4um_nom"/>
+            <paramgroup categories="" name="ABI_Difference_SplitOzone"/>
         </operands>
     </derived>
     <derived description="ABI Split Snow Difference" formula="ABISplitSnowDifference(D1[label=Band 5 Reflectance], D2[label=Band 2 Reflectance])" id="abisplitsnow" isdefault="true" isenduser="true" override="true">
@@ -432,8 +416,7 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="CMI_C05" p2="CMI_C02"/>
-            <params categories="" p1="refl_1_60um_nom" p2="refl_0_65um_nom"/>
+            <paramgroup categories="" name="ABI_Difference_SplitSnow"/>
         </operands>
     </derived>
     <derived description="ABI Split Water Vapor Difference" formula="ABISplitWaterVaporDifference(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature])" id="abisplitwatervapor" isdefault="true" isenduser="true" override="true">
@@ -455,12 +438,7 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band8_TEMP" p2="186_Band10_TEMP"/>
-            <params categories="" p1="188_Band8_TEMP" p2="188_Band10_TEMP"/>
-            <params categories="" p1="190_Band8_TEMP" p2="190_Band10_TEMP"/>
-            <params categories="" p1="192_Band8_TEMP" p2="192_Band10_TEMP"/>
-            <params categories="" p1="CMI_C08" p2="CMI_C10"/>
-            <params categories="" p1="temp_6_2um_nom" p2="temp_7_3um_nom"/>
+            <paramgroup categories="" name="ABI_Difference_SplitWaterVapor"/>
         </operands>
     </derived>
     <derived description="ABI Split Window Difference" formula="ABISplitWindowDifference(D1[label=Band 13 Temperature], D2[label=Band 15 Temperature])" id="abisplitwindow" isdefault="true" isenduser="true" override="true">
@@ -482,13 +460,7 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band13_TEMP" p2="186_Band15_TEMP"/>
-            <params categories="" p1="188_Band13_TEMP" p2="188_Band15_TEMP"/>
-            <params categories="" p1="190_Band13_TEMP" p2="190_Band15_TEMP"/>
-            <params categories="" p1="192_Band13_TEMP" p2="192_Band15_TEMP"/>
-            <params categories="" p1="CMI_C13" p2="CMI_C15"/>
-            <params categories="" p1="temp_10_4um_nom" p2="temp_12_0um_nom"/>
-	    <params categories="" p1="brightness_temperature_10um4" p2="brightness_temperature_12um3"/>
+            <paramgroup categories="" name="ABI_Difference_SplitWindow"/>
         </operands>
     </derived>
     <derived description="ABI Split Window Difference (Dust)" formula="ABISplitWindowDifference(D1[label=Band 13 Temperature], D2[label=Band 15 Temperature])" id="abisplitwindowdust" isdefault="true" isenduser="true" override="true">
@@ -510,13 +482,7 @@
             <category value="display:timeloncontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band13_TEMP" p2="186_Band15_TEMP"/>
-            <params categories="" p1="188_Band13_TEMP" p2="188_Band15_TEMP"/>
-            <params categories="" p1="190_Band13_TEMP" p2="190_Band15_TEMP"/>
-            <params categories="" p1="192_Band13_TEMP" p2="192_Band15_TEMP"/>
-            <params categories="" p1="CMI_C13" p2="CMI_C15"/>
-            <params categories="" p1="temp_10_4um_nom" p2="temp_12_0um_nom"/>
-	    <params categories="" p1="brightness_temperature_10um4" p2="brightness_temperature_12um3"/>
+            <paramgroup categories="" name="ABI_Difference_SplitWindow"/>
         </operands>
     </derived>
     <derived description="ABI Airmass RGB" formula="ABIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="abiairmass" isdefault="true" isenduser="true" override="true">
