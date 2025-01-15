@@ -28,54 +28,54 @@
 
 package edu.wisc.ssec.hydra;
 
-import javax.swing.JFrame;
-import javax.swing.JComponent;
-import javax.swing.JComboBox;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.Dimension;
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.WindowEvent;
-import java.awt.Cursor;
-
-import java.util.HashMap;
-
 import edu.wisc.ssec.adapter.MultiSpectralData;
-
-import visad.*;
-import visad.georef.LatLonTuple;
-import visad.georef.MapProjection;
-
-import java.rmi.RemoteException;
-
-import ucar.unidata.util.ColorTable;
 import edu.wisc.ssec.hydra.data.DataChoice;
 import edu.wisc.ssec.hydra.data.DataSelection;
 import edu.wisc.ssec.hydra.data.DataSource;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import ucar.unidata.util.ColorTable;
 
+import visad.CellImpl;
+import visad.Data;
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.FlatField;
+import visad.Gridded1DSet;
+import visad.VisADException;
+import visad.georef.LatLonTuple;
+import visad.georef.MapProjection;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-import java.io.File;
-import java.util.Date;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.HashMap;
 
 public class MultiChannelViewer extends HydraDisplay {
 
@@ -94,12 +94,9 @@ public class MultiChannelViewer extends HydraDisplay {
     int dataSourceId;
 
     JMenuBar menuBar = null;
-
     JFrame frame = null;
 
     float initXmapScale;
-
-    boolean initialized = false;
     ReadoutProbe probe = null;
 
     public MultiChannelViewer(Hydra hydra, DataChoice dataChoice, String sourceDescription, String dateTimeStamp, int windowNumber, int dataSourceId) throws Exception {
@@ -133,7 +130,6 @@ public class MultiChannelViewer extends HydraDisplay {
         DatasetInfo dsInfo = new DatasetInfo(fldName, Float.NaN, datSrcInfo);
 
         baseDescription = sourceDescription + " " + dateTimeStamp;
-        String str = baseDescription + " " + Float.toString(multiSpectDsp.getWaveNumber()) + " cm-1";
 
         if (windowNumber > 0) {
             imgDisplay = new ImageDisplay(imageDsp, mapProj, windowNumber, false, dsInfo, false);
@@ -479,7 +475,7 @@ public class MultiChannelViewer extends HydraDisplay {
 
         gui.add(widget.makeActionComponent());
 
-        JButton seenow = new JButton("display");
+        JButton seenow = new JButton("Display");
         class MyListener implements ActionListener {
             Compute compute;
 
