@@ -29,7 +29,6 @@
 package edu.wisc.ssec.mcidas.adde;
 
 import java.io.DataInputStream;
-import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -319,17 +318,7 @@ public class AddeURLConnection extends URLConnection
   /** OBTG request type */
   public final static int OBTG = 8;
 
-
-  // ADDE data types (not used?)
-  private final static int IMAGE = 100;
-  private final static int GRID  = 101;
-  private final static int POINT = 102;
-  private final static int TEXT  = 103;
-  private final static int WXTEXT  = 104;
-  private final static int OBTEXT  = 105;
-
   private int numBytes = 0;
-  private int dataType = IMAGE;
 
   private byte[] binaryData = null;   // byte array to hold extra binary data
 
@@ -464,8 +453,6 @@ public class AddeURLConnection extends URLConnection
     }
 
     // prep for real thing - get cmd from file part of URL
-    int test = requestOriginal.indexOf("?");
-    //String uCmd = (test >=0) ? requestOriginal.substring(test+1) : requestOriginal;
     String uCmd = (query == null) ? requestOriginal : query;
     if (LOGGER.isLoggable(Level.FINEST)) {
       LOGGER.finest("uCmd="+uCmd);
@@ -593,7 +580,7 @@ public class AddeURLConnection extends URLConnection
 
       // check to see if we can do uncompression
       try {
-        Class c = Class.forName("HTTPClient.UncompressInputStream");
+        Class.forName("HTTPClient.UncompressInputStream");
         compressionType = COMPRESS;
       } catch (ClassNotFoundException cnfe) {
         LOGGER.severe(
@@ -1504,8 +1491,8 @@ public class AddeURLConnection extends URLConnection
             {
                 tempString = 
                     testString.substring(testString.indexOf("=") + 1).toLowerCase();
-                if (tempString.equals("")) {  // null string
-                  posString = "0 0";
+                if (tempString.isEmpty()) {
+                    posString = "0 0";
                 } else {
 
                   // see if a single argument
