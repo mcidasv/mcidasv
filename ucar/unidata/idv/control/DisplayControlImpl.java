@@ -60,6 +60,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -12399,12 +12400,19 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         displayListTemplate = value;
     }
 
+    // McIDAS Inquiry #3060-3141
+    private void killColorScale() {
+        // I want to kill the color scale right here
+        if (getDisplayName().contains("3 Color (RGB)")) ctw = null;
+    }
+
     /**
      * Get the DisplayListTemplate property.
      *
      * @return The DisplayListTemplate
      */
     public String getDisplayListTemplate() {
+        killColorScale();
         if (displayListTemplate == null) {
             boolean haveData = (getShortParamName() != null);
             // PM July 2023 - edits made for inquiry #2774
