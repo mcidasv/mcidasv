@@ -370,6 +370,9 @@ public class AddeImageChooser extends AddeChooser implements
      */
     private double linesToElements = 1.0;
 
+    /** McIDAS Inquiry #2696-3141 **/
+    private boolean isError = false;
+
     /**
      * limit of slider
      */
@@ -1331,6 +1334,8 @@ public class AddeImageChooser extends AddeChooser implements
                 showWaitCursor();
                 try {
                     readTimesInner(forceAll);
+                    // McIDAS Inquiry #2696-3141
+                    if (isError) archiveDay = null;
                     checkSetNav();
                 } catch (Exception e) {
                     handleConnectionError(e);
@@ -1448,6 +1453,9 @@ public class AddeImageChooser extends AddeChooser implements
             // and since we already have a server and dataset, all the user needs
             // to do is select an image type (descriptor).
             setState(STATE_CONNECTED);
+
+            // McIDAS Inquiry #2696-3141
+            isError = true;
         }
     }
 
