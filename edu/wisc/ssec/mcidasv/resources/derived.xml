@@ -694,6 +694,17 @@
             <paramgroup categories="" name="ABI_RGB_CloudPhase"/>
         </operands>
     </derived>
+    <derived description="ABI NGFS Microphysics RGB" formula="ABINgfsMicrophysicsRGB(D1[label=Band 7 Temperature], D2[label=Band 13 Temperature], D3[label=Band 15 Temperature])" id="abingfs" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_NGFS"/>
+        </operands>
+    </derived>
     <derived description="AHI Airmass RGB" formula="AHIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahiairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
