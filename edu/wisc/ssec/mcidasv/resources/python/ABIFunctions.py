@@ -283,6 +283,17 @@ def ABICloudPhaseRGB(b2A, b5A, b6A):
     blu = rescale(b2A, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
 
+# ABI NGFS (Next Generation Fire System) Microphysics RGB
+def ABINgfsMicrophysicsRGB(b7T, b13T, b15T):
+    # https://cimss.ssec.wisc.edu/ngfs/images/documentation/QuickGuide_NGFS_Microphysics_jao.pdf
+    # red = band13 - band15; -1C to 5C rescaled to 0 to 255 inverted
+    # grn = band7 - band13; -5C to 30C rescaled to 0 to 255 inverted
+    # blu = band13; 243K to 293K rescaled to 0 to 255
+    red = rescale(b13T-b15T, 5, -1, 0, 255)
+    grn = rescale(b7T-b13T, 30, -5, 0, 255)
+    blu = rescale(b13T, 243, 293, 0, 255)
+    return combineRGB(red, grn, blu)
+
 # Split Ozone Channel Difference
 def ABIOzoneDifference(b12T, b13T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitOzoneDiff.pdf
