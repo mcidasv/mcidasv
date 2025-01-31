@@ -131,6 +131,12 @@
     <params p1="190_Band2_ALB" p2="190_Band5_ALB" p3="190_Band6_ALB"/>
     <params p1="192_Band2_ALB" p2="192_Band5_ALB" p3="192_Band6_ALB"/>
   </paramgroup>
+  <paramgroup description="ABI NGFS Microphysics RGB" name="ABI_RGB_NGFS">
+    <params p1="186_Band7_TEMP" p2="186_Band13_TEMP" p3="186_Band15_TEMP"/>
+    <params p1="188_Band7_TEMP" p2="188_Band13_TEMP" p3="188_Band15_TEMP"/>
+    <params p1="190_Band7_TEMP" p2="190_Band13_TEMP" p3="190_Band15_TEMP"/>
+    <params p1="192_Band7_TEMP" p2="192_Band13_TEMP" p3="192_Band15_TEMP"/>
+  </paramgroup>
   <paramgroup description="ABI Night Fog Difference" name="ABI_Difference_NightFog">
     <params p1="186_Band13_TEMP" p2="186_Band7_TEMP"/>
     <params p1="188_Band13_TEMP" p2="188_Band7_TEMP"/>
