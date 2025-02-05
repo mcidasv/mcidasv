@@ -1658,7 +1658,16 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if (selection.equals(LABEL_SELECT)) {
             return null;
         }
+
         return selection;
+    }
+
+    public int getSelectedIndex() {
+        return descriptorComboBox.getSelectedIndex();
+    }
+
+    public void setBoxAtIndex(int idx) {
+        descriptorComboBox.setSelectedIndex(idx);
     }
 
     /**

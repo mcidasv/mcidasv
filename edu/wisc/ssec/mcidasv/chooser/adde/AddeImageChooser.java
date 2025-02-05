@@ -1333,11 +1333,13 @@ public class AddeImageChooser extends AddeChooser implements
                 updateStatus();
                 showWaitCursor();
                 try {
+                    int saveContext = getSelectedIndex();
                     readTimesInner(forceAll);
                     // McIDAS Inquiry #2696-3141
                     if (isError) {
                         archiveDay = null;
                         archiveDayBtn.setText(DAY_TIME_RANGE_LABEL);
+                        setBoxAtIndex(saveContext);
                     }
                     checkSetNav();
                 } catch (Exception e) {
