@@ -1335,7 +1335,10 @@ public class AddeImageChooser extends AddeChooser implements
                 try {
                     readTimesInner(forceAll);
                     // McIDAS Inquiry #2696-3141
-                    if (isError) archiveDay = null;
+                    if (isError) {
+                        archiveDay = null;
+                        archiveDayBtn.setText(DAY_TIME_RANGE_LABEL);
+                    }
                     checkSetNav();
                 } catch (Exception e) {
                     handleConnectionError(e);
