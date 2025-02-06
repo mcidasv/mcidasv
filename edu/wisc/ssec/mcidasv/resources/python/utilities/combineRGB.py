@@ -19,23 +19,25 @@ def correct(band, tau):
     out.setSamples(data)
     
     return out
-    
 
-def mycombineRGB(red, green, blue):
-    """Three Color (RGB) Image (Auto-scale) formula."""
-    global uniqueID
-    uniqueID += 1
-    
-    rl, gl, bl = 0.65, 0.56, 0.47
+def mycombineRGB_Rayleigh(red, green, blue, lmb = (0.65, 0.56, 0.47)):
+    rl, gl, bl = lmb[0], lmb[1], lmb[2]
     rt, gt, bt = rayleight_ot(rl), rayleight_ot(gl), rayleight_ot(bl)
     
     red = correct(red, rt)
     green = correct(green, gt)
     blue = correct(blue, bt)
     
+    return mycombineRGB(red, green, blue)
+        
+        
+def mycombineRGB(red, green, blue):
+    """Three Color (RGB) Image (Auto-scale) formula."""
+    global uniqueID
+    uniqueID += 1
+    
     red = GridUtil.setParamType(red, makeRealType("redimage%d" % uniqueID), 0)
     green = GridUtil.setParamType(green, makeRealType("greenimage%d" % uniqueID), 0)
     blue = GridUtil.setParamType(blue, makeRealType("blueimage%d" % uniqueID), 0)
-    
-    print(type(red))
+
     return DerivedGridFactory.combineGrids([red, green, blue], 1)
