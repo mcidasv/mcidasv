@@ -485,6 +485,22 @@ def VIIRSNgfsMicrophysicsMRGB(M13, M15, M16):
     return package(inM13, rgb)
 
 
+# VIIRS SDR NGFS Microphysics M and I-Band RGB
+def VIIRSSDRNgfsMicrophysicsMIRGB(I4, I5, M15, M16):
+    # https://cimss.ssec.wisc.edu/ngfs/images/documentation/QuickGuide_NGFS_Microphysics_jao.pdf
+    # red = M15 - M16 (10.763um - 12.013um); -2C to 4C rescaled to 0 to 255 inverted
+    # grn = I4 - I5 (3.74um - 11.45um);    5C to 40C rescaled to 0 to 255 inverted
+    # blu = I5 (11.45um);                  243K to 293K rescaled to 0 to 255
+    I4stg = swathToGrid(I4, 375, 1)
+    I5stg = swathToGrid(I5, 375, 1)
+    M15stg = swathToGrid(M15, 375, 1)
+    M16stg = swathToGrid(M16, 375, 1)
+    red = rescale(M15stg-M16stg, 4, -2, 0, 255)
+    grn = rescale(I4stg-I5stg, 40, 5, 0, 255)
+    blu = rescale(I5stg, 243, 293, 0, 255)
+    return mycombineRGB(red, grn, blu)
+
+
 # VIIRS SDR NDVI
 def VIIRSNDVI(I1, I2):
     # I1 = 0.64um;  visible Reflectance
@@ -805,6 +821,18 @@ def VIIRSEDRNgfsMicrophysicsMRGB(M13, M15, M16):
     red = rescale(M15-M16, 4, -2, 0, 255)
     grn = rescale(M13-M15, 30, -5, 0, 255)
     blu = rescale(M15, 243, 293, 0, 255)
+    return mycombineRGB(red, grn, blu)
+
+
+# VIIRS EDR NGFS Microphysics M and I-Band RGB
+def VIIRSEDRNgfsMicrophysicsMIRGB(I4, I5, M15, M16):
+    # https://cimss.ssec.wisc.edu/ngfs/images/documentation/QuickGuide_NGFS_Microphysics_jao.pdf
+    # red = M15 - M16 (10.763um - 12.013um); -2C to 4C rescaled to 0 to 255 inverted
+    # grn = I4 - I5 (3.74um - 11.45um);    5C to 40C rescaled to 0 to 255 inverted
+    # blu = I5 (11.45um);                  243K to 293K rescaled to 0 to 255
+    red = rescale(resampleGrid(M15-M16,I4), 4, -2, 0, 255)
+    grn = rescale(I4-I5, 40, 5, 0, 255)
+    blu = rescale(I5, 243, 293, 0, 255)
     return mycombineRGB(red, grn, blu)
 
 
