@@ -8,21 +8,23 @@ from visad.python.JPythonMethods import makeRealType
 
 uniqueID = 0
 
-def rayleight_ot(lmbda): return 0.00877 * (lmbda ** (-4.05))
+def rayleigh_ot(lmbda): return 0.00877 * (lmbda ** (-4.05))
 
 def correct(band, tau):
     data = band.getFloats(False)
     
-    for i in range(len(data[0])): data[0][i] -= tau
+    l = (2.71828182 ** (-tau))
+    for i in range(len(data[0])): data[0][i] *= l
+    # for i in range(len(data[0])): data[0][i] = 0
     
     out = band.clone()
     out.setSamples(data)
-    
+    print("e^(-tau) = ", l)
     return out
 
 def mycombineRGB_Rayleigh(red, green, blue, lmb = (0.65, 0.56, 0.47)):
     rl, gl, bl = lmb[0], lmb[1], lmb[2]
-    rt, gt, bt = rayleight_ot(rl), rayleight_ot(gl), rayleight_ot(bl)
+    rt, gt, bt = rayleigh_ot(rl), rayleigh_ot(gl), rayleigh_ot(bl)
     
     red = correct(red, rt)
     green = correct(green, gt)
