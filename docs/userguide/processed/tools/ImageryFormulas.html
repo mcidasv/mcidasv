@@ -807,8 +807,8 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-    <li class="propertylistitem"><strong>ABI Night Rocket Plume RGB (Band 7 Temperature, Band 8 Temperature, Band 10 Temperature) -</strong> Allows for tracking the plume associated with rockets and other hotspots during day and nighttime hours.
-  <table id="miscformulas21" cellpadding="0" cellspacing="0" border="1">
+    <li class="propertylistitem"><strong>ABI NGFS Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Highlights regions of fire activity during day and nighttime hours.
+      <table id="miscformulas21a" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
@@ -823,22 +823,54 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8 Temperature</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 8 (6.2um) temperature.</p>
+        <p>ABI band 13 (10.3um) temperature.</p>
         </td>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10 Temperature</em></p>
+        <p><em>Band 15 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 10 (7.3um) temperature.</p>
+        <p>ABI band 15 (12.3um) temperature.</p>
         </td>
       </tr>
   </table>
 </li>
+    <li class="propertylistitem"><strong>ABI Night Rocket Plume RGB (Band 7 Temperature, Band 8 Temperature, Band 10 Temperature) -</strong> Allows for tracking the plume associated with rockets and other hotspots during day and nighttime hours.
+      <table id="miscformulas21" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+          <td colspan="1"><strong>Input Parameter</strong></td>
+          <td width="630"><strong>Definition
+        </strong></td></tr>
+        <tr>
+          <td width="145" colspan="1" rowspan="1" valign="top">
+            <p><em>Band 7 Temperature</em></p>
+          </td>
+          <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+            <p>ABI band 7 (3.9um) temperature.</p>
+          </td>
+        </tr>
+        <tr>
+          <td width="145" colspan="1" rowspan="1" valign="top">
+            <p><em>Band 8 Temperature</em></p>
+          </td>
+          <td width="510" colspan="2" rowspan="1" valign="top">
+            <p>ABI band 8 (6.2um) temperature.</p>
+          </td>
+        </tr>
+        <tr>
+          <td width="145" colspan="1" rowspan="1" valign="top">
+            <p><em>Band 10 Temperature</em></p>
+          </td>
+          <td width="510" colspan="2" rowspan="1" valign="top">
+            <p>ABI band 10 (7.3um) temperature.</p>
+          </td>
+        </tr>
+      </table>
+    </li>
 <li class="propertylistitem"><strong>ABI Nighttime Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
   <table id="miscformulas22" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -3103,6 +3135,75 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
+<li class="propertylistitem"><strong>VIIRS EDR NGFS Microphysics M and I Band RGB (SVI04 Temperature, SVI05 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Highlights regions of fire activity during day and nighttime hours. The data displays at 375m resolution.
+  <table id="miscformulas75" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+        <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR NGFS Microphysics M-Band RGB RGB (SVM13 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Highlights regions of fire activity during day and nighttime hours. The data displays at 750m resolution.
+  <table id="miscformulas75" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM13 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 13 (4.05um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+</table>
+</li>
 <li class="propertylistitem"><strong>VIIRS EDR Nighttime Microphysics RGB (SVM12 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
   <table id="miscformulas74" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -3801,7 +3902,76 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
         </td>
       </tr>
 </table>
+</li><li class="propertylistitem"><strong>VIIRS SDR NGFS Microphysics M and I Band RGB (SVI04 Temperature, SVI05 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Highlights regions of fire activity during day and nighttime hours. The data displays at 375m resolution.
+  <table id="miscformulas75" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+        <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+</table>
 </li>
+<li class="propertylistitem"><strong>VIIRS SDR NGFS Microphysics M-Band RGB RGB (SVM13 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Highlights regions of fire activity during day and nighttime hours. The data displays at 750m resolution.
+  <table id="miscformulas75" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM13 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 13 (4.05um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+</table>
+</li>
+
 <li class="propertylistitem"><strong>VIIRS SDR Nighttime Microphysics RGB (SVM12 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
   <table id="miscformulas92" cellpadding="0" cellspacing="0" border="1">
     <tr>
