@@ -137,6 +137,12 @@
     <params p1="190_Band7_TEMP" p2="190_Band13_TEMP" p3="190_Band15_TEMP"/>
     <params p1="192_Band7_TEMP" p2="192_Band13_TEMP" p3="192_Band15_TEMP"/>
   </paramgroup>
+  <paramgroup description="ABI Blowing Snow RGB" name="ABI_RGB_Blowing_Snow">
+    <params p1="186_Band2_ALB" p2="186_Band5_ALB" p3="186_Band7_TEMP" p4="186_Band13_TEMP"/>
+    <params p1="188_Band2_ALB" p2="188_Band5_ALB" p3="188_Band7_TEMP" p4="188_Band13_TEMP"/>
+    <params p1="190_Band2_ALB" p2="190_Band5_ALB" p3="190_Band7_TEMP" p4="190_Band13_TEMP"/>
+    <params p1="192_Band2_ALB" p2="192_Band5_ALB" p3="192_Band7_TEMP" p4="192_Band13_TEMP"/>
+  </paramgroup>
   <paramgroup description="ABI Night Fog Difference" name="ABI_Difference_NightFog">
     <params p1="186_Band13_TEMP" p2="186_Band7_TEMP"/>
     <params p1="188_Band13_TEMP" p2="188_Band7_TEMP"/>
@@ -365,6 +371,9 @@
   <paramgroup description="JPSS Day Snow-Fog I RGB" name="JPSS_SDR_RGB_DaySnowFogI">
     <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature"/>
   </paramgroup>
+  <paramgroup description="JPSS Blowing Snow RGB" name="JPSS_RGB_BlowingSnow">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature"/>
+  </paramgroup>
   <paramgroup description="JPSS NDSI" name="JPSS_NDSI">
     <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
   </paramgroup>
@@ -542,6 +551,14 @@
     <params p1="327_Band2_REF" p2="327_Band3_REF" p3="327_Band4_TEMP" p4="327_Band5_TEMP"/>
     <params p1="328_Band2_REF" p2="328_Band3_REF" p3="328_Band4_TEMP" p4="328_Band5_TEMP"/>
     <params p1="329_Band2_REF" p2="329_Band3_REF" p3="329_Band4_TEMP" p4="329_Band5_TEMP"/>
+  </paramgroup>
+  <paramgroup description="JPSS EDR Blowing Snow RGB" name="JPSS_EDR_RGB_BlowingSnow">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p4="VIIRS-I5-IMG-EDR_All/BrightnessTemperature"/>
+    <params p1="325_Band1_REF" p2="325_Band3_REF" p3="325_Band4_TEMP" p4="325_Band5_TEMP"/>
+    <params p1="326_Band1_REF" p2="326_Band3_REF" p3="326_Band4_TEMP" p4="326_Band5_TEMP"/>
+    <params p1="327_Band1_REF" p2="327_Band3_REF" p3="327_Band4_TEMP" p4="327_Band5_TEMP"/>
+    <params p1="328_Band1_REF" p2="328_Band3_REF" p3="328_Band4_TEMP" p4="328_Band5_TEMP"/>
+    <params p1="329_Band1_REF" p2="329_Band3_REF" p3="329_Band4_TEMP" p4="329_Band5_TEMP"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Normalized Burn Ratio" name="JPSS_EDR_NormBurnRatio">
     <params p1="VIIRS-I2-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance"/>
