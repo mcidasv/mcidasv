@@ -1341,6 +1341,7 @@ public class AddeImageChooser extends AddeChooser implements
                         archiveDayBtn.setText(DAY_TIME_RANGE_LABEL);
                         setBoxAtIndex(saveContext);
                     }
+                    isError = false;
                     checkSetNav();
                 } catch (Exception e) {
                     handleConnectionError(e);
@@ -1388,6 +1389,7 @@ public class AddeImageChooser extends AddeChooser implements
             appendKeyValue(addeCmdBuff, PROP_TIME, archiveBegTime + " " + archiveEndTime);
         }
         String url = addeCmdBuff.toString();
+
         readTimesTask = startTask();
         updateStatus();
         Object task = readTimesTask;
@@ -1460,7 +1462,7 @@ public class AddeImageChooser extends AddeChooser implements
             setState(STATE_CONNECTED);
 
             // McIDAS Inquiry #2696-3141
-            isError = true;
+            if (e.getCause().toString().contains("No images satisfy the search criteria")) isError = true;
         }
     }
 
