@@ -500,6 +500,31 @@ def VIIRSSDRNgfsMicrophysicsMIRGB(I4, I5, M15, M16):
     blu = rescale(I5stg, 243, 293, 0, 255)
     return mycombineRGB(red, grn, blu)
 
+# VIIRS SDR Blowing Snow RGB
+def VIIRSBlowingSnowRGB(I1, I3, I4, I5):
+    # https://rammb2.cira.colostate.edu/wp-content/uploads/2025/02/VIIRS_Blowing_Snow_RGB_Quick_Guide_v1.pdf
+    # red = I1 (0.64um); 10% to 110% rescaled to 0 to 255; gamma 1.0
+    # grn = I3 (1.61um); 5% to 40% reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = I4 (3.74um) - I5 (11.45um); 0C to 15C temperature rescaled to 0 to 255; gamma 1.0
+
+    inI1 = I1
+    I1 = unpackage(I1)
+    inI3 = I3
+    I3 = unpackage(I3)
+    inI4 = I4
+    I4 = unpackage(I4)
+    inI5 = I5
+    I5 = unpackage(I5)
+
+    grd375 = makeGrid(I1, 375)
+
+    red = rescale(I1, 0.1, 1.1, 0, 255)
+    grn = rescale(I3, 0.05, 0.4, 0, 255)
+    blu = rescale(I4-I5, 0, 15, 0, 255)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd375, [red, grn, blu], 1.0)
+    return package(inI4, rgb)
+
 
 # VIIRS SDR NDVI
 def VIIRSNDVI(I1, I2):
@@ -800,6 +825,7 @@ def VIIRSEdrDaySnowFogIRGB(I2, I3, I4, I5):
     blu = 255*(rescale(I4-I5, 0, 30, 0, 1)**(1/1.7))
     return mycombineRGB(red, grn, blu)
 
+
 # VIIRS EDR Cloud Phase RGB
 def VIIRSEdrCloudPhaseRGB(M5, M10, M11):
     # https://resources.eumetrain.org/data/7/726/navmenu.php?tab=3&page=1.0.0
@@ -833,6 +859,18 @@ def VIIRSEDRNgfsMicrophysicsMIRGB(I4, I5, M15, M16):
     red = rescale(resampleGrid(M15-M16,I4), 4, -2, 0, 255)
     grn = rescale(I4-I5, 40, 5, 0, 255)
     blu = rescale(I5, 243, 293, 0, 255)
+    return mycombineRGB(red, grn, blu)
+
+
+# VIIRS Edr Blowing Snow RGB
+def VIIRSEdrBlowingSnowRGB(I1, I3, I4, I5):
+    # https://rammb2.cira.colostate.edu/wp-content/uploads/2025/02/VIIRS_Blowing_Snow_RGB_Quick_Guide_v1.pdf
+    # red = I1 (0.64um); 10% to 110% rescaled to 0 to 255; gamma 1.0
+    # grn = I3 (1.61um); 5% to 40% reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = I4 (3.74um) - I5 (11.45um); 0C to 15C temperature rescaled to 0 to 255; gamma 1.0
+    red = rescale(I1, 0.1, 1.1, 0, 255)
+    grn = rescale(I3, 0.05, 0.4, 0, 255)
+    blu = rescale(I4-I5, 0, 15, 0, 255)
     return mycombineRGB(red, grn, blu)
 
 

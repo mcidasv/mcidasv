@@ -294,6 +294,17 @@ def ABINgfsMicrophysicsRGB(b7T, b13T, b15T):
     blu = rescale(b13T, 243, 293, 0, 255)
     return combineRGB(red, grn, blu)
 
+# ABI Blowing Snow RGB
+def ABIBlowingSnowRGB(b2A, b5A, b7T, b13T):
+    # https://rammb2.cira.colostate.edu/wp-content/uploads/2024/11/GOES-BlowingSnowRGB1_QuickGuide_24April2024.pdf
+    # red = band2; 0% to 50% rescaled to 0 to 255; gamma 0.7
+    # grn = band5; 0% to 20% rescaled to 0 to 255; gamma 1.0
+    # blu = band7-band13; 0K to 30K rescaled to 0 to 255; gamma 0.7
+    red = 255*(rescale(b2A, 0, 50, 0, 1)**(1/0.7))
+    grn = rescale(b5A, 0, 20, 0, 255)
+    blu = 255*(rescale(b7T-b13T, 0, 30, 0, 1)**(1/0.7))
+    return combineRGB(red, grn, blu)
+
 # Split Ozone Channel Difference
 def ABIOzoneDifference(b12T, b13T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitOzoneDiff.pdf

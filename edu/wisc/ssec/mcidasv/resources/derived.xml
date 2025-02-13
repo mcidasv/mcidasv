@@ -705,6 +705,17 @@
             <paramgroup name="ABI_RGB_NGFS"/>
         </operands>
     </derived>
+    <derived description="ABI Blowing Snow RGB" formula="ABIBlowingSnowRGB(D1[label=Band 2 Albedo], D2[label=Band 5 Albedo], D3[label=Band 7 Temperature], D4[label=Band 13 Temperature])" id="abiblowingsnow" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_Blowing_Snow"/>
+        </operands>
+    </derived>
     <derived description="AHI Airmass RGB" formula="AHIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahiairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
@@ -1141,6 +1152,17 @@
         </categories>
         <operands categories=""/>
     </derived>
+    <derived description="VIIRS SDR Blowing Snow RGB" formula="VIIRSBlowingSnowRGB(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_SDR_BLOWING_SNOW_RGB" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_RGB_BlowingSnow"/>
+        </operands>
+    </derived>
     <derived description="VIIRS SDR Burn Area Index (BAI)" formula="VIIRSBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS SDR BAI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-Indices"/>
@@ -1424,6 +1446,17 @@
             <category value="display:imagecontrol"/>
         </categories>
         <operands/>
+    </derived>
+    <derived description="VIIRS EDR Blowing Snow RGB" formula="VIIRSEdrBlowingSnowRGB(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_BLOWING_SNOW_RGB" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_EDR_RGB_BlowingSnow"/>
+        </operands>
     </derived>
     <derived description="VIIRS EDR Burn Area Index (BAI)" formula="VIIRSEdrBAI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS EDR BAI" isdefault="true" isenduser="true" override="true">
         <categories>
