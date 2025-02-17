@@ -74,7 +74,9 @@
      .*BrightnessTemp.*,
      .*_Band.*_TEMP,
      BT_6\.75um,
-     BT_10\.8um"/>
+     BT_10\.8um,
+     map_data/BT_6\.75um,
+     map_data/BT_10\.8um"/>
   
   <alias 
      name="Refl"
@@ -91,7 +93,9 @@
      vschn,
      vschn_2,
      ref_0\.63um,
-     SW_broadband_albedo"/>
+     SW_broadband_albedo,
+     map_data/ref_0\.63um,
+     map_data/SW_broadband_albedo"/>
   
 <alias
      name="ABSVOR"
