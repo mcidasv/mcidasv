@@ -72,7 +72,9 @@
      Brightness_Temperature_*.*_GH*.*,
      brightness_temperature,
      .*BrightnessTemp.*,
-     .*_Band.*_TEMP"/>
+     .*_Band.*_TEMP,
+     BT_6\.75um,
+     BT_10\.8um"/>
   
   <alias 
      name="Refl"
@@ -87,7 +89,9 @@
      SREFL_CH2,
      SREFL_CH1,
      vschn,
-     vschn_2"/>
+     vschn_2,
+     ref_0\.63um,
+     SW_broadband_albedo"/>
   
 <alias
      name="ABSVOR"
