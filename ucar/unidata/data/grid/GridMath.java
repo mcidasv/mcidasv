@@ -48,6 +48,7 @@ import visad.util.DataUtility;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -208,6 +209,30 @@ public class GridMath {
     public static FieldImpl multiply(FieldImpl grid1, FieldImpl grid2)
             throws VisADException {
         return multiply(grid1, grid2, false);
+    }
+
+    public static FieldImpl scale(FieldImpl grid1, float scale)
+            throws VisADException, RemoteException{
+
+         // a script to test this:
+         //from visad.python.JPythonMethods import *
+         //from ucar.unidata.data.grid import GridMath
+         //vals = [1, 2, 3]
+         //data = field(vals)
+         //data = GridMath.scale(data, 2)
+         //print(data)
+
+         int len1 = grid1.getValues().length;
+         int len2 = grid1.getValues()[0].length;
+         float[][] tmpArr = new float[len1][len2];
+         for (int i = 0; i < len1; i++) {
+             for (int j = 0; j < len2; j++) {
+                 tmpArr[i][j] = scale;
+             }
+         }
+         FieldImpl scaleField = (FieldImpl) grid1.dataClone();
+         scaleField.setSamples(tmpArr);
+         return multiply(grid1, scaleField);
     }
 
     /**
