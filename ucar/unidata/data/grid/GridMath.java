@@ -212,7 +212,7 @@ public class GridMath {
     }
 
     public static FieldImpl scale(FieldImpl grid1, float scale)
-            throws VisADException, RemoteException{
+            throws VisADException, RemoteException {
 
          // a script to test this:
          //from visad.python.JPythonMethods import *
@@ -233,6 +233,90 @@ public class GridMath {
          FieldImpl scaleField = (FieldImpl) grid1.dataClone();
          scaleField.setSamples(tmpArr);
          return multiply(grid1, scaleField);
+    }
+
+    public static FieldImpl cos(FieldImpl grid)
+            throws VisADException, RemoteException {
+        // from visad.python.JPythonMethods import *
+        // from ucar.unidata.data.grid import GridMath
+        // vals = [0, 1.57079632679, 3.14159]
+        // data = field(vals)
+        // data = GridMath.cos(data)
+        // print(data)
+        int len1 = grid.getValues().length;
+        int len2 = grid.getValues()[0].length;
+        double[][] tmpArr = new double[len1][len2];
+        for (int i = 0; i < len1; i++) {
+            for (int j = 0; j < len2; j++) {
+                tmpArr[i][j] = Math.cos(grid.getValues()[i][j]);
+            }
+        }
+        FieldImpl outField = (FieldImpl) grid.dataClone();
+        outField.setSamples(tmpArr);
+        return outField;
+    }
+
+    public static FieldImpl sin(FieldImpl grid)
+            throws VisADException, RemoteException {
+        // from visad.python.JPythonMethods import *
+        // from ucar.unidata.data.grid import GridMath
+        // vals = [0, 1.57079632679, 3.14159]
+        // data = field(vals)
+        // data = GridMath.sin(data)
+        // print(data)
+        int len1 = grid.getValues().length;
+        int len2 = grid.getValues()[0].length;
+        double[][] tmpArr = new double[len1][len2];
+        for (int i = 0; i < len1; i++) {
+            for (int j = 0; j < len2; j++) {
+                tmpArr[i][j] = Math.sin(grid.getValues()[i][j]);
+            }
+        }
+        FieldImpl outField = (FieldImpl) grid.dataClone();
+        outField.setSamples(tmpArr);
+        return outField;
+    }
+
+    public static FieldImpl deg2rad(FieldImpl grid)
+            throws VisADException, RemoteException {
+        // from visad.python.JPythonMethods import *
+        // from ucar.unidata.data.grid import GridMath
+        // vals = [0, 1.57079632679, 3.14159]
+        // data = field(vals)
+        // data = GridMath.deg2rad(data)
+        // print(data)
+        int len1 = grid.getValues().length;
+        int len2 = grid.getValues()[0].length;
+        double[][] tmpArr = new double[len1][len2];
+        for (int i = 0; i < len1; i++) {
+            for (int j = 0; j < len2; j++) {
+                tmpArr[i][j] = grid.getValues()[i][j] * Math.PI * (1.0/180.0);
+            }
+        }
+        FieldImpl outField = (FieldImpl) grid.dataClone();
+        outField.setSamples(tmpArr);
+        return outField;
+    }
+
+    public static FieldImpl rad2deg(FieldImpl grid)
+            throws VisADException, RemoteException {
+//         from visad.python.JPythonMethods import *
+//         from ucar.unidata.data.grid import GridMath
+//         vals = [0, 1.57079632679, 3.14159]
+//         data = field(vals)
+//         data = GridMath.rad2deg(data)
+//         print(data)
+        int len1 = grid.getValues().length;
+        int len2 = grid.getValues()[0].length;
+        double[][] tmpArr = new double[len1][len2];
+        for (int i = 0; i < len1; i++) {
+            for (int j = 0; j < len2; j++) {
+                tmpArr[i][j] = grid.getValues()[i][j] * (1.0/Math.PI) * 180.0;
+            }
+        }
+        FieldImpl outField = (FieldImpl) grid.dataClone();
+        outField.setSamples(tmpArr);
+        return outField;
     }
 
     /**
