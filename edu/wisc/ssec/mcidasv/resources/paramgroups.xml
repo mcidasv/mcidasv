@@ -394,6 +394,7 @@
     <params p1="328_Band18_TEMP" p2="328_Band20_TEMP" p3="328_Band21_TEMP"/>
     <params p1="329_Band18_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M13" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M13" p2="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M15" p3="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Day Fire RGB" name="JPSS_EDR_RGB_DayFire">
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
@@ -460,6 +461,7 @@
     <params p1="328_Band17_TEMP" p2="328_Band20_TEMP" p3="328_Band21_TEMP"/>
     <params p1="329_Band17_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M12" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M12" p2="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M15" p3="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR True Color RGB" name="JPSS_EDR_RGB_TrueColor">
     <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M4-MOD-EDR_All/Reflectance" p3="VIIRS-M3-MOD-EDR_All/Reflectance"/>
