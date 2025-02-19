@@ -1462,7 +1462,13 @@ public class AddeImageChooser extends AddeChooser implements
             setState(STATE_CONNECTED);
 
             // McIDAS Inquiry #2696-3141
-            if (e.getCause().toString().contains("No images satisfy the search criteria")) isError = true;
+            logger.info(e.getMessage());
+            logger.info(e.getCause().toString());
+            logger.info(e.toString());
+
+            if (e.getCause().toString().contains("No images satisfy the search criteria")
+                    || e.getCause().toString().contains("No images satisfy database selection criteria"))
+                isError = true;
         }
     }
 
