@@ -10728,6 +10728,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
     }
 
+    // McIDAS Inquiry #2800-3141
+    public void clipDisplayedRange(boolean setENB, int min, int max)
+            throws RemoteException, VisADException {
+        if (!this.selectRangeEnabled) this.setSelectRangeEnabled(setENB);
+        Range tmp = new Range(min, max);
+        this.setSelectRange(tmp);
+    }
+
 
 
 
