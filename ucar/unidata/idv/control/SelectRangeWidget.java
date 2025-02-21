@@ -93,6 +93,11 @@ public class SelectRangeWidget extends ControlWidget {
         //        button.setEnabled(enabledCbx.isSelected());
     }
 
+    // McIDAS Inquiry #2800-3141
+    public void setEnabledCbx(boolean b) {
+        this.enabledCbx.setSelected(b);
+    }
+
     /**
      * Method public due to ActionListener implementation
      *

@@ -10732,10 +10732,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public void clipDisplayedRange(boolean setENB, int min, int max)
             throws RemoteException, VisADException {
 
-        if (!this.selectRangeEnabled) {
-            this.setSelectRangeEnabled(setENB);
-            selectRangeEnabled = setENB;
-        }
+        this.setSelectRangeEnabled(setENB);
 
         if (!setENB) {
             Range tmp = new Range(-1 * 2 << 16, 2 << 16);
@@ -10746,7 +10743,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         Range tmp = new Range(min, max);
         this.setSelectRange(tmp);
     }
-
 
 
 
@@ -12816,6 +12812,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return;
         }
         selectRangeEnabled = value;
+        selectRangeWidget.setEnabledCbx(value);
         if (getHaveInitialized()) {
             try {
                 applySelectRange();
