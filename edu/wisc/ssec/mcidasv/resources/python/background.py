@@ -1091,11 +1091,11 @@ class _Display(_JavaProxy):
         raise KeyError("No map matching '%s'" % originalDescription)
         
     @gui_invoke_later
-    def setMapLayerVisibility(self, visibility):
+    def setMapLayerVisibility(self, visible):
         """Toggle the visibility of the current display's map layer."""
         from ucar.visad.display import CompositeDisplayable
         mapLayer = self.getMapLayer()
-        mapLayer.setLayerVisible(visibility)
+        mapLayer.setLayerVisible(visible)
         
         # what follows is due to Inquiry 1741, Request 4.
         # when running in the background, the CompositeDisplayable latLonHolder
