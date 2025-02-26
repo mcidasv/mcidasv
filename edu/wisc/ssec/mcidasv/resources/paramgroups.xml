@@ -414,6 +414,7 @@
     <params p1="329_Band1_REF" p2="329_Band2_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I1" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I2"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SWIR1_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*SWIR2_reflectance"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I1" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I2"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Dust RGB" name="JPSS_EDR_RGB_Dust">
     <params p1="VIIRS-M14-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p3="VIIRS-M16-MOD-EDR_All/BrightnessTemperature"/>
@@ -442,6 +443,7 @@
     <params p1="328_Band15_REF" p2="328_Band12_REF" p3="328_Band10_REF"/>
     <params p1="329_Band15_REF" p2="329_Band12_REF" p3="329_Band10_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M7" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M10" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M7" p3="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M5"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Natural Color SVI RGB" name="JPSS_EDR_RGB_I_NaturalColor">
     <params p1="VIIRS-I3-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
@@ -452,6 +454,7 @@
     <params p1="328_Band3_REF" p2="328_Band2_REF" p3="328_Band1_REF"/>
     <params p1="329_Band3_REF" p2="329_Band2_REF" p3="329_Band1_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I3" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I2" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I1"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I3" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I2" p3="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I1"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Nighttime Microphysics RGB" name="JPSS_EDR_RGB_NightMicrophysics">
     <params p1="VIIRS-M12-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p3="VIIRS-M16-MOD-EDR_All/BrightnessTemperature"/>
@@ -473,6 +476,7 @@
     <params p1="329_Band10_REF" p2="329_Band9_REF" p3="329_Band8_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M4" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M3"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*red_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*green_reflectance" p3="HDFEOS/GRIDS/VIIRS_*.*blue_reflectance"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M5" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M4" p3="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M3"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Cloud Type RGB" name="JPSS_EDR_RGB_CloudType">
     <params p1="VIIRS-M9-MOD-EDR_All/Reflectance" p2="VIIRS-M5-MOD-EDR_All/Reflectance" p3="VIIRS-M10-MOD-EDR_All/Reflectance"/>
@@ -491,6 +495,7 @@
     <params p1="328_Band15_REF" p2="328_Band13_REF" p3="328_Band10_REF"/>
     <params p1="329_Band15_REF" p2="329_Band13_REF" p3="329_Band10_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M8" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M10" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M8" p3="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M5"/>
   </paramgroup>
   <paramgroup description="JPSS EDR NDSI" name="JPSS_EDR_NDSI">
     <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance"/>
@@ -502,6 +507,7 @@
     <params p1="329_Band1_REF" p2="329_Band3_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I1" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I3"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SWIR1_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*SWIR3_reflectance"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I1" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I3"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Sea Spray RGB" name="JPSS_EDR_RGB_SeaSpray">
     <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p4="VIIRS-I5-IMG-EDR_All/BrightnessTemperature"/>
@@ -571,6 +577,7 @@
     <params p1="329_Band2_REF" p2="329_Band3_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I2" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_I3"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SWIR2_reflectance" p2="HDFEOS/GRIDS/VIIRS_*.*SWIR3_reflectance"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I2" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_I3"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Cloud Phase RGB" name="JPSS_EDR_RGB_CloudPhase">
     <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M10-MOD-EDR_All/Reflectance" p3="VIIRS-M11-MOD-EDR_All/Reflectance"/>
@@ -581,6 +588,7 @@
     <params p1="328_Band5_REF" p2="328_Band10_REF" p3="328_Band11_REF"/>
     <params p1="329_Band5_REF" p2="329_Band10_REF" p3="329_Band11_REF"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M5" p2="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M10" p3="HDFEOS/GRIDS/VIIRS_*.*SurfReflect_M11"/>
+    <params p1="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M5" p2="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M10" p3="HDFEOS/GRIDS/VIIRS_Grid_BRDF/Data_Fields/Nadir_Reflectance_M11"/>
   </paramgroup>
   <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
     <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>
@@ -676,60 +684,70 @@
     <params p1="111_Band1_REF" p2="111_Band2_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_2"/>
     <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b02*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band1" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band2"/>
   </paramgroup>
   <paramgroup description="MODIS NDSI" name="MODIS_NDSI">
     <params p1="101_Band4_REF" p2="101_Band6_REF"/>
     <params p1="111_Band4_REF" p2="111_Band6_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_4" p2="MOD*.*Surface_Reflectance_Band_6"/>
     <params p1="MOD*.*sur_refl_b04*.*" p2="MOD*.*sur_refl_b06*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band4" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band6"/>
   </paramgroup>
   <paramgroup description="MODIS NDWI" name="MODIS_NDWI">
     <params p1="101_Band2_REF" p2="101_Band4_REF"/>
     <params p1="111_Band2_REF" p2="111_Band4_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_2" p2="MOD*.*Surface_Reflectance_Band_4"/>
     <params p1="MOD*.*sur_refl_b02*.*" p2="MOD*.*sur_refl_b04*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band2" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band4"/>
   </paramgroup>
   <paramgroup description="MODIS EVI" name="MODIS_EVI">
     <params p1="101_Band1_REF" p2="101_Band2_REF" p3="101_Band3_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF" p3="111_Band3_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_2" p3="MOD*.*Surface_Reflectance_Band_3"/>
     <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b02*.*" p3="MOD*.*sur_refl_b03*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band1" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band2" p3="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band3"/>
   </paramgroup>
   <paramgroup description="MODIS True Color RGB" name="MODIS_RGB_TrueColor">
     <params p1="101_Band1_REF" p2="101_Band4_REF" p3="101_Band3_REF"/>
     <params p1="111_Band1_REF" p2="111_Band4_REF" p3="111_Band3_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_4" p3="MOD*.*Surface_Reflectance_Band_3"/>
     <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b04*.*" p3="MOD*.*sur_refl_b03*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band1" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band4" p3="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band3"/>
   </paramgroup>
   <paramgroup description="MODIS False Color RGB" name="MODIS_RGB_FalseColor">
     <params p1="101_Band7_REF" p2="101_Band2_REF" p3="101_Band1_REF"/>
     <params p1="111_Band7_REF" p2="111_Band2_REF" p3="111_Band1_REF"/>
     <params p1="MOD*.*1km_Surface_Reflectance_Band_7" p2="MOD*.*1km_Surface_Reflectance_Band_2" p3="MOD*.*Surface_Reflectance_Band_1"/>
     <params p1="MOD*.*sur_refl_b07*.*" p2="MOD*.*sur_refl_b02*.*" p3="MOD*.*sur_refl_b01*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band7" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band2" p3="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band1"/>
   </paramgroup>
     <paramgroup description="MODIS BAI" name="MODIS_BAI">
     <params p1="101_Band1_REF" p2="101_Band2_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_2"/>
     <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b02*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band1" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band2"/>
   </paramgroup>
   <paramgroup description="MODIS NBR" name="MODIS_NBR">
     <params p1="101_Band2_REF" p2="101_Band6_REF"/>
     <params p1="111_Band2_REF" p2="111_Band6_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_2" p2="MOD*.*Surface_Reflectance_Band_6"/>
     <params p1="MOD*.*sur_refl_b02*.*" p2="MOD*.*sur_refl_b06*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band2" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band6"/>
   </paramgroup>
   <paramgroup description="MODIS VARI" name="MODIS_VARI">
     <params p1="101_Band1_REF" p2="101_Band3_REF" p3="101_Band4_REF"/>
     <params p1="111_Band1_REF" p2="111_Band3_REF" p3="111_Band4_REF"/>
     <params p1="MOD*.*Surface_Reflectance_Band_1" p2="MOD*.*Surface_Reflectance_Band_3" p3="MOD*.*Surface_Reflectance_Band_4"/>
     <params p1="MOD*.*sur_refl_b01*.*" p2="MOD*.*sur_refl_b03*.*" p3="MOD*.*sur_refl_b04*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band1" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band3" p3="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band4"/>
   </paramgroup>
   <paramgroup description="MODIS NDBI" name="MODIS_NDBI">
     <params p1="101_Band2_REF" p2="101_Band6_REF"/>
     <params p1="111_Band2_REF" p2="111_Band6_REF"/>
     <params p1="MOD*.*1km_Surface_Reflectance_Band_2" p2="MOD*.*1km_Surface_Reflectance_Band_6"/>
     <params p1="MOD*.*sur_refl_b02*.*" p2="MOD*.*sur_refl_b06*.*"/>
+    <params p1="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band2" p2="MOD_Grid_BRDF/Data_Fields/Nadir_Reflectance_Band6"/>
   </paramgroup>
   <paramgroup description="" name="speed_and_dir">
     <params p1="wind_speed" p2="wind_dir"/>
