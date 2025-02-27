@@ -1066,24 +1066,28 @@ class _Display(_JavaProxy):
         raise KeyError("No map matching '%s'" % originalDescription)
         
     @gui_invoke_later
-    def setMapVisibilityByDescription(self, description, visibility):
+    def setMapVisibilityByDescription(self, description, visible=None, **kwargs):
         """Return visibility of the map matching the given description.
         
         Args:
             description: Corresponds to the label used by the GUI. Case does
                          not matter.
                          
-            visibility: Boolean value for the new map visibility.
+            visibile: Boolean value for the new map visibility.
                         
         Raises:
             KeyError: if no maps matching the given description could be found.
         """
+
+        # McIDAS Inquiry #2790
+        if visible is None and 'visibility' in kwargs: visible = kwargs['visibility']
+            
         originalDescription = description
         description = str(description).lower()
         for mapState in self.getMapLayer().getMapStates():
             mapDescription = str(mapState.getDescription()).lower()
             if description == mapDescription:
-                mapState.setVisible(visibility)
+                mapState.setVisible(visible)
                 # apparently there is no mapPanel when running from background!
                 if mapState.mapPanel:
                     mapState.mapPanel.updateUI()
