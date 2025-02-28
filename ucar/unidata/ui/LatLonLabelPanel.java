@@ -148,7 +148,7 @@ public class LatLonLabelPanel extends JPanel {
                 }
                 validateTextFields();
                 latLonLabelData.setInterval(
-                    new Float(spacingField.getText()).floatValue());
+                    Float.valueOf(spacingField.getText()).floatValue());
                 // this ensures the formatting is consistent for lat/lon text fields
                 spacingField.setText("" + latLonLabelData.getInterval());
             }
@@ -165,10 +165,10 @@ public class LatLonLabelPanel extends JPanel {
                 validateTextFields();
                 if (latLonLabelData.getIsLatitude()) {
                 	latLonLabelData.setBaseValue(
-                			new Float(baseField.getText()).floatValue());
+                			Float.valueOf(baseField.getText()).floatValue());
                 } else {
                 	latLonLabelData.setBaseValue(
-                			new Float(baseField.getText()).floatValue());
+                			Float.valueOf(baseField.getText()).floatValue());
                 }
                 // this ensures the formatting is consistent for lat/lon text fields
                 baseField.setText("" + latLonLabelData.getBaseValue());
@@ -298,12 +298,12 @@ public class LatLonLabelPanel extends JPanel {
 
                     	// also adjust lat/lon relative text fields
                     	if (! latLonLabelData.getIsLatitude()) {
-                    		Float f = new Float(lllpLon.baseField.getText()).floatValue();
+                    		Float f = Float.valueOf(lllpLon.baseField.getText()).floatValue();
                     		if (f < 0) {
                     			lllpLon.baseField.setText("" + (f + 360));
                     		}
                     	}
-                    	Float f = new Float(llp.baseField.getText()).floatValue();
+                    	Float f = Float.valueOf(llp.baseField.getText()).floatValue();
                     	if (f < 0) {
                     		llp.baseField.setText("" + (f + 360));
                     	}
@@ -323,12 +323,12 @@ public class LatLonLabelPanel extends JPanel {
 
                     	// also adjust lat/lon relative text fields
                     	if (! latLonLabelData.getIsLatitude()) {
-                    		Float f = new Float(lllpLon.baseField.getText()).floatValue();
+                    		Float f = Float.valueOf(lllpLon.baseField.getText()).floatValue();
                     		if (f > 180) {
                     			lllpLon.baseField.setText("" + (f - 360));
                     		}
                     	}
-                    	Float f = new Float(llp.baseField.getText()).floatValue();
+                    	Float f = Float.valueOf(llp.baseField.getText()).floatValue();
                     	if (f > 180) {
                     		llp.baseField.setText("" + (f - 360));
                     	}
@@ -421,9 +421,9 @@ public class LatLonLabelPanel extends JPanel {
         // need to get the TextField values because people could type in a new value
         // without hitting return.  Other widgets should trigger a change
         latLonLabelData.setInterval(
-            new Float(spacingField.getText()).floatValue());
+            Float.valueOf(spacingField.getText()).floatValue());
         latLonLabelData.setBaseValue(
-            new Float(baseField.getText()).floatValue());
+            Float.valueOf(baseField.getText()).floatValue());
         latLonLabelData.setLabelsLineString(labelLinesField.getText());
     }
 

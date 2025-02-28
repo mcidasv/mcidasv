@@ -438,7 +438,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
     }
 
     private Color doColorThing(final int percent) {
-        Float alpha = new Float(percent).floatValue() / 100;
+        Float alpha = Float.valueOf(percent).floatValue() / 100;
         return new Color(1.0f, 0.0f, 0.0f, alpha);
     }
     

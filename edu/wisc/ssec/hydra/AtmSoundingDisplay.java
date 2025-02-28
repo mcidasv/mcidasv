@@ -258,7 +258,7 @@ public class AtmSoundingDisplay implements DisplayListener {
 
     private void notifyListener(float val) {
         if (listener != null) {
-            listener.propertyChange(new PropertyChangeEvent(this, "wavenumber", null, new Float(val)));
+            listener.propertyChange(new PropertyChangeEvent(this, "wavenumber", null, Float.valueOf(val)));
         }
     }
 
@@ -734,7 +734,7 @@ public class AtmSoundingDisplay implements DisplayListener {
             lastSelectedValue = val;
 
             if (listener != null) { // notify THE listener
-                listener.propertyChange(new PropertyChangeEvent(this, "wavenumber", null, new Float(lastSelectedValue)));
+                listener.propertyChange(new PropertyChangeEvent(this, "wavenumber", null, Float.valueOf(lastSelectedValue)));
             }
         }
 

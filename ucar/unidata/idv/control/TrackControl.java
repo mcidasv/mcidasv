@@ -990,12 +990,12 @@ public class TrackControl extends GridDisplayControl {
         dsd.addPropertyValue(new Boolean(getTimeDeclutterEnabled()),
                              "timeDeclutterEnabled", "Subset Times",
                              SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Float(getTimeDeclutterMinutes()),
+        dsd.addPropertyValue(Double.valueOf(getTimeDeclutterMinutes()),
                              "timeDeclutterMinutes", "Subset Interval (min)",
                              SETTINGS_GROUP_DISPLAY);
         dsd.addPropertyValue(getMarkerLayout(), "markerLayout",
                              "Marker Layout", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Float(markerScale), "markerScale",
+        dsd.addPropertyValue(Float.valueOf(markerScale), "markerScale",
                              "Marker Scale", SETTINGS_GROUP_DISPLAY);
         dsd.addPropertyValue(Integer.valueOf(getLineWidth()), "lineWidth",
                              "Line Width", SETTINGS_GROUP_DISPLAY);

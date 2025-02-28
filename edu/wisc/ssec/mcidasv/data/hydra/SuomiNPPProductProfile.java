@@ -336,7 +336,7 @@ public class SuomiNPPProductProfile {
 									Node grandChild = grandChildren.item(l);
 									if (grandChild.getNodeName().equals("Value")) {
 										String fillValueStr = grandChild.getTextContent();
-										fValAL.add(new Float(Float.parseFloat(fillValueStr)));
+										fValAL.add(Float.valueOf(Float.parseFloat(fillValueStr)));
 									}
 								}
 							}

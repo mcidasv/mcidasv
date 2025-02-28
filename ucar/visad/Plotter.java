@@ -842,9 +842,9 @@ public class Plotter {
 
             PSTranscoder     psTranscoder  = new PSTranscoder();
             psTranscoder.addTranscodingHint(PSTranscoder.KEY_WIDTH,
-                                            new Float(viewWidth));
+                                            Float.valueOf(viewWidth));
             psTranscoder.addTranscodingHint(PSTranscoder.KEY_HEIGHT,
-                                            new Float(viewHeight));
+                                            Float.valueOf(viewHeight));
 
             psTranscoder.transcode(transcoderIn, transcoderOut);
             psStream.flush();

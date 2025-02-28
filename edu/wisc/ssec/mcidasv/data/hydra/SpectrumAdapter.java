@@ -204,7 +204,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     if (hasBandNames) {
       bandNameMap = new HashMap<>();
       for (int k=0; k<numChannels; k++) {
-        bandNameMap.put(bandNameArray[k], new Float(channels[k]));
+        bandNameMap.put(bandNameArray[k], Float.valueOf(channels[k]));
       }
     }
     return channels;

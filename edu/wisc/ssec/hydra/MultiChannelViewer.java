@@ -451,7 +451,7 @@ public class MultiChannelViewer extends HydraDisplay {
             valA = (valA > hi) ? (2 * hi - valA) : valA;
             valA = multiSpectDsp.findWaveNumber(valA);
             multiSpectDsp.createSelector(idA, Color.red, valA);
-            widget.updateOperandComp(1, new Float(valA));
+            widget.updateOperandComp(1, Float.valueOf(valA));
             multiSpectDsp.addSelectorListener(idA, new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent pce) {
                     widget.updateOperandComp(1, pce.getNewValue());
@@ -462,7 +462,7 @@ public class MultiChannelViewer extends HydraDisplay {
             valB = (valB < lo) ? 2 * lo - valB : valB;
             valB = multiSpectDsp.findWaveNumber(valB);
             multiSpectDsp.createSelector(idB, Color.magenta, valB);
-            widget.updateOperandComp(0, new Float(valB));
+            widget.updateOperandComp(0, Float.valueOf(valB));
             multiSpectDsp.addSelectorListener(idB, new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent pce) {
                     widget.updateOperandComp(0, pce.getNewValue());

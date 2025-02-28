@@ -522,7 +522,7 @@ public class XmlObjectStore implements PersistentStore {
      *  @param value The value to store.
      */
     public void put(String key, float value) {
-        put(key, new Float(value));
+        put(key, Float.valueOf(value));
     }
 
     /**
@@ -684,7 +684,7 @@ public class XmlObjectStore implements PersistentStore {
         if (value == null || value.toString().isEmpty()) {
             return dflt;
         }
-        return new Float(value.toString()).floatValue();
+        return Float.valueOf(value.toString()).floatValue();
     }
 
     /**

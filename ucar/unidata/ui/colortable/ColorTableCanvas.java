@@ -631,7 +631,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
         for (int i = 0; i < values.length; i++) {
             float  v    = values[i];
             String name = ((int) (v * 100.0f)) + "%";
-            l.add(new TwoFacedObject(name, new Float(v)));
+            l.add(new TwoFacedObject(name, Float.valueOf(v)));
         }
         return l;
     }
@@ -687,7 +687,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
             String text = selected.toString();
             try {
                 text  = StringUtil.replace(text, "%", "").trim();
-                value = (int) new Float(text).floatValue();
+                value = (int) Float.valueOf(text).floatValue();
             } catch (Exception e) {
                 return 1.0f;
             }
@@ -991,7 +991,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
         if (scales == null) {
             scales = new ArrayList();
             for (int i = 0; i < colorList.size(); i++) {
-                scales.add(new Float(1.0f));
+                scales.add(Float.valueOf(1.0f));
             }
         }
         colorsChanged();
@@ -1017,10 +1017,10 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
         while (cnt-- > 0) {
             if (start) {
                 colorList.add(0, colorList.get(0));
-                scales.add(0, new Float(1.0f));
+                scales.add(0, Float.valueOf(1.0f));
             } else {
                 colorList.add(colorList.get(colorList.size() - 1));
-                scales.add(new Float(1.0f));
+                scales.add(Float.valueOf(1.0f));
             }
         }
         colorsChanged();
@@ -2129,7 +2129,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < tmp.size(); j++) {
                         colorList.add(tmp.get(j));
-                        scales.add(new Float(1.0f));
+                        scales.add(Float.valueOf(1.0f));
                     }
                 }
                 colorsChanged();
@@ -2380,7 +2380,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
         int   cnt            = 0;
         for (int i = lowerColorIndex; i <= upperColorIndex; i++, cnt++) {
             float newBrightness = f1 + (brightnessStep * cnt);
-            scales.set(i, new Float(newBrightness));
+            scales.set(i, Float.valueOf(newBrightness));
         }
         tableChanged();
         repaint();
@@ -2569,7 +2569,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
     public void setBrightnessFromTo(int lowerIndex, int upperIndex) {
         float b = getBrightness();
         for (int i = lowerIndex; i <= upperIndex; i++) {
-            scales.set(i, new Float(b));
+            scales.set(i, Float.valueOf(b));
         }
         tableChanged();
         repaint();

@@ -1434,10 +1434,10 @@ public class Hydra {
         org.jdom2.Element elemS = (Element) vals.get(2);
         org.jdom2.Element elemE = (Element) vals.get(3);
 
-        elemN.setText((new Float(north)).toString());
-        elemW.setText((new Float(west)).toString());
-        elemS.setText((new Float(south)).toString());
-        elemE.setText((new Float(east)).toString());
+        elemN.setText((Double.valueOf(north)).toString());
+        elemW.setText((Double.valueOf(west)).toString());
+        elemS.setText((Double.valueOf(south)).toString());
+        elemE.setText((Double.valueOf(east)).toString());
 
         XMLOutputter xmlOut = new XMLOutputter();
         String newStr = xmlOut.outputString(doc);

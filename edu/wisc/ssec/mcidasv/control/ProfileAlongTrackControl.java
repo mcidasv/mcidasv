@@ -308,7 +308,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
       }
 
       public void update() {
-         int idx = (new Float(this.lastSelectedValue)).intValue();
+         int idx = (Float.valueOf(this.lastSelectedValue)).intValue();
          try {
            float[][] val = domainSet.indexToValue(new int[] {idx});
            locOnTrack.setPoint(new EarthLocationTuple(val[1][0], val[0][0], 0));

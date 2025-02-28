@@ -186,7 +186,7 @@ public class DragLine extends CellImpl {
         val = (val + 2.5f) / 5f;
 
         for (int k = 0; k < listeners.size(); k++) {
-            listeners.get(k).propertyChange(new PropertyChangeEvent(this, "distmarker", null, new Float(val)));
+            listeners.get(k).propertyChange(new PropertyChangeEvent(this, "distmarker", null, Float.valueOf(val)));
         }
     }
 

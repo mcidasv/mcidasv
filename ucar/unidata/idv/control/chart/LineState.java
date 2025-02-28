@@ -788,7 +788,7 @@ public class LineState {
 
         try {
             if (widthFld != null) {
-                width = new Float(widthFld.getText().trim()).floatValue();
+                width = Float.valueOf(widthFld.getText().trim()).floatValue();
             }
         } catch (NumberFormatException nfe) {
             LogUtil.userErrorMessage("Bad width: " + widthFld.getText());

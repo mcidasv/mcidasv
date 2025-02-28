@@ -241,9 +241,9 @@ public class McIdasColorTableDefaults {
         int num = reds.size();
         float colorTable[][] = new float[3][num];
         for (int i=0; i<num; i++) {
-            colorTable[0][i] = new Float((String)reds.get(i)).floatValue();
-            colorTable[1][i] = new Float((String)greens.get(i)).floatValue();
-            colorTable[2][i] = new Float((String)blues.get(i)).floatValue();
+            colorTable[0][i] = Float.valueOf((String)reds.get(i)).floatValue();
+            colorTable[1][i] = Float.valueOf((String)greens.get(i)).floatValue();
+            colorTable[2][i] = Float.valueOf((String)blues.get(i)).floatValue();
         }
         return colorTable;
     }

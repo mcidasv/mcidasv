@@ -1110,7 +1110,7 @@ public class DisplaySettingsDialog {
                 if (value instanceof Double) {
                     newValue = Double.valueOf(newString);
                 } else if (value instanceof Float) {
-                    newValue = new Float(newString);
+                    newValue = Float.valueOf(newString);
                 } else if (value instanceof Integer) {
                     newValue = Integer.valueOf(newString);
                 }

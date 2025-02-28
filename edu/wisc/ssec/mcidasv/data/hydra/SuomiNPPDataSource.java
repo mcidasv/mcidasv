@@ -1253,12 +1253,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									try {
     	    										af.setFloat(0, Float.parseFloat(rangeMin));
     	    									} catch (NumberFormatException nfe) {
-    	    										af.setFloat(0, new Float(Integer.MIN_VALUE));
+    	    										af.setFloat(0, Float.valueOf(Integer.MIN_VALUE));
     	    									}
     	    									try {
     	    										af.setFloat(1, Float.parseFloat(rangeMax));
     	    									} catch (NumberFormatException nfe) {
-    	    										af.setFloat(1, new Float(Integer.MAX_VALUE));
+    	    										af.setFloat(1, Float.valueOf(Integer.MAX_VALUE));
     	    									}
     	    									Attribute rangeAtt = new Attribute("valid_range", af);
     	    									v.addAttribute(rangeAtt);

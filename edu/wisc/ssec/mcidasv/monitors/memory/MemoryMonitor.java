@@ -123,7 +123,7 @@ public class MemoryMonitor implements Monitorable {
     }
 
     public static Color doColorThing(final int percent) {
-        Float alpha = new Float(percent).floatValue() / 100;
+        Float alpha = Float.valueOf(percent).floatValue() / 100;
         return new Color(1.0f, 0.0f, 0.0f, alpha);
     }
 }

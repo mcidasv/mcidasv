@@ -3091,10 +3091,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 StringTokenizer tok = new StringTokenizer(cards[i]);
                 String str = tok.nextToken();
                 str = tok.nextToken();
-                Float flt = new Float(str);
+                Float flt = Float.valueOf(str);
                 res[0] = flt.floatValue();
                 str = tok.nextToken();
-                flt = new Float(str);
+                flt = Float.valueOf(str);
                 res[1] = flt.floatValue();
                 return res;
             }

@@ -219,7 +219,7 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
             profilersourceHT.put(AddeUtil.NUM_RELATIVE_TIMES,
                     getRelativeTimeIndices());
             profilersourceHT.put(AddeUtil.RELATIVE_TIME_INCREMENT,
-                    new Float(getRelativeTimeIncrement()));
+                    Float.valueOf(getRelativeTimeIncrement()));
             profilersourceHT.put(AddeUtil.MISC_KEYWORDS,
                     getMiscKeywords());
 

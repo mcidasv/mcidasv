@@ -493,9 +493,9 @@ public class XmlEncoder extends XmlUtil {
         addDelegateForClass(Rectangle2D.Float.class, new XmlDelegateImpl() {
             public Element createElement(XmlEncoder e, Object o) {
                 Rectangle2D.Float r = (Rectangle2D.Float) o;
-                List args = Misc.newList(new Float(r.x), new Float(r.y),
-                                         new Float(r.width),
-                                         new Float(r.height));
+                List args = Misc.newList(Float.valueOf(r.x), Float.valueOf(r.y),
+                                         Float.valueOf(r.width),
+                                         Float.valueOf(r.height));
                 List types = Misc.newList(Float.TYPE, Float.TYPE, Float.TYPE,
                                           Float.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
@@ -2025,21 +2025,21 @@ public class XmlEncoder extends XmlUtil {
                         return Double.valueOf(Double.NaN);
                     }
                     if (primitiveClass.equals(Float.class)) {
-                        return new Float(Float.NaN);
+                        return Float.valueOf(Float.NaN);
                     }
                 } else if (value.equals("Infinity")) {
                     if (primitiveClass.equals(Double.class)) {
                         return Double.valueOf(Double.POSITIVE_INFINITY);
                     }
                     if (primitiveClass.equals(Float.class)) {
-                        return new Float(Float.POSITIVE_INFINITY);
+                        return Float.valueOf(Float.POSITIVE_INFINITY);
                     }
                 } else if (value.equals("-Infinity")) {
                     if (primitiveClass.equals(Double.class)) {
                         return Double.valueOf(Double.NEGATIVE_INFINITY);
                     }
                     if (primitiveClass.equals(Float.class)) {
-                        return new Float(Float.NEGATIVE_INFINITY);
+                        return Float.valueOf(Float.NEGATIVE_INFINITY);
                     }
                 }
             }

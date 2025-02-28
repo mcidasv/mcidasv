@@ -625,13 +625,13 @@ public class HydraCombo extends HydraControl {
         public void unpersistSelectorWrapper(final Hashtable<String, String> table) {
             variable = table.get("variable");
             selector.addName(variable);
-            scale.setText(String.format("%3.1f", new Float(table.get("scale"))));
+            scale.setText(String.format("%3.1f", Float.valueOf(table.get("scale"))));
             
             String waveText = table.get("wave");
             if (Objects.equals(waveText, BLANK)) {
                 disable();
             } else {
-                float wave = new Float(table.get("wave"));
+                float wave = Float.valueOf(table.get("wave"));
                 selector.setWaveNumber(wave);
                 if (isValid()) {
                     update();
