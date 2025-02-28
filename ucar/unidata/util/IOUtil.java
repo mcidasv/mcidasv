@@ -1250,7 +1250,7 @@ public class IOUtil {
             return b.booleanValue();
         }
         boolean result = isHtmlFileInner(filenameOrUrl);
-        isHtmlCache.put(filenameOrUrl, new Boolean(result));
+        isHtmlCache.put(filenameOrUrl, Boolean.valueOf(result));
         return result;
     }
 

@@ -770,7 +770,7 @@ public abstract class DisplayRendererJ3D
         modelClipClass.getField("ALLOW_ENABLE_WRITE").getInt(modelClip);
       modelClipSetCapability.invoke(modelClip,
                          new Object[] {Integer.valueOf(ALLOW_ENABLE_WRITE)});
-      Boolean f = new Boolean(false);
+      Boolean f = Boolean.valueOf(false);
       for (int i=0; i<6; i++) {
         modelClipSetEnable.invoke(modelClip, new Object[] {Integer.valueOf(i), f});
       }
@@ -843,7 +843,7 @@ public abstract class DisplayRendererJ3D
     }
     Vector4d vect = new Vector4d((double) a, (double) b, (double) c, (double) d);
     try {
-      Object[] params = {Integer.valueOf(plane), new Boolean(enable)};
+      Object[] params = {Integer.valueOf(plane), Boolean.valueOf(enable)};
       modelClipSetEnable.invoke(modelClip, params);
       params = new Object[] {Integer.valueOf(plane), vect};
       modelClipSetPlane.invoke(modelClip, params);
@@ -858,7 +858,7 @@ public abstract class DisplayRendererJ3D
     try {
       for (int i=0; i<6; i++) {
         if (modelClipEnables[i]) {
-          Object[] params = {Integer.valueOf(i), new Boolean(false)};
+          Object[] params = {Integer.valueOf(i), Boolean.valueOf(false)};
           modelClipSetEnable.invoke(modelClip, params);
         }
       }
@@ -872,7 +872,7 @@ public abstract class DisplayRendererJ3D
     try {
       for (int i=0; i<6; i++) {
         if (modelClipEnables[i]) {
-          Object[] params = {Integer.valueOf(i), new Boolean(true)};
+          Object[] params = {Integer.valueOf(i), Boolean.valueOf(true)};
           modelClipSetEnable.invoke(modelClip, params);
         }
       }

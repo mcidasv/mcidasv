@@ -1034,13 +1034,13 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
 
         dsd.addPropertyValue(flowRange, "flowRange", "Flow Field Range",
                              SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Boolean(getStreamlines()), "streamlines",
+        dsd.addPropertyValue(Boolean.valueOf(getStreamlines()), "streamlines",
                              "Show Streamlines", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Boolean(getTrajectories()), "trajectory",
+        dsd.addPropertyValue(Boolean.valueOf(getTrajectories()), "trajectory",
                              "Show Trajectory", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Boolean(getCVectors()), "curlyvector",
+        dsd.addPropertyValue(Boolean.valueOf(getCVectors()), "curlyvector",
                              "Show Curly Vector", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Boolean(getAutoSize()), "autoSize",
+        dsd.addPropertyValue(Boolean.valueOf(getAutoSize()), "autoSize",
                              "Autosize", SETTINGS_GROUP_DISPLAY);
 
 

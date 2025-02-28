@@ -581,7 +581,7 @@ public class ResourceCollection {
                                        + resource + "\n");
             }
             //Put an error in the cache
-            cache.put(resource, new Boolean(false));
+            cache.put(resource, Boolean.valueOf(false));
             //error logging ??
         }
         return result;

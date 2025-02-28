@@ -189,11 +189,11 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
      */
     protected Hashtable getRequestProperties() {
         Hashtable props = super.getRequestProperties();
-        props.put(McIdasComponents.IMAGE, new Boolean(this.frameComponentInfo.getIsImage()));
-        props.put(McIdasComponents.GRAPHICS, new Boolean(this.frameComponentInfo.getIsGraphics()));
-        props.put(McIdasComponents.COLORTABLE, new Boolean(this.frameComponentInfo.getIsColorTable()));
-        props.put(McIdasComponents.ANNOTATION, new Boolean(this.frameComponentInfo.getIsAnnotation()));
-        props.put(McIdasComponents.FAKEDATETIME, new Boolean(this.frameComponentInfo.getFakeDateTime()));
+        props.put(McIdasComponents.IMAGE, Boolean.valueOf(this.frameComponentInfo.getIsImage()));
+        props.put(McIdasComponents.GRAPHICS, Boolean.valueOf(this.frameComponentInfo.getIsGraphics()));
+        props.put(McIdasComponents.COLORTABLE, Boolean.valueOf(this.frameComponentInfo.getIsColorTable()));
+        props.put(McIdasComponents.ANNOTATION, Boolean.valueOf(this.frameComponentInfo.getIsAnnotation()));
+        props.put(McIdasComponents.FAKEDATETIME, Boolean.valueOf(this.frameComponentInfo.getFakeDateTime()));
         props.put(McIdasComponents.DIRTYINFO, this.frameDirtyInfoList);
         return props;
     }

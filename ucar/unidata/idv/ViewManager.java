@@ -3433,7 +3433,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             BooleanProperty bp = (BooleanProperty) iter.next();
 
             if (bp.hasValue()) {
-                tmp.put(bp.getId(), new Boolean(bp.getValue()));
+                tmp.put(bp.getId(), Boolean.valueOf(bp.getValue()));
             }
         }
 
@@ -7341,7 +7341,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             return false;
         }
 
-        return new Boolean(prop).booleanValue();
+        return Boolean.valueOf(prop).booleanValue();
     }
 
     /**

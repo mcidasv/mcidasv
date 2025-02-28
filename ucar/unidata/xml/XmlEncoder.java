@@ -2586,7 +2586,7 @@ public class XmlEncoder extends XmlUtil {
         } catch (IllegalAccessException iae) {
             ctorOk = false;
         }
-        classCtorsOk.put(theClass, new Boolean(ctorOk));
+        classCtorsOk.put(theClass, Boolean.valueOf(ctorOk));
         return ctorOk;
     }
 

@@ -198,7 +198,7 @@ public class OSXAdapter implements InvocationHandler {
         if (result == null) {
             return true;
         }
-        return Boolean.valueOf(result.toString()).booleanValue();
+        return Boolean.valueOf(result.toString());
     }
     
     // InvocationHandler implementation

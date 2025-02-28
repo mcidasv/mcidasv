@@ -434,7 +434,7 @@ public class HovmollerControl extends GridDisplayControl {
         super.addDisplaySettings(dsd);
         dsd.addPropertyValue(getTimeFormat(), "timeFormat",
                              "Time Label Format", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Boolean(getReverseTime()), "reverseTime",
+        dsd.addPropertyValue(Boolean.valueOf(getReverseTime()), "reverseTime",
                              "Latest Time at Bottom", SETTINGS_GROUP_DISPLAY);
     }
 

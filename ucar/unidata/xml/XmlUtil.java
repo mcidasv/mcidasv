@@ -410,7 +410,7 @@ public abstract class XmlUtil {
         if (value == null) {
             return dflt;
         }
-        return new Boolean(value).booleanValue();
+        return Boolean.valueOf(value).booleanValue();
     }
 
 
@@ -727,7 +727,7 @@ public abstract class XmlUtil {
         Node n = attrs.getNamedItem(name);
         return ((n == null)
                 ? dflt
-                : new Boolean(n.getNodeValue()).booleanValue());
+                : Boolean.valueOf(n.getNodeValue()).booleanValue());
     }
 
     /**

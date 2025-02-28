@@ -984,10 +984,10 @@ public class TrackControl extends GridDisplayControl {
             dsd.addPropertyValue(getDataTimeRange(), "dataTimeRange",
                                  "Time Mode", "Display");
         }
-        dsd.addPropertyValue(new Boolean(getUseTrackTimes()),
+        dsd.addPropertyValue(Boolean.valueOf(getUseTrackTimes()),
                              "useTrackTimes", "Use Track Times",
                              SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Boolean(getTimeDeclutterEnabled()),
+        dsd.addPropertyValue(Boolean.valueOf(getTimeDeclutterEnabled()),
                              "timeDeclutterEnabled", "Subset Times",
                              SETTINGS_GROUP_DISPLAY);
         dsd.addPropertyValue(Double.valueOf(getTimeDeclutterMinutes()),

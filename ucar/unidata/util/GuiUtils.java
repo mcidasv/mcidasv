@@ -3460,13 +3460,13 @@ public class GuiUtils extends LayoutUtil {
         final JTextField field    = new JTextField(((initValue == null)
                 ? ""
                 : initValue), fieldWidth);
-        ObjectListener   listener = new ObjectListener(new Boolean(false)) {
+        ObjectListener   listener = new ObjectListener(Boolean.valueOf(false)) {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
                 if ((ae.getSource() == field) || cmd.equals(CMD_OK)) {
-                    theObject = new Boolean(true);
+                    theObject = Boolean.valueOf(true);
                 } else {
-                    theObject = new Boolean(false);
+                    theObject = Boolean.valueOf(false);
                 }
                 dialog.setVisible(false);
             }
@@ -4789,9 +4789,9 @@ public class GuiUtils extends LayoutUtil {
                     } else {
                         theMethod.invoke(object, ((arg == null)
                                 ? new Object[] {
-                                    new Boolean(cbx.isSelected()) }
+                                    Boolean.valueOf(cbx.isSelected()) }
                                 : new Object[] {
-                                    new Boolean(cbx.isSelected()),
+                                    Boolean.valueOf(cbx.isSelected()),
                                     arg }));
                     }
                 } catch (Exception exc) {
@@ -6798,7 +6798,7 @@ public class GuiUtils extends LayoutUtil {
         Node n = attrs.getNamedItem(name);
         return ((n == null)
                 ? dflt
-                : new Boolean(n.getNodeValue()).booleanValue());
+                : Boolean.valueOf(n.getNodeValue()).booleanValue());
     }
 
     /**

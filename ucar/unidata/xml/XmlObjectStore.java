@@ -486,7 +486,7 @@ public class XmlObjectStore implements PersistentStore {
      *  @param value The value to store.
      */
     public void put(String key, boolean value) {
-        put(key, new Boolean(value));
+        put(key, Boolean.valueOf(value));
     }
 
     /**
@@ -628,7 +628,7 @@ public class XmlObjectStore implements PersistentStore {
         if (value == null || value.toString().isEmpty()) {
             return dflt;
         }
-        return new Boolean(value.toString()).booleanValue();
+        return Boolean.valueOf(value.toString()).booleanValue();
     }
 
     /**

@@ -1376,7 +1376,7 @@ public class AddeImageDataSelection {
             fullResBtn =
                 GuiUtils.makeImageButton("/auxdata/ui/icons/arrow_out.png",
                                          this, "setToFullResolution",
-                                         new Boolean(true));
+                                         Boolean.valueOf(true));
             fullResBtn.setContentAreaFilled(false);
             fullResBtn.setToolTipText("Set fields to retrieve full image");
 

@@ -1791,7 +1791,7 @@ public class DataManager {
         if (v == null) {
             return dflt;
         }
-        return new Boolean(v).booleanValue();
+        return Boolean.valueOf(v).booleanValue();
     }
 
     /**

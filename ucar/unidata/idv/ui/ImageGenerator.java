@@ -3697,7 +3697,7 @@ public class ImageGenerator extends IdvManager {
         if (value == null) {
             return dflt;
         }
-        return new Boolean(applyMacros(value)).booleanValue();
+        return Boolean.valueOf(applyMacros(value)).booleanValue();
     }
 
 

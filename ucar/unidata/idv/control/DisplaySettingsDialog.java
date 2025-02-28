@@ -966,9 +966,9 @@ public class DisplaySettingsDialog {
             if (v instanceof Boolean) {
                 Boolean b = (Boolean) v;
                 if (b.booleanValue()) {
-                    changeValueTo(new Boolean(false));
+                    changeValueTo(Boolean.valueOf(false));
                 } else {
-                    changeValueTo(new Boolean(true));
+                    changeValueTo(Boolean.valueOf(true));
                 }
                 cbx.setSelected(true);
                 return;

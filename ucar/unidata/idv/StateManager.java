@@ -534,9 +534,9 @@ public class StateManager extends IdvManager {
             for (int i = 0; i < cds.size(); i++) {
                 ControlDescriptor cd = (ControlDescriptor) cds.get(i);
                 if (oldControlMap.get(cd.getControlId()) != null) {
-                    newControlMap.put(cd.getControlId(), new Boolean(true));
+                    newControlMap.put(cd.getControlId(), Boolean.valueOf(true));
                 } else {
-                    newControlMap.put(cd.getControlId(), new Boolean(false));
+                    newControlMap.put(cd.getControlId(), Boolean.valueOf(false));
                 }
             }
             getStore().put(PROP_CONTROLDESCRIPTORS, newControlMap);
@@ -660,7 +660,7 @@ public class StateManager extends IdvManager {
     public boolean getProperty(String name, boolean dflt) {
         String v = (String) getProperty(name);
         if (v != null) {
-            return new Boolean(v.trim()).booleanValue();
+            return Boolean.valueOf(v.trim()).booleanValue();
         }
         return dflt;
     }
@@ -1095,7 +1095,7 @@ public class StateManager extends IdvManager {
     public boolean getPreferenceOrProperty(String pref, boolean dflt) {
         Object o = getPreferenceOrProperty(pref);
         if (o != null && !o.toString().isEmpty()) {
-            return new Boolean(o.toString()).booleanValue();
+            return Boolean.valueOf(o.toString()).booleanValue();
         }
         return dflt;
     }

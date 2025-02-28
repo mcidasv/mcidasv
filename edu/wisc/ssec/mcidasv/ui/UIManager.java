@@ -3217,7 +3217,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (field instanceof JTextComponent) {
                 value = ((JTextComponent) field).getText().trim();
             } else if (field instanceof JCheckBox) {
-                value = new Boolean(((JCheckBox)field).isSelected());
+                value = Boolean.valueOf(((JCheckBox)field).isSelected());
             } else if (field instanceof JComboBox) {
                 value = ((JComboBox) field).getSelectedItem();
             } else if (field instanceof LatLonWidget) {

@@ -1034,7 +1034,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
         if (o == null) {
             return dflt;
         }
-        return new Boolean(o.toString()).booleanValue();
+        return Boolean.valueOf(o.toString()).booleanValue();
     }
 
 
@@ -1048,7 +1048,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
         if (properties == null) {
             properties = new Hashtable();
         }
-        properties.put(prop, new Boolean(value));
+        properties.put(prop, Boolean.valueOf(value));
     }
 
 

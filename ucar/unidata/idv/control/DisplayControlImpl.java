@@ -6256,36 +6256,36 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                                  SETTINGS_GROUP_DISPLAY);
         }
 
-        dsd.addPropertyValue(new Boolean(getDisplayVisibility()),
+        dsd.addPropertyValue(Boolean.valueOf(getDisplayVisibility()),
                              "displayVisibility", "Visibility",
                              SETTINGS_GROUP_FLAGS);
-        dsd.addPropertyValue(new Boolean(getLockVisibilityToggle()),
+        dsd.addPropertyValue(Boolean.valueOf(getLockVisibilityToggle()),
                              "lockVisibilityToggle",
                              "Lock Visibility Toggle", SETTINGS_GROUP_FLAGS);
-        dsd.addPropertyValue(new Boolean(getShowInDisplayList()),
+        dsd.addPropertyValue(Boolean.valueOf(getShowInDisplayList()),
                              "showInDisplayList", "Show In Display List",
                              SETTINGS_GROUP_FLAGS);
-        dsd.addPropertyValue(new Boolean(getUseFastRendering()),
+        dsd.addPropertyValue(Boolean.valueOf(getUseFastRendering()),
                              "useFastRendering", "Use Fast Rendering",
                              SETTINGS_GROUP_FLAGS);
-        dsd.addPropertyValue(new Boolean(getUseTimesInAnimation()),
+        dsd.addPropertyValue(Boolean.valueOf(getUseTimesInAnimation()),
                              "useTimesInAnimation", "Use Times In Animation",
                              SETTINGS_GROUP_FLAGS);
 
-        dsd.addPropertyValue(new Boolean(getDoCursorReadout()),
+        dsd.addPropertyValue(Boolean.valueOf(getDoCursorReadout()),
                              "doCursorReadout", "Include In Cursor Readout",
                              SETTINGS_GROUP_FLAGS);
-        dsd.addPropertyValue(new Boolean(getCanDoRemoveAll()),
+        dsd.addPropertyValue(Boolean.valueOf(getCanDoRemoveAll()),
                              "canDoRemoveAll", "Remove on Remove All",
                              SETTINGS_GROUP_FLAGS);
-        dsd.addPropertyValue(new Boolean(getShowNoteText()), "showNoteText",
+        dsd.addPropertyValue(Boolean.valueOf(getShowNoteText()), "showNoteText",
                              "Show Note Text", SETTINGS_GROUP_FLAGS);
         if (getIdv().getUseTimeDriver()) {
-            dsd.addPropertyValue(new Boolean(getIsTimeDriver()),
+            dsd.addPropertyValue(Boolean.valueOf(getIsTimeDriver()),
                                  "isTimeDriver",
                                  "Set As Time Driver",
                                  SETTINGS_GROUP_FLAGS);
-            dsd.addPropertyValue(new Boolean(getUsesTimeDriver()),
+            dsd.addPropertyValue(Boolean.valueOf(getUsesTimeDriver()),
                                  "usesTimeDriver", "Match Time Driver",
                                  SETTINGS_GROUP_FLAGS);
         }
@@ -6580,7 +6580,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 Method theMethod = Misc.findMethod(getClass(), key,
                                        new Class[] { Boolean.TYPE });
 
-                theMethod.invoke(this, new Object[] { new Boolean(flag) });
+                theMethod.invoke(this, new Object[] { Boolean.valueOf(flag) });
             }
         } catch (Exception exc) {
             throw new IllegalArgumentException("Error:" + exc);
@@ -10050,7 +10050,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
         settingVisibility = false;
         if (shouldShare) {
-            doShareExternal(SHARE_VISIBILITY, new Boolean(isVisible));
+            doShareExternal(SHARE_VISIBILITY, Boolean.valueOf(isVisible));
         }
 
         List v = getViewManagers();

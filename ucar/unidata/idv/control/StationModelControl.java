@@ -3015,7 +3015,7 @@ public class StationModelControl extends ObsDisplayControl {
             dsd.addPropertyValue(getDataTimeRange(), "dataTimeRange",
                                  "Accumulation Times", "Display");
         }
-        dsd.addPropertyValue(new Boolean(getUseDataTimes()), "useDataTimes",
+        dsd.addPropertyValue(Boolean.valueOf(getUseDataTimes()), "useDataTimes",
                              "Use Data Times", SETTINGS_GROUP_DISPLAY);
 
         dsd.addPropertyValue(getStationModelName(), "stationModelName",

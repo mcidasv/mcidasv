@@ -930,7 +930,7 @@ public class StormTrackControl extends DisplayControlImpl {
                                    boolean writeAsPreference) {
         okWays = new Hashtable();
         for (Way way : ways) {
-            okWays.put(way.getId(), new Boolean(true));
+            okWays.put(way.getId(), Boolean.valueOf(true));
         }
         if (writeAsPreference) {
             putPreference(getPref(PREF_OKWAYS), okWays);
@@ -948,7 +948,7 @@ public class StormTrackControl extends DisplayControlImpl {
                                      boolean writeAsPreference) {
         okParams = new Hashtable();
         for (StormParam param : params) {
-            okParams.put(param.getName(), new Boolean(true));
+            okParams.put(param.getName(), Boolean.valueOf(true));
         }
         if (writeAsPreference) {
             putPreference(getPref(PREF_OKPARAMS), okParams);
@@ -1577,7 +1577,7 @@ public class StormTrackControl extends DisplayControlImpl {
         sdf.setTimeZone(DateUtil.TIMEZONE_GMT);
         GregorianCalendar cal = new GregorianCalendar(DateUtil.TIMEZONE_GMT);
         Hashtable<String, Boolean> obsWays = new Hashtable<String, Boolean>();
-        obsWays.put(Way.OBSERVATION.toString(), new Boolean(true));
+        obsWays.put(Way.OBSERVATION.toString(), Boolean.valueOf(true));
         String  currentMessage = "";
         String  errors         = "";
         boolean doYearTime     = yearTimeMode == YEAR_TIME_MODE_YEAR;
