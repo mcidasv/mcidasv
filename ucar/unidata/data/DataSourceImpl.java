@@ -968,7 +968,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
         if (o == null) {
             return dflt;
         }
-        return Long.valueOf(o.toString()).longValue();
+        return Long.valueOf(o.toString());
     }
 
     /**

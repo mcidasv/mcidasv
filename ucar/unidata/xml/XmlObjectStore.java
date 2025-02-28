@@ -656,7 +656,7 @@ public class XmlObjectStore implements PersistentStore {
         if (value == null || value.toString().isEmpty()) {
             return dflt;
         }
-        return Short.valueOf(value.toString()).shortValue();
+        return Short.valueOf(value.toString());
     }
 
     /**
@@ -698,7 +698,7 @@ public class XmlObjectStore implements PersistentStore {
         if (value == null || value.toString().isEmpty()) {
             return dflt;
         }
-        return Long.valueOf(value.toString()).longValue();
+        return Long.valueOf(value.toString());
     }
 
     /**
