@@ -572,13 +572,13 @@ public class TimeHeightControl extends LineProbeControl {
                     majorTickSpacing = (time - start);
                 }
                 DateTime dt = new DateTime(r);
-                timeLabels.put(new Double(time),
+                timeLabels.put(Double.valueOf(time),
                                dt.formattedString(format,
                                    dt.getFormatTimeZone()));
             }
             // do this so we get the last one
             DateTime dt = new DateTime(endTime);
-            timeLabels.put(new Double(end),
+            timeLabels.put(Double.valueOf(end),
                            dt.formattedString(format,
                                dt.getFormatTimeZone()));
 

@@ -1675,8 +1675,8 @@ public class ImageGenerator extends IdvManager {
         if (XmlUtil.hasAttribute(node, ATTR_VALUE)) {
             by = applyMacros(node, ATTR_VALUE);
         }
-        double num = new Double(value).doubleValue()
-                     + new Double(by).doubleValue();
+        double num = Double.valueOf(value).doubleValue()
+                     + Double.valueOf(by).doubleValue();
         ht.put(name, "" + num);
         return true;
     }
@@ -2803,7 +2803,7 @@ public class ImageGenerator extends IdvManager {
                 }
             }
             sleepTime = (long) (multiplier
-                                * new Double(sleepString).doubleValue());
+                                * Double.valueOf(sleepString).doubleValue());
         }
         for (int i = 0; i < loopTimes; i++) {
             currentLoopIndex = i;
@@ -3622,7 +3622,7 @@ public class ImageGenerator extends IdvManager {
             double percent = Misc.toDouble(s.substring(0, s.length() - 1));
             return (percent / 100.0) * baseValue;
         }
-        return new Double(s).doubleValue();
+        return Double.valueOf(s).doubleValue();
     }
 
 
@@ -4845,7 +4845,7 @@ public class ImageGenerator extends IdvManager {
                                                   ",");
                         for (int valueIdx = 0; valueIdx < valueArray.length;
                                 valueIdx++) {
-                            values.add(new Double(valueArray[valueIdx]));
+                            values.add(Double.valueOf(valueArray[valueIdx]));
                         }
                     } else if (ticks > 0) {
                         int spacing = ((ticks == 1)
@@ -4858,13 +4858,13 @@ public class ImageGenerator extends IdvManager {
                                     ? (double) tickIdx / (double) (ticks - 1)
                                     : 0.0);
                             values.add(
-                                new Double(range.getValueOfPercent(percent)));
+                                Double.valueOf(range.getValueOfPercent(percent)));
                         }
                     } else if (interval > 0) {
                         double value = range.getMin();
                         double max   = range.getMax();
                         while (value <= max) {
-                            values.add(new Double(value));
+                            values.add(Double.valueOf(value));
                             value += interval;
                         }
                     }
@@ -5118,15 +5118,15 @@ public class ImageGenerator extends IdvManager {
                         lr[1] = tmp;
                     }
                     imageProps.put(ATTR_NORTH,
-                                   new Double(ulEl.getLatitude().getValue()));
+                                   Double.valueOf(ulEl.getLatitude().getValue()));
                     imageProps.put(
                         ATTR_WEST,
-                        new Double(ulEl.getLongitude().getValue()));
+                        Double.valueOf(ulEl.getLongitude().getValue()));
                     imageProps.put(ATTR_SOUTH,
-                                   new Double(lrEl.getLatitude().getValue()));
+                                   Double.valueOf(lrEl.getLatitude().getValue()));
                     imageProps.put(
                         ATTR_EAST,
-                        new Double(lrEl.getLongitude().getValue()));
+                        Double.valueOf(lrEl.getLongitude().getValue()));
                 } else if ((viewManager != null)
                            && XmlUtil.hasAttribute(child, ATTR_NORTH)) {
                     NavigatedDisplay display =
@@ -5142,13 +5142,13 @@ public class ImageGenerator extends IdvManager {
                     lr = display.getScreenCoordinates(
                         display.getSpatialCoordinates(el2, null));
                     imageProps.put(ATTR_NORTH,
-                                   new Double(el1.getLatitude().getValue()));
+                                   Double.valueOf(el1.getLatitude().getValue()));
                     imageProps.put(ATTR_WEST,
-                                   new Double(el1.getLongitude().getValue()));
+                                   Double.valueOf(el1.getLongitude().getValue()));
                     imageProps.put(ATTR_SOUTH,
-                                   new Double(el2.getLatitude().getValue()));
+                                   Double.valueOf(el2.getLatitude().getValue()));
                     imageProps.put(ATTR_EAST,
-                                   new Double(el2.getLongitude().getValue()));
+                                   Double.valueOf(el2.getLongitude().getValue()));
                 } else if (XmlUtil.hasAttribute(child, ATTR_LEFT)) {
                     ul = new int[] {
                         (int) toDouble(child, ATTR_LEFT, imageWidth),

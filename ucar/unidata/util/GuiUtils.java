@@ -3697,7 +3697,7 @@ public class GuiUtils extends LayoutUtil {
 
     /**
      * Return the selected item in the given box as an integer.
-     * Do a new Double(selected.toString()):
+     * Do a Double.valueOf(selected.toString()):
      *
      * @param box The box
      * @return The int value of the selected item.

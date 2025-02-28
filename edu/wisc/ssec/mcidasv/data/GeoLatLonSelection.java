@@ -888,7 +888,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
       private String formatIntegerCoord(int cols, double val) {
           String outStr = Misc.MISSING;
-          Double dbl = new Double(val);
+          Double dbl = Double.valueOf(val);
           if (!dbl.isNaN()) {
               int ival = (int)Math.floor(val + 0.5);
               outStr = Integer.toString(ival);
@@ -903,7 +903,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
       private String formatDoubleCoord(int cols, double val) {
           String outStr = Misc.MISSING;
-          Double dbl = new Double(val);
+          Double dbl = Double.valueOf(val);
           if (!dbl.isNaN()) {
               outStr = Double.toString(val);
               if (outStr.length() > cols)
@@ -1601,8 +1601,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 if (type.equals(TYPE_IMAGE))
                     el = this.areaNav.imageCoordToAreaCoord(el);
                 Rectangle2D mapArea = macs.getDefaultMapArea();
-                int previewXDim = new Long(new Double(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
-                int previewYDim = new Long(new Double(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
+                int previewXDim = new Long(Double.valueOf(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
+                int previewYDim = new Long(Double.valueOf(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
                 el[0][0] = el[0][0] * dirEMag / previewEleMag;
                 el[1][0] = previewYDim - 1 - el[1][0] * dirLMag / previewLineMag;;
             }
@@ -1657,8 +1657,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 int previewLineMag = dirB[11];
                 int previewEleMag = dirB[12];
                 Rectangle2D mapArea = macs.getDefaultMapArea();
-                int previewXDim = new Long(new Double(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
-                int previewYDim = new Long(new Double(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
+                int previewXDim = new Long(Double.valueOf(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
+                int previewYDim = new Long(Double.valueOf(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
                 for (int i=0; i<area[0].length; i++) {
                     disp[0][i] = area[0][i] / previewEleMag;
                     disp[1][i] = previewYDim - 1 - area[1][i] / previewLineMag;

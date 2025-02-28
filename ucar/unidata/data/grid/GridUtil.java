@@ -6750,7 +6750,7 @@ public class GridUtil {
                 } else {
                     if (param.getLength() == 1) {
                         attributes.add(new Attribute(param.getName(),
-                                new Double(param.getNumericValue())));
+                                Double.valueOf(param.getNumericValue())));
                     } else {
                         double[] data = param.getNumericValues();
                         attributes.add(new Attribute(param.getName(),

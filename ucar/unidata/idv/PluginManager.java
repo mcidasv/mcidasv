@@ -2091,7 +2091,7 @@ public class PluginManager extends IdvManager {
                     String versionStr = XmlUtil.getAttribute(pluginNode,
                                             ATTR_VERSION, "" + version);
                     try {
-                        plugin.version = new Double(versionStr).doubleValue();
+                        plugin.version = Double.valueOf(versionStr).doubleValue();
                     } catch (NumberFormatException nfe) {
                         plugin.version = version;
                     }

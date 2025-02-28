@@ -693,7 +693,7 @@ public class StateManager extends IdvManager {
     public double getProperty(String name, double dflt) {
         String v = (String) getProperty(name);
         if (v != null) {
-            return new Double(v.trim()).doubleValue();
+            return Double.valueOf(v.trim()).doubleValue();
         }
         return dflt;
     }
@@ -1077,7 +1077,7 @@ public class StateManager extends IdvManager {
     public double getPreferenceOrProperty(String pref, double dflt) {
         Object o = getPreferenceOrProperty(pref);
         if (o != null && !o.toString().isEmpty()) {
-            return new Double(o.toString()).doubleValue();
+            return Double.valueOf(o.toString()).doubleValue();
         }
         return dflt;
     }
@@ -1231,8 +1231,8 @@ public class StateManager extends IdvManager {
      * @return number version
      */
     public double getNumberVersion() {
-        return new Double(getVersionMajor()).doubleValue()
-               + new Double(getVersionMinor()).doubleValue() * 0.1;
+        return Double.valueOf(getVersionMajor()).doubleValue()
+               + Double.valueOf(getVersionMinor()).doubleValue() * 0.1;
     }
 
     /**

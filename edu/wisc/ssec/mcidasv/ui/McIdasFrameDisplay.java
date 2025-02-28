@@ -589,7 +589,7 @@ public class McIdasFrameDisplay extends JPanel implements ActionListener {
                                   GuiUtils.top(GuiUtils.inset(accessory, 5)));
             
         	double displayRate =
-                (new Double(displayRateFld.getText())).doubleValue();
+                (Double.valueOf(displayRateFld.getText())).doubleValue();
 
             if (filename.toLowerCase().endsWith(".gif")) {
                 double rate = 1.0 / displayRate;

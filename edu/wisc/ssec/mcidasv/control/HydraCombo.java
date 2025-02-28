@@ -232,9 +232,9 @@ public class HydraCombo extends HydraControl {
     
     protected void addSelector(final Selector selector) throws Exception {
         ConstantMap[] mapping = selector.getColor();
-        float r = new Double(mapping[0].getConstant()).floatValue();
-        float g = new Double(mapping[1].getConstant()).floatValue();
-        float b = new Double(mapping[2].getConstant()).floatValue();
+        float r = Double.valueOf(mapping[0].getConstant()).floatValue();
+        float g = Double.valueOf(mapping[1].getConstant()).floatValue();
+        float b = Double.valueOf(mapping[2].getConstant()).floatValue();
         Color javaColor = new Color(r, g, b);
         display.createSelector(selector.getId(), javaColor);
         display.setSelectorValue(selector.getId(), selector.getWaveNumber());
@@ -569,9 +569,9 @@ public class HydraCombo extends HydraControl {
         public JPanel getPanel() {
             JPanel panel = new JPanel(new FlowLayout());
             JComponent comp = getWavenumberComponent();
-            float r = new Double(color[0].getConstant()).floatValue();
-            float g = new Double(color[1].getConstant()).floatValue();
-            float b = new Double(color[2].getConstant()).floatValue();
+            float r = Double.valueOf(color[0].getConstant()).floatValue();
+            float g = Double.valueOf(color[1].getConstant()).floatValue();
+            float b = Double.valueOf(color[2].getConstant()).floatValue();
             comp.setBorder(new LineBorder(new Color(r, g, b), 2));
             panel.add(scale);
             panel.add(comp);

@@ -440,7 +440,7 @@ public class DataManager {
                                                       && dh.startsWith("0")) {
                                                   dh = dh.substring(1);
                                               }
-                                              double hours = new Double(dh);
+                                              double hours = Double.valueOf(dh);
                                               String HH    = "" + (int) hours;
                                               String mm =
                                                   "" + (int) (60

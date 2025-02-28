@@ -1299,7 +1299,7 @@ public class ProjectionManager implements ActionListener {
                 try {
                     String   valstr = pp.getTextField().getText();
                     fix.add(valstr);
-                    Double   valdub = new Double(valstr);
+                    Double   valdub = Double.valueOf(valstr);
                     Object[] args   = { valdub };
                     if (debugBeans) {
                         System.out.println(

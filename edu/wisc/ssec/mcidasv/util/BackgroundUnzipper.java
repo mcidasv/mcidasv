@@ -81,8 +81,8 @@ public class BackgroundUnzipper extends SwingWorker<Long, Long>{
     }
     
     public long getPercentage() {
-        double current = new Double(countingStream.getTotalBytesRead()).doubleValue();
-        double total = new Double(totalSize).doubleValue();
+        double current = Double.valueOf(countingStream.getTotalBytesRead()).doubleValue();
+        double total = Double.valueOf(totalSize).doubleValue();
         long val = Math.round((current / total) * 100);
         setProgress(new Long(val).intValue());
         return val;

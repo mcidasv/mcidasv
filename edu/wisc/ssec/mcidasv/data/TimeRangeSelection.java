@@ -348,7 +348,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
 
         Time bTime = new Time(year, month, day, hours, mins, secs);
         double dVal = bTime.getJulianDate();
-        Double bigD = new Double(dVal);
+        Double bigD = Double.valueOf(dVal);
         String begTimeStr = bigD.toString();
         dataSelection.putProperty(PROP_BEGTIME, bTime.getDateTimeStr());
 
@@ -362,7 +362,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         dataSelection.putProperty(PROP_HOURS, intVal.toString());
         intVal = new Integer(mins);
         dataSelection.putProperty(PROP_MINS, intVal.toString());
-        Double doubleVal = new Double(secs);
+        Double doubleVal = Double.valueOf(secs);
         dataSelection.putProperty(PROP_SECS, doubleVal.toString());
 
         cal = endDay.getJCalendar();
@@ -388,7 +388,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
 
         Time eTime = new Time(year, month, day, hours, mins, secs);
         dVal = eTime.getJulianDate();
-        bigD = new Double(dVal);
+        bigD = Double.valueOf(dVal);
         String endTimeStr = bigD.toString();
 
         dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());

@@ -461,8 +461,8 @@ public class GctpFunction {
         double sin = Math.sin(val);
         double cos = Math.cos(val);
 
-        sin_val = new Double(sin);
-        cos_val = new Double(cos);
+        sin_val = Double.valueOf(sin);
+        cos_val = Double.valueOf(cos);
 
         return;
     }

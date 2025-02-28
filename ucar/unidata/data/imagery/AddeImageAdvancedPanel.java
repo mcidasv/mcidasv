@@ -1277,7 +1277,7 @@ public class AddeImageAdvancedPanel extends DataSelectionComponent {
      */
     public double getLatitude() {
         double val = latLonWidget.getLat();
-        //        Double dbl = new Double(val);
+        //        Double dbl = Double.valueOf(val);
         if (Double.isNaN(val)) {
             val = defaultLat;
         }
@@ -1323,7 +1323,7 @@ public class AddeImageAdvancedPanel extends DataSelectionComponent {
      */
     public double getLongitude() {
         double val = latLonWidget.getLon();
-        //        Double dbl = new Double(val);
+        //        Double dbl = Double.valueOf(val);
         if (Double.isNaN(val)) {
             val = defaultLon;
         }

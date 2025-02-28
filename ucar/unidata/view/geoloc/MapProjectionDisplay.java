@@ -805,7 +805,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         for (Double i : increment) {
             EarthLocationTuple elt = new EarthLocationTuple(bottomLat, i, 0);
             double[]           values = newtonLon(elt, 0);
-            Double             d      = new Double(values[0]);
+            Double             d      = Double.valueOf(values[0]);
 
             double             mm     = (base - i) % inc;
 
@@ -996,8 +996,8 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
         Hashtable<Double, String> labelTable = new Hashtable<Double, String>();
 
-        labelTable.put(new Double(maxmin[0]), labelFormat.format(bottom));
-        labelTable.put(new Double(maxmin[1]), labelFormat.format(top));
+        labelTable.put(Double.valueOf(maxmin[0]), labelFormat.format(bottom));
+        labelTable.put(Double.valueOf(maxmin[1]), labelFormat.format(top));
         scale.setLabelTable(labelTable);
         scale.setTickBase(maxmin[0]);
         
@@ -1080,9 +1080,9 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
          * verticalScale.setSnapToBox(true);
          * verticalScale.setTitle(
          * Hashtable labelTable = new Hashtable();
-         * labelTable.put(new Double(zRange[0]),
+         * labelTable.put(Double.valueOf(zRange[0]),
          *              labelFormat.format(minVerticalRange));
-         * labelTable.put(new Double(zRange[1]),
+         * labelTable.put(Double.valueOf(zRange[1]),
          *              labelFormat.format(maxVerticalRange));
          * verticalScale.setLabelTable(labelTable);
          * verticalScale.setTickBase(zRange[0]);

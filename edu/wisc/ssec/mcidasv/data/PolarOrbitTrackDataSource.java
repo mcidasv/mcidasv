@@ -552,7 +552,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         tle = new TLE(choiceName, tleLine1, tleLine2);
 
         String endStr = (String) this.selectionProps.get("ETime");
-        Double dEnd = new Double(endStr);
+        Double dEnd = Double.valueOf(endStr);
         double endJulianDate = dEnd.doubleValue();
         julDate1 = endJulianDate;
 
@@ -572,7 +572,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                         (new Integer((String)this.selectionProps.get("Day"))).intValue(),
                         (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
                         (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
-                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
+                        (Double.valueOf((String)this.selectionProps.get("Secs"))).doubleValue());
         double julianDate = time.getJulianDate();
         julDate0 = julianDate;
         Vector v = new Vector();
@@ -608,7 +608,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     private double getDouble(int beg, int end, String card) {
         String str = card.substring(beg, end);
         str = str.trim();
-        return (new Double(str)).doubleValue();
+        return (Double.valueOf(str)).doubleValue();
     }
 
     public int getDTime() {
@@ -683,7 +683,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             (new Integer((String)this.selectionProps.get("Day"))).intValue(),
             (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
             (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
-            (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
+            (Double.valueOf((String)this.selectionProps.get("Secs"))).doubleValue());
 
         double minDist = 999999.99;
         double julianDate = julDate0;

@@ -482,9 +482,9 @@ public class XmlEncoder extends XmlUtil {
         addDelegateForClass(Rectangle2D.Double.class, new XmlDelegateImpl() {
             public Element createElement(XmlEncoder e, Object o) {
                 Rectangle2D.Double r = (Rectangle2D.Double) o;
-                List args = Misc.newList(new Double(r.x), new Double(r.y),
-                                         new Double(r.width),
-                                         new Double(r.height));
+                List args = Misc.newList(Double.valueOf(r.x), Double.valueOf(r.y),
+                                         Double.valueOf(r.width),
+                                         Double.valueOf(r.height));
                 List types = Misc.newList(Double.TYPE, Double.TYPE,
                                           Double.TYPE, Double.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
@@ -2022,21 +2022,21 @@ public class XmlEncoder extends XmlUtil {
             if (exc instanceof java.lang.reflect.InvocationTargetException) {
                 if (value.equals("NaN")) {
                     if (primitiveClass.equals(Double.class)) {
-                        return new Double(Double.NaN);
+                        return Double.valueOf(Double.NaN);
                     }
                     if (primitiveClass.equals(Float.class)) {
                         return new Float(Float.NaN);
                     }
                 } else if (value.equals("Infinity")) {
                     if (primitiveClass.equals(Double.class)) {
-                        return new Double(Double.POSITIVE_INFINITY);
+                        return Double.valueOf(Double.POSITIVE_INFINITY);
                     }
                     if (primitiveClass.equals(Float.class)) {
                         return new Float(Float.POSITIVE_INFINITY);
                     }
                 } else if (value.equals("-Infinity")) {
                     if (primitiveClass.equals(Double.class)) {
-                        return new Double(Double.NEGATIVE_INFINITY);
+                        return Double.valueOf(Double.NEGATIVE_INFINITY);
                     }
                     if (primitiveClass.equals(Float.class)) {
                         return new Float(Float.NEGATIVE_INFINITY);

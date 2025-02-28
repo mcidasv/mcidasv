@@ -6232,7 +6232,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
         if (checkFlag(FLAG_ZPOSITION) && useZPosition()) {
 //            logger.trace("enabling zpos");
-            dsd.addPropertyValue(new Double(getZPosition()), "zPosition",
+            dsd.addPropertyValue(Double.valueOf(getZPosition()), "zPosition",
                                  "Vertical Position", SETTINGS_GROUP_DISPLAY);
         }
 //        else {

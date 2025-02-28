@@ -2236,7 +2236,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             return;
         }
         try {
-            endPause = (new Double(endPauseFld.getText())).doubleValue();
+            endPause = (Double.valueOf(endPauseFld.getText())).doubleValue();
         } catch (NumberFormatException nfe) {
             JOptionPane.showMessageDialog(mainDialog, "Invalid End Pause: " + endPauseFld.getText());
             return;

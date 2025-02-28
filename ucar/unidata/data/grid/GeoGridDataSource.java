@@ -1993,7 +1993,7 @@ public class GeoGridDataSource extends GridDataSource {
                 int index = new Integer(s.substring(1).trim()).intValue();
                 return index;
             }
-            o = new Real(new Double(s).doubleValue());
+            o = new Real(Double.valueOf(s).doubleValue());
         }
 
         if ((o instanceof Real) && (levels.size() > 0)

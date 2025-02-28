@@ -434,7 +434,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
         for (int i=0; i<2; i++) {
             for (int j=0; j<5; j++) {
-                Double val = new Double(elelin[i][j]);
+                Double val = Double.valueOf(elelin[i][j]);
                 if (val.isNaN()) {
                     eraseBox();
                     return;

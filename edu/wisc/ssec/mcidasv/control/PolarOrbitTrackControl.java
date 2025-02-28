@@ -1494,7 +1494,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 if (satName.equals(choiceName)) {
                     String strWidth = n.getAttribute(ATTR_WIDTH);
                     if (strWidth.isEmpty()) strWidth = "0";
-                    Double dWidth = new Double(strWidth);
+                    Double dWidth = Double.valueOf(strWidth);
                     curWidth = dWidth.doubleValue();
                     break;
                 }

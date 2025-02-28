@@ -359,7 +359,7 @@ public class AtcfStormDataSource extends StormDataSource {
 		if (s.length() == 0) {
 			return Double.NaN;
 		}
-		return new Double(s).doubleValue();
+		return Double.valueOf(s).doubleValue();
 	}
 
 	/**

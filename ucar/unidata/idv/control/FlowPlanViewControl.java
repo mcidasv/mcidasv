@@ -1020,15 +1020,15 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
      */
     protected void addDisplaySettings(DisplaySettingsDialog dsd) {
         super.addDisplaySettings(dsd);
-        dsd.addPropertyValue(new Double(flowScaleValue), "flowScale",
+        dsd.addPropertyValue(Double.valueOf(flowScaleValue), "flowScale",
                              "Scale", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Double(trajOffsetValue), "trajOffset",
+        dsd.addPropertyValue(Double.valueOf(trajOffsetValue), "trajOffset",
                              "Offset Length", SETTINGS_GROUP_DISPLAY);
         dsd.addPropertyValue(new Integer(trajFormType), "trajFormType",
                              "Traj Form", SETTINGS_GROUP_DISPLAY);
         dsd.addPropertyValue(new Integer(getSkipValue()), "skipValue",
                              "Skip Factor", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Double(getStreamlineDensity()),
+        dsd.addPropertyValue(Double.valueOf(getStreamlineDensity()),
                              "streamlineDensity", "Streamline Density",
                              SETTINGS_GROUP_DISPLAY);
 

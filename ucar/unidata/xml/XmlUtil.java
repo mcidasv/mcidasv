@@ -707,7 +707,7 @@ public abstract class XmlUtil {
         Node n = attrs.getNamedItem(name);
         return ((n == null)
                 ? dflt
-                : new Double(n.getNodeValue()).doubleValue());
+                : Double.valueOf(n.getNodeValue()).doubleValue());
     }
 
     /**
@@ -1722,7 +1722,7 @@ public abstract class XmlUtil {
         if (text.length() == 0) {
             return dflt;
         }
-        return new Double(text).doubleValue();
+        return Double.valueOf(text).doubleValue();
     }
 
 

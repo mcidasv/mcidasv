@@ -2232,7 +2232,7 @@ public class StationModelControl extends ObsDisplayControl {
                             //                                         obsReal.getUnit());
                             if (obsReal.getUnit() == null) {
                                 tmpValues[filterIdx] =
-                                    new Double(filterReal.getValue());
+                                    Double.valueOf(filterReal.getValue());
                             } else {
                                 tmpValues[filterIdx] = new Double(
                                     filterReal.getValue(obsReal.getUnit()));
