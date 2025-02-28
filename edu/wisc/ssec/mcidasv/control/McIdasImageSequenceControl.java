@@ -282,7 +282,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     	GridBagConstraints c = new GridBagConstraints();
     	c.gridwidth = GridBagConstraints.REMAINDER;
     	
-        frmI = new Integer(0);
+        frmI = Integer.valueOf(0);
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
         for (int i=0; i<dss.size(); i++) {
@@ -305,10 +305,10 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         			StringTokenizer tok = new StringTokenizer(choiceStr);
         			String str = tok.nextToken();
         			if (str.equals("Frame")) {
-        				frmI = new Integer(tok.nextToken());
+        				frmI = Integer.valueOf(tok.nextToken());
         				frameNumbers.add(frmI);
         			} else {
-        				frmI = new Integer(1);
+        				frmI = Integer.valueOf(1);
         				frameNumbers.add(frmI);
         			}
         		}

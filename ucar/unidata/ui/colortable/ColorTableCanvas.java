@@ -492,7 +492,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
             JRadioButton rb = new JRadioButton(modeNames[i], (i == 0));
             modeGroup.add(rb);
             modeBtns.add(rb);
-            rb.addItemListener(new ObjectListener(new Integer(modes[i])) {
+            rb.addItemListener(new ObjectListener(Integer.valueOf(modes[i])) {
                 public void itemStateChanged(ItemEvent e) {
                     if (((JRadioButton) e.getSource()).isSelected()) {
                         currentMode = ((Integer) theObject).intValue();
@@ -610,7 +610,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
         };
         for (int i = 0; i < values.length; i++) {
             l.add(new TwoFacedObject(values[i] + "%",
-                                     new Integer(values[i])));
+                                     Integer.valueOf(values[i])));
         }
         return l;
     }
@@ -2120,7 +2120,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
                 return;
             }
             try {
-                int count = new Integer(inputValue.trim()).intValue();
+                int count = Integer.parseInt(inputValue.trim());
                 prepColorChange();
                 if (count > 100) {
                     count = 100;
@@ -2878,7 +2878,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
                 double percent = 1-alpha/(double)255;
                 int intPercent = (int)(percent*100+0.5);
                 TwoFacedObject tfo = new TwoFacedObject(intPercent + "%",
-                                                        new Integer(intPercent));
+                                                        Integer.valueOf(intPercent));
 
                 transBox.setSelectedItem (tfo);
                 ignoreTransBoxEvents = false;

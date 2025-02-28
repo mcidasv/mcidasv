@@ -249,7 +249,7 @@ public class GranuleAggregation implements MultiDimensionReader {
                 }
 
                 HashMap<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(varName);
-                granIdxToInTrackLen.put(ncIdx, new Integer(dimLengths[varInTrackIndex]));
+                granIdxToInTrackLen.put(ncIdx, Integer.valueOf(dimLengths[varInTrackIndex]));
 
                 dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] * granuleCount;
                 varDataType.put(varName, var.getDataType().getPrimitiveClassType());
@@ -291,7 +291,7 @@ public class GranuleAggregation implements MultiDimensionReader {
         int numDimensions = dList.size();
 
         if (inTrackDimensionName == null) {
-            Integer dims = new Integer(numDimensions);
+            Integer dims = Integer.valueOf(numDimensions);
             if (varToAggrInTrackIndex.containsKey(dims)) {
                 int inTrackIndex = varToAggrInTrackIndex.get(dims);
                 return inTrackIndex;

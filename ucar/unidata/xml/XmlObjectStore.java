@@ -513,7 +513,7 @@ public class XmlObjectStore implements PersistentStore {
      *  @param value The value to store.
      */
     public void put(String key, int value) {
-        put(key, new Integer(value));
+        put(key, Integer.valueOf(value));
     }
 
     /**
@@ -670,7 +670,7 @@ public class XmlObjectStore implements PersistentStore {
         if (value == null || value.toString().isEmpty()) {
             return dflt;
         }
-        return new Integer(value.toString()).intValue();
+        return Integer.parseInt(value.toString());
     }
 
     /**

@@ -1315,7 +1315,7 @@ public class DataManager {
             name = "#0";
         }
         if (name.startsWith("#")) {
-            int index = new Integer(name.substring(1).trim()).intValue();
+            int index = Integer.parseInt(name.substring(1).trim());
             if ((index >= 0) && (index < dataSources.size())) {
                 return dataSources.get(index);
             }

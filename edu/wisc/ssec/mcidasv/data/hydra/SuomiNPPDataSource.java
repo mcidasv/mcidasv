@@ -1881,7 +1881,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		name = name + "Reflectance";
         	}
         }
-        DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, dcSubset);
+        DirectDataChoice ddc = new DirectDataChoice(this, Integer.valueOf(idx), name, name, categories, dcSubset);
         ddc.setProperties(dcSubset);
         return ddc;
     }

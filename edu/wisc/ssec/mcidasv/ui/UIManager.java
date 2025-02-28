@@ -3103,7 +3103,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 if (rowString == null) {
                     rowString = "1";
                 }
-                int rows = new Integer(rowString).intValue();
+                int rows = Integer.parseInt(rowString);
                 if (rows == 1) {
                     field = new JTextField((dflt != null)
                         ? dflt.toString()

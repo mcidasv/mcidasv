@@ -209,11 +209,11 @@ public class JTimeRangePicker extends JPanel {
         String[] timeStrings = begTime.split(":");
         int num = timeStrings.length;
         if (num > 0)
-            hours = (new Integer(timeStrings[0])).intValue();
+            hours = (Integer.parseInt(timeStrings[0]));
         if (num > 1)
-            mins = (new Integer(timeStrings[1])).intValue();
+            mins = (Integer.parseInt(timeStrings[1]));
         if (num > 2)
-            seconds = (new Integer(timeStrings[2])).intValue();
+            seconds = (Integer.parseInt(timeStrings[2]));
         
         // Year, Month, and Day are arbitrary, just need to match eTime vals
         Time bTime = new Time(2017, 2, 2, hours, mins, seconds);
@@ -222,11 +222,11 @@ public class JTimeRangePicker extends JPanel {
         timeStrings = endTime.split(":");
         num = timeStrings.length;
         if (num > 0)
-            hours = (new Integer(timeStrings[0])).intValue();
+            hours = (Integer.parseInt(timeStrings[0]));
         if (num > 1)
-            mins = (new Integer(timeStrings[1])).intValue();
+            mins = (Integer.parseInt(timeStrings[1]));
         if (num > 2)
-            seconds = (new Integer(timeStrings[2])).intValue();
+            seconds = (Integer.parseInt(timeStrings[2]));
         
         // Year, Month, and Day are arbitrary, just need to match bTime vals
         Time eTime = new Time(2017, 2, 2, hours, mins, seconds);

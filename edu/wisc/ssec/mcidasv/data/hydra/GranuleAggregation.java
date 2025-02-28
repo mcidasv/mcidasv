@@ -271,7 +271,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   for (int ncIdx = 0; ncIdx < nclist.size(); ncIdx++) {
 		   
 		   // good place to initialize the cut Range ArrayList for each granule
-		   Integer granuleIndex = new Integer(ncIdx);
+		   Integer granuleIndex = Integer.valueOf(ncIdx);
 		   List<Range> al = new ArrayList<>();
 
 		   int cutScanCount = 0;
@@ -379,7 +379,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   }
 			   }
 		   }
-		   granCutScans.put(granuleIndex, new Integer(cutScanCount));
+		   granCutScans.put(granuleIndex, Integer.valueOf(cutScanCount));
 	       granCutRanges.put(granuleIndex, al);
 	   }
 	   
@@ -465,9 +465,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   // adjust in-track dimension if needed (scans were cut)
 			   int cutScans = 0;
 			   if (! granCutScans.isEmpty() && granCutScans.containsKey(ncIdx)) {
-			       cutScans = granCutScans.get(new Integer(ncIdx));
+			       cutScans = granCutScans.get(Integer.valueOf(ncIdx));
 			   } else {
-			       granCutScans.put(new Integer(ncIdx), new Integer(0));
+			       granCutScans.put(Integer.valueOf(ncIdx), Integer.valueOf(0));
 			   }
 
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] - cutScans;
@@ -491,7 +491,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   }
 
 			   Map<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(varName);
-			   granIdxToInTrackLen.put(ncIdx, new Integer(dimLengths[varInTrackIndex]));
+			   granIdxToInTrackLen.put(ncIdx, Integer.valueOf(dimLengths[varInTrackIndex]));
 			   
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] * granuleCount;
 			   varDataType.put(varName, var.getDataType());
@@ -768,7 +768,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   rangeListCount++;
 				   
 				   // If there were chunks of fill data to remove...
-				   List<Range> al = granCutRanges.get(new Integer(granuleIdx));
+				   List<Range> al = granCutRanges.get(Integer.valueOf(granuleIdx));
 				   if (! al.isEmpty()) {
 					   List<Variable> varChunks = new ArrayList<>();
 					   for (int rangeCount = 0; rangeCount < al.size(); rangeCount+=2) {

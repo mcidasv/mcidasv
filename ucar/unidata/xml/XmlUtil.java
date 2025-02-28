@@ -667,7 +667,7 @@ public abstract class XmlUtil {
         Node n = attrs.getNamedItem(name);
         return ((n == null)
                 ? dflt
-                : new Integer(n.getNodeValue()).intValue());
+                : Integer.parseInt(n.getNodeValue()));
     }
 
     /**

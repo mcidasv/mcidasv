@@ -316,7 +316,7 @@ public class AtcfStormDataSource extends StormDataSource {
 				String basin = (String) toks.get(1);
 				String number = (String) toks.get(7);
 				String year = (String) toks.get(8);
-				int y = new Integer(year).intValue();
+				int y = Integer.parseInt(year);
 				String id = basin + "_" + number + "_" + year;
 				if (name.equals("UNNAMED")) {
 					name = id;
@@ -480,7 +480,7 @@ public class AtcfStormDataSource extends StormDataSource {
 			}
 
 			String fhour = (String) toks.get(IDX_TAU);
-			int forecastHour = new Integer(fhour).intValue();
+			int forecastHour = Integer.parseInt(fhour);
 			// A hack - we've seen some atfc files that have a 5 character
 			// forecast hour
 			// right padded with "00", eg., 01200

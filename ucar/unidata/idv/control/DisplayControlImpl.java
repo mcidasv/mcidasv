@@ -6223,11 +6223,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
         if (checkFlag(FLAG_LINEWIDTH)) {
-            dsd.addPropertyValue(new Integer(lineWidth), "lineWidth",
+            dsd.addPropertyValue(Integer.valueOf(lineWidth), "lineWidth",
                                  "Line Width", SETTINGS_GROUP_DISPLAY);
         }
         if (checkFlag(FLAG_SKIPFACTOR)) {
-            dsd.addPropertyValue(new Integer(skipValue), "skipValue",
+            dsd.addPropertyValue(Integer.valueOf(skipValue), "skipValue",
                                  "Skip Value", SETTINGS_GROUP_DISPLAY);
         }
         if (checkFlag(FLAG_ZPOSITION) && useZPosition()) {
@@ -6244,14 +6244,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
         if (checkFlag(FLAG_TEXTUREQUALITY)) {
-            dsd.addPropertyValue(new Integer(textureQuality),
+            dsd.addPropertyValue(Integer.valueOf(textureQuality),
                                  "textureQuality", getTextureQualityLabel(),
                                  SETTINGS_GROUP_DISPLAY);
         }
         if (checkFlag(FLAG_SMOOTHING)) {
             dsd.addPropertyValue(getSmoothingType(), "smoothingType",
                                  "Smoothing Type", SETTINGS_GROUP_DISPLAY);
-            dsd.addPropertyValue(new Integer(getSmoothingFactor()),
+            dsd.addPropertyValue(Integer.valueOf(getSmoothingFactor()),
                                  "smoothingFactor", "Smoothing Factor",
                                  SETTINGS_GROUP_DISPLAY);
         }
@@ -8053,9 +8053,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             textureSlider = GuiUtils.makeSlider(1, 21, textureQuality, this,
                     "setTextureQuality");
             Hashtable labels = new Hashtable();
-            labels.put(new Integer(1), GuiUtils.lLabel("High"));
-            labels.put(new Integer(10), GuiUtils.cLabel("Medium"));
-            labels.put(new Integer(21), GuiUtils.rLabel("Low"));
+            labels.put(Integer.valueOf(1), GuiUtils.lLabel("High"));
+            labels.put(Integer.valueOf(10), GuiUtils.cLabel("Medium"));
+            labels.put(Integer.valueOf(21), GuiUtils.rLabel("Low"));
 
             // TJJ Jun 2018 - invert so low on left, high on right
             textureSlider.setInverted(true);
@@ -12892,7 +12892,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         skipValue = value;
         if (getHaveInitialized()) {
             applySkipFactor();
-            doShare(SHARE_SKIPVALUE, new Integer(skipValue));
+            doShare(SHARE_SKIPVALUE, Integer.valueOf(skipValue));
         }
     }
 

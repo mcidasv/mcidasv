@@ -457,9 +457,9 @@ public class XmlEncoder extends XmlUtil {
         addDelegateForClass(Color.class, new XmlDelegateImpl() {
             public Element createElement(XmlEncoder e, Object o) {
                 Color color = (Color) o;
-                List args = Misc.newList(new Integer(color.getRed()),
-                                         new Integer(color.getGreen()),
-                                         new Integer(color.getBlue()));
+                List args = Misc.newList(Integer.valueOf(color.getRed()),
+                                         Integer.valueOf(color.getGreen()),
+                                         Integer.valueOf(color.getBlue()));
                 List types = Misc.newList(Integer.TYPE, Integer.TYPE,
                                           Integer.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
@@ -469,9 +469,9 @@ public class XmlEncoder extends XmlUtil {
         addDelegateForClass(Rectangle.class, new XmlDelegateImpl() {
             public Element createElement(XmlEncoder e, Object o) {
                 Rectangle r = (Rectangle) o;
-                List args = Misc.newList(new Integer(r.x), new Integer(r.y),
-                                         new Integer(r.width),
-                                         new Integer(r.height));
+                List args = Misc.newList(Integer.valueOf(r.x), Integer.valueOf(r.y),
+                                         Integer.valueOf(r.width),
+                                         Integer.valueOf(r.height));
                 List types = Misc.newList(Integer.TYPE, Integer.TYPE,
                                           Integer.TYPE, Integer.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
@@ -505,8 +505,8 @@ public class XmlEncoder extends XmlUtil {
         addDelegateForClass(Point.class, new XmlDelegateImpl() {
             public Element createElement(XmlEncoder e, Object o) {
                 Point p     = (Point) o;
-                List  args  = Misc.newList(new Integer(p.x),
-                                           new Integer(p.y));
+                List  args  = Misc.newList(Integer.valueOf(p.x),
+                                           Integer.valueOf(p.y));
                 List  types = Misc.newList(Integer.TYPE, Integer.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
             }
@@ -515,8 +515,8 @@ public class XmlEncoder extends XmlUtil {
         addDelegateForClass(Dimension.class, new XmlDelegateImpl() {
             public Element createElement(XmlEncoder e, Object o) {
                 Dimension p = (Dimension) o;
-                List args = Misc.newList(new Integer(p.width),
-                                         new Integer(p.height));
+                List args = Misc.newList(Integer.valueOf(p.width),
+                                         Integer.valueOf(p.height));
                 List types = Misc.newList(Integer.TYPE, Integer.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
             }
@@ -526,8 +526,8 @@ public class XmlEncoder extends XmlUtil {
             public Element createElement(XmlEncoder e, Object o) {
                 Font f = (Font) o;
                 List args = Misc.newList(f.getName(),
-                                         new Integer(f.getStyle()),
-                                         new Integer(f.getSize()));
+                                         Integer.valueOf(f.getStyle()),
+                                         Integer.valueOf(f.getSize()));
                 List types = Misc.newList(String.class, Integer.TYPE,
                                           Integer.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
@@ -1797,7 +1797,7 @@ public class XmlEncoder extends XmlUtil {
         try {
             Class arrayType = getClass(element.getAttribute(ATTR_CLASS));
             int length =
-                new Integer(element.getAttribute(ATTR_LENGTH)).intValue();
+                Integer.parseInt(element.getAttribute(ATTR_LENGTH));
             Object   array    = Array.newInstance(arrayType, length);
             NodeList children = XmlUtil.getElements(element);
             for (int i = 0; i < children.getLength(); i++) {
@@ -1871,7 +1871,7 @@ public class XmlEncoder extends XmlUtil {
                 return new ObjectClass(
                     deserialize(XmlUtil.decodeBase64(value)));
             } else {
-                int length = new Integer(lengthStr).intValue();
+                int length = Integer.parseInt(lengthStr);
                 array = Array.newInstance(arrayType, length);
 
                 /**

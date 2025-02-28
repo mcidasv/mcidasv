@@ -204,7 +204,7 @@ public class McIdasFrame {
                 line = (String)(graphics.get(i));
                 tok = new StringTokenizer(line);
                 for (int j = 0; j < 3; j++) {
-                    graphicsPt[j] = new Integer(tok.nextToken()).intValue();
+                    graphicsPt[j] = Integer.parseInt(tok.nextToken());
                 }
                 int color = graphicsPt[2];
                 int x = graphicsPt[1] - 1;

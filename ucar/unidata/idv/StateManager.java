@@ -677,7 +677,7 @@ public class StateManager extends IdvManager {
     public int getProperty(String name, int dflt) {
         String v = (String) getProperty(name);
         if (v != null) {
-            return new Integer(v.trim()).intValue();
+            return Integer.parseInt(v.trim());
         }
         return dflt;
     }

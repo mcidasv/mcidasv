@@ -186,7 +186,7 @@ public class McvHelpTipDialog extends JDialog implements Constants,
 				topMenu.add(m);
 			}
 			JMenuItem mi = new JMenuItem(tipTitle);
-			mi.addActionListener(new ObjectListener(new Integer(i)) {
+			mi.addActionListener(new ObjectListener(Integer.valueOf(i)) {
 				public void actionPerformed(ActionEvent ae) {
 					idx = ((Integer) theObject).intValue();
 					showTip();

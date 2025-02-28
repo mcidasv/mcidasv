@@ -218,9 +218,9 @@ public class McIdasColorTableDefaults {
         int num = reds.size();
         float colorTable[][] = new float[3][num];
         for (int i=0; i<num; i++) {
-            red = new Integer((String)reds.get(i)).intValue();
-            green = new Integer((String)greens.get(i)).intValue();
-            blue = new Integer((String)blues.get(i)).intValue();
+            red = Integer.parseInt((String)reds.get(i));
+            green = Integer.parseInt((String)greens.get(i));
+            blue = Integer.parseInt((String)blues.get(i));
             colors.add(new Color(red, green, blue));
         }
         colorTable = toArray(colors);

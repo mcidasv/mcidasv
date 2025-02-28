@@ -567,11 +567,11 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 		}
 
         Time time = new Time(
-                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
+                        (Integer.parseInt((String)this.selectionProps.get("Year"))),
+                        (Integer.parseInt((String)this.selectionProps.get("Month"))),
+                        (Integer.parseInt((String)this.selectionProps.get("Day"))),
+                        (Integer.parseInt((String)this.selectionProps.get("Hours"))),
+                        (Integer.parseInt((String)this.selectionProps.get("Mins"))),
                         (Double.valueOf((String)this.selectionProps.get("Secs"))).doubleValue());
         double julianDate = time.getJulianDate();
         julDate0 = julianDate;
@@ -678,11 +678,11 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     public double getNearestAltToGroundStation(double gsLat, double gsLon) {
         double retAlt = 0.0;
         Time time = new Time(
-            (new Integer((String)this.selectionProps.get("Year"))).intValue(),
-            (new Integer((String)this.selectionProps.get("Month"))).intValue(),
-            (new Integer((String)this.selectionProps.get("Day"))).intValue(),
-            (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
-            (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
+            (Integer.parseInt((String)this.selectionProps.get("Year"))),
+            (Integer.parseInt((String)this.selectionProps.get("Month"))),
+            (Integer.parseInt((String)this.selectionProps.get("Day"))),
+            (Integer.parseInt((String)this.selectionProps.get("Hours"))),
+            (Integer.parseInt((String)this.selectionProps.get("Mins"))),
             (Double.valueOf((String)this.selectionProps.get("Secs"))).doubleValue());
 
         double minDist = 999999.99;

@@ -465,7 +465,7 @@ public class DataOperand {
         List timeStrings = StringUtil.split(timeString, ";", true, true);
         List timeIndices = new ArrayList();
         for (int timeIdx = 0; timeIdx < timeStrings.size(); timeIdx++) {
-            timeIndices.add(new Integer(timeStrings.get(timeIdx).toString()));
+            timeIndices.add(Integer.valueOf(timeStrings.get(timeIdx).toString()));
         }
         return timeIndices;
     }

@@ -453,7 +453,7 @@ public class GeotiffAdapter {
      * @return  key value or dflt
      */
     private int getGeoKey(int key, int dflt) {
-        double[] v = (double[]) keys.get(new Integer(key));
+        double[] v = (double[]) keys.get(Integer.valueOf(key));
         if (v == null) {
             return dflt;
         }
@@ -468,7 +468,7 @@ public class GeotiffAdapter {
      * @return  key value or dflt
      */
     private double[] getGeoKey(int key, double[] dflt) {
-        double[] v = (double[]) keys.get(new Integer(key));
+        double[] v = (double[]) keys.get(Integer.valueOf(key));
         if (v == null) {
             return dflt;
         }
@@ -500,7 +500,7 @@ public class GeotiffAdapter {
      * @param value       value
      */
     private void processKey(int geoKeyId, double[] value) {
-        keys.put(new Integer(geoKeyId), value);
+        keys.put(Integer.valueOf(geoKeyId), value);
     }
 
 
@@ -633,7 +633,7 @@ public class GeotiffAdapter {
                 int    code  = pcs.findIntByName("parameterCode" + num);
                 int    uom   = pcs.findIntByName("parameterUom" + num);
                 double value = pcs.findDoubleByName("parameterValue" + num);
-                paramCodeMap.put(new Integer(code), new double[] { value,
+                paramCodeMap.put(Integer.valueOf(code), new double[] { value,
                         (double) uom });
             } catch (Exception exc) {
                 break;
@@ -649,7 +649,7 @@ public class GeotiffAdapter {
      * @return  true if we have it
      */
     private boolean hasParamCode(int code) {
-        double[] valueAndUom = (double[]) paramCodeMap.get(new Integer(code));
+        double[] valueAndUom = (double[]) paramCodeMap.get(Integer.valueOf(code));
         return (valueAndUom != null);
     }
 
@@ -661,7 +661,7 @@ public class GeotiffAdapter {
      * @return  value for code or dflt
      */
     private double getParamCodeValue(int code, double dflt) {
-        double[] valueAndUom = (double[]) paramCodeMap.get(new Integer(code));
+        double[] valueAndUom = (double[]) paramCodeMap.get(Integer.valueOf(code));
         if (valueAndUom != null) {
             return valueAndUom[0];
         }

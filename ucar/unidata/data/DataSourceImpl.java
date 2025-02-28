@@ -984,7 +984,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
         if (o == null) {
             return dflt;
         }
-        return new Integer(o.toString()).intValue();
+        return Integer.parseInt(o.toString());
     }
 
     /**
@@ -1733,7 +1733,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
 
         if (asString.startsWith("#")) {
             try {
-                int index = new Integer(asString.substring(1)).intValue();
+                int index = Integer.parseInt(asString.substring(1));
                 if ((index < choices.size()) && (index >= 0)) {
                     return Misc.newList(choices.get(index));
                 }
@@ -1797,7 +1797,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
         List   choices  = getDataChoices();
         if (asString.startsWith("#")) {
             try {
-                int index = new Integer(asString.substring(1)).intValue();
+                int index = Integer.parseInt(asString.substring(1));
                 if ((index < choices.size()) && (index >= 0)) {
                     result.add(choices.get(index));
                     return result;

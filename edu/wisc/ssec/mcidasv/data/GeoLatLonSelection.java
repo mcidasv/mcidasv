@@ -1737,7 +1737,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             }
         }
         elementMagLbl.setText("Ele  Mag=");
-        eleMagFld.setText(new Integer(value).toString());
+        eleMagFld.setText(Integer.valueOf(value).toString());
         String str = " Res=" +
             truncateNumericString(Double.toString(this.baseERes*Math.abs(value)), 1);
         elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
@@ -1775,7 +1775,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 setLineMag(value);
             }
             lineMagLbl.setText("Line Mag=");
-            lineMagFld.setText(new Integer(value).toString());
+            lineMagFld.setText(Integer.valueOf(value).toString());
             String str = " Res=" +
                 truncateNumericString(Double.toString(this.baseLRes*Math.abs(value)), 1);
             lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);

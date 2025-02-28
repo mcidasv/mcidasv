@@ -592,7 +592,7 @@ public class VerticalProfileControl extends LineProbeControl {
         JMenuItem jmi;
         jmi = new JMenuItem("Change Unit...");
         paramMenu.add(jmi);
-        jmi.addActionListener(new ObjectListener(new Integer(row)) {
+        jmi.addActionListener(new ObjectListener(Integer.valueOf(row)) {
             public void actionPerformed(ActionEvent ev) {
 
                 Unit newUnit = getDisplayConventions().selectUnit(
@@ -613,7 +613,7 @@ public class VerticalProfileControl extends LineProbeControl {
         // Remove this parameter
         jmi = new JMenuItem("Remove");
         paramMenu.add(jmi);
-        jmi.addActionListener(new ObjectListener(new Integer(row)) {
+        jmi.addActionListener(new ObjectListener(Integer.valueOf(row)) {
             public void actionPerformed(ActionEvent ev) {
                 removeField(((Integer) theObject).intValue());
             }

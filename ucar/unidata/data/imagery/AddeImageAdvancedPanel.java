@@ -348,8 +348,8 @@ public class AddeImageAdvancedPanel extends DataSelectionComponent {
         String magVal = AddeImageDataSource.getKey(source,
                             AddeImageURL.KEY_MAG);
         String[] magVals = magVal.split(" ");
-        this.elementMag = new Integer(magVals[1]).intValue();
-        this.lineMag    = new Integer(magVals[0]).intValue();
+        this.elementMag = Integer.parseInt(magVals[1]);
+        this.lineMag    = Integer.parseInt(magVals[0]);
 
 
         // init information for the location and the default is LATLON
@@ -362,8 +362,8 @@ public class AddeImageAdvancedPanel extends DataSelectionComponent {
         convertToLineEle();
         /*String locVal = AddeImageDataSource.getKey(source, "LINELE");
         String[] locVals = locVal.split(" ");
-        int li = new Integer(locVals[0]).intValue();
-        int el = new Integer(locVals[1]).intValue();
+        int li = Integer.parseInt(locVals[0]);
+        int el = Integer.parseInt(locVals[1]);
         this.areaElement = el;
         this.areaLine = li;
         setElement(el);

@@ -279,11 +279,11 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         String[] timeStrings = begTime.split(":");
         int num = timeStrings.length;
         if (num > 0)
-            hours = (new Integer(timeStrings[0])).intValue();
+            hours = (Integer.parseInt(timeStrings[0]));
         if (num > 1)
-            mins = (new Integer(timeStrings[1])).intValue();
+            mins = (Integer.parseInt(timeStrings[1]));
         if (num > 2)
-            secs = (new Integer(timeStrings[2])).intValue();
+            secs = (Integer.parseInt(timeStrings[2]));
 
         Time bTime = new Time(year, month, day, hours, mins, secs);
 
@@ -299,11 +299,11 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         timeStrings = endTime.split(":");
         num = timeStrings.length;
         if (num > 0)
-            hours = (new Integer(timeStrings[0])).intValue();
+            hours = (Integer.parseInt(timeStrings[0]));
         if (num > 1)
-            mins = (new Integer(timeStrings[1])).intValue();
+            mins = (Integer.parseInt(timeStrings[1]));
         if (num > 2)
-            secs = (new Integer(timeStrings[2])).intValue();
+            secs = (Integer.parseInt(timeStrings[2]));
 
         Time eTime = new Time(year, month, day, hours, mins, secs);
         
@@ -337,11 +337,11 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         String[] timeStrings = begTime.split(":");
         int num = timeStrings.length;
         if (num > 0)
-            hours = (new Integer(timeStrings[0])).intValue();
+            hours = (Integer.parseInt(timeStrings[0]));
         if (num > 1)
-            mins = (new Integer(timeStrings[1])).intValue();
+            mins = (Integer.parseInt(timeStrings[1]));
         if (num > 2)
-            secs = (new Integer(timeStrings[2])).intValue();
+            secs = (Integer.parseInt(timeStrings[2]));
         if ((hours < 0) || (hours > 23)) hours = 0;
         if ((mins < 0) || (mins > 59)) mins = 0;
         if ((secs < 0.0) || (secs > 59.0)) secs = 0.0;
@@ -352,15 +352,15 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         String begTimeStr = bigD.toString();
         dataSelection.putProperty(PROP_BEGTIME, bTime.getDateTimeStr());
 
-        Integer intVal = new Integer(year);
+        Integer intVal = Integer.valueOf(year);
         dataSelection.putProperty(PROP_YEAR, intVal.toString());
-        intVal = new Integer(month);
+        intVal = Integer.valueOf(month);
         dataSelection.putProperty(PROP_MONTH, intVal.toString());
-        intVal = new Integer(day);
+        intVal = Integer.valueOf(day);
         dataSelection.putProperty(PROP_DAY, intVal.toString());
-        intVal = new Integer(hours);
+        intVal = Integer.valueOf(hours);
         dataSelection.putProperty(PROP_HOURS, intVal.toString());
-        intVal = new Integer(mins);
+        intVal = Integer.valueOf(mins);
         dataSelection.putProperty(PROP_MINS, intVal.toString());
         Double doubleVal = Double.valueOf(secs);
         dataSelection.putProperty(PROP_SECS, doubleVal.toString());
@@ -377,11 +377,11 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         timeStrings = endTime.split(":");
         num = timeStrings.length;
         if (num > 0)
-            hours = (new Integer(timeStrings[0])).intValue();
+            hours = (Integer.parseInt(timeStrings[0]));
         if (num > 1)
-            mins = (new Integer(timeStrings[1])).intValue();
+            mins = (Integer.parseInt(timeStrings[1]));
         if (num > 2)
-            secs = (new Integer(timeStrings[2])).intValue();
+            secs = (Integer.parseInt(timeStrings[2]));
         if ((hours < 0) || (hours > 23)) hours = 0;
         if ((mins < 0) || (mins > 59)) mins = 0;
         if ((secs < 0.0) || (secs > 59.0)) secs = 0.0;

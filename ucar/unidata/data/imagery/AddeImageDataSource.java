@@ -1524,8 +1524,8 @@ public class AddeImageDataSource extends ImageDataSource {
         if(magVal.length() == 0)
             return;
         String[] magVals = magVal.split(" ");
-        eMag = new Integer(magVals[1]).intValue();
-        lMag = new Integer(magVals[0]).intValue();
+        eMag = Integer.parseInt(magVals[1]);
+        lMag = Integer.parseInt(magVals[0]);
     }
 
     /**

@@ -488,7 +488,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                     for (int i=0; i<num; i++) {
                         attr = (String)(props.get(i));
                         if (attr.equals(ATTR_POS)) {
-                            val = new Integer(numImages - 1).toString();
+                            val = Integer.valueOf(numImages - 1).toString();
                         } else if (attr.equals(ATTR_DAY)) {
                             val = dateS;
                         } else if (attr.equals(ATTR_TIME)) {
@@ -956,7 +956,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                     for (int i = 0; i < num; i++) {
                         attr = (String)(props.get(i));
                         if (attr.equals(ATTR_POS)) {
-                            val = new Integer(numImages - 1).toString();
+                            val = Integer.valueOf(numImages - 1).toString();
                         } else if (attr.equals(ATTR_DAY)) {
                             val = dateS;
                         } else if (attr.equals(ATTR_TIME)) {

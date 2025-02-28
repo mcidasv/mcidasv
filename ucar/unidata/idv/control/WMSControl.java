@@ -998,11 +998,11 @@ public class WMSControl extends ImageControl implements ImageObserver {
                                       Double.valueOf(resolution));
             }
             requestProperties.put(WmsDataSource.PROP_IMAGEWIDTH,
-                                  new Integer(imageWidth));
+                                  Integer.valueOf(imageWidth));
             //            System.err.println ("imageWidth:" + imageWidth + " imageHeight:" + imageHeight);
 
             requestProperties.put(WmsDataSource.PROP_IMAGEHEIGHT,
-                                  new Integer(imageHeight));
+                                  Integer.valueOf(imageHeight));
 
             //            theDataChoice.setFixedRequestProperties(requestProperties);
             if (writeFile != null) {

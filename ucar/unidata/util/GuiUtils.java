@@ -2571,10 +2571,10 @@ public class GuiUtils extends LayoutUtil {
             }
             try {
                 int start =
-                    new Integer(intervalStartFld.getText().trim()).intValue()
+                    Integer.parseInt(intervalStartFld.getText().trim())
                     - 1;
                 int step =
-                    new Integer(intervalStepFld.getText().trim()).intValue();
+                    Integer.parseInt(intervalStepFld.getText().trim());
                 list.clearSelection();
                 for (int idx = start; idx < size; idx += step) {
                     list.addSelectionInterval(idx, idx);
@@ -3726,7 +3726,7 @@ public class GuiUtils extends LayoutUtil {
             box.setEditable(true);
         }
         box.setActionCommand(command);
-        box.setSelectedItem(new Integer(initValue));
+        box.setSelectedItem(Integer.valueOf(initValue));
         //Add the listener at the end so we don't get the event
         //fired from the prior setSelectedItem
         box.addActionListener(listener);
@@ -4835,7 +4835,7 @@ public class GuiUtils extends LayoutUtil {
                         try {
                             theMethod.invoke(object,
                                              new Object[] {
-                                                 new Integer(theIndex) });
+                                                 Integer.valueOf(theIndex) });
                         } catch (Exception exc) {
                             logger.error("Error in makeCheckbox", exc);
                         }
@@ -5209,7 +5209,7 @@ public class GuiUtils extends LayoutUtil {
                                          int current) {
         List      l        = TwoFacedObject.createList(values, labels);
         JComboBox box      = new JComboBox(new Vector(l));
-        Object    selected = TwoFacedObject.findId(new Integer(current), l);
+        Object    selected = TwoFacedObject.findId(Integer.valueOf(current), l);
         if (selected != null) {
             box.setSelectedItem(selected);
         }
@@ -5294,7 +5294,7 @@ public class GuiUtils extends LayoutUtil {
                     int value = slider.getValue();
                     try {
                         theMethod.invoke(listener,
-                                         new Object[] { new Integer(value) });
+                                         new Object[] { Integer.valueOf(value) });
                     } catch (Exception exc) {
                         logger.error("Error invoking method", exc);
                     }
@@ -5373,7 +5373,7 @@ public class GuiUtils extends LayoutUtil {
         int[]  fontSizes    = GuiUtils.FONT_SIZES;
         Vector fontSizeList = new Vector();
         for (int i = 0; i < FONT_SIZES.length; i++) {
-            fontSizeList.add(new Integer(FONT_SIZES[i]));
+            fontSizeList.add(Integer.valueOf(FONT_SIZES[i]));
         }
         return fontSizeList;
     }
@@ -6194,7 +6194,7 @@ public class GuiUtils extends LayoutUtil {
      */
     public static JComboBox doMakeFontSizeBox(int size) {
         JComboBox fontSizeBox = new JComboBox(GuiUtils.getFontSizeList());
-        fontSizeBox.setSelectedItem(new Integer(size));
+        fontSizeBox.setSelectedItem(Integer.valueOf(size));
         return fontSizeBox;
     }
 

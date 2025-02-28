@@ -314,9 +314,9 @@ public class EnviInfo extends HeaderInfo {
                 // anything other than default values later (both "lines" and "samples")
 
                 else if (parameter.equals("samples")) {
-                    setParameter(ELEMENTS, new Integer(value));
+                    setParameter(ELEMENTS, Integer.valueOf(value));
                 } else if (parameter.equals("lines")) {
-                    setParameter(LINES, new Integer(value));
+                    setParameter(LINES, Integer.valueOf(value));
                 } else if (parameter.equals("header offset")) {
                     setParameter(OFFSET, Integer.parseInt(value));
                 } else if (parameter.equals("data type")) {

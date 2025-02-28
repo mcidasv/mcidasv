@@ -234,7 +234,7 @@ public class NearCastTrajDataSource extends DataSourceImpl {
         String name = paramList[idx];
         DirectDataChoice ddc = null;
         if (ncFile.hasArray(name)) {
-            ddc = new DirectDataChoice(this, new Integer(idx), name, name, null, new Hashtable());
+            ddc = new DirectDataChoice(this, Integer.valueOf(idx), name, name, null, new Hashtable());
         }
         return ddc;
     }

@@ -132,7 +132,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
 */
         if ((properties == null) || (properties.get(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY) == null)) {
           List frames = new ArrayList();
-          frames.add(new Integer(-1));
+          frames.add(Integer.valueOf(-1));
           properties.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, frames);
         }
 
@@ -378,7 +378,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
       SingleBandedImage image = getMcIdasFrame(frameNumber, frameComponentInfo, frameDirtyInfo);
       if (image != null) {
          if (shouldCache((Data)image)) {
-            Integer fo = new Integer(frameNumber);
+            Integer fo = Integer.valueOf(frameNumber);
             putCache(fo,image);
          }
       }
@@ -509,7 +509,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
             if (frameNo != null) {
             	frameNos.add(frameNo);
             	//We will create the  data choice with an index, not with the actual frame number.
-            	frameSelect = new DataSelection(Misc.newList(new Integer(cnt)));
+            	frameSelect = new DataSelection(Misc.newList(Integer.valueOf(cnt)));
             }
             frameSelect = null;
             DataChoice choice =

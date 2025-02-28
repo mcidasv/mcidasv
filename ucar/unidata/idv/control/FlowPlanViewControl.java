@@ -193,7 +193,7 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
     JComponent trajFormComponent;
 
     /** default type */
-    private Integer trajFormType = new Integer(0);
+    private Integer trajFormType = Integer.valueOf(0);
 
     /** _more_ */
     private Range flowColorRange;
@@ -1024,9 +1024,9 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
                              "Scale", SETTINGS_GROUP_DISPLAY);
         dsd.addPropertyValue(Double.valueOf(trajOffsetValue), "trajOffset",
                              "Offset Length", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Integer(trajFormType), "trajFormType",
+        dsd.addPropertyValue(Integer.valueOf(trajFormType), "trajFormType",
                              "Traj Form", SETTINGS_GROUP_DISPLAY);
-        dsd.addPropertyValue(new Integer(getSkipValue()), "skipValue",
+        dsd.addPropertyValue(Integer.valueOf(getSkipValue()), "skipValue",
                              "Skip Factor", SETTINGS_GROUP_DISPLAY);
         dsd.addPropertyValue(Double.valueOf(getStreamlineDensity()),
                              "streamlineDensity", "Streamline Density",

@@ -908,7 +908,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
         }
 
-        DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, subset);
+        DirectDataChoice ddc = new DirectDataChoice(this, Integer.valueOf(idx), name, name, categories, subset);
         ddc.setProperties(subset);
         return ddc;
     }

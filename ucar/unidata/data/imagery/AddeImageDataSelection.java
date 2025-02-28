@@ -499,8 +499,8 @@ public class AddeImageDataSelection {
             /*String magVal = AddeImageDataSource.getKey(source,
                                 AddeImageURL.KEY_MAG);
             String[] magVals = magVal.split(" ");
-            this.elementMag = new Integer(magVals[1]).intValue();
-            this.lineMag    = new Integer(magVals[0]).intValue();
+            this.elementMag = Integer.parseInt(magVals[1]);
+            this.lineMag    = Integer.parseInt(magVals[0]);
             */
 
             // init information for the location and the default is LATLON
@@ -564,8 +564,8 @@ public class AddeImageDataSelection {
             String magVal = AddeImageDataSource.getKey(source,
                                 AddeImageURL.KEY_MAG);
             String[] magVals = magVal.split(" ");
-            /*this.elementMag = new Integer(magVals[1]).intValue();
-            this.lineMag    = new Integer(magVals[0]).intValue();  */
+            /*this.elementMag = Integer.parseInt(magVals[1]);
+            this.lineMag    = Integer.parseInt(magVals[0]);  */
             setLineMagSlider(urlInfo.getLineMag());
             setElementMagSlider(urlInfo.getElementMag());
 

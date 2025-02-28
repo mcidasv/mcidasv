@@ -2022,8 +2022,8 @@ public class ImageGenerator extends IdvManager {
         if ((width != null) && (height != null)) {
             getIdv().getStateManager().setViewSize(
                 new Dimension(
-                    new Integer(width).intValue(),
-                    new Integer(height).intValue()));
+                    Integer.parseInt(width),
+                    Integer.parseInt(height)));
         }
 
         if (vms.size() == 0) {
@@ -2068,7 +2068,7 @@ public class ImageGenerator extends IdvManager {
         boolean end         = indexString.equals("end");
         boolean step        = indexString.equals("step");
         if ( !end && !step) {
-            index = new Integer(indexString).intValue();
+            index = Integer.parseInt(indexString);
         }
         for (ViewManager viewManager : getViewManagers(node)) {
             AnimationWidget animationWidget =
@@ -2466,8 +2466,8 @@ public class ImageGenerator extends IdvManager {
         if ((width != null) && (height != null)) {
             getIdv().getStateManager().setViewSize(
                 new Dimension(
-                    new Integer(width).intValue(),
-                    new Integer(height).intValue()));
+                    Integer.parseInt(width),
+                    Integer.parseInt(height)));
         }
         String  bundleFile = applyMacros(node, ATTR_FILE, (String) null);
         boolean doRemove   = applyMacros(node, ATTR_CLEAR, true);
@@ -3213,7 +3213,7 @@ public class ImageGenerator extends IdvManager {
                 List times = new ArrayList();
                 for (String tok :
                         StringUtil.split(timeString, ",", true, true)) {
-                    times.add(new Integer(tok));
+                    times.add(Integer.valueOf(tok));
                 }
                 dataSelection.setTimes(times);
             }
@@ -3914,7 +3914,7 @@ public class ImageGenerator extends IdvManager {
      * @param v  the index
      */
     public void putIndex(Hashtable props, String name, int v) {
-        props.put(name, new Integer(v));
+        props.put(name, Integer.valueOf(v));
         props.put(name + "_alpha", getLetter(v).toLowerCase());
         props.put(name + "_ALPHA", getLetter(v).toUpperCase());
         
@@ -3952,7 +3952,7 @@ public class ImageGenerator extends IdvManager {
         for (int i = 0; i < viewManagers.size(); i++) {
             ViewManager viewManager = (ViewManager) viewManagers.get(i);
             if (viewId.startsWith("#")) {
-                int viewIndex = new Integer(viewId.substring(1)).intValue();
+                int viewIndex = Integer.parseInt(viewId.substring(1));
                 if (viewIndex == i) {
                     goodOnes.add(viewManager);
                     //                    System.err.println("\tskipping index");
@@ -5211,9 +5211,9 @@ public class ImageGenerator extends IdvManager {
                     for (int col = 0; col < cols; col++) {
                         pushProperties();
                         Hashtable myprops = new Hashtable();
-                        putProperty("row", new Integer(row));
-                        putProperty("column", new Integer(col));
-                        putProperty("count", new Integer(++cnt));
+                        putProperty("row", Integer.valueOf(row));
+                        putProperty("column", Integer.valueOf(col));
+                        putProperty("count", Integer.valueOf(++cnt));
                         String realFile = applyMacros(file, myprops);
                         Image splitImage = image.getSubimage(hSpace * col,
                                                vSpace * row, hSpace, vSpace);
@@ -5910,7 +5910,7 @@ public class ImageGenerator extends IdvManager {
             ViewManager viewManager =
                 getIdv().getVMManager().getLastActiveViewManager();
 
-            getProperties().put(PROP_VIEWINDEX, new Integer(0));
+            getProperties().put(PROP_VIEWINDEX, Integer.valueOf(0));
             String name = viewManager.getName();
             if (name == null) {
                 name = "view" + 0;
@@ -5945,7 +5945,7 @@ public class ImageGenerator extends IdvManager {
             for (int i = 0; i < viewManagers.size(); i++) {
                 ViewManager viewManager = viewManagers.get(i);
 
-                getProperties().put(PROP_VIEWINDEX, new Integer(i));
+                getProperties().put(PROP_VIEWINDEX, Integer.valueOf(i));
                 String name = viewManager.getName();
                 if (name == null) {
                     name = "view" + i;

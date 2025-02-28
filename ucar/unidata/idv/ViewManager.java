@@ -2110,13 +2110,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             if (fullScreenWidthFld.getText().trim().equals("")  || fullScreenWidthFld.getText().trim().equals("0")) {
                 width = 0;
             } else {
-                width = new Integer(fullScreenWidthFld.getText().trim()).intValue();
+                width = Integer.parseInt(fullScreenWidthFld.getText().trim());
             }
 
             if (fullScreenHeightFld.getText().trim().equals("") || fullScreenHeightFld.getText().trim().equals("0")) {
                 height = 0;
             } else {
-                height = new Integer(fullScreenHeightFld.getText().trim()).intValue();
+                height = Integer.parseInt(fullScreenHeightFld.getText().trim());
             }
 
             if ((width != fullScreenWidth) || (height != fullScreenHeight)) {
@@ -4032,7 +4032,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
             /**
              *  Lets not use numeric keys to toggle specific displays anymore
-             * stepVisibilityToggle(new Integer("" + c).intValue());
+             * stepVisibilityToggle(Integer.parseInt("" + c));
              * runVisibilityAnimation = false;
              * if (animationCB != null) {
              *   animationCB.setSelected(false);

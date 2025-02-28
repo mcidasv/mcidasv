@@ -765,14 +765,14 @@ public abstract class DisplayRendererJ3D
       int ALLOW_PLANE_WRITE =
         modelClipClass.getField("ALLOW_PLANE_WRITE").getInt(modelClip);
       modelClipSetCapability.invoke(modelClip,
-                         new Object[] {new Integer(ALLOW_PLANE_WRITE)});
+                         new Object[] {Integer.valueOf(ALLOW_PLANE_WRITE)});
       int ALLOW_ENABLE_WRITE =
         modelClipClass.getField("ALLOW_ENABLE_WRITE").getInt(modelClip);
       modelClipSetCapability.invoke(modelClip,
-                         new Object[] {new Integer(ALLOW_ENABLE_WRITE)});
+                         new Object[] {Integer.valueOf(ALLOW_ENABLE_WRITE)});
       Boolean f = new Boolean(false);
       for (int i=0; i<6; i++) {
-        modelClipSetEnable.invoke(modelClip, new Object[] {new Integer(i), f});
+        modelClipSetEnable.invoke(modelClip, new Object[] {Integer.valueOf(i), f});
       }
       BoundingSphere bound3 =
         new BoundingSphere(new Point3d(0.0,0.0,0.0),2000000.0);
@@ -843,9 +843,9 @@ public abstract class DisplayRendererJ3D
     }
     Vector4d vect = new Vector4d((double) a, (double) b, (double) c, (double) d);
     try {
-      Object[] params = {new Integer(plane), new Boolean(enable)};
+      Object[] params = {Integer.valueOf(plane), new Boolean(enable)};
       modelClipSetEnable.invoke(modelClip, params);
-      params = new Object[] {new Integer(plane), vect};
+      params = new Object[] {Integer.valueOf(plane), vect};
       modelClipSetPlane.invoke(modelClip, params);
       modelClipEnables[plane] = enable;
     } catch (InvocationTargetException | IllegalAccessException e) {
@@ -858,7 +858,7 @@ public abstract class DisplayRendererJ3D
     try {
       for (int i=0; i<6; i++) {
         if (modelClipEnables[i]) {
-          Object[] params = {new Integer(i), new Boolean(false)};
+          Object[] params = {Integer.valueOf(i), new Boolean(false)};
           modelClipSetEnable.invoke(modelClip, params);
         }
       }
@@ -872,7 +872,7 @@ public abstract class DisplayRendererJ3D
     try {
       for (int i=0; i<6; i++) {
         if (modelClipEnables[i]) {
-          Object[] params = {new Integer(i), new Boolean(true)};
+          Object[] params = {Integer.valueOf(i), new Boolean(true)};
           modelClipSetEnable.invoke(modelClip, params);
         }
       }

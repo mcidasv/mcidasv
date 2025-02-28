@@ -317,7 +317,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     if (!calType.equals("RAW")) {
                         sourceProps.put(UNIT_KEY, calType);
                         int[] bandNums = areaDirectory.getBands();
-                        String bandString = new Integer(bandNums[0]).toString();
+                        String bandString = Integer.valueOf(bandNums[0]).toString();
                         sourceProps.put(BAND_KEY, bandString);
                     }
                 }
@@ -754,8 +754,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (sourceProps.containsKey(magKey)) {
             String magVal = (String)(sourceProps.get(magKey));
             String[] magVals = magVal.split(" ");
-            this.lineMag = new Integer(magVals[0]).intValue();
-            this.elementMag = new Integer(magVals[1]).intValue();
+            this.lineMag = Integer.parseInt(magVals[0]);
+            this.elementMag = Integer.parseInt(magVals[1]);
         }
     }
 
@@ -784,7 +784,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             try {
                 List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object)null);
                 BandInfo bi = bandInfos.get(0);
-//                String bandStr = new Integer(bi.getBandNumber()).toString();
+//                String bandStr = Integer.valueOf(bi.getBandNumber()).toString();
                 addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bi.getBandNumber());
                 dirList = new AreaDirectoryList(addeCmdBuff);
             } catch (Exception eOpen) {
@@ -900,12 +900,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     String magStr = getKey(baseSource, MAG_KEY);
                     String saveMagStr = magStr;
                     String[] vals = StringUtil.split(magStr, " ", 2);
-                    Integer iVal = new Integer(vals[0]);
+                    Integer iVal = Integer.valueOf(vals[0]);
                     int lMag = iVal.intValue() * -1;
                     if (lMag == -1) {
                         lMag = 1;
                     }
-                    iVal = new Integer(vals[1]);
+                    iVal = Integer.valueOf(vals[1]);
                     int eMag = iVal.intValue() * -1;
                     if (eMag == -1) {
                         eMag = 1;
@@ -959,9 +959,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     replaceKey(MAG_KEY, saveMagStr);
                     magStr = getKey(baseSource, MAG_KEY);
                     vals = StringUtil.split(magStr, " ", 2);
-                    iVal = new Integer(vals[0]);
+                    iVal = Integer.valueOf(vals[0]);
                     lMag = iVal.intValue();
-                    iVal = new Integer(vals[1]);
+                    iVal = Integer.valueOf(vals[1]);
                     eMag = iVal.intValue();
 
                     this.initProps.put("LRES", String.valueOf((this.lRes)));
@@ -1103,7 +1103,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             Object dcObj = dataChoice.getId();
             if (dcObj instanceof BandInfo) {
                 bi = (BandInfo) dcObj;
-                Integer bandInt = new Integer(bandInfos.indexOf(dcObj)+1);
+                Integer bandInt = Integer.valueOf(bandInfos.indexOf(dcObj)+1);
                 saveBand = bandInt.toString();
             } else {
                 msgFlag = true;
@@ -1312,8 +1312,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (sourceProps.containsKey(magKey)) {
                 String magVal = (String)(sourceProps.get(magKey));
                 String[] magVals = magVal.split(" ");
-                peMag = new Integer(magVals[0]).intValue();
-                plMag = new Integer(magVals[1]).intValue();
+                peMag = Integer.parseInt(magVals[0]);
+                plMag = Integer.parseInt(magVals[1]);
             }
             double feSize = (double) previewDir.getElements();
             double flSize = (double) previewDir.getLines();
@@ -1585,7 +1585,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         BandInfo bi = null;
         if (sourceProps.containsKey(BAND_KEY)) {
-            int bandProp = new Integer((String)(sourceProps.get(BAND_KEY))).intValue();
+            int bandProp = Integer.parseInt((String)(sourceProps.get(BAND_KEY)));
             int bandIndex = BandInfo.findIndexByNumber(bandProp, bandInfos);
             bi = (BandInfo)bandInfos.get(bandIndex);
             if (sourceProps.containsKey(UNIT_KEY)) {
@@ -1776,8 +1776,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (this.selectionProps.containsKey("MAG")) {
             String str = (String)this.selectionProps.get("MAG");
             String[] strs = StringUtil.split(str, " ", 2);
-            this.lineMag = new Integer(strs[0]).intValue();
-            this.elementMag = new Integer(strs[1]).intValue();
+            this.lineMag = Integer.parseInt(strs[0]);
+            this.elementMag = Integer.parseInt(strs[1]);
         }
         this.choiceName = dataChoice.getName();
         if (this.choiceName != null) {
@@ -1838,9 +1838,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
                 String sizeStr = (String)(subsetProperties.get(key));
                 String[] vals = StringUtil.split(sizeStr, " ", 2);
-                Integer iVal = new Integer(vals[0]);
+                Integer iVal = Integer.valueOf(vals[0]);
                 numLines = iVal.intValue();
-                iVal = new Integer(vals[1]);
+                iVal = Integer.valueOf(vals[1]);
                 numEles = iVal.intValue();
                 break;
             }
@@ -2165,7 +2165,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         int band = 0;
                         String bandString = aii.getBand();
                         if ((bandString != null) && !AddeURL.ALL.equals(bandString)) {
-                            band = new Integer(bandString).intValue();
+                            band = Integer.parseInt(bandString);
                         }
                         // TODO: even though the band is non-zero we might only 
                         // get back one band
@@ -2635,7 +2635,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        boolean isRelative = aid.getIsRelative();
 //        for (int i=0; i<times; i++) {
 //            if (isRelative) {
-//                src = replaceKey(src, "POS", new Integer(i).toString());
+//                src = replaceKey(src, "POS", Integer.valueOf(i).toString());
 //            } else {
 //                DateTime dt = (DateTime)imageTimes.get(i);
 //                String timeStr = dt.timeString();
@@ -2970,7 +2970,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
 //        for (int i = 0; i < times; i++) {
 //            if (isRelative) {
-//                src = replaceKey(src, "POS", new Integer(i).toString());
+//                src = replaceKey(src, "POS", Integer.valueOf(i).toString());
 //            } else {
 //                DateTime dt = (DateTime)imageTimes.get(i);
 //                String timeStr = dt.timeString();

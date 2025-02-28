@@ -1216,7 +1216,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         // Restore date/time
         if (restoreElement.hasAttribute(ATTR_POS)) {
             setDoAbsoluteTimes(false);
-            Integer pos = new Integer(restoreElement.getAttribute(ATTR_POS));
+            Integer pos = Integer.valueOf(restoreElement.getAttribute(ATTR_POS));
             if (pos.intValue() >= 0) {
                 getRelativeTimesList().setSelectedIndex(pos);
             }

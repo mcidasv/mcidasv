@@ -1879,13 +1879,13 @@ public class StormTrackControl extends DisplayControlImpl {
             StormInfo stormInfo = stormInfos.get(i);
             cal.setTime(ucar.visad.Util.makeDate(stormInfo.getStartTime()));
             int year = cal.get(Calendar.YEAR);
-            if (years.get(new Integer(year)) == null) {
+            if (years.get(Integer.valueOf(year)) == null) {
                 YearDisplayState yds = getYearDisplayState(year);
                 yearComps.add(new JLabel("" + year));
                 yearComps.add(yds.getButton());
                 yearComps.add(GuiUtils.wrap(yds.getColorSwatch()));
                 yearComps.add(yds.getLabel());
-                years.put(new Integer(year), "");
+                years.put(Integer.valueOf(year), "");
                 if (yearComps.size() > 20) {
                     GuiUtils.tmpInsets = GuiUtils.INSETS_5;
                     yearPanels.add(GuiUtils.doLayout(yearComps, 4,
@@ -2125,10 +2125,10 @@ public class StormTrackControl extends DisplayControlImpl {
      */
     public YearDisplayState getYearDisplayState(int year) {
         YearDisplayState yearDisplayState =
-            yearDisplayStateMap.get(new Integer(year));
+            yearDisplayStateMap.get(Integer.valueOf(year));
         if (yearDisplayState == null) {
             yearDisplayState = new YearDisplayState(this, year);
-            yearDisplayStateMap.put(new Integer(year), yearDisplayState);
+            yearDisplayStateMap.put(Integer.valueOf(year), yearDisplayState);
         }
         return yearDisplayState;
     }
@@ -2144,7 +2144,7 @@ public class StormTrackControl extends DisplayControlImpl {
             yearDisplayStateMap = new Hashtable<Integer, YearDisplayState>();
             for (YearDisplayState yearDisplayState : value) {
                 yearDisplayStateMap.put(
-                    new Integer(yearDisplayState.getYear()),
+                    Integer.valueOf(yearDisplayState.getYear()),
                     yearDisplayState);
             }
         }

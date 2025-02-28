@@ -1619,7 +1619,7 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
                 if(row!=0) {
                     JMenuItem mi = new JMenuItem("Move Up");
                     moveMenu.add(mi);
-                    mi.addActionListener(new ObjectListener(new Integer(row)) {
+                    mi.addActionListener(new ObjectListener(Integer.valueOf(row)) {
                     public void actionPerformed(ActionEvent ev) {
                         Object o = infos.get(row);
                         infos.remove(row);

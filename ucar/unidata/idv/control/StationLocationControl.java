@@ -1937,7 +1937,7 @@ public class StationLocationControl extends StationModelControl {
             idItems.add(
                 new TwoFacedObject(
                     StationLocationDisplayable.ID_NAMES[i],
-                    new Integer(StationLocationDisplayable.IDS[i])));
+                    Integer.valueOf(StationLocationDisplayable.IDS[i])));
 
         }
 
@@ -1957,7 +1957,7 @@ public class StationLocationControl extends StationModelControl {
         for (int i = 0; i < StationLocationDisplayable.SYMBOLS.length; i++) {
             TwoFacedObject listItem = new TwoFacedObject(
                     StationLocationDisplayable.SYMBOL_NAMES[i],
-                    new Integer(StationLocationDisplayable.SYMBOLS[i]));
+                    Integer.valueOf(StationLocationDisplayable.SYMBOLS[i]));
             if (StationLocationDisplayable.SYMBOL_NAMES[i].equals("Circle")) {
                 defaultSymbol = listItem;
             }
@@ -2311,10 +2311,10 @@ public class StationLocationControl extends StationModelControl {
     @Override public void actionPerformed(ActionEvent ae) {
         String cmd = ae.getActionCommand();
         if (cmd.startsWith("symbol")) {
-            symbolType = new Integer(cmd.substring(6)).intValue();
+            symbolType = Integer.parseInt(cmd.substring(6));
             updateDisplayable();
         } else if (cmd.startsWith("id")) {
-            idType = new Integer(cmd.substring(2)).intValue();
+            idType = Integer.parseInt(cmd.substring(2));
             updateDisplayable();
         } else {
             super.actionPerformed(ae);

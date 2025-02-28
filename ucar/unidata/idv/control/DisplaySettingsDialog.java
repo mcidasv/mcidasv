@@ -1112,7 +1112,7 @@ public class DisplaySettingsDialog {
                 } else if (value instanceof Float) {
                     newValue = new Float(newString);
                 } else if (value instanceof Integer) {
-                    newValue = new Integer(newString);
+                    newValue = Integer.valueOf(newString);
                 }
                 propertyValue.setValue(newValue);
             } else if (value instanceof Unit) {

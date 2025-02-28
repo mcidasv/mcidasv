@@ -5907,7 +5907,7 @@ public class GridUtil {
                     if (indexLists[mapIdx] == null) {
                         indexLists[mapIdx] = new ArrayList<Integer>();
                     }
-                    indexLists[mapIdx].add(new Integer(i));
+                    indexLists[mapIdx].add(Integer.valueOf(i));
                     break;
                 }
             }

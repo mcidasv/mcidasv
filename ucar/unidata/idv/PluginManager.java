@@ -1227,7 +1227,7 @@ public class PluginManager extends IdvManager {
                                        + ".propwidth");
                     if (width != null) {
                         pi.widget = new JTextField(text,
-                                new Integer(width.trim()).intValue());
+                                Integer.parseInt(width.trim()));
                         ((JTextField) pi.widget).setCaretPosition(0);
                         pi.outerWidget = GuiUtils.left(pi.widget);
                     } else {
@@ -2440,7 +2440,7 @@ public class PluginManager extends IdvManager {
                 + "');\"><img alt='Import Plugin into Plugin Creator' src=\"idvresource:/auxdata/ui/icons/DocumentOpen16.png\" border=\"0\"></a>";
             String sizeString = "";
             if (plugin.size != null) {
-                int s = new Integer(plugin.size).intValue();
+                int s = Integer.parseInt(plugin.size);
                 sizeString = "&nbsp;" + HtmlUtil.b((s / 1000) + "KB");
             }
 

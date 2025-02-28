@@ -890,7 +890,7 @@ public class Plotter {
 
             // Use 1 bit colour (true monochrome)
             pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_INDEXED,
-                                             new Integer(1));
+                                             Integer.valueOf(1));
             // And switch off antialiasing - this uses shades
             svgRoot.setAttributeNS(null, "shape-rendering", "crispEdges");
             svgRoot.setAttributeNS(null, "text-rendering", "optimizeSpeed");
@@ -1123,7 +1123,7 @@ public class Plotter {
         if (colours != null) {
             for (int i = 0; i < colours.length; i++) {
                 int     rgbInt = colours[i].getRGB() & 0xFFFFFF;
-                Integer rgb    = new Integer(rgbInt);
+                Integer rgb    = Integer.valueOf(rgbInt);
                 colourList.add(rgb);
                 reservedList.add(rgb);
             }
@@ -1137,7 +1137,7 @@ public class Plotter {
                 int rgb = image32.getRGB(i, j) & 0xFFFFFF;
 
                 // Make a list of every colour used
-                Integer rgbInteger = new Integer(rgb);
+                Integer rgbInteger = Integer.valueOf(rgb);
                 if ( !colourList.contains(rgbInteger)) {
                     colourList.add(rgbInteger);
                 }
@@ -1150,11 +1150,11 @@ public class Plotter {
                 }
                 Integer count = (Integer) colourWeights.get(rgbInteger);
                 if (count == null) {
-                    colourWeights.put(rgbInteger, new Integer(weight));
+                    colourWeights.put(rgbInteger, Integer.valueOf(weight));
                 } else {
                     int countInt = count.intValue() + weight;
                     colourWeights.remove(rgbInteger);
-                    colourWeights.put(rgbInteger, new Integer(countInt));
+                    colourWeights.put(rgbInteger, Integer.valueOf(countInt));
                 }
             }
         }
