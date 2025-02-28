@@ -504,7 +504,7 @@ public class XmlObjectStore implements PersistentStore {
      *  @param value The value to store.
      */
     public void put(String key, short value) {
-        put(key, new Short(value));
+        put(key, Short.valueOf(value));
     }
 
     /**
@@ -531,7 +531,7 @@ public class XmlObjectStore implements PersistentStore {
      *  @param value The value to store.
      */
     public void put(String key, long value) {
-        put(key, new Long(value));
+        put(key, Long.valueOf(value));
     }
 
     /**
@@ -656,7 +656,7 @@ public class XmlObjectStore implements PersistentStore {
         if (value == null || value.toString().isEmpty()) {
             return dflt;
         }
-        return new Short(value.toString()).shortValue();
+        return Short.valueOf(value.toString()).shortValue();
     }
 
     /**
@@ -698,7 +698,7 @@ public class XmlObjectStore implements PersistentStore {
         if (value == null || value.toString().isEmpty()) {
             return dflt;
         }
-        return new Long(value.toString()).longValue();
+        return Long.valueOf(value.toString()).longValue();
     }
 
     /**

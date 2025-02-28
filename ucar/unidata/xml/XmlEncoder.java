@@ -537,7 +537,7 @@ public class XmlEncoder extends XmlUtil {
         addDelegateForClass(Date.class, new XmlDelegateImpl() {
             public Element createElement(XmlEncoder e, Object o) {
                 Date p     = (Date) o;
-                List args  = Misc.newList(new Long(p.getTime()));
+                List args  = Misc.newList(Long.valueOf(p.getTime()));
                 List types = Misc.newList(Long.TYPE);
                 return e.createObjectConstructorElement(o, args, types);
             }

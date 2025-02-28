@@ -387,7 +387,7 @@ public class TextLabel extends BranchGroup {
      */
     protected Material getMaterial(Integer diffuseColor, Integer ambientColor, float shininess) {
         if (diffuseColor != null) {
-            Long materialKey = new Long(diffuseColor + (ambientColor << 24) + ((char)(shininess * 128) << 48));
+            Long materialKey = Long.valueOf(diffuseColor + (ambientColor << 24) + ((char)(shininess * 128) << 48));
             Material material = materials.get(materialKey);
             if (material == null) {
                 Color3f ambientMaterialColor = new Color3f(((ambientColor >>> 16) & 0xFF) / 255f,
