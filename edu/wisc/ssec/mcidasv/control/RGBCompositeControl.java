@@ -33,11 +33,7 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -97,6 +93,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
     private double redGamma = DEFAULT_GAMMA;
     private double grnGamma = DEFAULT_GAMMA;
     private double bluGamma = DEFAULT_GAMMA;
+
+    private JCheckBox matchFieldsCbox = null;
 
     private final JTextField gammaTxtFld =
         new JTextField(Double.toString(gamma), 4);
@@ -473,19 +471,51 @@ public class RGBCompositeControl extends DisplayControlImpl {
             updateGamma(Double.valueOf(tmp));
         });
 
+        // McIDAS Inquiry #3193-3141
         redLowTxtFld.addActionListener(e -> {
-            String tmp = redLowTxtFld.getText().trim();
-            updateRedRange(Double.valueOf(tmp), redRange[1]);
+            if (matchFieldsCbox.isSelected()) {
+                grnLowTxtFld.setText(redLowTxtFld.getText());
+                bluLowTxtFld.setText(redLowTxtFld.getText());
+
+                redHighTxtFld.setText(redHighTxtFld.getText());
+                bluHighTxtFld.setText(bluHighTxtFld.getText());
+                grnHighTxtFld.setText(grnHighTxtFld.getText());
+            }
+
+            Double l1 = Double.valueOf(redLowTxtFld.getText().trim());
+            Double l2 = Double.valueOf(redHighTxtFld.getText().trim());
+            redRange[0] = l1;
+            redRange[1] = l2;
+            updateRedRange(redRange[0], redRange[1]);
         });
 
         redHighTxtFld.addActionListener(e -> {
-            String tmp = redHighTxtFld.getText().trim();
-            updateRedRange(redRange[0], Double.valueOf(tmp));
+            if (matchFieldsCbox.isSelected()) {
+                grnHighTxtFld.setText(redHighTxtFld.getText());
+                bluHighTxtFld.setText(redHighTxtFld.getText());
+
+                redLowTxtFld.setText(redLowTxtFld.getText());
+                bluLowTxtFld.setText(bluLowTxtFld.getText());
+                grnLowTxtFld.setText(grnLowTxtFld.getText());
+            }
+
+            Double l1 = Double.valueOf(redLowTxtFld.getText().trim());
+            Double l2 = Double.valueOf(redHighTxtFld.getText().trim());
+            redRange[0] = l1;
+            redRange[1] = l2;
+            updateRedRange(redRange[0], redRange[1]);
         });
 
         redGammaTxtFld.addActionListener(e -> {
             String tmp = redGammaTxtFld.getText().trim();
             updateRedGamma(Double.valueOf(tmp));
+
+            if (matchFieldsCbox.isSelected()) {
+                grnGammaTxtFld.setText(tmp);
+                bluGammaTxtFld.setText(tmp);
+                updateBluGamma(Double.valueOf(tmp));
+                updateGrnGamma(Double.valueOf(tmp));
+            }
         });
 
         JButton redReset = new JButton("Reset");
@@ -500,18 +530,50 @@ public class RGBCompositeControl extends DisplayControlImpl {
         });
 
         grnLowTxtFld.addActionListener(e -> {
-            String tmp = grnLowTxtFld.getText().trim();
-            updateGrnRange(Double.valueOf(tmp), grnRange[1]);
+            if (matchFieldsCbox.isSelected()) {
+                redLowTxtFld.setText(grnLowTxtFld.getText());
+                bluLowTxtFld.setText(grnLowTxtFld.getText());
+
+                redHighTxtFld.setText(redHighTxtFld.getText());
+                bluHighTxtFld.setText(bluHighTxtFld.getText());
+                grnHighTxtFld.setText(grnHighTxtFld.getText());
+
+            }
+
+            Double l1 = Double.valueOf(grnLowTxtFld.getText().trim());
+            Double l2 = Double.valueOf(grnHighTxtFld.getText().trim());
+            grnRange[0] = l1;
+            grnRange[1] = l2;
+            updateGrnRange(grnRange[0], grnRange[1]);
         });
 
         grnHighTxtFld.addActionListener(e -> {
-            String tmp = grnHighTxtFld.getText().trim();
-            updateGrnRange(grnRange[0], Double.valueOf(tmp));
+            if (matchFieldsCbox.isSelected()) {
+                redHighTxtFld.setText(grnHighTxtFld.getText());
+                bluHighTxtFld.setText(grnHighTxtFld.getText());
+
+                redLowTxtFld.setText(redLowTxtFld.getText());
+                bluLowTxtFld.setText(bluLowTxtFld.getText());
+                grnLowTxtFld.setText(grnLowTxtFld.getText());
+            }
+
+            Double l1 = Double.valueOf(grnLowTxtFld.getText().trim());
+            Double l2 = Double.valueOf(grnHighTxtFld.getText().trim());
+            grnRange[0] = l1;
+            grnRange[1] = l2;
+            updateGrnRange(grnRange[0], grnRange[1]);
         });
 
         grnGammaTxtFld.addActionListener(e -> {
             String tmp = grnGammaTxtFld.getText().trim();
             updateGrnGamma(Double.valueOf(tmp));
+
+            if (matchFieldsCbox.isSelected()) {
+                redGammaTxtFld.setText(tmp);
+                bluGammaTxtFld.setText(tmp);
+                updateRedGamma(Double.valueOf(tmp));
+                updateGrnGamma(Double.valueOf(tmp));
+            }
         });
 
         JButton grnReset = new JButton("Reset");
@@ -526,18 +588,49 @@ public class RGBCompositeControl extends DisplayControlImpl {
         });
 
         bluLowTxtFld.addActionListener(e -> {
-            String tmp = bluLowTxtFld.getText().trim();
-            updateBluRange(Double.valueOf(tmp), bluRange[1]);
+            if (matchFieldsCbox.isSelected()) {
+                redLowTxtFld.setText(bluLowTxtFld.getText());
+                grnLowTxtFld.setText(bluLowTxtFld.getText());
+
+                redHighTxtFld.setText(redHighTxtFld.getText());
+                bluHighTxtFld.setText(bluHighTxtFld.getText());
+                grnHighTxtFld.setText(grnHighTxtFld.getText());
+            }
+
+            Double l1 = Double.valueOf(bluLowTxtFld.getText().trim());
+            Double l2 = Double.valueOf(bluHighTxtFld.getText().trim());
+            bluRange[0] = l1;
+            bluRange[1] = l2;
+            updateBluRange(bluRange[0], bluRange[1]);
         });
 
         bluHighTxtFld.addActionListener(e -> {
-            String tmp = bluHighTxtFld.getText().trim();
-            updateBluRange(bluRange[0], Double.valueOf(tmp));
+            if (matchFieldsCbox.isSelected()) {
+                redHighTxtFld.setText(bluHighTxtFld.getText());
+                grnHighTxtFld.setText(bluHighTxtFld.getText());
+
+                redLowTxtFld.setText(redLowTxtFld.getText());
+                bluLowTxtFld.setText(bluLowTxtFld.getText());
+                grnLowTxtFld.setText(grnLowTxtFld.getText());
+            }
+
+            Double l1 = Double.valueOf(bluLowTxtFld.getText().trim());
+            Double l2 = Double.valueOf(bluHighTxtFld.getText().trim());
+            bluRange[0] = l1;
+            bluRange[1] = l2;
+            updateBluRange(bluRange[0], bluRange[1]);
         });
 
         bluGammaTxtFld.addActionListener(e -> {
             String tmp = bluGammaTxtFld.getText().trim();
             updateBluGamma(Double.valueOf(tmp));
+
+            if (matchFieldsCbox.isSelected()) {
+                grnGammaTxtFld.setText(tmp);
+                redGammaTxtFld.setText(tmp);
+                updateGrnGamma(Double.valueOf(tmp));
+                updateRedGamma(Double.valueOf(tmp));
+            }
         });
 
         JButton bluReset = new JButton("Reset");
@@ -571,7 +664,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
             updateBluGamma(Double.valueOf(tmp3));
         });
 
+        // McIDAS Inquiry #3193-3141
+        matchFieldsCbox = new JCheckBox();
         JPanel topPanel = new JPanel(new MigLayout());
+        topPanel.add(new JLabel("Match fields: "));
+        topPanel.add(matchFieldsCbox, "wrap");
         topPanel.add(new JLabel("Red range: "));
         topPanel.add(redLowTxtFld);
         topPanel.add(redHighTxtFld);
@@ -593,7 +690,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
         topPanel.add(bluGammaTxtFld);
         topPanel.add(bluReset, "wrap");
 
-        topPanel.add(Box.createHorizontalStrut(1), "span 5");
+        topPanel.add(Box.createHorizontalStrut(2), "span 5");
         topPanel.add(applyButton, "wrap");
 
         JPanel bottomPanel = new JPanel(new MigLayout("", "[align right][fill]"));
