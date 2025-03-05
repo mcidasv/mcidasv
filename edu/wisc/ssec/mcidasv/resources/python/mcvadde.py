@@ -1463,6 +1463,8 @@ def _getADDEImage(localEntry=None,
             location = stations.get(station[0] + ":" + station[1])
         else:
             location = stations.get(station + ":X")
+            if location is None:
+                raise ValueError("Station %s not found in database." % (station))
         
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
