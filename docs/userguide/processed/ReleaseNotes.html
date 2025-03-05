@@ -62,6 +62,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#multispectral2.0">MultiSpectral CSV Output</a></strong></li>
     <li><strong><a class="faq-question-link" href="#McXNetcdf2.0">McIDAS-X netCDF File Compatibility</a></strong></li>
     <li><strong><a class="faq-question-link" href="#probSevere2.0">ProbSevere Data</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#channels2.0">Channel Combination Formulas</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_2.0">Display
@@ -148,6 +149,34 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>ProbSevere Data</h4>
     <div class="faq-answer">Added the ability to read and display ProbSevere data. This can be done with local files through the General&gt;Files/Directories chooser or remotely through the Display&gt;Text Data&gt;ProbSevere menu item in the Layer Controls. ProbSevere uses radar, satellite, and forecast model data to identify locations susceptible to severe hail, severe straight-line winds, and tornadoes.</div>
 	</div>
+    <div class="faq-category"><a name="channels2.0" id="channels2.0"></a>
+    <h4>Channel Combination Formulas</h4>
+    <div class="faq-answer">
+      <p>Added a variety of RGB and Channel Combination functions and formulas.</p>
+        <ul>
+        <li>ABI</li>
+            <ul>
+            <li>Blowing Snow RGB</li>
+            <li>Cloud Phase RGB</li>
+            <li>NGFS (Next Generation Fire System) RGB</li>
+            <li>Split Window Difference (Dust)</li>
+            </ul>
+        <li>AHI
+          <ul>
+            <li>Cloud Phase RGB</li>
+          </ul>
+        </li>
+        <li>MODIS
+          <ul>
+            <li>Burn Area Index (BAI)</li>
+            <li>Normalized Burn Ratio (NBR)</li>
+            <li>Normalized Difference Built-up Index (NDBI)</li>
+            <li>Visible Atmospherically Resistant Index (VARI)</li>
+          </ul>
+        </li>
+        </ul>
+    </div>
+	</div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat3_2.0" id="faq1_cat3_2.0"></a>Display
@@ -162,7 +191,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   </div>
     <div class="faq-category"><a name="layerLabels2.0" id="layerLabels2.0"></a>
     <h4><strong><a class="faq-question-link" href="#nucaps_1.9">Updated Layer Labels</a></strong></h4>
-    <div class="faq-answer">Updated the layer label template for satellite, grid, radar, and point data. These improved layer labels are more descriptive and concise than in previous iterations.</div>
+    <div class="faq-answer">Updated the layer label template for satellite, grid, radar, and point data. These improved layer labels are more descriptive and concise than in previous iterations. The default Legend labels (the description of the layers in the Legend), were updated as well.</div>
 </div>
     <div class="faq-category"><a name="ospo2.0" id="ospo2.0"></a>
     <h4>OSPO Satellite Enhancements</h4>
@@ -230,12 +259,22 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">
       <ul>
       <li>Added parameter groups and aliases for VIIRS/JPSS products from NASA EarthData.  This allows for easily displaying the output of derived formulas, and for different variables to use the expected enhancement and enhancement range.</li>
-      <li>Added new functions and formulas to allow for the creation of burn and land-use indices for VIIRS data.  This includes:
+      <li>Added new functions and formulas to allow for the creation of burn and land-use indices for VIIRS SDR and EDR data.  This includes:
         <ul>
-          <li>Burn Area Index</li>
-          <li>Normalized Burn Ratio</li>
-          <li>Normalized Built-up Index</li>
-          <li>Visible Atmospherically Resistant Index</li>
+          <li>Burn Area Index (BAI)</li>
+          <li>Normalized Burn Ratio (NBR)</li>
+          <li>Normalized Difference Built-up Index (NDBI)</li>
+          <li>Normalized Difference Snow Index (NDSI)</li>
+          <li>Normalized Difference Vegetation Index (NDVI)</li>
+          <li>Visible Atmospherically Resistant Index (VARI)</li>
+          </ul>
+      </li>
+      <li>Added new functions and formulas for the creation of RGBs for VIIRS SDR and Imagery EDR data. 
+        <ul>
+          <li>Blowing Snow RGB</li>
+          <li>Cloud Phase RGB</li>
+          <li>NGFS (Next Generation Fire System) M Band RGB</li>
+          <li>NGFS (Next Generation Fire System) M and I Band RGB</li>
         </ul>
       </li>
       </ul>
