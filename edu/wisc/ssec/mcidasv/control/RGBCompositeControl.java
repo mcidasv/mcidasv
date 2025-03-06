@@ -484,9 +484,15 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
             Double l1 = Double.valueOf(redLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(redHighTxtFld.getText().trim());
+            bluRange[0] = l1;
+            bluRange[1] = l2;
             redRange[0] = l1;
             redRange[1] = l2;
+            grnRange[0] = l1;
+            grnRange[1] = l2;
             updateRedRange(redRange[0], redRange[1]);
+            updateBluRange(redRange[0], redRange[1]);
+            updateGrnRange(redRange[0], redRange[1]);
         });
 
         redHighTxtFld.addActionListener(e -> {
@@ -501,9 +507,15 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
             Double l1 = Double.valueOf(redLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(redHighTxtFld.getText().trim());
+            bluRange[0] = l1;
+            bluRange[1] = l2;
             redRange[0] = l1;
             redRange[1] = l2;
+            grnRange[0] = l1;
+            grnRange[1] = l2;
             updateRedRange(redRange[0], redRange[1]);
+            updateBluRange(redRange[0], redRange[1]);
+            updateGrnRange(redRange[0], redRange[1]);
         });
 
         redGammaTxtFld.addActionListener(e -> {
@@ -542,8 +554,14 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
             Double l1 = Double.valueOf(grnLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(grnHighTxtFld.getText().trim());
+            bluRange[0] = l1;
+            bluRange[1] = l2;
+            redRange[0] = l1;
+            redRange[1] = l2;
             grnRange[0] = l1;
             grnRange[1] = l2;
+            updateRedRange(grnRange[0], grnRange[1]);
+            updateBluRange(grnRange[0], grnRange[1]);
             updateGrnRange(grnRange[0], grnRange[1]);
         });
 
@@ -559,8 +577,14 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
             Double l1 = Double.valueOf(grnLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(grnHighTxtFld.getText().trim());
+            bluRange[0] = l1;
+            bluRange[1] = l2;
+            redRange[0] = l1;
+            redRange[1] = l2;
             grnRange[0] = l1;
             grnRange[1] = l2;
+            updateRedRange(grnRange[0], grnRange[1]);
+            updateBluRange(grnRange[0], grnRange[1]);
             updateGrnRange(grnRange[0], grnRange[1]);
         });
 
@@ -601,7 +625,13 @@ public class RGBCompositeControl extends DisplayControlImpl {
             Double l2 = Double.valueOf(bluHighTxtFld.getText().trim());
             bluRange[0] = l1;
             bluRange[1] = l2;
+            redRange[0] = l1;
+            redRange[1] = l2;
+            grnRange[0] = l1;
+            grnRange[1] = l2;
+            updateRedRange(bluRange[0], bluRange[1]);
             updateBluRange(bluRange[0], bluRange[1]);
+            updateGrnRange(bluRange[0], bluRange[1]);
         });
 
         bluHighTxtFld.addActionListener(e -> {
@@ -618,7 +648,13 @@ public class RGBCompositeControl extends DisplayControlImpl {
             Double l2 = Double.valueOf(bluHighTxtFld.getText().trim());
             bluRange[0] = l1;
             bluRange[1] = l2;
+            redRange[0] = l1;
+            redRange[1] = l2;
+            grnRange[0] = l1;
+            grnRange[1] = l2;
+            updateRedRange(bluRange[0], bluRange[1]);
             updateBluRange(bluRange[0], bluRange[1]);
+            updateGrnRange(bluRange[0], bluRange[1]);
         });
 
         bluGammaTxtFld.addActionListener(e -> {
@@ -666,6 +702,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
         // McIDAS Inquiry #3193-3141
         matchFieldsCbox = new JCheckBox();
+        matchFieldsCbox.setToolTipText("When enabled, changing a setting for one color changes the setting for all\n" +
+                "colors.");
         JPanel topPanel = new JPanel(new MigLayout());
         topPanel.add(new JLabel("Match fields: "));
         topPanel.add(matchFieldsCbox, "wrap");
