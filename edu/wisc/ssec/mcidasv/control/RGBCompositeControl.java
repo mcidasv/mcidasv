@@ -458,6 +458,28 @@ public class RGBCompositeControl extends DisplayControlImpl {
         return getDisplayConventions().getParamColorTable("image");
     }
 
+    void setAllFields(String txtl1, String txtl2) {
+        Double l1 = Double.valueOf(txtl1.trim());
+        Double l2 = Double.valueOf(txtl2.trim());
+        bluRange[0] = l1;
+        bluRange[1] = l2;
+        redRange[0] = l1;
+        redRange[1] = l2;
+        grnRange[0] = l1;
+        grnRange[1] = l2;
+        updateRedRange(redRange[0], redRange[1]);
+        updateBluRange(redRange[0], redRange[1]);
+        updateGrnRange(redRange[0], redRange[1]);
+
+        redLowTxtFld.setText(txtl1);
+        grnLowTxtFld.setText(txtl1);
+        bluLowTxtFld.setText(txtl1);
+
+        redHighTxtFld.setText(txtl2);
+        bluHighTxtFld.setText(txtl2);
+        grnHighTxtFld.setText(txtl2);
+    }
+
     public Container doMakeContents() {
 
         JButton allGammaButton = new JButton("Apply to All Gamma Fields");
@@ -473,49 +495,26 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
         // McIDAS Inquiry #3193-3141
         redLowTxtFld.addActionListener(e -> {
-            if (matchFieldsCbox.isSelected()) {
-                grnLowTxtFld.setText(redLowTxtFld.getText());
-                bluLowTxtFld.setText(redLowTxtFld.getText());
-
-                redHighTxtFld.setText(redHighTxtFld.getText());
-                bluHighTxtFld.setText(bluHighTxtFld.getText());
-                grnHighTxtFld.setText(grnHighTxtFld.getText());
-            }
+            if (matchFieldsCbox.isSelected())
+                setAllFields(redLowTxtFld.getText(),redHighTxtFld.getText());
 
             Double l1 = Double.valueOf(redLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(redHighTxtFld.getText().trim());
-            bluRange[0] = l1;
-            bluRange[1] = l2;
             redRange[0] = l1;
             redRange[1] = l2;
-            grnRange[0] = l1;
-            grnRange[1] = l2;
             updateRedRange(redRange[0], redRange[1]);
-            updateBluRange(redRange[0], redRange[1]);
-            updateGrnRange(redRange[0], redRange[1]);
+
         });
 
         redHighTxtFld.addActionListener(e -> {
-            if (matchFieldsCbox.isSelected()) {
-                grnHighTxtFld.setText(redHighTxtFld.getText());
-                bluHighTxtFld.setText(redHighTxtFld.getText());
-
-                redLowTxtFld.setText(redLowTxtFld.getText());
-                bluLowTxtFld.setText(bluLowTxtFld.getText());
-                grnLowTxtFld.setText(grnLowTxtFld.getText());
-            }
+            if (matchFieldsCbox.isSelected())
+                setAllFields(redLowTxtFld.getText(),redHighTxtFld.getText());
 
             Double l1 = Double.valueOf(redLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(redHighTxtFld.getText().trim());
-            bluRange[0] = l1;
-            bluRange[1] = l2;
             redRange[0] = l1;
             redRange[1] = l2;
-            grnRange[0] = l1;
-            grnRange[1] = l2;
             updateRedRange(redRange[0], redRange[1]);
-            updateBluRange(redRange[0], redRange[1]);
-            updateGrnRange(redRange[0], redRange[1]);
         });
 
         redGammaTxtFld.addActionListener(e -> {
@@ -542,49 +541,24 @@ public class RGBCompositeControl extends DisplayControlImpl {
         });
 
         grnLowTxtFld.addActionListener(e -> {
-            if (matchFieldsCbox.isSelected()) {
-                redLowTxtFld.setText(grnLowTxtFld.getText());
-                bluLowTxtFld.setText(grnLowTxtFld.getText());
-
-                redHighTxtFld.setText(redHighTxtFld.getText());
-                bluHighTxtFld.setText(bluHighTxtFld.getText());
-                grnHighTxtFld.setText(grnHighTxtFld.getText());
-
-            }
+            if (matchFieldsCbox.isSelected())
+                setAllFields(grnLowTxtFld.getText(),grnHighTxtFld.getText());
 
             Double l1 = Double.valueOf(grnLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(grnHighTxtFld.getText().trim());
-            bluRange[0] = l1;
-            bluRange[1] = l2;
-            redRange[0] = l1;
-            redRange[1] = l2;
             grnRange[0] = l1;
             grnRange[1] = l2;
-            updateRedRange(grnRange[0], grnRange[1]);
-            updateBluRange(grnRange[0], grnRange[1]);
             updateGrnRange(grnRange[0], grnRange[1]);
         });
 
         grnHighTxtFld.addActionListener(e -> {
-            if (matchFieldsCbox.isSelected()) {
-                redHighTxtFld.setText(grnHighTxtFld.getText());
-                bluHighTxtFld.setText(grnHighTxtFld.getText());
-
-                redLowTxtFld.setText(redLowTxtFld.getText());
-                bluLowTxtFld.setText(bluLowTxtFld.getText());
-                grnLowTxtFld.setText(grnLowTxtFld.getText());
-            }
+            if (matchFieldsCbox.isSelected())
+                setAllFields(grnLowTxtFld.getText(),grnHighTxtFld.getText());
 
             Double l1 = Double.valueOf(grnLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(grnHighTxtFld.getText().trim());
-            bluRange[0] = l1;
-            bluRange[1] = l2;
-            redRange[0] = l1;
-            redRange[1] = l2;
             grnRange[0] = l1;
             grnRange[1] = l2;
-            updateRedRange(grnRange[0], grnRange[1]);
-            updateBluRange(grnRange[0], grnRange[1]);
             updateGrnRange(grnRange[0], grnRange[1]);
         });
 
@@ -612,49 +586,25 @@ public class RGBCompositeControl extends DisplayControlImpl {
         });
 
         bluLowTxtFld.addActionListener(e -> {
-            if (matchFieldsCbox.isSelected()) {
-                redLowTxtFld.setText(bluLowTxtFld.getText());
-                grnLowTxtFld.setText(bluLowTxtFld.getText());
-
-                redHighTxtFld.setText(redHighTxtFld.getText());
-                bluHighTxtFld.setText(bluHighTxtFld.getText());
-                grnHighTxtFld.setText(grnHighTxtFld.getText());
-            }
+            if (matchFieldsCbox.isSelected())
+                setAllFields(bluLowTxtFld.getText(),bluHighTxtFld.getText());
 
             Double l1 = Double.valueOf(bluLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(bluHighTxtFld.getText().trim());
             bluRange[0] = l1;
             bluRange[1] = l2;
-            redRange[0] = l1;
-            redRange[1] = l2;
-            grnRange[0] = l1;
-            grnRange[1] = l2;
-            updateRedRange(bluRange[0], bluRange[1]);
             updateBluRange(bluRange[0], bluRange[1]);
-            updateGrnRange(bluRange[0], bluRange[1]);
         });
 
         bluHighTxtFld.addActionListener(e -> {
-            if (matchFieldsCbox.isSelected()) {
-                redHighTxtFld.setText(bluHighTxtFld.getText());
-                grnHighTxtFld.setText(bluHighTxtFld.getText());
-
-                redLowTxtFld.setText(redLowTxtFld.getText());
-                bluLowTxtFld.setText(bluLowTxtFld.getText());
-                grnLowTxtFld.setText(grnLowTxtFld.getText());
-            }
+            if (matchFieldsCbox.isSelected())
+                setAllFields(bluLowTxtFld.getText(),bluHighTxtFld.getText());
 
             Double l1 = Double.valueOf(bluLowTxtFld.getText().trim());
             Double l2 = Double.valueOf(bluHighTxtFld.getText().trim());
             bluRange[0] = l1;
             bluRange[1] = l2;
-            redRange[0] = l1;
-            redRange[1] = l2;
-            grnRange[0] = l1;
-            grnRange[1] = l2;
-            updateRedRange(bluRange[0], bluRange[1]);
             updateBluRange(bluRange[0], bluRange[1]);
-            updateGrnRange(bluRange[0], bluRange[1]);
         });
 
         bluGammaTxtFld.addActionListener(e -> {
