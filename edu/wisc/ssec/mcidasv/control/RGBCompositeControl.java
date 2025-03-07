@@ -652,8 +652,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
         // McIDAS Inquiry #3193-3141
         matchFieldsCbox = new JCheckBox();
-        matchFieldsCbox.setToolTipText("When enabled, changing a setting for one color changes the setting for all\n" +
-                "colors.");
+        matchFieldsCbox.setToolTipText("When enabled, changing a setting for one color changes the setting for all colors.");
         JPanel topPanel = new JPanel(new MigLayout());
         topPanel.add(new JLabel("Match fields: "));
         topPanel.add(matchFieldsCbox, "wrap");
