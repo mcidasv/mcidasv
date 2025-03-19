@@ -500,6 +500,7 @@ def VIIRSSDRNgfsMicrophysicsMIRGB(I4, I5, M15, M16):
     blu = rescale(I5stg, 243, 293, 0, 255)
     return mycombineRGB(red, grn, blu)
 
+
 # VIIRS SDR Blowing Snow RGB
 def VIIRSBlowingSnowRGB(I1, I3, I4, I5):
     # https://rammb2.cira.colostate.edu/wp-content/uploads/2025/02/VIIRS_Blowing_Snow_RGB_Quick_Guide_v1.pdf
@@ -524,6 +525,101 @@ def VIIRSBlowingSnowRGB(I1, I3, I4, I5):
 
     rgb = MultiSpectralDataSource.swathToGrid(grd375, [red, grn, blu], 1.0)
     return package(inI4, rgb)
+
+
+# VIIRS SDR Sandwich RGB
+def sandwichSDR(imgIR, imgVIS, minIR=180, maxIR=280, resolution=750, colorTable='Sandwich', useNaN=False):
+    """McIDAS-V implementation of Martin Setvak's "sandwich" imagery.
+    This function is designed to work with VIIRS SDR data
+    Bowtie deletion lines will be removed by swathToGrid()
+    
+    Args:
+        imgIR: IR image being displayed.
+        imgVIS: VIS image being displayed.
+        minIR, maxIR: outside these bounds, no IR layer will be visible.
+        resolution: resolution of the output display in meters
+        colorTable: Name of chosen enhancement table for IR image.
+        useNaN: if True, the VIS image won't be visible outside of minIR/maxIR.
+        
+    Returns:
+       rgbImg: An RGB "sandwich".
+    """
+
+    imgIR = swathToGrid(imgIR, resolution, 1)
+    imgVIS = swathToGrid(imgVIS, resolution, 1)
+    
+    if imgIR.isFlatField():
+        imgIR = imgIR
+    
+    else:
+        imgIR = imgIR[0]
+        
+    if imgIR.isFlatField():
+        imgVIS = imgVIS
+    else:
+        imgVIS = imgVIS[0]
+    
+    if useNaN:
+        noIRContribution = float('nan')
+    else:
+        noIRContribution = 1
+        
+    ct = getStaticMcv().getColorTableManager().getColorTable(colorTable)
+    table = ct.getColorTable()
+    
+    # get the rgb values for each index of the rainbow table
+    # flip the color table here so that cold temperatures are red
+    rTable = table[0][::-1]   # should use ColorTable.IDX_RED etc.
+    gTable = table[1][::-1]
+    bTable = table[2][::-1]
+    aTable = table[3][::-1]  # alpha layer... all 1's for rainbow table
+    nCols = len(rTable) - 1  # TODO: why minus 1?
+    
+    # scale the IR image from 0 to 1
+    floatsIR = imgIR.getFloats(False)[0]
+    
+    scaledIR = (imgIR - int(minIR)) / (int(maxIR) - int(minIR))
+    
+    scaledFloats = scaledIR.getFloats(False)[0]
+    
+    # set up the r, g, b arrays to put the image in to
+    rIR = imgIR.clone()
+    gIR = imgIR.clone()
+    bIR = imgIR.clone()
+    rFloats = rIR.getFloats(False)[0]
+    gFloats = gIR.getFloats(False)[0]
+    bFloats = bIR.getFloats(False)[0]
+    
+    t0 = time.clock()
+    sandwichSpeedup(
+        scaledFloats,
+        floatsIR,
+        rFloats,
+        gFloats,
+        bFloats,
+        rTable,
+        gTable,
+        bTable,
+        int(minIR),
+        int(maxIR),
+        nCols,
+        noIRContribution,
+    )
+    t1 = time.clock()
+    # print('Sandwich: time spent in for loop [s]: {}'.format(t1 - t0))
+    
+    # now scale rgb values by visible image to make the "sandwich" product
+    imgVIS = noUnit(imgVIS)
+    rIR = noUnit(rIR)
+    gIR = noUnit(gIR)
+    bIR = noUnit(bIR)
+    
+    rOutput = imgVIS * rIR
+    gOutput = imgVIS * gIR
+    bOutput = imgVIS * bIR
+    
+    rgbImg = mycombineRGB(rOutput, gOutput, bOutput)
+    return rgbImg
 
 
 # VIIRS SDR NDVI
@@ -862,7 +958,7 @@ def VIIRSEDRNgfsMicrophysicsMIRGB(I4, I5, M15, M16):
     return mycombineRGB(red, grn, blu)
 
 
-# VIIRS Edr Blowing Snow RGB
+# VIIRS EDR Blowing Snow RGB
 def VIIRSEdrBlowingSnowRGB(I1, I3, I4, I5):
     # https://rammb2.cira.colostate.edu/wp-content/uploads/2025/02/VIIRS_Blowing_Snow_RGB_Quick_Guide_v1.pdf
     # red = I1 (0.64um); 10% to 110% rescaled to 0 to 255; gamma 1.0
@@ -872,6 +968,99 @@ def VIIRSEdrBlowingSnowRGB(I1, I3, I4, I5):
     grn = rescale(I3, 0.05, 0.4, 0, 255)
     blu = rescale(I4-I5, 0, 15, 0, 255)
     return mycombineRGB(red, grn, blu)
+
+
+# VIIRS EDR Sandwich RGB
+def sandwichEDR(imgIR, imgVIS, minIR=180, maxIR=280, colorTable='Sandwich', useNaN=False):
+    """McIDAS-V implementation of Martin Setvak's "sandwich" imagery.
+    This function is designed to work with VIIRS Imagery EDR data
+    
+    Args:
+        imgIR: IR image being displayed.
+        imgVIS: VIS image being displayed.
+        minIR, maxIR: outside these bounds, no IR layer will be visible.
+        colorTable: Name of chosen enhancement table for IR image.
+        useNaN: if True, the VIS image won't be visible outside of minIR/maxIR.
+        
+    Returns:
+       rgbImg: An RGB "sandwich".
+    """
+
+    if imgIR.isFlatField():
+        imgIR = imgIR
+    
+    else:
+        imgIR = imgIR[0]
+        
+    if imgIR.isFlatField():
+        imgVIS = imgVIS
+    else:
+        imgVIS = imgVIS[0]
+
+    a = type(imgIR)
+    b = type(imgVIS)
+    
+    if useNaN:
+        noIRContribution = float('nan')
+    else:
+        noIRContribution = 1
+        
+    ct = getStaticMcv().getColorTableManager().getColorTable(colorTable)
+    table = ct.getColorTable()
+    
+    # get the rgb values for each index of the rainbow table
+    # flip the color table here so that cold temperatures are red
+    rTable = table[0][::-1]   # should use ColorTable.IDX_RED etc.
+    gTable = table[1][::-1]
+    bTable = table[2][::-1]
+    aTable = table[3][::-1]  # alpha layer... all 1's for rainbow table
+    nCols = len(rTable) - 1  # TODO: why minus 1?
+    
+    # scale the IR image from 0 to 1
+    floatsIR = imgIR.getFloats(False)[0]
+    
+    scaledIR = (imgIR - int(minIR)) / (int(maxIR) - int(minIR))
+    
+    scaledFloats = scaledIR.getFloats(False)[0]
+    
+    # set up the r, g, b arrays to put the image in to
+    rIR = imgIR.clone()
+    gIR = imgIR.clone()
+    bIR = imgIR.clone()
+    rFloats = rIR.getFloats(False)[0]
+    gFloats = gIR.getFloats(False)[0]
+    bFloats = bIR.getFloats(False)[0]
+    
+    t0 = time.clock()
+    sandwichSpeedup(
+        scaledFloats,
+        floatsIR,
+        rFloats,
+        gFloats,
+        bFloats,
+        rTable,
+        gTable,
+        bTable,
+        int(minIR),
+        int(maxIR),
+        nCols,
+        noIRContribution,
+    )
+    t1 = time.clock()
+    # print('Sandwich: time spent in for loop [s]: {}'.format(t1 - t0))
+    
+    # now scale rgb values by visible image to make the "sandwich" product
+    imgVIS = noUnit(imgVIS)
+    rIR = noUnit(rIR)
+    gIR = noUnit(gIR)
+    bIR = noUnit(bIR)
+    
+    rOutput = imgVIS * rIR
+    gOutput = imgVIS * gIR
+    bOutput = imgVIS * bIR
+    
+    rgbImg = mycombineRGB(rOutput, gOutput, bOutput)
+    return rgbImg
 
 
 # VIIRS EDR NDVI
