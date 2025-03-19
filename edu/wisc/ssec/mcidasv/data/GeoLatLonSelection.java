@@ -659,7 +659,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                           GuiUtils.getToggleImageButton(IdvUIManager.ICON_UNLOCK,
                                           IdvUIManager.ICON_LOCK, 0, 0, true);
                   lockBtn.setContentAreaFilled(false);
-                  lockBtn.setSelected(true);
+                  lockBtn.setSelected(false);
                   lockBtn.setToolTipText(
                                   "Unlock to automatically change size when changing magnification");
 
