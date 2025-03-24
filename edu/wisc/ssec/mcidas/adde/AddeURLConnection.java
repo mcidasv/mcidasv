@@ -1646,19 +1646,18 @@ public class AddeURLConnection extends URLConnection
 
         }
 
-            buf.append(groupString);
-            buf.append(" ");
-            buf.append(userString);
-            buf.append(" ");
-            buf.append(projString);
-            buf.append(" ");
-            buf.append(descrString);
-            buf.append(" ");
-            buf.append(filenameString);
-            buf.append(" ");
-            buf.append(traceString.toUpperCase());
-            buf.append(" ");
-
+        buf.append(groupString);
+        buf.append(" ");
+        buf.append(descrString);
+        buf.append(" ");
+        buf.append(userString);
+        buf.append(" ");
+        buf.append(projString);
+        buf.append(" ");
+        buf.append(filenameString);
+        buf.append(" ");
+        buf.append(traceString.toUpperCase());
+        buf.append(" ");
         return buf;
     }
 
