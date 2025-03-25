@@ -21,6 +21,8 @@
 package ucar.unidata.util;
 
 
+import edu.wisc.ssec.mcidas.adde.AddeURLConnection;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
@@ -66,6 +68,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,6 +101,9 @@ public class Misc {
 
     /** NaN string */
     public static final String NaN = "NaN";
+
+    private static final Logger logger =
+            Logger.getLogger(Misc.class.getName());
 
     /** Default constructor; does nothing */
     public Misc() {}
@@ -226,8 +232,13 @@ public class Misc {
      *
      * @return formatted value
      */
+
+    public static String formatLatOrLon(double value, String format, boolean isLatitude, boolean use360) {
+        return formatLatOrLon(value, format, isLatitude, use360, false);
+    }
+
     public static String formatLatOrLon(double value, String format,
-                                        boolean isLatitude, boolean use360) {
+                                        boolean isLatitude, boolean use360, boolean deg) {
         if (Double.isNaN(value)) {
             return NaN;
         }
@@ -290,6 +301,12 @@ public class Misc {
             }
         } else if ((value < 0) && !use360) {
             formatted = "-" + formatted;
+        }
+        if (deg) {
+            // McIDAS Inquiry #2905-3141
+            // this is a placeholder, I couldn't get \u00B0 / ° to render correctly
+            formatted += "*";
+            logger.info("3141 " + formatted.trim());
         }
         return formatted.trim();
     }

@@ -77,6 +77,8 @@ public class LatLonLabels extends TextDisplayable {
     /** the label format */
     private boolean use360 = false;
 
+    private boolean useDeg = true;
+
 
     /** proto real */
     private Real latReal = new Real(RealType.Latitude, 0, CommonUnit.degree);
@@ -292,8 +294,11 @@ public class LatLonLabels extends TextDisplayable {
      * @return formatted value
      */
     private String formatLabel(double value) {
-        return Misc.formatLatOrLon(value, labelFormat, isLatitude, use360);
+        return Misc.formatLatOrLon(value, labelFormat, isLatitude, use360, useDeg);
     }
+
+    public boolean getDegUse() {return useDeg;}
+    public void setDegUse(boolean b) {useDeg = b;}
 
     /**
      * @return the isLatitude

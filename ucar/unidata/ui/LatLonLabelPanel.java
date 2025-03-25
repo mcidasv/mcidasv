@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.JCheckBox;
@@ -55,6 +56,7 @@ import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlObjectStore;
+import visad.VisADException;
 
 /**
  * A panel to hold the gui for Lat/Lon label adjustments
@@ -103,6 +105,9 @@ public class LatLonLabelPanel extends JPanel {
 
     /** the use360 checkbox */
     private JCheckBox use360Cbx;
+
+    // McIDAS Inquiry #2905-3141
+    private JCheckBox useDegCbx;
 
     /** list of predefined formats */
     private static final String[] LABEL_FORMATS = {
@@ -269,6 +274,26 @@ public class LatLonLabelPanel extends JPanel {
         formatSelector.setSelectedItem(latLonLabelData.getLabelFormat());
         ignoreEvents = false;
 
+        try {
+            useDegCbx = new JCheckBox("°", latLonLabelData.getLatLonLabels().getDegUse());
+            useDegCbx.setToolTipText("Add degree symbol to labels");
+            useDegCbx.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        latLonLabelData.getLatLonLabels().setDegUse(useDegCbx.isSelected());
+                        applyStateToData();
+                        LatLonPanel llp = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getLonPanel();
+                        llp.applyStateToData();
+                    } catch (VisADException | RemoteException ex) {
+                        ;
+                    }
+                }
+            });
+        } catch (VisADException | RemoteException e) {
+            useDegCbx = new JCheckBox("°", false);
+            useDegCbx.setToolTipText("Add degree symbol to labels");
+        }
+
         use360Cbx    = new JCheckBox("0-360", latLonLabelData.getUse360());
         use360Cbx.setToolTipText(
             "Use 0 to 360 vs. -180 to 180 convention for longitude labels");
@@ -405,8 +430,8 @@ public class LatLonLabelPanel extends JPanel {
                                             GuiUtils.WT_N);
         Component[] extraComps = {
             GuiUtils.rLabel("Font:"), latPanel.fontSelector.getComponent(),
-            GuiUtils.rLabel("Format:"), latPanel.formatSelector,
-            lonPanel.use360Cbx, GuiUtils.filler()
+            GuiUtils.rLabel("Format:"), latPanel.formatSelector, GuiUtils.filler(),
+            lonPanel.use360Cbx, lonPanel.useDegCbx, GuiUtils.filler()
         };
         GuiUtils.tmpInsets = new Insets(2, 4, 2, 4);
         JPanel extra = GuiUtils.doLayout(extraComps, 5, GuiUtils.WT_N,
