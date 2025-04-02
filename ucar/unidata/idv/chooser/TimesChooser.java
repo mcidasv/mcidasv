@@ -781,14 +781,6 @@ public class TimesChooser extends IdvChooser {
 
         //panel.setBorder(BorderFactory.createEtchedBorder());
         timesTab.addChangeListener(listener);
-
-        // McIDAS Inquiry #3082-3141
-        // might take some time to get used to T-T
-        for (int i = 0; i < timesTab.getTabCount(); i++) {
-            timesTab.setBackgroundAt(i, Color.GRAY);
-            timesTab.setForegroundAt(i, Color.BLACK);
-        }
-
         popIgnore();
         return panel;
     }
