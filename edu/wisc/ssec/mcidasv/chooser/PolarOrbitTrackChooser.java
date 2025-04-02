@@ -406,7 +406,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         descriptorComboBox.setEnabled(false);
 
         clearOnChange(serverSelector);
-        McVGuiUtils.setComponentWidth(serverSelector, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(serverSelector, Width.TRIPLE);
 
         JLabel groupLabel = McVGuiUtils.makeLabelRight("Dataset:");
 
@@ -496,7 +496,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeList.add(groupLabel);
         addeList.add(groupSelector);
         addeList.add(connectButton);
-        McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
+        McVGuiUtils.setComponentWidth(descriptorComboBox, 560);
         addeList.add(urlLabel);
         addeList.add(box);
 
