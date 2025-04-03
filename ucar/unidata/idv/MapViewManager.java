@@ -3637,7 +3637,7 @@ public class MapViewManager extends NavigatedViewManager {
      * @return The ProgressiveResolution
      */
     public boolean getUseProgressiveResolution() {
-        return getBp(PREF_USE_PROGRESSIVE_RESOLUTION, true);
+        return getBp(PREF_USE_PROGRESSIVE_RESOLUTION, false);
     }
 
 
