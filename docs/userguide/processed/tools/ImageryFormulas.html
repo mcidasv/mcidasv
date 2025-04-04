@@ -3317,6 +3317,44 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
+<li class="propertylistitem"><strong>VIIRS EDR Sandwich RGB (IR Data, VIS Data, Min IR Temp, Max IR Temp) -</strong> Overlays infrared data within a bounded temperature range on top of visible data. This allows for easy visualization of visible and infrared data in one layer. Additionally, the texture of the underlying visible data can be seen in the infrared portion of the display.
+  <table id="miscformulas75a" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>IR Data</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>Infrared data to display.&nbsp; This should be a temperature calibration.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>VIS Data</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Visible data to display. This can be reflectance or radiance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Min IR Temp</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Minimum infrared temperature value to display (default=180K).</p>
+        </td>
+        <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Max IR Temp</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Maximum infrared temperature value to display (default=280K).</p>
+        </td>
+</table>
+</li>
 <li class="propertylistitem"><strong>VIIRS EDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
   <table id="miscformulas75" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -4123,6 +4161,51 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
         <p>VIIRS SVM band 16 (12.01um) temperature.</p>
         </td>
       </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Sandwich RGB (IR Data, VIS Data, Min IR Temp, Max IR Temp, Resolution in Meters) -</strong> Overlays infrared data within a bounded temperature range on top of visible data. This allows for easy visualization of visible and infrared data in one layer.  Additionally, the texture of the underlying visible data can be seen in the infrared portion of the display. This formula also removes bowtie deletion lines.
+  <table id="miscformulas75a" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></td></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>IR Data</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>Infrared data to display. This should be a temperature calibration.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>VIS Data</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Visible data to display. This can be reflectance or radiance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Min IR Temp</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Minimum infrared temperature value to display (default=180K).</p>
+        </td>
+        <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Max IR Temp</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Maximum infrared temperature value to display (default=280K).</p>
+        </td>
+            <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Resolution in Meters</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Maximum infrared temperature value to display (default=280K).</p>
+        </td>
 </table>
 </li>
 <li class="propertylistitem"><strong>VIIRS SDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
