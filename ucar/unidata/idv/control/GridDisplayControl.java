@@ -131,7 +131,7 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
      * @override
      */
     protected boolean canDoProgressiveResolution() {
-        return canDataDoProgressiveResolution();
+        return false;
     }
 
 
