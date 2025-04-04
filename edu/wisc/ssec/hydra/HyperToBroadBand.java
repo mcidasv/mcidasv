@@ -371,7 +371,7 @@ public class HyperToBroadBand extends Compute implements ActionListener {
     }
 
     public enum Kernel {
-        TH(Float.NaN, "TopHat"),
+        TH(Float.NaN, "Boxcar"),
         G68(1f, "68%"),
         FWHM(1.1676f, "FWHM"),
         G95(2f, "95%"),
