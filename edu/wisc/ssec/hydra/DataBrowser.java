@@ -79,6 +79,7 @@ import java.awt.Dimension;
 import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.Label;
+import java.awt.Frame;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -440,6 +441,12 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
         editMenu.add(remove);
 
 
+        JMenuItem rename = new JMenuItem("Rename Combination");
+        rename.addActionListener(this);
+        rename.setActionCommand("RenameFormula");
+        editMenu.add(rename);
+
+
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
         JMenuItem rgb = new JMenuItem("RGB Composite");
@@ -747,6 +754,38 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
                 return;
             }
             removeFormula(selectedLeafNode);
+
+        } else if (cmd.equals("RenameFormula")) {
+            if (selectedLeafNode == userNode) {
+                return;
+            }
+
+            Compute cmp = ((Compute) ((LeafInfo) selectedLeafNode.getUserObject()).source);
+
+            JDialog dialog = new JDialog((Frame) null, "Rename Combination", true);
+            dialog.setLayout(new FlowLayout());
+
+            JTextField textField = new JTextField(20);
+            JButton button = new JButton("OK");
+            final String[] result = new String[1];
+
+            button.addActionListener(exp -> {
+                result[0] = textField.getText();
+                dialog.dispose();
+            });
+
+            dialog.add(textField);
+            dialog.add(button);
+            dialog.setSize(300, 100);
+            dialog.setLocationRelativeTo(null);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+
+            if (!result[0].isBlank()) {
+                LeafInfo info = new LeafInfo(cmp, result[0], 0);
+                selectedLeafNode.setUserObject(info);
+            }
+
         } else if (cmd.equals("OpenRemote")) {
         } else if (cmd.equals("Exit")) {
             closeFrame();
