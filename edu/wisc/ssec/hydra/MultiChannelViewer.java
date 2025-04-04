@@ -239,8 +239,11 @@ public class MultiChannelViewer extends HydraDisplay {
 
         JMenu hlpMenu = new JMenu("Help");
         hlpMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-
-        hlpMenu.add(new JTextArea("Spectrum Display:\n   Zoom (rubber band): SHFT+DRAG \n   Reset: CNTL+CLCK"));
+        JTextArea jt = new JTextArea(" Spectrum Display:\n   Zoom (rubber band): SHFT+DRAG \n   Reset: CNTL+CLCK");
+        jt.setEditable(false);
+        jt.setCursor(null);
+        jt.setFocusable(false);
+        hlpMenu.add(jt);
 
         menuBar.add(hlpMenu);
 

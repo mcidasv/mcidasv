@@ -555,22 +555,22 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
 
         JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-        maplines = new JCheckBoxMenuItem("coastlines", true);
+        maplines = new JCheckBoxMenuItem("Coast Lines", true);
         maplines.addActionListener(this);
         maplines.setActionCommand("coastlines");
         settingsMenu.add(maplines);
 
-        minmaxItem = new JCheckBoxMenuItem("min/max", false);
+        minmaxItem = new JCheckBoxMenuItem("Min/Max", false);
         minmaxItem.addActionListener(this);
         minmaxItem.setActionCommand("minmax");
         settingsMenu.add(minmaxItem);
 
-        probeItem = new JCheckBoxMenuItem("probe readout", true);
+        probeItem = new JCheckBoxMenuItem("Probe Readout", true);
         probeItem.addActionListener(this);
         probeItem.setActionCommand("probe");
         settingsMenu.add(probeItem);
 
-        clrScaleItem = new JCheckBoxMenuItem("color scale", false);
+        clrScaleItem = new JCheckBoxMenuItem("Color Scale", false);
         clrScaleItem.addActionListener(this);
         clrScaleItem.setActionCommand("colorScale");
         settingsMenu.add(clrScaleItem);

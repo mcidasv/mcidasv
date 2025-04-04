@@ -455,14 +455,14 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
 
         JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-        regionMatch = new JCheckBoxMenuItem("region matching", true);
+        regionMatch = new JCheckBoxMenuItem("Region Matching", true);
         regionMatch.addActionListener(this);
         regionMatch.setActionCommand("regionMatch");
         settingsMenu.add(regionMatch);
 
-        JMenu reprojectMode = new JMenu("reproject mode");
-        JRadioButtonMenuItem mode0 = new JRadioButtonMenuItem("nearest", true);
-        JRadioButtonMenuItem mode2 = new JRadioButtonMenuItem("bilinear", false);
+        JMenu reprojectMode = new JMenu("Reproject Mode");
+        JRadioButtonMenuItem mode0 = new JRadioButtonMenuItem("Nearest", true);
+        JRadioButtonMenuItem mode2 = new JRadioButtonMenuItem("Bilinear", false);
         ButtonGroup bg = new ButtonGroup();
         bg.add(mode0);
         bg.add(mode2);
@@ -475,18 +475,18 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
 
         settingsMenu.add(reprojectMode);
 
-        parallelCompute = new JCheckBoxMenuItem("parallel compute", Hydra.getDoParallel());
+        parallelCompute = new JCheckBoxMenuItem("Parallel Compute", Hydra.getDoParallel());
         parallelCompute.addActionListener(this);
         parallelCompute.setActionCommand("doParallel");
         settingsMenu.add(parallelCompute);
 
-        replicateCombinations = new JCheckBoxMenuItem("replicate combinations", Hydra.getReplicateCompute());
+        replicateCombinations = new JCheckBoxMenuItem("Replicate Combinations", Hydra.getReplicateCompute());
         replicateCombinations.addActionListener(this);
         replicateCombinations.setActionCommand("doReplicateCombinations");
         replicateCombinations.setToolTipText("automatically generates combinations for same instrument and platform");
         settingsMenu.add(replicateCombinations);
 
-        probeSettingsItem = new JMenuItem("text");
+        probeSettingsItem = new JMenuItem("Text");
         probeSettingsItem.addActionListener(this);
         probeSettingsItem.setActionCommand("textSettings");
         settingsMenu.add(probeSettingsItem);
@@ -1112,11 +1112,11 @@ class TextSettings {
         fontFld.setText(Integer.toString(Hydra.getFontSize()));
 
         JPanel panelA = new JPanel(new FlowLayout());
-        panelA.add(new Label("text scale factor"));
+        panelA.add(new Label("Text Scale Factor"));
         panelA.add(txtFld);
 
         JPanel panelB = new JPanel(new FlowLayout());
-        panelB.add(new Label("font size"));
+        panelB.add(new Label("Font Size"));
         panelB.add(fontFld);
 
         panel.add(panelA);
