@@ -443,7 +443,7 @@ public class StationModelControl extends ObsDisplayControl {
      * @override
      */
     protected boolean canDoProgressiveResolution() {
-        return true;
+        return false;
     }
     /**
      * Initailize after we have been unpersisted.
