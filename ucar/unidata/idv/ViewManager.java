@@ -769,6 +769,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** For globe background visibility */
     private JCheckBox globeBackgroundVisibility;
 
+    private JButton globeBGImage;
+
     /** For logo properties */
     private JCheckBox logoVisCbx;
 
@@ -1475,7 +1477,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         colorPanel.add(new JLabel(" Background: "));
         colorPanel.add(bgPropertiesSwatch);
 
-        colorPanel.setBorder(BorderFactory.createTitledBorder("Colors"));
+        // McIDAS Inquiry #2850-3141 
+        globeBGImage = new JButton("Use Background Image");
+        colorPanel.add(globeBGImage);
+        globeBGImage.addActionListener(ae -> getIdv().doMakeBackgroundImage());
+
+        colorPanel.setBorder(BorderFactory.createTitledBorder("Colors & Background Images"));
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false,
                                         false);
         fontSelector.setFont(getDisplayListFont());
@@ -1513,17 +1520,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                              ((MapViewManager) this).getGlobeBackgroundColorToUse(),
                                              "Globe Background Color");
 
-          bgComps[0].setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
-          globeBackgroundColorComp = bgComps[0];
-          globePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-          globePanel.add(globeBackgroundVisibility);
-          globePanel.add(new JLabel("Color: "));
-          globePanel.add(bgComps[0]);
-          globePanel.add(new JLabel(" Level: "));
-          globePanel.add(levelComp);
-          globePanel.setBorder(
-                  BorderFactory.createTitledBorder("Globe Display"));
-        }
+            bgComps[0].setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+            globeBackgroundColorComp = bgComps[0];
+            globePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            globePanel.add(globeBackgroundVisibility);
+            globePanel.add(new JLabel("Color: "));
+            globePanel.add(bgComps[0]);
+            globePanel.add(new JLabel(" Level: "));
+            globePanel.add(levelComp);
+            globePanel.setBorder(
+                    BorderFactory.createTitledBorder("Globe Display"));
+            }
 
         JPanel fullScreenPanel =
             GuiUtils.left(GuiUtils.hbox(new JLabel(" Width: "),
