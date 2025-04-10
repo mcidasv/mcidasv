@@ -33,14 +33,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/VolumeRe
 <xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
 <div class="pagesubtitle">Overview</div>
 <p>3D grids can be rendered as a volume display.</p>
-<div class="images"><img src="images/VolumeRenderControlGui.gif" alt="Image 1: Volume Rendering Controls Properties Dialog"><br>
+<div class="images"><img src="images/VolumeRenderControlGui.gif" alt="Image 1: Layout tab of the Point Data Plot Controls Dialog"><br>
 <span class="caption">Image 1: Volume Rendering Controls Properties Dialog</span></div>
 <p>The transparency features of the color table can be adjusted to see through the display. This is done by right-clicking on the color bar, going down to Transparency, and selecting a percentage.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows for opening the <a href="../tools/ColorTableEditor.html">Color Table Editor</a>, changing the range, selecting other color tables, etc.</li>
-  <li class="propertylistitem"><strong>Visible Range -</strong> Sets the range of data displayed. Clicking the <img src="images/Change.gif" alt="Change button" width="77" height="26"align=absmiddle> button will allow for changing the range from the default values for the parameter. Clicking the checkbox next to Visible Range applies any modified range to the data being displayed in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Use 3D Texture -</strong> Uses 3D texture to display the image in the Main Display window. This incorporates a sense of transparency to the display, making it easier to visualize features.</ul>
+  <li class="propertylistitem"><strong>Clip Displayed Range -</strong> Sets the range of data displayed. Clicking the <img src="images/Change.gif" alt="Change button" width="77" height="26"align=absmiddle> button will allow for changing the range from the default values for the parameter. Clicking the checkbox next to Visible Range applies any modified range to the data being displayed in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Smoothing -</strong> Smooths the display. There are seven types of smoothing: None, 5-point, 9-point, Gaussian, Cressman, Circular, and Rectangular weighted smoothers. The smoothing factor can be adjusted for all except the 5-point and 9-point smoothers. The higher the value, the smoother the grid. For the Cressman, Circular and Rectangular aperture smoothing types, the smoothing factor is the radius in grid spacing units.</li>
+  <li class="propertylistitem"><strong>Resolution -</strong> Sets the resolution of the display, with options between Low and High. A higher resolution will show more data points in the display and will take more time and memory to render than a lower resolution.</li>
+  <li class="propertylistitem"><strong>Use 3D Texture -</strong> Uses 3D texture to display the image in the Main Display window. This incorporates a sense of transparency to the display, making it easier to visualize features.</li></ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there is one option that is unique to this display.</p>
 <p>The <strong>View</strong> menu has this unique option:</p>
