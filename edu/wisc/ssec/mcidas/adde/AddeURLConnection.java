@@ -444,8 +444,7 @@ public class AddeURLConnection extends URLConnection
     }
     else
     {
-      throw new AddeURLException(
-          "Invalid or unsupported ADDE service= "+svc.toString() );
+        throw new AddeURLException("Invalid or unsupported ADDE service");
     }
 
     if (LOGGER.isLoggable(Level.FINEST)) {
@@ -1193,7 +1192,6 @@ public class AddeURLConnection extends URLConnection
     /**
      * Decode the ADDE request for grid directory information.
      *
-     *
      * there can be any valid combination of the following supported keywords:
      *
      * <pre>
@@ -1228,7 +1226,7 @@ public class AddeURLConnection extends URLConnection
      */
     private StringBuffer decodeGDIRString(String uCmd) {
       StringBuffer buf = new StringBuffer();
-      String testString, tempString, lctestString;
+      String testString, lctestString;
       String groupString = null;
       String descrString = "ALL";
       String sizeString = " 999999 ";
@@ -1239,7 +1237,6 @@ public class AddeURLConnection extends URLConnection
       String lonString = null;
       String rowString = null;
       String colString = null;
-      String srcString = null;
       String skip = null;
 
       StringTokenizer cmdTokens = new StringTokenizer(uCmd, "&");
@@ -1696,7 +1693,6 @@ public class AddeURLConnection extends URLConnection
         StringBuffer buf = new StringBuffer();
         String testString;
         String lctestString;
-        String tempString;
         String numString = "NUM=1";
         String dTimeString = "DTIME=96.0000";
         String traceString = "TRACE=0";
@@ -1829,7 +1825,6 @@ public class AddeURLConnection extends URLConnection
         StringBuffer buf = new StringBuffer();
         String testString;
         String lctestString;
-        String tempString;
         String numString = "NUM=1";
         String traceString = "TRACE=0";
         // Mandatory strings
@@ -2232,7 +2227,6 @@ public class AddeURLConnection extends URLConnection
      */
     private String decodeSELECTString(String justTheSelectString) {
 
-        String testString = null;
         String entireSelectString = null;
         // String trimmedSelectString = null;
         String thisSelect = null;
