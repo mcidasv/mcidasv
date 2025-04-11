@@ -67,7 +67,6 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
@@ -82,8 +81,6 @@ import java.awt.Label;
 import java.awt.Frame;
 
 import java.io.File;
-import java.io.PrintStream;
-import java.io.FileOutputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -97,6 +94,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
     private static final Logger logger = LoggerFactory.getLogger(DataBrowser.class);
     private static final String HYDRA_LAST_PATH_ID = "mcidasv.hydra.lastpath";
 
+    // TJJ - keep around as original version McV drop-in was based on, but do not display any more
     public static String version = "5.0.2";
 
     private static DataBrowser instance = null;
@@ -189,7 +187,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
 
         formulaSelection = new FormulaSelection();
 
-        String title = "HYDRA " + version;
+        String title = "HYDRA Control Window";
         frame = Hydra.createAndShowFrame(title, guiPanel, menuBar, new Dimension(568, 360));
         frame.addWindowListener(this);
         frameLoc = frame.getLocation();
