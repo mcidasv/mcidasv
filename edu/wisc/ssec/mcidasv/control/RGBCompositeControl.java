@@ -363,6 +363,31 @@ public class RGBCompositeControl extends DisplayControlImpl {
         return gamma;
     }
 
+    /**
+     * TJJ - quick hack, just do something visually jarring to test path
+     */
+
+    private void applyRayleighCorrection() {
+        float[][] newRedTbl = getZeroOutArray(redTable);
+        float[][] newGrnTbl = getZeroOutArray(grnTable);
+        float[][] newBluTbl = getZeroOutArray(bluTable);
+
+        for (int k = 0; k < redTable[0].length; k++) {
+            newRedTbl[0][k] = (float) Math.pow(redTable[0][k], 0.2);
+            newGrnTbl[1][k] = (float) Math.pow(grnTable[1][k], 0.2);
+            newBluTbl[2][k] = (float) Math.pow(bluTable[2][k], 0.2);
+        }
+        try {
+            displayMaster.setDisplayInactive();
+            ((BaseColorControl) redMap.getControl()).setTable(newRedTbl);
+            ((BaseColorControl) grnMap.getControl()).setTable(newGrnTbl);
+            ((BaseColorControl) bluMap.getControl()).setTable(newBluTbl);
+            displayMaster.setDisplayActive();
+        } catch (Exception e) {
+            LogUtil.logException("setDisplayInactive", e);
+        }
+    }
+
     private void updateGamma(double gamma) {
         setGamma(gamma);
         setRedGamma(gamma);
@@ -481,6 +506,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
     }
 
     public Container doMakeContents() {
+
+        JButton rayleighButton = new JButton("Apply Rayleigh Correction");
+        rayleighButton.addActionListener(e -> {
+            applyRayleighCorrection();
+        });
 
         JButton allGammaButton = new JButton("Apply to All Gamma Fields");
         allGammaButton.addActionListener(e -> {
@@ -656,21 +686,21 @@ public class RGBCompositeControl extends DisplayControlImpl {
         JPanel topPanel = new JPanel(new MigLayout());
         topPanel.add(new JLabel("Match fields: "));
         topPanel.add(matchFieldsCbox, "wrap");
-        topPanel.add(new JLabel("Red range: "));
+        topPanel.add(new JLabel("Red Range: "));
         topPanel.add(redLowTxtFld);
         topPanel.add(redHighTxtFld);
         topPanel.add(new JLabel("Red Gamma: "));
         topPanel.add(redGammaTxtFld);
         topPanel.add(redReset, "wrap");
 
-        topPanel.add(new JLabel("Green range: "));
+        topPanel.add(new JLabel("Green Range: "));
         topPanel.add(grnLowTxtFld);
         topPanel.add(grnHighTxtFld);
         topPanel.add(new JLabel("Green Gamma: "));
         topPanel.add(grnGammaTxtFld);
         topPanel.add(grnReset, "wrap");
 
-        topPanel.add(new JLabel("Blue range: "));
+        topPanel.add(new JLabel("Blue Range: "));
         topPanel.add(bluLowTxtFld);
         topPanel.add(bluHighTxtFld);
         topPanel.add(new JLabel("Blue Gamma: "));
@@ -680,10 +710,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
         topPanel.add(Box.createHorizontalStrut(2), "span 5");
         topPanel.add(applyButton, "wrap");
 
-        JPanel bottomPanel = new JPanel(new MigLayout("", "[align right][fill]"));
+        JPanel bottomPanel = new JPanel(new MigLayout());
         bottomPanel.add(new JLabel("Common Gamma: "));
-        bottomPanel.add(gammaTxtFld, "flowx, split 2");
-        bottomPanel.add(allGammaButton, "alignx right, wrap");
+        bottomPanel.add(gammaTxtFld);
+        bottomPanel.add(allGammaButton, "wrap");
+        bottomPanel.add(rayleighButton, "wrap");
         bottomPanel.add(new JLabel("Vertical Position: "));
         bottomPanel.add(doMakeZPositionSlider());
 
