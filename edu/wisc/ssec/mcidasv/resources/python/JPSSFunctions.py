@@ -87,6 +87,30 @@ def VIIRSTrueColorRGB(M5, M4, M3):
 
     return package(inM5, rgb)
 
+# VIIRS SDR True Color RGB
+def VIIRSTrueColorRGBRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA):
+    # https://gina.alaska.edu/wp-content/uploads/2023/02/QuickGuide_True_Color_Final.pdf
+    # red = M5 (0.672um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+    # grn = M4 (0.555um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = M3 (0.488um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+
+    inM5 = M5
+    M5 = unpackage(M5)
+    inM4 = M4
+    M4 = unpackage(M4)
+    inM3 = M3
+    M3 = unpackage(M3)
+
+    grd750 = makeGrid(M5, 750)
+
+    red = rescale(M5, 0, 1, 0, 255)
+    grn = rescale(M4, 0, 1, 0, 255)
+    blu = rescale(M3, 0, 1, 0, 255)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
+
+    return package(inM5, rgb)
+
 
 # VIIRS SDR Natural Color RGB (M-band)
 def VIIRSNaturalColorRGB(M10, M7, M5):

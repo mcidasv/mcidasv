@@ -1033,6 +1033,17 @@
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
         </operands>
     </derived>
+    <derived description="JPSS True Color RGB Rayleigh Corrected" formula="VIIRSTrueColorRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle])" id="VIIRS_M_RGB_RC(M5, M4, M3, SOL_ZA, SAT_ZA)" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_RGB_TrueColor_Rayleigh_Corrected"/>
+        </operands>
+    </derived>
     <derived description="VIIRS SDR Day Cloud Type RGB" formula="VIIRSCloudTypeRGB(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_Cloud_Type_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>

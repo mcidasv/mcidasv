@@ -347,6 +347,15 @@
   <paramgroup description="JPSS True Color RGB" name="JPSS_RGB_TrueColor">
     <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M4-SDR_All/Reflectance" p3="VIIRS-M3-SDR_All/Reflectance"/>
   </paramgroup>
+  <paramgroup description="JPSS True Color RGB Rayleigh Corrected" name="JPSS_RGB_TrueColor_Rayleigh_Corrected">
+    <params
+            p1="VIIRS-M5-SDR_All/Reflectance"
+            p2="VIIRS-M4-SDR_All/Reflectance"
+            p3="VIIRS-M3-SDR_All/Reflectance"
+            p4="VIIRS-MOD-GEO_All/SolarZenithAngle"
+            p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle"
+    />
+  </paramgroup>
   <paramgroup description="JPSS Cloud Type RGB" name="JPSS_RGB_CloudType">
     <params p1="VIIRS-M9-SDR_All/Reflectance" p2="VIIRS-M5-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance"/>
   </paramgroup>

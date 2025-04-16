@@ -27,13 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv.control;
 
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.rmi.RemoteException;
-import java.util.Hashtable;
-import java.util.Iterator;
-
-import javax.swing.*;
+import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -57,7 +51,18 @@ import visad.ScalarMapListener;
 import visad.VisADException;
 import visad.georef.MapProjection;
 
-import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.rmi.RemoteException;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 public class RGBCompositeControl extends DisplayControlImpl {
 
@@ -280,11 +285,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
         }
     }
 
-    public void setRedRange(double[] range) {
-        redRange[0] = range[0];
-        redRange[1] = range[1];
-    }
-
     public double[] getRedRange() {
         return new double[] {redRange[0], redRange[1]};
     }
@@ -299,11 +299,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
         } catch (VisADException | RemoteException ex) {
             LogUtil.logException("grnMap.setRange", ex);
         }
-    }
-
-    public void setGrnRange(double[] range) {
-        grnRange[0] = range[0];
-        grnRange[1] = range[1];
     }
 
     public double[] getGrnRange() {
@@ -322,11 +317,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
         }
     }
 
-    public void setBluRange(double[] range) {
-        bluRange[0] = range[0];
-        bluRange[1] = range[1];
-    }
-
     public double[] getBluRange() {
         return new double[] {bluRange[0], bluRange[1]};
     }
@@ -335,24 +325,12 @@ public class RGBCompositeControl extends DisplayControlImpl {
         redGamma = gamma;
     }
 
-    public double getRedGamma() {
-        return redGamma;
-    }
-
     public void setGrnGamma(double gamma) {
         grnGamma = gamma;
     }
 
-    public double getGrnGamma() {
-        return grnGamma;
-    }
-
     public void setBluGamma(double gamma) {
         bluGamma = gamma;
-    }
-
-    public double getBluGamma() {
-        return bluGamma;
     }
 
     public void setGamma(double gamma) {
