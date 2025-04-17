@@ -354,6 +354,8 @@
             p3="VIIRS-M3-SDR_All/Reflectance"
             p4="VIIRS-MOD-GEO_All/SolarZenithAngle"
             p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle"
+            p6="VIIRS-MOD-GEO_All/SolarAzimuthAngle"
+            p7="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"
     />
   </paramgroup>
   <paramgroup description="JPSS Cloud Type RGB" name="JPSS_RGB_CloudType">

@@ -88,7 +88,7 @@ def VIIRSTrueColorRGB(M5, M4, M3):
     return package(inM5, rgb)
 
 # VIIRS SDR True Color RGB
-def VIIRSTrueColorRGBRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA):
+def VIIRSTrueColorRGBRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # https://gina.alaska.edu/wp-content/uploads/2023/02/QuickGuide_True_Color_Final.pdf
     # red = M5 (0.672um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
     # grn = M4 (0.555um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
