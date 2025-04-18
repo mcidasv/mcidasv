@@ -347,7 +347,7 @@
   <paramgroup description="JPSS True Color RGB" name="JPSS_RGB_TrueColor">
     <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M4-SDR_All/Reflectance" p3="VIIRS-M3-SDR_All/Reflectance"/>
   </paramgroup>
-  <paramgroup description="JPSS True Color RGB Rayleigh Corrected" name="JPSS_RGB_TrueColor_Rayleigh_Corrected">
+  <paramgroup description="VIIRS True Color RGB Rayleigh Corrected" name="VIIRS_RGB_TrueColor_Rayleigh_Corrected">
     <params
             p1="VIIRS-M5-SDR_All/Reflectance"
             p2="VIIRS-M4-SDR_All/Reflectance"
