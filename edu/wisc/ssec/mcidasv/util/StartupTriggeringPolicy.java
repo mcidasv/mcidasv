@@ -41,6 +41,7 @@ import java.nio.file.Paths;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This is a Logback {@literal "triggering policy"} that forces a log
@@ -244,7 +245,7 @@ public class StartupTriggeringPolicy<E>
     @Override public void start() {
         renameOldLogDirectory();
         super.start();
-        nextCheck = 0L;
+        this.atomicNextCheck = new AtomicLong(0L);
         isTriggeringEvent(null, null);
         try {
             tbrp.rollover();

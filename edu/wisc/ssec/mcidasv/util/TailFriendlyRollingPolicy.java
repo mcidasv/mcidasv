@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.Future;
 
@@ -92,9 +93,8 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
             getTimeBasedFileNamingAndTriggeringPolicy().getArchiveRemover();
 
         if (archiveRemover != null) {
-            Date d =
-                new Date(timeBasedFileNamingAndTriggeringPolicy.getCurrentTime());
-            archiveRemover.clean(d);
+            Instant instant = Instant.ofEpochMilli(timeBasedFileNamingAndTriggeringPolicy.getCurrentTime());
+            archiveRemover.clean(instant);
         }
     }
 
