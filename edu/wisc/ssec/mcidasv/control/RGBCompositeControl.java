@@ -31,24 +31,17 @@ import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.LogUtil;
 import ucar.visad.display.DisplayMaster;
 
-import visad.BaseColorControl;
-import visad.CoordinateSystem;
-import visad.Data;
-import visad.FieldImpl;
-import visad.FlatField;
-import visad.FunctionType;
-import visad.ScalarMap;
-import visad.ScalarMapControlEvent;
-import visad.ScalarMapEvent;
-import visad.ScalarMapListener;
-import visad.VisADException;
+import visad.*;
 import visad.georef.MapProjection;
 
 import javax.swing.Box;
@@ -67,7 +60,7 @@ import java.util.Iterator;
 public class RGBCompositeControl extends DisplayControlImpl {
 
     public final static String FORMULA_IN_PROGRESS_FLAG = "Formula_Active";
-
+    private static final Logger logger = LoggerFactory.getLogger(RGBCompositeControl.class);
     /** Displayable for the data */
     private ImageRGBDisplayable imageDisplay;
 
@@ -360,11 +353,20 @@ public class RGBCompositeControl extends DisplayControlImpl {
      * @throws IllegalArgumentException if input grid dimensions are inconsistent.
      */
 
-    public static float[][] correctRayleighVisible(
-            float[][] visibleDataGrid,
-            float[][] satelliteZenithGrid, float[][] solarZenithGrid,
-            float[][] satelliteAzimuthGrid, float[][] solarAzimuthGrid,
-            double wavelengthVisible, double atmosphericPressure) {
+    public static FieldImpl correctRayleighVisible(FieldImpl visibleField,
+                                               FieldImpl satelliteZenithField,
+                                               FieldImpl solarZenithField,
+                                               FieldImpl satelliteAzimuthField,
+                                               FieldImpl solarAzimuthField,
+                                               double wavelengthVisible,
+                                               double atmosphericPressure)
+            throws VisADException, RemoteException {
+
+        double[][] visibleDataGrid = visibleField.getValues();
+        double[][] satelliteZenithGrid = satelliteZenithField.getValues();
+        double[][] solarZenithGrid = solarZenithField.getValues();
+        double[][] satelliteAzimuthGrid = satelliteAzimuthField.getValues();
+        double[][] solarAzimuthGrid = solarAzimuthField.getValues();
 
         int rows = visibleDataGrid.length;
         int cols = visibleDataGrid[0].length;
@@ -386,8 +388,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
                 correctedDataGrid[i][j] = (float) Math.max(0, visibleDataGrid[i][j] - rhoRayleigh);
             }
         }
+        FieldImpl outField = visibleField;
+        outField.setSamples(correctedDataGrid);
 
-        return correctedDataGrid;
+        logger.info("3141 - made it out");
+        return outField;
     }
 
     /**
