@@ -380,12 +380,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
                 float phiV = (float) Math.toRadians(satelliteAzimuthGrid[i][j]);
                 float phiS = (float) Math.toRadians(solarAzimuthGrid[i][j]);
 
-                // Calculate Rayleigh scattering reflectance for the visible band
                 double rhoRayleigh = calculateRayleighReflectance(wavelengthVisible, thetaS, thetaV, phiS, phiV, atmosphericPressure);
-
-                // Apply Rayleigh correction (assuming observed data includes Rayleigh scattering)
-                // This is a simplified correction; more sophisticated methods exist.
-                correctedDataGrid[i][j] = (float) Math.max(0, visibleDataGrid[i][j] - rhoRayleigh);
+                correctedDataGrid[i][j] = (float) (visibleDataGrid[i][j] - rhoRayleigh);
             }
         }
         FieldImpl outField = visibleField;
@@ -395,58 +391,36 @@ public class RGBCompositeControl extends DisplayControlImpl {
         return outField;
     }
 
-    /**
-     * Calculates the Rayleigh scattering reflectance.
-     *
-     * This is a simplified implementation based on approximations. More complex
-     * models might be needed for higher accuracy.
-     *
-     * @param wavelength        Wavelength of the band (in micrometers).
-     * @param solarZenithRad    Solar zenith angle (in radians).
-     * @param satelliteZenithRad Satellite zenith angle (in radians).
-     * @param solarAzimuthRad   Solar azimuth angle (in radians).
-     * @param satelliteAzimuthRad Satellite azimuth angle (in radians).
-     * @param pressureHPa       Atmospheric pressure (in hPa).
-     * @return Rayleigh scattering reflectance (unitless).
-     */
-
+    // Calculate Rayleigh reflectance - McIDAS Inquiry #3055-3141
     private static double calculateRayleighReflectance(
             double wavelength, double solarZenithRad, double satelliteZenithRad,
             double solarAzimuthRad, double satelliteAzimuthRad, double pressureHPa) {
 
-        // Standard pressure (1013.25 hPa)
-        double standardPressure = 1013.25;
-        double pressureRatio = pressureHPa / standardPressure;
+        double tau_ro = (0.008569 / Math.pow(wavelength, 4))
+                        * (1 + (0.0113 / Math.pow(wavelength, 2)) + (0.00013 / Math.pow(wavelength, 4)));
 
-        // Air molecule number density at standard temperature and pressure (cm^-3)
-        double n0 = 2.545 * Math.pow(10, 19);
+        // \tau_{ro} = \frac{0.008569}{\lambda^4} \cdot (1 + \frac{0.0113}{\lambda^2} + \frac{0.00013}{\lambda^4})
 
-        // Refractive index of air (simplified formula)
-        double n_minus_1 = 8342.4 * Math.pow(10, -8) * (1 + 0.007525 * Math.pow(1 / wavelength, 2));
-        double n = 1 + n_minus_1;
+        double pressure_rat = pressureHPa / 1013.25;
+        // P = \frac{pHPa}{atmP}
 
-        // Rayleigh scattering cross-section (cm^2)
-        double sigmaRayleigh = (24 * Math.PI * Math.PI * Math.PI * Math.pow(n * n - 1, 2)) /
-                (Math.pow(wavelength * 1e-4, 4) * n0 * n0 * ((6 - 7 * Math.sin(solarZenithRad) * Math.sin(solarZenithRad)) /
-                        (6 + 3 * Math.sin(solarZenithRad) * Math.sin(solarZenithRad))));
+        double tau = pressure_rat * tau_ro; // this is the only thing matters next
+        // \tau = P \cdot \tau_{ro}
 
-        // Optical thickness due to Rayleigh scattering
-        double tauRayleigh = sigmaRayleigh * n0 * pressureRatio;
+        double scattering_angle_cos = Math.cos(solarZenithRad) * Math.cos(satelliteZenithRad)
+                                    + Math.sin(solarZenithRad) * Math.sin(satelliteZenithRad)
+                                    * Math.cos(satelliteAzimuthRad - solarAzimuthRad);
 
-        // Scattering angle cosine
-        double cosScatteringAngle = Math.cos(solarZenithRad) * Math.cos(satelliteZenithRad) +
-                Math.sin(solarZenithRad) * Math.sin(satelliteZenithRad) * Math.cos(solarAzimuthRad - satelliteAzimuthRad);
+        // \cos (\Theta) = \cos (\theta_{sun})\cos (\theta_{sat}) + \sin (\theta_{sun})\sin (\theta_{sat}) \cdot \cos(\phi_{sat} - \phi_{sun})
 
-        // Phase function for Rayleigh scattering (unpolarized light)
-        double phaseFunction = 0.75 * (1 + cosScatteringAngle * cosScatteringAngle);
+        double P_big_theta = 0.75 * (1 + Math.pow(scattering_angle_cos, 2)); // another important value
+        // P(\Theta) = 0.75 * (1 + (\cos(\Theta))^2)
 
-        // Simplified Rayleigh reflectance (approximation)
-        // This is a very basic approximation and doesn't account for multiple scattering
-        double rhoRayleigh = (tauRayleigh * phaseFunction * (Math.exp(-tauRayleigh / Math.cos(solarZenithRad)) +
-                Math.exp(-tauRayleigh / Math.cos(satelliteZenithRad)))) /
-                (4 * Math.cos(solarZenithRad) * Math.cos(satelliteZenithRad));
+        double mu_1 = Math.cos(solarZenithRad);
+        double mu_2 = Math.cos(solarZenithRad);
 
-        return rhoRayleigh;
+        return tau * P_big_theta * (1 / (4 * mu_1 * mu_2));
+        // \tau \cdot P(\Theta) \cdot (\frac{1}{4 \cdot \mu_1 \cdot \mu_2})
     }
 
     private void applyRayleighCorrection() {
