@@ -371,7 +371,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
         int rows = visibleDataGrid.length;
         int cols = visibleDataGrid[0].length;
 
-        float[][] correctedDataGrid = new float[rows][cols];
+        // float[][] correctedDataGrid = new float[rows][cols];
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -381,14 +381,13 @@ public class RGBCompositeControl extends DisplayControlImpl {
                 float phiS = (float) Math.toRadians(solarAzimuthGrid[i][j]);
 
                 double rhoRayleigh = calculateRayleighReflectance(wavelengthVisible, thetaS, thetaV, phiS, phiV, atmosphericPressure);
-                correctedDataGrid[i][j] = (float) (visibleDataGrid[i][j] - rhoRayleigh);
+                visibleDataGrid[i][j] = (float) (visibleDataGrid[i][j] - rhoRayleigh);
             }
         }
-        FieldImpl outField = visibleField;
-        outField.setSamples(correctedDataGrid);
+        visibleField.setSamples(visibleDataGrid);
 
         logger.info("3141 - made it out");
-        return outField;
+        return visibleField;
     }
 
     // Calculate Rayleigh reflectance - McIDAS Inquiry #3055-3141
