@@ -110,6 +110,10 @@ public class RGBCompositeControl implements DepictionControl {
     private Depiction depiction = null;
     private JFrame frame;
 
+    public RGBCompositeControl() {
+        super();
+    }
+
     public RGBCompositeControl(DisplayMaster displayMaster, ImageRGBDisplayable imageDisplay) {
         this.displayMaster = displayMaster;
         this.imageDisplay = imageDisplay;
@@ -127,7 +131,6 @@ public class RGBCompositeControl implements DepictionControl {
         redTable = Hydra.grayTable.getTable();
         grnTable = Hydra.grayTable.getTable();
         bluTable = Hydra.grayTable.getTable();
-
 
         Iterator iter = imageDisplay.getScalarMapSet().iterator();
         while (iter.hasNext()) {

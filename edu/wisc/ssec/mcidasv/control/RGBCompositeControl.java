@@ -278,6 +278,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
         }
     }
 
+    public void setRedRange(double[] range) {
+        redRange[0] = range[0];
+        redRange[1] = range[1];
+    }
+
     public double[] getRedRange() {
         return new double[] {redRange[0], redRange[1]};
     }
@@ -292,6 +297,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
         } catch (VisADException | RemoteException ex) {
             LogUtil.logException("grnMap.setRange", ex);
         }
+    }
+
+    public void setGrnRange(double[] range) {
+        grnRange[0] = range[0];
+        grnRange[1] = range[1];
     }
 
     public double[] getGrnRange() {
@@ -310,6 +320,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
         }
     }
 
+    public void setBluRange(double[] range) {
+        bluRange[0] = range[0];
+        bluRange[1] = range[1];
+    }
+
     public double[] getBluRange() {
         return new double[] {bluRange[0], bluRange[1]};
     }
@@ -318,12 +333,24 @@ public class RGBCompositeControl extends DisplayControlImpl {
         redGamma = gamma;
     }
 
+    public double getRedGamma() {
+        return redGamma;
+    }
+
     public void setGrnGamma(double gamma) {
         grnGamma = gamma;
     }
 
+    public double getGrnGamma() {
+        return grnGamma;
+    }
+
     public void setBluGamma(double gamma) {
         bluGamma = gamma;
+    }
+
+    public double getBluGamma() {
+        return bluGamma;
     }
 
     public void setGamma(double gamma) {
