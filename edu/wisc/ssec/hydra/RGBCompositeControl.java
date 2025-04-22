@@ -50,10 +50,7 @@ import visad.ScalarMapEvent;
 import visad.ScalarMapListener;
 import visad.VisADException;
 
-import visad.georef.MapProjection;
-
 import ucar.visad.display.DisplayMaster;
-
 
 public class RGBCompositeControl implements DepictionControl {
 
@@ -80,16 +77,11 @@ public class RGBCompositeControl implements DepictionControl {
     final double[] initGrnRange = new double[]{Double.NaN, Double.NaN};
     final double[] initBluRange = new double[]{Double.NaN, Double.NaN};
 
-    private MapProjection mapProjection = null;
-
-
     private double gamma = 1.0;
 
     private double redGamma = 1.0;
     private double grnGamma = 1.0;
     private double bluGamma = 1.0;
-
-    private boolean hasRange = false;
 
     private final JTextField gammaTxtFld =
             new JTextField(Float.toString(1f), 4);
@@ -139,7 +131,6 @@ public class RGBCompositeControl implements DepictionControl {
         redTable = Hydra.grayTable.getTable();
         grnTable = Hydra.grayTable.getTable();
         bluTable = Hydra.grayTable.getTable();
-
 
         Iterator iter = imageDisplay.getScalarMapSet().iterator();
         while (iter.hasNext()) {
@@ -515,7 +506,6 @@ public class RGBCompositeControl implements DepictionControl {
         grnPanel.add(new JLabel("Gamma:"));
         grnPanel.add(grnGammaTxtFld);
 
-
         button = new JButton("reset");
         grnPanel.add(button);
         button.addActionListener(new ActionListener() {
@@ -527,7 +517,6 @@ public class RGBCompositeControl implements DepictionControl {
                 grnHighTxtFld.setText(Float.toString((float) grnRange[1]));
             }
         });
-
 
         JPanel bluPanel = new JPanel(new FlowLayout());
         bluPanel.add(new JLabel("Blue range: "));
@@ -567,7 +556,6 @@ public class RGBCompositeControl implements DepictionControl {
                 bluHighTxtFld.setText(Float.toString((float) bluRange[1]));
             }
         });
-
 
         subPanel.add(redPanel);
         subPanel.add(grnPanel);
@@ -615,7 +603,6 @@ public class RGBCompositeControl implements DepictionControl {
             this.range = range;
             this.initRange = initRange;
         }
-
 
         public void controlChanged(ScalarMapControlEvent event) throws RemoteException, VisADException {
         }

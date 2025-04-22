@@ -27,42 +27,40 @@
  */
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
+
+import net.miginfocom.swing.MigLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.LogUtil;
+import ucar.visad.display.DisplayMaster;
+
+import visad.*;
+import visad.georef.MapProjection;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.swing.*;
-
-import net.miginfocom.swing.MigLayout;
-
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.LogUtil;
-import ucar.visad.display.DisplayMaster;
-
-import visad.BaseColorControl;
-import visad.CoordinateSystem;
-import visad.Data;
-import visad.FieldImpl;
-import visad.FlatField;
-import visad.FunctionType;
-import visad.ScalarMap;
-import visad.ScalarMapControlEvent;
-import visad.ScalarMapEvent;
-import visad.ScalarMapListener;
-import visad.VisADException;
-import visad.georef.MapProjection;
-
-import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
-
 public class RGBCompositeControl extends DisplayControlImpl {
 
     public final static String FORMULA_IN_PROGRESS_FLAG = "Formula_Active";
-
+    private static final Logger logger = LoggerFactory.getLogger(RGBCompositeControl.class);
     /** Displayable for the data */
     private ImageRGBDisplayable imageDisplay;
 
@@ -363,6 +361,115 @@ public class RGBCompositeControl extends DisplayControlImpl {
         return gamma;
     }
 
+    /**
+     * TJJ - quick hack, just do something visually jarring to test path
+     */
+
+    /**
+     * Computes a Rayleigh scattering corrected 2D grid for visible range data.
+     *
+     * @param visibleDataGrid      2D grid of remote sensing data in the visible range
+     * (assuming it represents top-of-atmosphere radiance or reflectance).
+     * @param satelliteZenithGrid  2D grid of satellite zenith angles (in degrees).
+     * @param solarZenithGrid      2D grid of solar zenith angles (in degrees).
+     * @param satelliteAzimuthGrid 2D grid of satellite azimuth angles (in degrees).
+     * @param solarAzimuthGrid     2D grid of solar azimuth angles (in degrees).
+     * @param wavelengthVisible    Wavelength of the visible band (in micrometers).
+     * @param atmosphericPressure  Atmospheric pressure at the surface (in hPa).
+     * @return A 2D grid representing the Rayleigh scattering corrected data.
+     * @throws IllegalArgumentException if input grid dimensions are inconsistent.
+     */
+
+    public static FieldImpl correctRayleighVisible(FieldImpl visibleField,
+                                               FieldImpl satelliteZenithField,
+                                               FieldImpl solarZenithField,
+                                               FieldImpl satelliteAzimuthField,
+                                               FieldImpl solarAzimuthField,
+                                               double wavelengthVisible,
+                                               double atmosphericPressure)
+            throws VisADException, RemoteException {
+
+        double[][] visibleDataGrid = visibleField.getValues();
+        double[][] satelliteZenithGrid = satelliteZenithField.getValues();
+        double[][] solarZenithGrid = solarZenithField.getValues();
+        double[][] satelliteAzimuthGrid = satelliteAzimuthField.getValues();
+        double[][] solarAzimuthGrid = solarAzimuthField.getValues();
+
+        int rows = visibleDataGrid.length;
+        int cols = visibleDataGrid[0].length;
+
+        // float[][] correctedDataGrid = new float[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                float thetaV = (float) Math.toRadians(satelliteZenithGrid[i][j]);
+                float thetaS = (float) Math.toRadians(solarZenithGrid[i][j]);
+                float phiV = (float) Math.toRadians(satelliteAzimuthGrid[i][j]);
+                float phiS = (float) Math.toRadians(solarAzimuthGrid[i][j]);
+
+                double rhoRayleigh = calculateRayleighReflectance(wavelengthVisible, thetaS, thetaV, phiS, phiV, atmosphericPressure);
+                visibleDataGrid[i][j] = (float) (visibleDataGrid[i][j] - rhoRayleigh);
+            }
+        }
+        visibleField.setSamples(visibleDataGrid);
+
+        logger.info("3141 - made it out");
+        return visibleField;
+    }
+
+    // Calculate Rayleigh reflectance - McIDAS Inquiry #3055-3141
+    private static double calculateRayleighReflectance(
+            double wavelength, double solarZenithRad, double satelliteZenithRad,
+            double solarAzimuthRad, double satelliteAzimuthRad, double pressureHPa) {
+
+        double tau_ro = (0.008569 / Math.pow(wavelength, 4))
+                        * (1 + (0.0113 / Math.pow(wavelength, 2)) + (0.00013 / Math.pow(wavelength, 4)));
+
+        // \tau_{ro} = \frac{0.008569}{\lambda^4} \cdot (1 + \frac{0.0113}{\lambda^2} + \frac{0.00013}{\lambda^4})
+
+        double pressure_rat = pressureHPa / 1013.25;
+        // P = \frac{pHPa}{atmP}
+
+        double tau = pressure_rat * tau_ro; // this is the only thing matters next
+        // \tau = P \cdot \tau_{ro}
+
+        double scattering_angle_cos = Math.cos(solarZenithRad) * Math.cos(satelliteZenithRad)
+                                    + Math.sin(solarZenithRad) * Math.sin(satelliteZenithRad)
+                                    * Math.cos(satelliteAzimuthRad - solarAzimuthRad);
+
+        // \cos (\Theta) = \cos (\theta_{sun})\cos (\theta_{sat}) + \sin (\theta_{sun})\sin (\theta_{sat}) \cdot \cos(\phi_{sat} - \phi_{sun})
+
+        double P_big_theta = 0.75 * (1 + Math.pow(scattering_angle_cos, 2)); // another important value
+        // P(\Theta) = 0.75 * (1 + (\cos(\Theta))^2)
+
+        double mu_1 = Math.cos(solarZenithRad);
+        double mu_2 = Math.cos(solarZenithRad);
+
+        return tau * P_big_theta * (1 / (4 * mu_1 * mu_2));
+        // \tau \cdot P(\Theta) \cdot (\frac{1}{4 \cdot \mu_1 \cdot \mu_2})
+    }
+
+    private void applyRayleighCorrection() {
+        float[][] newRedTbl = getZeroOutArray(redTable);
+        float[][] newGrnTbl = getZeroOutArray(grnTable);
+        float[][] newBluTbl = getZeroOutArray(bluTable);
+
+        for (int k = 0; k < redTable[0].length; k++) {
+            newRedTbl[0][k] = (float) Math.pow(redTable[0][k], 0.2);
+            newGrnTbl[1][k] = (float) Math.pow(grnTable[1][k], 0.2);
+            newBluTbl[2][k] = (float) Math.pow(bluTable[2][k], 0.2);
+        }
+        try {
+            displayMaster.setDisplayInactive();
+            ((BaseColorControl) redMap.getControl()).setTable(newRedTbl);
+            ((BaseColorControl) grnMap.getControl()).setTable(newGrnTbl);
+            ((BaseColorControl) bluMap.getControl()).setTable(newBluTbl);
+            displayMaster.setDisplayActive();
+        } catch (Exception e) {
+            LogUtil.logException("setDisplayInactive", e);
+        }
+    }
+
     private void updateGamma(double gamma) {
         setGamma(gamma);
         setRedGamma(gamma);
@@ -481,6 +588,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
     }
 
     public Container doMakeContents() {
+
+        JButton rayleighButton = new JButton("Apply Rayleigh Correction");
+        rayleighButton.addActionListener(e -> {
+            applyRayleighCorrection();
+        });
 
         JButton allGammaButton = new JButton("Apply to All Gamma Fields");
         allGammaButton.addActionListener(e -> {
@@ -656,21 +768,21 @@ public class RGBCompositeControl extends DisplayControlImpl {
         JPanel topPanel = new JPanel(new MigLayout());
         topPanel.add(new JLabel("Match fields: "));
         topPanel.add(matchFieldsCbox, "wrap");
-        topPanel.add(new JLabel("Red range: "));
+        topPanel.add(new JLabel("Red Range: "));
         topPanel.add(redLowTxtFld);
         topPanel.add(redHighTxtFld);
         topPanel.add(new JLabel("Red Gamma: "));
         topPanel.add(redGammaTxtFld);
         topPanel.add(redReset, "wrap");
 
-        topPanel.add(new JLabel("Green range: "));
+        topPanel.add(new JLabel("Green Range: "));
         topPanel.add(grnLowTxtFld);
         topPanel.add(grnHighTxtFld);
         topPanel.add(new JLabel("Green Gamma: "));
         topPanel.add(grnGammaTxtFld);
         topPanel.add(grnReset, "wrap");
 
-        topPanel.add(new JLabel("Blue range: "));
+        topPanel.add(new JLabel("Blue Range: "));
         topPanel.add(bluLowTxtFld);
         topPanel.add(bluHighTxtFld);
         topPanel.add(new JLabel("Blue Gamma: "));
@@ -680,10 +792,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
         topPanel.add(Box.createHorizontalStrut(2), "span 5");
         topPanel.add(applyButton, "wrap");
 
-        JPanel bottomPanel = new JPanel(new MigLayout("", "[align right][fill]"));
+        JPanel bottomPanel = new JPanel(new MigLayout());
         bottomPanel.add(new JLabel("Common Gamma: "));
-        bottomPanel.add(gammaTxtFld, "flowx, split 2");
-        bottomPanel.add(allGammaButton, "alignx right, wrap");
+        bottomPanel.add(gammaTxtFld);
+        bottomPanel.add(allGammaButton, "wrap");
+        bottomPanel.add(rayleighButton, "wrap");
         bottomPanel.add(new JLabel("Vertical Position: "));
         bottomPanel.add(doMakeZPositionSlider());
 

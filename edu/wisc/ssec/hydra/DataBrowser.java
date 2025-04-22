@@ -44,7 +44,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -111,8 +110,6 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
 
     JComboBox actionType;
 
-    JList dataSourceList;
-
     JMenuBar menuBar;
 
     JCheckBoxMenuItem regionMatch = null;
@@ -127,7 +124,6 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
     DefaultTreeModel rootModel;
     JTree rootTree;
 
-    JTree datasetTree;
     DefaultMutableTreeNode datasetsNode;
     DefaultTreeModel treeModel;
 
@@ -367,7 +363,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
                 previewDisplay.draw();
                 first = false;
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         } else {
             if (comp != null) {
@@ -376,7 +372,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
             try {
                 previewDisplay.updateFrom(comp);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
     }

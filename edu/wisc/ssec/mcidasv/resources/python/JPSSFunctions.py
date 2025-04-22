@@ -1,5 +1,6 @@
 # Note that these functions are still considered to be under development
 
+from edu.wisc.ssec.mcidasv.control import RGBCompositeControl
 from edu.wisc.ssec.mcidasv.data.hydra import MultiSpectralDataSource
 from ucar.unidata.data.grid import GridUtil
 
@@ -79,6 +80,44 @@ def VIIRSTrueColorRGB(M5, M4, M3):
   
     grd750 = makeGrid(M5, 750)
     
+    red = rescale(M5, 0, 1, 0, 255)
+    grn = rescale(M4, 0, 1, 0, 255)
+    blu = rescale(M3, 0, 1, 0, 255)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
+
+    return package(inM5, rgb)
+
+# VIIRS SDR True Color RGB, Rayleigh Corrected
+def VIIRSTrueColorRGBRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
+    # https://gina.alaska.edu/wp-content/uploads/2023/02/QuickGuide_True_Color_Final.pdf
+    # red = M5 (0.672um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+    # grn = M4 (0.555um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = M3 (0.488um) Reflectance; 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+
+    # azDiff = SOL_AA - SAT_AA
+
+    inM5 = M5
+    M5 = unpackage(M5)
+    inM4 = M4
+    M4 = unpackage(M4)
+    inM3 = M3
+    M3 = unpackage(M3)
+    inSOL_ZA = SOL_ZA
+    SOL_ZA = unpackage(SOL_ZA)
+    inSAT_ZA = SAT_ZA
+    SAT_ZA = unpackage(SAT_ZA)
+    inSOL_AA = SOL_AA
+    SOL_AA = unpackage(SOL_AA)
+    inSAT_AA = SAT_AA
+    SAT_AA = unpackage(SAT_AA)
+
+    M5 = RGBCompositeControl.correctRayleighVisible(M5, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
+    M4 = RGBCompositeControl.correctRayleighVisible(M4, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
+    M3 = RGBCompositeControl.correctRayleighVisible(M3, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+
+    grd750 = makeGrid(M5, 750)
+
     red = rescale(M5, 0, 1, 0, 255)
     grn = rescale(M4, 0, 1, 0, 255)
     blu = rescale(M3, 0, 1, 0, 255)
