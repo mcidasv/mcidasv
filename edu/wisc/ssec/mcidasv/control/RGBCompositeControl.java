@@ -589,11 +589,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
     public Container doMakeContents() {
 
-        JButton rayleighButton = new JButton("Apply Rayleigh Correction");
-        rayleighButton.addActionListener(e -> {
-            applyRayleighCorrection();
-        });
-
         JButton allGammaButton = new JButton("Apply to All Gamma Fields");
         allGammaButton.addActionListener(e -> {
             String tmp = gammaTxtFld.getText().trim();
@@ -796,7 +791,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
         bottomPanel.add(new JLabel("Common Gamma: "));
         bottomPanel.add(gammaTxtFld);
         bottomPanel.add(allGammaButton, "wrap");
-        bottomPanel.add(rayleighButton, "wrap");
         bottomPanel.add(new JLabel("Vertical Position: "));
         bottomPanel.add(doMakeZPositionSlider());
 
