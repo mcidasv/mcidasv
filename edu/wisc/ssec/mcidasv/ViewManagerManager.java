@@ -74,7 +74,7 @@ public class ViewManagerManager extends VMManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ViewManagerManager.class);
 
-    /** Whether or not to display debug messages. */
+    /** Whether to display debug messages. */
     private final boolean DEBUG = false;
 
     /** The stack that stores the order of previously active ViewManagers. */
