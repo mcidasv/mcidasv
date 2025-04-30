@@ -975,4 +975,196 @@
     <params p1="Temperature_sigma" p2="Relative_humidity_sigma"/>
     <params p1="Temperature_layer_between_two_pressure_difference_from_ground_layer" p2="Relative_humidity_layer_between_two_pressure_difference_from_ground_layer"/>
   </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_TrueColor_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M4-MOD-EDR_All/Reflectance" p3="VIIRS-M3-MOD-EDR_All/Reflectance" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M1_EDR">
+    <params p1="VIIRS-M1-MOD-EDR_All/Reflectance" p2="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M2_EDR">
+    <params p1="VIIRS-M2-MOD-EDR_All/Reflectance" p2="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M3_EDR">
+    <params p1="VIIRS-M3-MOD-EDR_All/Reflectance" p2="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M4_EDR">
+    <params p1="VIIRS-M4-MOD-EDR_All/Reflectance" p2="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M5_EDR">
+    <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M6_EDR">
+    <params p1="VIIRS-M6-MOD-EDR_All/Reflectance" p2="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M7_EDR">
+    <params p1="VIIRS-M7-MOD-EDR_All/Reflectance" p2="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_I1_EDR">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_I2_EDR">
+    <params p1="VIIRS-I2-IMG-EDR_All/Reflectance" p2="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p3="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p4="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_NaturalColor_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M10-MOD-EDR_All/Reflectance" p2="VIIRS-M7-MOD-EDR_All/Reflectance" p3="VIIRS-M5-MOD-EDR_All/Reflectance" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M1_SDR">
+    <params p1="VIIRS-M1-SDR_All/Reflectance" p2="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p3="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M1-SDR_All/Reflectance" p2="VIIRS-MOD-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M2_SDR">
+    <params p1="VIIRS-M2-SDR_All/Reflectance" p2="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p3="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M2-SDR_All/Reflectance" p2="VIIRS-MOD-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M3_SDR">
+    <params p1="VIIRS-M3-SDR_All/Reflectance" p2="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p3="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M3-SDR_All/Reflectance" p2="VIIRS-MOD-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M4_SDR">
+    <params p1="VIIRS-M4-SDR_All/Reflectance" p2="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p3="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M4-SDR_All/Reflectance" p2="VIIRS-MOD-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M5_SDR">
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p3="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-MOD-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M6_SDR">
+    <params p1="VIIRS-M6-SDR_All/Reflectance" p2="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p3="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M6-SDR_All/Reflectance" p2="VIIRS-MOD-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_M7_SDR">
+    <params p1="VIIRS-M7-SDR_All/Reflectance" p2="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p3="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M7-SDR_All/Reflectance" p2="VIIRS-MOD-GEO_All/SolarZenithAngle" p3="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p4="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p5="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_Rayleigh_Corrected_I2_SDR">
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p3="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-IMG-GEO_All/SolarZenithAngle" p3="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p4="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p5="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIIRS_Rayleigh_Corrected_I1_SDR">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p3="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p4="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p5="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-IMG-GEO_All/SolarZenithAngle" p3="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p4="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p5="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DayFire_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance" p4="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_NaturalColor_IBand_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I3-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance" p4="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DayCloudPhase_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M10-MOD-EDR_All/Reflectance" p3="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DayCloudPhase_IBand_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-I5-IMG-EDR_All/BrightnessTemperature" p4="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_CloudType_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M9-MOD-EDR_All/Reflectance" p2="VIIRS-M5-MOD-EDR_All/Reflectance" p3="VIIRS-M10-MOD-EDR_All/Reflectance" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_Snowmelt_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M10-MOD-EDR_All/Reflectance" p2="VIIRS-M8-MOD-EDR_All/Reflectance" p3="VIIRS-M5-MOD-EDR_All/Reflectance" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_SeaSpray_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p4="VIIRS-I5-IMG-EDR_All/BrightnessTemperature" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p7="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p8="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_CloudPhase_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M10-MOD-EDR_All/Reflectance" p3="VIIRS-M11-MOD-EDR_All/Reflectance" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_BlowingSnow_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p4="VIIRS-I5-IMG-EDR_All/BrightnessTemperature" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p7="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p8="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NDVI_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NDSI_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_BAI_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NBR_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I2-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_VARI_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M4-MOD-EDR_All/Reflectance" p3="VIIRS-M3-MOD-EDR_All/Reflectance" p4="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NDBI_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I2-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DaySnowFog_M_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-M7-MOD-EDR_All/Reflectance" p2="VIIRS-M10-MOD-EDR_All/Reflectance" p3="VIIRS-M12-MOD-EDR_All/BrightnessTemperature" p4="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p5="VIIRS-MOD-GTM-EDR-GEO_All/SolarZenithAngle" p6="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteZenithAngle" p7="VIIRS-MOD-GTM-EDR-GEO_All/SolarAzimuthAngle" p8="VIIRS-MOD-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DaySnowFog_I_Rayleigh_Corrected_EDR">
+    <params p1="VIIRS-I2-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance" p3="VIIRS-I4-IMG-EDR_All/Reflectance" p4="VIIRS-I5-IMG-EDR_All/BrightnessTemperature" p5="VIIRS-IMG-GTM-EDR-GEO_All/SolarZenithAngle" p6="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteZenithAngle" p7="VIIRS-IMG-GTM-EDR-GEO_All/SolarAzimuthAngle" p8="VIIRS-IMG-GTM-EDR-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_Natural_Color_M_Rayleigh_Corrected">
+    <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M7-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance" p4="VIIRS-MOD-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M7-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance" p4="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NDVI_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p4="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-IMG-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NDBI_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p4="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-IMG-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NBR_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p4="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-IMG-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_BAI_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p4="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I1-SDR_All/Reflectance" p3="VIIRS-IMG-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_NDSI_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p4="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-IMG-GEO_All/SolarZenithAngle" p4="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p5="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p6="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_VARI_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M4-SDR_All/Reflectance" p3="VIIRS-M3-SDR_All/Reflectance" p4="VIIRS-MOD-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M4-SDR_All/Reflectance" p3="VIIRS-M3-SDR_All/Reflectance" p4="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DayFire_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance" p4="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance" p4="VIIRS-IMG-GEO_All/SolarZenithAngle" p5="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p6="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p7="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_Natural_Color_I_Rayleigh_Corrected">
+    <params p1="VIIRS-I3-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance" p4="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I3-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance" p4="VIIRS-IMG-GEO_All/SolarZenithAngle" p5="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p6="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p7="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DayCloudPhase_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M10-SDR_All/Reflectance" p3="VIIRS-M15-SDR_All/BrightnessTemperature" p4="VIIRS-MOD-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M10-SDR_All/Reflectance" p3="VIIRS-M15-SDR_All/BrightnessTemperature" p4="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_DayCloudPhase_Rayleigh_Corrected_I_SDR">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I5-SDR_All/BrightnessTemperature" p4="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p5="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I5-SDR_All/BrightnessTemperature" p4="VIIRS-IMG-GEO_All/SolarZenithAngle" p5="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p6="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p7="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_CloudType_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-M9-SDR_All/Reflectance" p2="VIIRS-M5-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance" p4="VIIRS-MOD-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M9-SDR_All/Reflectance" p2="VIIRS-M5-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance" p4="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_CloudPhase_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M10-SDR_All/Reflectance" p3="VIIRS-M11-SDR_All/Reflectance" p4="VIIRS-MOD-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M10-SDR_All/Reflectance" p3="VIIRS-M11-SDR_All/Reflectance" p4="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_BlowingSnow_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature" p5="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p7="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p8="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature" p5="VIIRS-IMG-GEO_All/SolarZenithAngle" p6="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p7="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p8="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DaySnowFog_M_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-M7-SDR_All/Reflectance" p2="VIIRS-M10-SDR_All/Reflectance" p3="VIIRS-M12-SDR_All/BrightnessTemperature" p4="VIIRS-M15-SDR_All/BrightnessTemperature" p5="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p6="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p7="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p8="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M7-SDR_All/Reflectance" p2="VIIRS-M10-SDR_All/Reflectance" p3="VIIRS-M12-SDR_All/BrightnessTemperature" p4="VIIRS-M15-SDR_All/BrightnessTemperature" p5="VIIRS-MOD-GEO_All/SolarZenithAngle" p6="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p7="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p8="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_DaySnowFog_I_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature" p5="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p7="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p8="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I2-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature" p5="VIIRS-IMG-GEO_All/SolarZenithAngle" p6="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p7="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p8="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_SeaSpray_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature" p5="VIIRS-IMG-GEO-TC_All/SolarZenithAngle" p6="VIIRS-IMG-GEO-TC_All/SatelliteZenithAngle" p7="VIIRS-IMG-GEO-TC_All/SolarAzimuthAngle" p8="VIIRS-IMG-GEO-TC_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I4-SDR_All/BrightnessTemperature" p4="VIIRS-I5-SDR_All/BrightnessTemperature" p5="VIIRS-IMG-GEO_All/SolarZenithAngle" p6="VIIRS-IMG-GEO_All/SatelliteZenithAngle" p7="VIIRS-IMG-GEO_All/SolarAzimuthAngle" p8="VIIRS-IMG-GEO_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
+  <paramgroup description="" name="VIIRS_RGB_Snowmelt_Rayleigh_Corrected_SDR">
+    <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M8-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance" p4="VIIRS-MOD-GEO_All/SolarZenithAngle" p5="VIIRS-MOD-GEO_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO_All/SatelliteAzimuthAngle"/>
+    <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M8-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance" p4="VIIRS-MOD-GEO-TC_All/SolarZenithAngle" p5="VIIRS-MOD-GEO-TC_All/SatelliteZenithAngle" p6="VIIRS-MOD-GEO-TC_All/SolarAzimuthAngle" p7="VIIRS-MOD-GEO-TC_All/SatelliteAzimuthAngle"/>
+  </paramgroup>
 </paramgroups>
