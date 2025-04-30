@@ -1132,7 +1132,7 @@
             <paramgroup categories="" name="JPSS_SDR_RGB_DaySnowFogI"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Cloud Phase M-Band RGB" formula="VIIRSCloudPhaseRGB(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M11 Reflectance])" id="viirsCloudPhase" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR Cloud Phase RGB" formula="VIIRSCloudPhaseRGB(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M11 Reflectance])" id="viirsCloudPhase" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontrol"/>
@@ -1143,7 +1143,7 @@
             <paramgroup categories="" name="JPSS_RGB_CloudPhase"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR NGFS Microphysics RGB" formula="VIIRSNgfsMicrophysicsMRGB(D1[label=M13 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsNgfsMicrophysics" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR NGFS M-Band Microphysics RGB" formula="VIIRSNgfsMicrophysicsMRGB(D1[label=M13 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsNgfsMicrophysics" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:imagecontroloverz"/>
@@ -5364,4 +5364,841 @@
         </categories>
         <operands categories=""/>
     </derived>
+    <!-- RMC Inq 3158 -->
+	<derived description="VIIRS SDR RC Visible Atmospherically Resistant Index (VARI)" formula="VIIRSSdrVARIRayleighCorrected(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_vari" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Indices"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagecontour"/>
+            <category value="display:probe"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_VARI_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC M5 Reflectance" formula="VIIRSSDRCorrectM5(D1[label=M5 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b5_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontourfilled"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M5_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC M4 Reflectance" formula="VIIRSEDRCorrectM3(D1[label=M4 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b4_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagecontour"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:probe"/>
+            <category value="display:imagedisplayoverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M4_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Day Cloud Type RGB" formula="VIIRSEdrCloudTypeRGBRayleighCorrected(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_day_cloud_type" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_CloudType_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Normalized DIfference Built-up Index (NDBI)" formula="VIIRSEdrNDBIRayleighCorrected(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_edr_rc_ndbi" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Indices"/>
+            <category value="display:probe"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NDBI_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Normalized Difference Snow Index (NDSI)" formula="VIIRSSdrNDSIRayleighCorrected(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_ndsi" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Indices"/>
+            <category value="display:probe"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NDSI_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC M2 Reflectance" formula="VIIRSEDRCorrectM2(D1[label=M2 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b2_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:probe"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagecontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M2_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Burn Area Index (BAI)" formula="VIIRSEdrBAIRayleighCorrected(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_edr_rc_bai" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Indices"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:probe"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayastopo"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_BAI_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Sea Spray RGB" formula="VIIRSEdrSeaSprayRGBRayleighCorrected(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature], D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="viirs_edr_rc_sea_spray" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_SeaSpray_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Sea Spray RGB" formula="VIIRSSdrSeaSprayRGBRayleighCorrected(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature], D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_sea_spray" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_SeaSpray_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC M7 Reflectance" formula="VIIRSSDRCorrectM7(D1[label=M7 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b7_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:probe"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M7_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Normalized Difference Vegetation Index (NDVI)" formula="VIIRSSdrNDVIRayleighCorrected(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_ndvi" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Indices"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NDVI_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Burn Area Index (BAI)" formula="VIIRSSdrBAIRayleighCorrected(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_bai" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Indices"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagecontour"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_BAI_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Snowmelt RGB" formula="VIIRSEdrSnowmeltRGBRayleighCorrected(D1[label=M10 Reflectance], D2[label=M8 Reflectance], D3[label=M5 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_snowmelt" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_Snowmelt_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC I2 Reflectance" formula="VIIRSSDRCorrectI2(D1[label=I2 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b2_i_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagecontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayastopo"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_I2_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Day Cloud Type RGB" formula="VIIRSSdrCloudTypeRGBRayleighCorrected(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="VIIRS_Cloud_Type_RGB_M" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_CloudType_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC M1 Reflectance" formula="VIIRSEDRCorrectM1(D1[label=M1 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b1_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagecontour"/>
+            <category value="display:probe"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:gridtablecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M1_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Cloud Phase RGB" formula="VIIRSEdrCloudPhaseRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M11 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_cloud_phase" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_CloudPhase_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Day Cloud Phase Distinction M-Band RGB" formula="VIIRSSdrDayCloudPhaseMRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M10 Reflectance Reflectance], D3[label=M15 Temperature], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_day_cloud_phase_m" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DayCloudPhase_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Day Cloud Phase Distinction I-Band RGB" formula="VIIRSSdrDayCloudPhaseIRGBRayleighCorrected(D1[label=I1 Reflectance], D2[label=I3 Reflectance Reflectance], D3[label=I5 Temperature], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_day_cloud_phase_i" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_DayCloudPhase_Rayleigh_Corrected_I_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Natural Color I-Band RGB" formula="VIIRSSdrNaturalColorIRGBRayleighCorrected(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_nat_col_i" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_Natural_Color_I_Rayleigh_Corrected"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Day Snow-Fog M-Band RGB" formula="VIIRSSdrDaySnowFogMRGBRayleighCorrected(D1[label=M7 Reflectance], D2[label=M10 Reflectance], D3[label=M12 Temperature], D4[label=M15 Temperature], D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="VIIRS_SDR_RC_DAY_SNOW_FOG_M_RGB" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DaySnowFog_M_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Natural Color M-Band RGB" formula="VIIRSSdrNaturalColorRGBRayleighCorrected(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_nat_col_m" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_Natural_Color_M_Rayleigh_Corrected"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Natural Color M-Band RGB" formula="VIIRSEdrNaturalColorRGBRayleighCorrected(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_nat_col_m" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_NaturalColor_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Normalized Difference Vegetation Index (NDVI)" formula="VIIRSEdrNDVIRayleighCorrected(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_edr_rc_ndvi" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Indices"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:imagecontour"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NDVI_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Natural Color I-Band RGB" formula="VIIRSEdrNaturalColorIRGBRayleighCorrected(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_nat_col_i" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_NaturalColor_IBand_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC I1 Reflectance" formula="VIIRSSDRCorrectI1(D1[label=I1 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b1_i_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagecontour"/>
+            <category value="display:probe"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplayastopo"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIIRS_Rayleigh_Corrected_I1_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Day Fire RGB" formula="VIIRSEdrDayFireRGBRayleighCorrected(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_day_fire" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DayFire_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Day Fire RGB" formula="VIIRSSdrDayFireRGBRayleighCorrected(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_day_fire_m" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DayFire_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Normalized DIfference Built-up Index (NDBI)" formula="VIIRSSdrNDBIRayleighCorrected(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_ndbi" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Indices"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:probe"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagecontour"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NDBI_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Normalized Difference Snow Index (NDSI)" formula="VIIRSEdrNDSIRayleighCorrected(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_edr_rc_ndsi" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Indices"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NDSI_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC M5 Reflectance" formula="VIIRSEDRCorrectM5(D1[label=M5 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b5_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:probe"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagecontour"/>
+            <category value="display:imagedisplayastopo"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M5_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Snowmelt RGB" formula="VIIRSSdrSnowmeltRGBRayleighCorrected(D1[label=M10 Reflectance], D2[label=M8 Reflectance], D3[label=M5 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_snowmelt" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_Snowmelt_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC I2 Reflectance" formula="VIIRSEDRCorrectI2(D1[label=I2 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b2_i_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagecontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:probe"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_I2_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Day Snow-Fog I-Band RGB" formula="VIIRSEdrDaySnowFogIRGBRayleighCorrected(D1[label=I2 Reflectance], D2[label=I3 Reflectance Reflectance], D3[label=I5 Temperature], D4[label=I5 Temperature], D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_day_snow_fog_i" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DaySnowFog_I_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC M4 Reflectance" formula="VIIRSSDRCorrectM4(D1[label=M4 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b4_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagecontour"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:probe"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M4_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Day Cloud Phase Distinction M-Band RGB" formula="VIIRSEdrDayCloudPhaseMRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M15 Temperature], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_day_cloud_phase_distinction_m" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DayCloudPhase_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC M3 Reflectance" formula="VIIRSEDRCorrectM3(D1[label=M3 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b3_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:probe"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagecontour"/>
+            <category value="display:scatter"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M3_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Day Cloud Phase Distinction I-Band RGB" formula="VIIRSEdrDayCloudPhaseIRGBRayleighCorrected(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=I5 Temperature], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_day_cloud_phase_distinction_i" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagesequence"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DayCloudPhase_IBand_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC M6 Reflectance" formula="VIIRSSDRCorrectM6(D1[label=M6 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b6_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagecontour"/>
+            <category value="display:probe"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M6_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Cloud Phase RGB" formula="VIIRSSdrCloudPhaseRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M10 Reflectance], D3[label=M11 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_cloud_phase" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_CloudPhase_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Visible Atmospherically Resistant Index (VARI)" formula="VIIRSEdrVARIRayleighCorrected(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="viirs_edr_rc_vari" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Indices"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:scatter"/>
+            <category value="display:probe"/>
+            <category value="display:imagecontour"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_VARI_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Blowing Snow RGB" formula="VIIRSEdrBlowingSnowRGBRayleighCorrected(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature], D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="viirs_edr_rc_blow_snow" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_BlowingSnow_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC M2 Reflectance" formula="VIIRSSDRCorrectM2(D1[label=M2 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b2_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:scatter"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:planviewcontourfilled"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M2_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC True Color RGB" formula="VIIRSEDRTrueColorRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="VIIRS_M_RGB_RC_EDR(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA)" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="VIIRS_RGB_TrueColor_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Blowing Snow RGB" formula="VIIRSSdrBlowingSnowRGBRayleighCorrected(D1[label=I1 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature], D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_blow_snow" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_BlowingSnow_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC M7 Reflectance" formula="VIIRSEDRCorrectM7(D1[label=M7 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b7_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:probe"/>
+            <category value="display:imagecontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M7_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC M3 Reflectance" formula="VIIRSSDRCorrectM3(D1[label=M3 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b3_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagecontour"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:probe"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M3_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC M6 Reflectance" formula="VIIRSEDRCorrectM6(D1[label=M6 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b6_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:probe"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilled"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M6_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Normalized Burn Ratio (NBR)" formula="VIIRSEdrNBRRayleighCorrected(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_edr_rc_nbr" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Indices"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:scatter"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:imagecontour"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NBR_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC I1 Reflectance" formula="VIIRSEDRCorrectI1(D1[label=I1 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_edr_rc_b1_i_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagecontour"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:probe"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_I1_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC Normalized Burn Ratio (NBR)" formula="VIIRSSdrNBRRayleighCorrected(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=Solar Zenith Angle], D4[label=Satellite Zenith Angle], D5[label=Solar Azimuth Angle], D6[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_nbr" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Indices"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:probe"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_NBR_Rayleigh_Corrected_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS SDR RC M1 Reflectance" formula="VIIRSSDRCorrectM1(D1[label=M1 Reflectance], D2[label=Solar Zenith Angle], D3[label=Satellite Zenith Angle], D4[label=Solar Azimuth Angle], D5[label=Satellite Azimuth Angle])" id="viirs_sdr_rc_b1_m_ref" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-Individual Bands"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagecontour"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:probe"/>
+            <category value="display:imagedisplayoverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_Rayleigh_Corrected_M1_SDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Day Snow-Fog I-Band RGB" formula="VIIRSEdrDaySnowFogIRGBRayleighCorrected(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature],D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="viirs_edr_rc_day_snow_fog_i" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_BlowingSnow_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS EDR RC Day Snow-Fog M-Band RGB" formula="VIIRSEdrDaySnowFogMRGBRayleighCorrected(D1[label=M7 Reflectance], D2[label=M10 Reflectance], D3[label=M12 Temperature], D4[label=M15 Temperature],D5[label=Solar Zenith Angle], D6[label=Satellite Zenith Angle], D7[label=Solar Azimuth Angle], D8[label=Satellite Azimuth Angle])" id="viirs_edr_rc_day_snow_fog_m" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="VIIRS_RGB_DaySnowFog_M_Rayleigh_Corrected_EDR"/>
+        </operands>
+    </derived>
+    <!-- End Inq 3158 -->
 </derived_parameters>
