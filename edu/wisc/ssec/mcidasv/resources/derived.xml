@@ -1033,9 +1033,9 @@
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
         </operands>
     </derived>
-    <derived description="VIIRS True Color RGB Rayleigh Corrected" formula="VIIRSTrueColorRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="VIIRS_M_RGB_RC(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA)" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR RC True Color RGB" formula="VIIRSTrueColorRGBRayleighCorrected(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance], D4[label=Solar Zenith Angle], D5[label=Satellite Zenith Angle], D6[label=Solar Azimuth Angle], D7[label=Satellite Azimuth Angle])" id="VIIRS_M_RGB_RC(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA)" isdefault="true" isenduser="true" override="true">
         <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR Rayleigh Corrected-RGBs"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
@@ -1107,7 +1107,7 @@
             <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
-            <paramgroup categories="" name="JPSS_SDR_RGB_DaySnowFogI"/>
+            <paramgroup categories="" name="JPSS_SDR_RGB_DayCloudPhaseDistinctionI"/>
         </operands>
     </derived>
     <derived description="VIIRS SDR Day Snow-Fog M-Band RGB" formula="VIIRSDaySnowFogMRGB(D1[label=M7 Reflectance], D2[label=M10 Reflectance], D3[label=M12 Temperature], D4[label=M15 Temperature])" id="VIIRS_SDR_DAY_SNOW_FOG_M_RGB" isdefault="true" isenduser="true" override="true">
