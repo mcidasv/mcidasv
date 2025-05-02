@@ -404,4 +404,11 @@
   <param name="viirs_sdr_rc_nbr" range_max="1.0" range_min="-1.0" table="Gray Scale"/>
   <param name="viirs_sdr_rc_bai" range_max="100.0" range_min="0.0" table="Gray Scale"/>
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.0" ci_min="0.0" ci_width="1" name="VIIRS_M*.*_RC_*.*" range_max="1.0" range_min="0.0" table="Gray scale"/>
+  <param name="viirs_sdr_rc_*.*_ref" range_max="1.0" range_min="0.0" table="Gray scale"/>
+  <param name="viirs_edr_rc_*.*_ref" range_max="1.0" range_min="0.0" table="Gray scale"/>
+  <param name="viirs_edr_rc_bai" range_max="100.0" range_min="0.0" table="Gray scale"/>
+  <param name="viirs_edr_rc_nbr" range_max="1.0" range_min="-1.0" table="Gray Scale"/>
+  <param name="viirs_edr_rc_ndbi" range_max="1.0" range_min="-1.0" table="Gray Scale"/>
+  <param name="viirs_edr_rc_ndsi" range_max="1.0" range_min="0.0" table="NDSI"/>
+  <param name="viirs_edr_rc_ndvi" range_max="1.0" range_min="-1.0" table="NDVI"/>
 </params>
