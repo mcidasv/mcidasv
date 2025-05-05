@@ -50,6 +50,7 @@ import ucar.unidata.data.DescriptorDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.ImageGenerator;
 import ucar.unidata.idv.ui.JythonShell;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.Misc;
 
 import javax.swing.*;
@@ -206,15 +207,9 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
 
         menuItem = new JMenuItem("Load Jython Script");
         menuItem.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Python Files (*.py)", "py");
-            jfc.setFileFilter(filter);
-            int returnValue = jfc.showOpenDialog(null);
-            String file;
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                file = jfc.getSelectedFile().getAbsolutePath();
-                createShellWithScript(file);
-            }
+            String file = FileManager.getReadFile("Load Script", filter);
+            createShellWithScript(file);
         });
 
         menuItems.add(menuItem);
