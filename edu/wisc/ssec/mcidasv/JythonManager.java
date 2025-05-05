@@ -53,6 +53,7 @@ import ucar.unidata.idv.ui.JythonShell;
 import ucar.unidata.util.Misc;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Overrides the IDV's {@link ucar.unidata.idv.JythonManager JythonManager} to 
@@ -206,6 +207,8 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         menuItem = new JMenuItem("Load Jython Script");
         menuItem.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Python Files (*.py)", "py");
+            jfc.setFileFilter(filter);
             int returnValue = jfc.showOpenDialog(null);
             String file;
             if (returnValue == JFileChooser.APPROVE_OPTION) {
