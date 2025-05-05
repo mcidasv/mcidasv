@@ -31,9 +31,13 @@ import static edu.wisc.ssec.mcidasv.McIdasPreferenceManager.PROP_HIQ_FONT_RENDER
 import static ucar.unidata.util.GuiUtils.makeMenu;
 import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
 import org.python.util.PythonInterpreter;
@@ -46,8 +50,9 @@ import ucar.unidata.data.DescriptorDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.ImageGenerator;
 import ucar.unidata.idv.ui.JythonShell;
+import ucar.unidata.util.Misc;
 
-import javax.swing.JMenuItem;
+import javax.swing.*;
 
 /**
  * Overrides the IDV's {@link ucar.unidata.idv.JythonManager JythonManager} to 
@@ -60,6 +65,9 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
     
     /** Associated Jython Shell. May be {@code null}. */
     private JythonShell jythonShell;
+
+    private static final Logger logger =
+            Logger.getLogger(JythonManager.class.getName());
     
     /**
      * Create the manager and call initPython.
@@ -83,6 +91,26 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
             
         }
         jythonShell.toFront();
+        return jythonShell;
+    }
+
+    public JythonShell createShellWithScript(String file) {
+        if (jythonShell == null) {
+            jythonShell = new JythonShell(getIdv());
+
+        }
+        jythonShell.toFront();
+        String cmd = "";
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                cmd += line + "\n";
+            }
+        } catch (IOException e) {
+            logger.info("Error reading scripting file: " + e.getMessage());
+        }
+
+        jythonShell.eval(cmd);
         return jythonShell;
     }
     
@@ -173,6 +201,19 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
 
         menuItem = new JMenuItem("Jython Shell");
         menuItem.addActionListener(e -> createShell());
+        menuItems.add(menuItem);
+
+        menuItem = new JMenuItem("Load Jython Script");
+        menuItem.addActionListener(e -> {
+            JFileChooser jfc = new JFileChooser();
+            int returnValue = jfc.showOpenDialog(null);
+            String file;
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                file = jfc.getSelectedFile().getAbsolutePath();
+                createShellWithScript(file);
+            }
+        });
+
         menuItems.add(menuItem);
 
         menuItems.add(MENU_SEPARATOR);
