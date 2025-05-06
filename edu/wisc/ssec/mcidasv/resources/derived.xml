@@ -1174,7 +1174,7 @@
             <paramgroup categories="" name="JPSS_RGB_BlowingSnow"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Sandwich RGB" formula="sandwichSDR(IR_data, VIS_data, IR_min_temp[isuser=true,default=180], IR_max_temp[isuser=true,default=280], resolution_in_meters[isuser=true,default=750], useNaN=False)" id="sdrSandwich" isdefault="false" isenduser="true" override="true">
+    <derived description="VIIRS SDR Sandwich RGB" formula="sandwichSDR(IR_data, VIS_data, IR_min_temp[isuser=true,default=180], IR_max_temp[isuser=true,default=280], resolution_in_meters[isuser=true,default=750], colorTable[isuser=true,default=Sandwich], useNaN=False)" id="sdrSandwich" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR-RGBs"/>
             <category value="display:rgbcomposite"/>
@@ -1478,7 +1478,7 @@
             <paramgroup categories="" name="JPSS_EDR_RGB_BlowingSnow"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Sandwich RGB" formula="sandwichEDR(IR_data, VIS_data, IR_min_temp[isuser=true,default=180], IR_max_temp[isuser=true,default=280], useNaN=False)" id="edrSandwich" isdefault="false" isenduser="true" override="true">
+    <derived description="VIIRS EDR Sandwich RGB" formula="sandwichEDR(IR_data, VIS_data, IR_min_temp[isuser=true,default=180], IR_max_temp[isuser=true,default=280], colorTable[isuser=true,default=Sandwich], useNaN=False)" id="edrSandwich" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR-RGBs"/>
             <category value="display:imagecontroloverz"/>
