@@ -1729,7 +1729,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
             getCategorizedFile("Save Data Source", dataSource.toString(),
                                getBundles(BUNDLES_DATA),
                                getBundleDirectory(BUNDLES_DATA), cats,
-                               ".xidv", false);
+                               ".mcv", false);
         if (fullFile == null) {
             return;
         }
@@ -1748,7 +1748,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
     /**
      * Prompt the user for a name and write out the given display control
-     * as a bundle into the user's .unidata/idv/displaytemplates directory.
+     * as a bundle into the user's /Username/McIDAS-V/displaytemplates directory.
      *
      * @param displayControl The display control to write
      * @param templateName Possibly null initial name for the template
@@ -1760,7 +1760,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
             getCategorizedFile("Save Display Template", templateName,
                                getBundles(BUNDLES_DISPLAY),
                                getBundleDirectory(BUNDLES_DISPLAY), cats,
-                               ".xidv", false);
+                               ".mcv", false);
         if (fullFile == null) {
             return;
         }
