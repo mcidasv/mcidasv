@@ -258,8 +258,8 @@
     <property name="jsattrack.version" value="4.2.3" />
     <property name="commons-httpclient.version" value="3.1" />
     <property name="jcodec.version" value="0.2.6-SNAPSHOT" />
-    <property name="idv.version" value="6.2u3-SNAPSHOT" />
-    <property name="ncidv.version" value="5.5.3" />
+    <property name="idv.version" value="6.3u1-SNAPSHOT" />
+    <property name="ncidv.version" value="5.8.0-SNAPSHOT" />
     <property name="visad.version" value="2.0-SNAPSHOT" />
     <property name="flatlaf.version" value="3.6" />
     <property name="batik.version" value="1.18" />
