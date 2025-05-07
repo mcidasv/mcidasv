@@ -282,6 +282,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
           <li>NGFS (Next Generation Fire System) M and I Band RGB</li>
         </ul>
       </li>
+      <li>Added several functions and formulas to correct for Rayleigh scattering for any VIIRS SDR and Imagery EDR data containing any visible or near infrared bands (SVM01-SVM07 and SVI01-SVI02).  These derived fields can be found in the Field Selector under Imagery > JPSS Functions > VIIRS EDR/SDR Rayleigh Corrected. Rayleigh correction mitigates scattering from particles in the atmosphere, allowing for cleaner displays where surface features are more visible.</li>
+      <li>Added VIIRS SDR and Imagery EDR functions and formulas to create a sandwich RGB. A sandwich RGB allows for viewing visible and infrared data in the same display. The display shows visible data overlaid with infrared data over a user-defined temperature range. This overlay allows for viewing infrared temperature data with the texture of visible data. These formulas can be found under Imagery &gt; JPSS Functions &gt; VIIRS EDR/SDR &gt; RGBs &gt; VIIRS EDR/SDR Sandwich.&nbsp;</li>
       </ul>
     </div>
   </div>

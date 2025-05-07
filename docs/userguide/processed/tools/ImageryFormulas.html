@@ -2615,11 +2615,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </li>
 </ul>
 <div class="pagesubtitle">JPSS Functions - VIIRS EDR<a name="viirsEdr" id="viirsEdr"></a></div>
-<p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) EDR (Environmental Data Record)  section of McIDAS-V. These formulas, designed to work with imagery EDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> JPSS Functions -&gt; VIIRS EDR tree.
+<p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) EDR (Environmental Data Record)  section of McIDAS-V. These formulas, designed to work with imagery EDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -&gt; JPSS Functions -&gt; VIIRS EDR tree.&nbsp; Note that several of these formulas also have a Rayleigh corrected version that can be found under Imagery -&gt; JPSS Functions -&gt; VIIRS EDR Rayleigh Corrected.&nbsp; These formulas have an&nbsp;asterisk next to them in the list below.
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Indices</strong></li>
     <ul class="propertylist">
-        <li class="propertylistitem"><strong>VIIRS EDR Burn Area Index (BAI) (SVI01 Reflectance, SVI02 Reflectance) - </strong>The Burn Area Index (BAI) is an index to help identify areas of land that have been affected by fire.
+        <li class="propertylistitem"><strong>VIIRS EDR Burn Area Index (BAI) (SVI01 Reflectance, SVI02 Reflectance)* - </strong>The Burn Area Index (BAI) is an index to help identify areas of land that have been affected by fire.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2643,7 +2643,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS EDR Normalized Burn Ratio (NBR) (SVI02 Reflectance, SVI03 Reflectance) -</strong> The Normalized Burn Ratio (NBR) is an index used to identify and measure burn severity.
+        <li class="propertylistitem"><strong>VIIRS EDR Normalized Burn Ratio (NBR) (SVI02 Reflectance, SVI03 Reflectance)* -</strong> The Normalized Burn Ratio (NBR) is an index used to identify and measure burn severity.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
             <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2667,7 +2667,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS EDR Normalized Difference Built-up Index (NDBI) (SVI02 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Built-up Index (NDBI) is an index used to identify built-up or urban development in a scene.
+        <li class="propertylistitem"><strong>VIIRS EDR Normalized Difference Built-up Index (NDBI) (SVI02 Reflectance, SVI03 Reflectance)* -</strong> The Normalized Difference Built-up Index (NDBI) is an index used to identify built-up or urban development in a scene.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2691,7 +2691,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS EDR Normalized Difference Snow Index (NDSI) (SVI01 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
+        <li class="propertylistitem"><strong>VIIRS EDR Normalized Difference Snow Index (NDSI) (SVI01 Reflectance, SVI03 Reflectance)* -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2715,7 +2715,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS EDR Normalized Difference Vegetation Index (NDVI) (SVI01 Reflectance, SVI02 Reflectance) -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.
+        <li class="propertylistitem"><strong>VIIRS EDR Normalized Difference Vegetation Index (NDVI) (SVI01 Reflectance, SVI02 Reflectance)* -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2739,7 +2739,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Visible Atmospherically Resistant Index (VARI) (SVM05 Reflectance, SVM04 Reflectance, SVM05 Reflectance) -</strong> The Visible Atmospherically Resistant Index (VARI) is used to highlight vegetation in the visible portion of the electromagnetic spectrum while mitigating atmospheric effects.
+<li class="propertylistitem"><strong>VIIRS EDR Visible Atmospherically Resistant Index (VARI) (SVM05 Reflectance, SVM04 Reflectance, SVM05 Reflectance)* -</strong> The Visible Atmospherically Resistant Index (VARI) is used to highlight vegetation in the visible portion of the electromagnetic spectrum while mitigating atmospheric effects.
   <table id="miscformulas77" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2806,7 +2806,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Blowing Snow RGB (SVI01 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) - </strong>Isolates regions of blowing snow over snowcover.
+<li class="propertylistitem"><strong>VIIRS EDR Blowing Snow RGB (SVI01 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature)* - </strong>Isolates regions of blowing snow over snowcover.
   <table id="miscformulas60" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2846,7 +2846,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
- <li class="propertylistitem"><strong>VIIRS EDR Cloud Phase RGB (SVM05 Reflectance, SVM10 Reflectance, SVM11 Reflectance) - </strong>Distinguishes between thick water clouds and thick ice clouds, along with particle size.
+ <li class="propertylistitem"><strong>VIIRS EDR Cloud Phase RGB (SVM05 Reflectance, SVM10 Reflectance, SVM11 Reflectance)* - </strong>Distinguishes between thick water clouds and thick ice clouds, along with particle size.
    <table id="miscformulas62" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2910,7 +2910,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature) - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
+<li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature)* - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
   <table id="miscformulas63" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2942,7 +2942,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance) -</strong> Distinguishes between low clouds and fog.
+<li class="propertylistitem"><strong>VIIRS EDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance)* -</strong> Distinguishes between low clouds and fog.
   <table id="miscformulas64" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2974,7 +2974,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance) -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
+<li class="propertylistitem"><strong>VIIRS EDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance)* -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
   <table id="miscformulas65" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3006,7 +3006,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
+<li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature)* -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
   <table id="miscformulas66" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3046,7 +3046,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature) - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
+<li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature) * - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
   <table id="miscformulas67" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3150,7 +3150,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+<li class="propertylistitem"><strong>VIIRS EDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance)* -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVI bands of 375m resolution. 
    <table id="miscformulas70" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -3183,7 +3183,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+<li class="propertylistitem"><strong>VIIRS EDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance)* - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVM bands of 750m resolution.
   <table id="miscformulas71" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -3355,7 +3355,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
         </td>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
+<li class="propertylistitem"><strong>VIIRS EDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature)* -</strong> Detects sea spray particles over bodies of water.
   <table id="miscformulas75" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3393,7 +3393,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
         </td>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance) -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
+<li class="propertylistitem"><strong>VIIRS EDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance)* -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
   <table id="miscformulas76" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3425,7 +3425,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS EDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance) -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
+<li class="propertylistitem"><strong>VIIRS EDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance)* -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
   <table id="miscformulas77" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3461,11 +3461,11 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 
 </ul>
 <div class="pagesubtitle">JPSS Functions - VIIRS SDR<a name="viirsSdr" id="viirsSdr"></a></div>
-<p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) SDR (Sensor Data Record)  section of McIDAS-V. These formulas, designed to work with imagery SDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. All of the RGB and channel combination functions use Swath To Grid to remap the data to a gridded projection and remove bowtie deletion lines. Other than Swath To Grid, these are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> JPSS Functions -&gt; VIIRS SDR tree.
+<p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) SDR (Sensor Data Record)  section of McIDAS-V. These formulas, designed to work with imagery SDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. All of the RGB and channel combination functions use Swath To Grid to remap the data to a gridded projection and remove bowtie deletion lines. Other than Swath To Grid, these are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -&gt; JPSS Functions -&gt; VIIRS SDR tree. Note that several of these formulas also have a Rayleigh corrected version that can be found under Imagery -&gt; JPSS Functions -&gt; VIIRS SDR Rayleigh Corrected. These formulas have an asterisk next to them in the list below.
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Indices</strong></li>
     <ul class="propertylist">
-        <li class="propertylistitem"><strong>VIIRS SDR Burn Area Index (BAI) (SVI01 Reflectance, SVI02 Reflectance) - </strong>The Burn Area Index (BAI) is an index to help identify areas of land that have been affected by fire.
+        <li class="propertylistitem"><strong>VIIRS SDR Burn Area Index (BAI) (SVI01 Reflectance, SVI02 Reflectance)* - </strong>The Burn Area Index (BAI) is an index to help identify areas of land that have been affected by fire.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3489,7 +3489,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS SDR Normalized Burn Ratio (NBR) (SVI02 Reflectance, SVI03 Reflectance) -</strong> The Normalized Burn Ratio (NBR) is an index used to identify and measure burn severity.
+        <li class="propertylistitem"><strong>VIIRS SDR Normalized Burn Ratio (NBR) (SVI02 Reflectance, SVI03 Reflectance)* -</strong> The Normalized Burn Ratio (NBR) is an index used to identify and measure burn severity.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
             <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3513,7 +3513,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS SDR Normalized Difference Built-up Index (NDBI) (SVI02 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Built-up Index (NDBI) is an index used to identify built-up or urban development in a scene.
+        <li class="propertylistitem"><strong>VIIRS SDR Normalized Difference Built-up Index (NDBI) (SVI02 Reflectance, SVI03 Reflectance)* -</strong> The Normalized Difference Built-up Index (NDBI) is an index used to identify built-up or urban development in a scene.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3537,7 +3537,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS SDR Normalized Difference Snow Index (NDSI) (SVI01 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
+        <li class="propertylistitem"><strong>VIIRS SDR Normalized Difference Snow Index (NDSI) (SVI01 Reflectance, SVI03 Reflectance)* -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3561,7 +3561,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-        <li class="propertylistitem"><strong>VIIRS SDR Normalized Difference Vegetation Index (NDVI) (SVI01 Reflectance, SVI02 Reflectance) -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.
+        <li class="propertylistitem"><strong>VIIRS SDR Normalized Difference Vegetation Index (NDVI) (SVI01 Reflectance, SVI02 Reflectance)* -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3585,7 +3585,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Visible Atmospherically Resistant Index (VARI) (SVM05 Reflectance, SVM04 Reflectance, SVM05 Reflectance) -</strong> The Visible Atmospherically Resistant Index (VARI) is used to highlight vegetation in the visible portion of the electromagnetic spectrum while mitigating atmospheric effects.
+<li class="propertylistitem"><strong>VIIRS SDR Visible Atmospherically Resistant Index (VARI) (SVM05 Reflectance, SVM04 Reflectance, SVM05 Reflectance)* -</strong> The Visible Atmospherically Resistant Index (VARI) is used to highlight vegetation in the visible portion of the electromagnetic spectrum while mitigating atmospheric effects.
   <table id="miscformulas77" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3652,7 +3652,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Blowing Snow RGB (SVI01 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) - </strong>Isolates regions of blowing snow over snowcover.
+<li class="propertylistitem"><strong>VIIRS SDR Blowing Snow RGB (SVI01 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature)* - </strong>Isolates regions of blowing snow over snowcover.
   <table id="miscformulas60" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3692,7 +3692,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Cloud Phase RGB (SVM05 Reflectance, SVM10 Reflectance, SVM11 Reflectance) - </strong>Distinguishes between thick water clouds and thick ice clouds, along with particle size.
+<li class="propertylistitem"><strong>VIIRS SDR Cloud Phase RGB (SVM05 Reflectance, SVM10 Reflectance, SVM11 Reflectance)* - </strong>Distinguishes between thick water clouds and thick ice clouds, along with particle size.
    <table id="miscformulas62" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3724,7 +3724,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature) -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
+<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature)* -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
   <table id="miscformulas80" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3756,7 +3756,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature) - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
+<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature)* - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
   <table id="miscformulas81" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3788,7 +3788,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance) -</strong> Distinguishes between low clouds and fog.
+<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance)* -</strong> Distinguishes between low clouds and fog.
   <table id="miscformulas82" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3820,7 +3820,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance) -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
+<li class="propertylistitem"><strong>VIIRS SDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance)* -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
   <table id="miscformulas83" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3852,7 +3852,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
+<li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature)* -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
   <table id="miscformulas84" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3892,7 +3892,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature) - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
+<li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature)* - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
   <table id="miscformulas85" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -3996,7 +3996,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+<li class="propertylistitem"><strong>VIIRS SDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance)* -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVI bands of 375m resolution. 
    <table id="miscformulas88" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -4029,7 +4029,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+<li class="propertylistitem"><strong>VIIRS SDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance)* - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
  This is designed for SVM bands of 750m resolution.
   <table id="miscformulas89" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -4208,7 +4208,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
         </td>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
+<li class="propertylistitem"><strong>VIIRS SDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature)* -</strong> Detects sea spray particles over bodies of water.
   <table id="miscformulas93" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -4246,7 +4246,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
         </td>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance) -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
+<li class="propertylistitem"><strong>VIIRS SDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance)* -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
   <table id="miscformulas94" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -4278,7 +4278,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>VIIRS SDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance) -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
+<li class="propertylistitem"><strong>VIIRS SDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance)* -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
   <table id="miscformulas95" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
