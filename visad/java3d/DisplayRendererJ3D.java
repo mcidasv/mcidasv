@@ -916,7 +916,6 @@ public abstract class DisplayRendererJ3D
     } else {
       this.non_direct.insertChild(group, index);
     }
-
   }
 
   public synchronized void reorderRenderers(int[] order) throws VisADException {
@@ -944,6 +943,7 @@ public abstract class DisplayRendererJ3D
     for(int k = 0; k < rendVec.size(); chldIdxOrder[k] = k++) {
       RendererJ3D rend = (RendererJ3D)rendVec.get(k);
       int ogi = rend.getOrderedGroupIndex();
+      chldIdxOrder[k] = k;
     }
 
     this.non_direct.setChildIndexOrder(chldIdxOrder);

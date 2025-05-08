@@ -750,6 +750,14 @@ public class DisplayImplJ3D extends DisplayImpl {
     return format;
   }
 
+  public void reorderRenderers(final int[] order) throws VisADException {
+    ((DisplayRendererJ3D)this.getDisplayRenderer()).reorderRenderers(order);
+  }
+
+  public void resetRendererOrder() {
+    ((DisplayRendererJ3D)this.getDisplayRenderer()).resetRendererOrder();
+  }
+
   public void destroyUniverse() {
     if (universe != null) universe.destroy();
     universe = null;
