@@ -976,16 +976,18 @@ public abstract class DisplayRendererJ3D
     directs.addElement(renderer);
   }
 
-  public void addDirectManipulationSceneGraphComponent(Group group, DirectManipulationRendererJ3D renderer, int index) {
-    if (this.not_destroyed != null) {
-      if (this.non_direct.numChildren() == 0) {
-        this.non_direct.addChild(group);
-      } else {
-        this.non_direct.insertChild(group, index);
-      }
-
-      this.directs.addElement(renderer);
+  public void addDirectManipulationSceneGraphComponent(Group group,
+                                                       DirectManipulationRendererJ3D renderer,
+                                                       int index) {
+    if (not_destroyed == null) {
+      return;
     }
+    if ((non_direct.numChildren() == 0) || (index >= non_direct.numChildren())) {
+      non_direct.addChild((Node)group);
+    } else {
+      non_direct.insertChild((Node)group, index);
+    }
+    directs.addElement(renderer);
   }
 
 
