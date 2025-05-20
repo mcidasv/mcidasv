@@ -443,7 +443,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
         // P(\Theta) = 0.75 * (1 + (\cos(\Theta))^2)
 
         double mu_1 = Math.cos(solarZenithRad);
-        double mu_2 = Math.cos(solarZenithRad);
+        double mu_2 = Math.cos(satelliteZenithRad);
 
         return tau * P_big_theta * (1 / (4 * mu_1 * mu_2));
         // \tau \cdot P(\Theta) \cdot (\frac{1}{4 \cdot \mu_1 \cdot \mu_2})
