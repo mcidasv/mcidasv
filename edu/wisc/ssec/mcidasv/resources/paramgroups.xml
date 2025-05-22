@@ -64,6 +64,7 @@
     <params p1="192_Band8_TEMP" p2="192_Band10_TEMP" p3="192_Band13_TEMP"/>
     <params p1="CMI_C08" p2="CMI_C10" p3="CMI_C13"/>
     <params p1="temp_6_2um_nom" p2="temp_7_3um_nom" p3="temp_10_4um_nom"/>
+    <params p1="Simulated_Brightness_Temp*.*_ABI_GOES-R_Band-8*.*" p2="Simulated_Brightness_Temp*.*_ABI_GOES-R_Band-10*.*" p3="Simulated_Brightness_Temp*.*_ABI_GOES-R_Band-13*.*"/>
   </paramgroup>
   <paramgroup description="ABI Day Snow Fog RGB" name="ABI_RGB_DaySnowFog">
     <params p1="186_Band3_ALB" p2="186_Band5_ALB" p3="186_Band7_TEMP" p4="186_Band13_TEMP"/>
@@ -99,6 +100,7 @@
     <params p1="192_Band8_TEMP" p2="192_Band10_TEMP"/>
     <params p1="CMI_C08" p2="CMI_C10"/>
     <params p1="temp_6_2um_nom" p2="temp_7_3um_nom"/>
+    <params p1="Simulated_Brightness_Temp*.*_ABI_GOES-R_Band-8*.*" p2="Simulated_Brightness_Temp*.*_ABI_GOES-R_Band-10*.*"/>
   </paramgroup>
   <paramgroup description="ABI Day Convection RGB" name="ABI_RGB_DayConvection">
     <params p1="186_Band2_ALB" p2="186_Band5_ALB" p3="186_Band7_TEMP" p4="186_Band8_TEMP" p5="186_Band10_TEMP" p6="186_Band13_TEMP"/>
