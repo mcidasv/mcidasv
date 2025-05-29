@@ -2565,6 +2565,40 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * Get the list of  initial skins to create windows for
+     *
+     * @return List of UI skins to create
+     */
+    private List<String> getInitialSkins() {
+        //Run the skins through the getResourcePath in case there are any %USERPATH% macros
+        List<String> temp = StringUtil.split(
+                getStateManager().getProperty("idv.ui.initskins", ""), ";", true,
+                true);
+        List<String> skins = new ArrayList<String>();
+        for(String skin: temp) {
+            skins.add(getResourceManager().getResourcePath(skin));
+        }
+        return skins;
+    }
+
+    /**
+     * Create the basic windows. This gets called at start up and if the user
+     * presses "show dashboard" and there isn't any windows available
+     */
+    @Override public void doMakeBasicWindows() {
+        splashMsg("Creating User Interface");
+        List skins = getInitialSkins();
+        for (int i = 0; i < skins.size(); i++) {
+            String skin = (String) skins.get(i);
+            try {
+                createNewWindow(new ArrayList(), skin);
+            } catch (Throwable exc) {
+                logException("Creating UI from skin:" + skin, exc);
+            }
+        }
+    }
+
+    /**
      * Method to do the work of showing the Data Explorer (nee Dashboard).
      * 
      * @param tabName Name of the tab that should be made active. 
