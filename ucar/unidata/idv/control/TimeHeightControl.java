@@ -33,6 +33,7 @@ import ucar.unidata.collab.Sharable;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
+import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.ControlContext;
 
@@ -49,6 +50,7 @@ import ucar.unidata.util.*;
 import ucar.visad.ShapeUtility;
 
 
+import ucar.visad.Util;
 import ucar.visad.display.ColorScale;
 import ucar.visad.display.Contour2DDisplayable;
 import ucar.visad.display.Displayable;
@@ -57,8 +59,12 @@ import ucar.visad.display.Grid2DDisplayable;
 import ucar.visad.display.GridDisplayable;
 import ucar.visad.display.XYDisplay;
 
+import ucar.visad.quantities.AirPressure;
+import ucar.visad.quantities.CommonUnits;
+import ucar.visad.quantities.Length;
 import visad.*;
 
+import visad.Set;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
@@ -72,14 +78,16 @@ import java.beans.PropertyChangeEvent;
 
 import java.beans.PropertyChangeListener;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
+
+import static javax.swing.JOptionPane.getRootFrame;
 
 
 /**
@@ -101,28 +109,31 @@ public class TimeHeightControl extends LineProbeControl {
 
 
     /** XY display for displaying time/height diagram */
-    private XYDisplay profileDisplay;
+    protected XYDisplay profileDisplay;
 
     /** the data */
-    private FieldImpl fieldImpl;
+    protected FieldImpl fieldImpl;
 
     /** Displayable for color filled contours */
     private DisplayableData dataDisplay;
 
     /** Displayable for contours */
-    private Contour2DDisplayable contourDisplay;
+    protected Contour2DDisplayable contourDisplay;
 
     /** flag for XAxis time orientation */
     private boolean isLatestOnLeft = true;
 
     /** flag for type of color display */
-    private boolean showAsContours = true;
+    private boolean showAsContours = false;
+
+    /** flag for type of color display */
+    private boolean colorFill = false;
 
     /** foreground color */
-    private Color foreground;
+    protected Color foreground;
 
     /** background color */
-    private Color background;
+    protected Color background;
 
     /** The latlon widget */
     private LatLonWidget latLonWidget;
@@ -130,11 +141,44 @@ public class TimeHeightControl extends LineProbeControl {
     /** the control window's view manager */
     protected TimeHeightViewManager timeHeightView;
 
+    /** the control for second variable */
+    protected JPanel controlPane;
+
+    /** the old smoothing type for first variable */
+    private String OldSmoothingType = LABEL_NONE;
+    /** the old smoothing factor for first variable */
+    private int OldSmoothingFactor = 0;
+
+    /** the control for second variable */
+    private MyTimeHeightControl myTimeHeightControl;
+    /** the color for second variable */
+    private ColorTable myColorTable;
+    /** the contour info for second variable */
+    private ContourInfo myContourInfo;
+    /** the smoothing type for second variable */
+    private String mySmoothingType;
+    /** the smoothing factor for second variable */
+    private int mySmoothingFactor;
+
+    private Unit altUnit = null;
+
+    float[][] latlonalt = null;
+    /** default pressure labels */
+    public static String[] DEFAULT_PRESSURE_LABELS = new String[] {
+            "1000", "700", "500", "300", "200", "100"
+    };
+    /** ScalarMap of Pressure to Display.YAxis */
+    private ScalarMap pressureMap = null;
+
+    /** vertical pressure axis scale */
+    private AxisScale pressureScale = null;
+    /** pressure labels being used */
+    private String[] pressureLabels = DEFAULT_PRESSURE_LABELS;
     /**
      *  Default Contructor; sets flags. See init() for creation actions.
      */
     public TimeHeightControl() {
-        setAttributeFlags(FLAG_DATACONTROL | FLAG_COLOR);
+        setAttributeFlags(FLAG_DATACONTROL | FLAG_COLOR );
     }
 
     /**
@@ -168,27 +212,47 @@ public class TimeHeightControl extends LineProbeControl {
         addViewManager(timeHeightView);
 
         if (showAsContours) {
-            dataDisplay = new Contour2DDisplayable("th_color_" + paramName,
-                    true, true);
-            dataDisplay.setVisible(true);
-            contourDisplay = new Contour2DDisplayable("th_contour_"
-                    + paramName);
+            contourDisplay = new Contour2DDisplayable("th_color_" + paramName,
+                    true, colorFill);
             contourDisplay.setVisible(true);
-            addDisplayable(dataDisplay, timeHeightView,
-                           FLAG_COLORTABLE | FLAG_CONTOUR | FLAG_DISPLAYUNIT);
-            addDisplayable(contourDisplay, timeHeightView,
-                           FLAG_COLOR | FLAG_CONTOUR | FLAG_DISPLAYUNIT);
 
-        } else {
+            addDisplayable(contourDisplay, timeHeightView,
+                    FLAG_COLORTABLE | FLAG_CONTOUR | FLAG_DISPLAYUNIT | FLAG_SMOOTHING);
+
+        } else if (this instanceof FlowTimeHeightControl){
             dataDisplay = createDataDisplay();
             addDisplayable(dataDisplay, timeHeightView,
-                           getDataDisplayFlags());
+                    getDataDisplayFlags());
+        } else {
+            dataDisplay = new Grid2DDisplayable("th_color_" + paramName,
+                    true);
+            dataDisplay.setVisible(true);
+            ((Grid2DDisplayable) dataDisplay).setTextureEnable(false);
+            addDisplayable(dataDisplay, timeHeightView,
+                    FLAG_COLORTABLE | FLAG_CONTOUR | FLAG_DISPLAYUNIT);
         }
+        controlPane = new JPanel();
+
 
         if ( !setData(dataChoice)) {
             return false;
         }
 
+        fieldImpl = getGridDataInstance().getGrid();
+
+        boolean isSequence = GridUtil.isTimeSequence(fieldImpl);
+
+        // Check to see if this is a time sequence or not.  No sense
+        // creating a timeHeight CrossSection with no times or one time.
+        if ( !isSequence || (fieldImpl.getDomainSet().getLength() <= 1)) {
+            throw new VisADException(
+                    "Need more than one time to create a TimeHeight Cross Section");
+        }
+
+        RealTuple ss = getGridCenterPosition();
+        setProbePosition(ss);
+        setXAxisLabels((SampledSet) fieldImpl.getDomainSet());
+        timeHeightView.setShowDisplayList(false);
         return true;
     }
 
@@ -208,7 +272,7 @@ public class TimeHeightControl extends LineProbeControl {
     protected int getDataDisplayFlags() {
         return FLAG_COLORTABLE | FLAG_DISPLAYUNIT;
     }
-
+	
     @Override protected boolean canDoProgressiveResolution() {
         return false;
     }
@@ -255,18 +319,6 @@ public class TimeHeightControl extends LineProbeControl {
             return false;
         }
 
-        fieldImpl = getGridDataInstance().getGrid();
-
-        boolean isSequence = GridUtil.isTimeSequence(fieldImpl);
-
-        // Check to see if this is a time sequence or not.  No sense
-        // creating a timeHeight CrossSection with no times or one time.
-        if ( !isSequence || (fieldImpl.getDomainSet().getLength() <= 1)) {
-            throw new VisADException(
-                "Need more than one time to create a TimeHeight Cross Section");
-        }
-
-        setXAxisLabels((SampledSet) fieldImpl.getDomainSet());
         return true;
     }
 
@@ -280,6 +332,59 @@ public class TimeHeightControl extends LineProbeControl {
             profileDisplay.draw();
         } catch (Exception exc) {
             logException("initDone", exc);
+        }
+    }
+
+    /**
+     * Called by the {@link ucar.unidata.idv.IntegratedDataViewer} to
+     * initialize after this control has been unpersisted
+     *
+     * @param vc The context in which this control exists
+     * @param properties Properties that may hold things
+     * @param preSelectedDataChoices set of preselected data choices
+     */
+    public void initAfterUnPersistence(ControlContext vc,
+                                       Hashtable properties,
+                                       List preSelectedDataChoices) {
+
+        super.initAfterUnPersistence(vc, properties, preSelectedDataChoices);
+
+
+        List choices = getDataChoices();
+        if(choices.size() > 1) {
+            try {
+                DataChoice dc = (DataChoice) choices.get(1);
+                myTimeHeightControl = new MyTimeHeightControl(this);
+                myTimeHeightControl.controlContext = getControlContext();
+
+                myTimeHeightControl.init(dc);
+
+                RealTuple position = getPosition();
+
+                myTimeHeightControl.setPosition(position);
+                myTimeHeightControl.initDone();
+                addDisplayable(myTimeHeightControl.contourDisplay, timeHeightView);
+                myTimeHeightControl.setMySmoothType(mySmoothingType);
+                myTimeHeightControl.setMyColorTable(myColorTable);
+                myTimeHeightControl.setMyContourInfo(myContourInfo);
+
+                JButton btn = new JButton(dc.getName());
+                controlPane.add(btn);
+                btn.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e)  {
+                        try {
+                            JFrame frame = new JFrame();
+                            frame.add(myTimeHeightControl.doMakeContents());
+
+                            GuiUtils.showFrameAsDialog(controlPane, frame);
+                        } catch (Exception ee){}
+
+                    }
+                });
+
+            } catch (Exception ee){}
         }
     }
 
@@ -305,7 +410,7 @@ public class TimeHeightControl extends LineProbeControl {
 
         // TODO:  This is what should be done - however legends don't show up.
         return GuiUtils.centerBottom(timeHeightView.getContents(),
-                                     doMakeWidgetComponent());
+                GuiUtils.hsplit( doMakeWidgetComponent(), controlPane));
         //return GuiUtils.centerBottom(profileDisplay.getComponent(),
         //                             doMakeWidgetComponent());
     }
@@ -342,7 +447,7 @@ public class TimeHeightControl extends LineProbeControl {
         SampledSet   ss           = GridUtil.getSpatialDomain(fi);
         RealType height =
             (RealType) ((SetType) ss.getType()).getDomain().getComponent(NN);
-        float[][] latlonalt = ss.getSamples();
+        latlonalt = ss.getSamples();
         Unit      zUnit     = ss.getSetUnits()[NN];
         if ( !height.equals(RealType.Altitude)) {
             CoordinateSystem cs = ss.getCoordinateSystem();
@@ -350,7 +455,7 @@ public class TimeHeightControl extends LineProbeControl {
             zUnit = cs
                 .getReferenceUnits()[cs.getReference().getIndex(RealType.Altitude)];
         }
-
+        setYAxisLabels(latlonalt[NN]);
         int        numTimes      = timeVals[0].length;
         int        numAlts       = ss.getLength();
 
@@ -383,6 +488,8 @@ public class TimeHeightControl extends LineProbeControl {
         FlatField profile = new FlatField(newFieldType, newDomain);
 
         profile.setSamples(newRangeVals, false);
+        if(dataDisplay == null)
+            dataDisplay = createDataDisplay();
         ((GridDisplayable) dataDisplay).loadData(profile);
 
         if (showAsContours) {  // add in the color filled type
@@ -397,10 +504,36 @@ public class TimeHeightControl extends LineProbeControl {
 
             FieldImpl profileOther = GridUtil.setParamType(profile,
                                          colorType, false);
+            if (checkFlag(FLAG_SMOOTHING)
+                    && !getSmoothingType().equals(LABEL_NONE)) {
+                profileOther = GridUtil.smooth(profileOther, getSmoothingType(),
+                        getSmoothingFactor());
+            }
+           // ((GridDisplayable) contourDisplay).loadData(profileOther);
+            if(!colorFill)
+                contourDisplay.setLabeling(true);
 
             contourDisplay.loadData(profileOther);
         }
     }  // end method displayTHForCoord
+
+
+    /**
+     *  Use the value of the smoothing type and weight to subset the data.
+     *
+     * @throws RemoteException Java RMI problem
+     * @throws VisADException  VisAD problem
+     */
+    protected void applySmoothing() throws VisADException, RemoteException {
+        if (checkFlag(FLAG_SMOOTHING)) {
+            if ( !getSmoothingType().equals(OldSmoothingType)
+                    || (getSmoothingFactor() != OldSmoothingFactor)) {
+                OldSmoothingType   = getSmoothingType();
+                OldSmoothingFactor = getSmoothingFactor();
+                loadProfile(getPosition());
+            }
+        }
+    }
 
 
     /**
@@ -411,6 +544,9 @@ public class TimeHeightControl extends LineProbeControl {
     protected void probePositionChanged(RealTuple position) {
         try {
             loadProfile(position);
+            if(myTimeHeightControl != null){
+                myTimeHeightControl.loadProfile(position);
+            }
         } catch (Exception exc) {
             logException("probePositionChanged", exc);
         }
@@ -592,7 +728,7 @@ public class TimeHeightControl extends LineProbeControl {
             //double averageTickSpacing = (end-start)/(double)(numSteps);
             double averageTickSpacing = (end - start);
             xScale.setMajorTickSpacing(averageTickSpacing * step);
-            xScale.setMinorTickSpacing(averageTickSpacing);
+            xScale.setMinorTickSpacing(averageTickSpacing * (1.0f/numSteps));
             xScale.setLabelTable(timeLabels);
             //xScale.setTitle("Time (" + dt.getFormatTimeZone().getDisplayName() + ")");
             xScale.setTitle("Time ("
@@ -601,7 +737,134 @@ public class TimeHeightControl extends LineProbeControl {
 
         } catch (RemoteException re) {}  // can't happen
     }
+    /**
+     * Set y (altitude) axis values from the data set supplied.
+     *
+     * @param altitude   alt array to use
+     *
+     * @throws VisADException   VisAD error
+     */
+    private void setYAxisLabels(float[] altitude) throws VisADException {
+        if (altitude == null) {
+            return;
+        }
+        int step =8;
+        double start;
+        double    end;
+        int len = altitude.length;
+        if(altitude[0] > altitude[1]) {
+            start = altitude[len-1];
+            end = altitude[0];
+        } else {
+            end = altitude[len-1];
+            start = altitude[0];
 
+        }
+        if(end >= 1000.0)
+            end = Math.round(end /1000)*1000.0;
+        if(start < 200)
+            start = 0.0;
+        double    values[]   = new double[5];
+        Hashtable labelTable = new Hashtable();
+        String [] labels = new String[5];
+        double averageTickSpacing = (end-start)/(double)(step);
+        if(averageTickSpacing >= 1000){
+            averageTickSpacing =  Math.round(averageTickSpacing /1000)*1000.0;
+        } else if(averageTickSpacing >= 100){
+            averageTickSpacing =  Math.round(averageTickSpacing /100)*100.0;
+        } else if(averageTickSpacing >= 10){
+            averageTickSpacing =  Math.round(averageTickSpacing /10)*10.0;
+        }
+        for (int i = 4; i >= 0; i--) {
+            double value = end - (4 - i) * averageTickSpacing * 2;
+            values[i] = value;
+            labels[i] = String.valueOf(value);
+        }
+
+        for (int i = 0; i <= 4; i++) {
+            labelTable.put(Double.valueOf(values[i]), labels[i]);
+        }
+        AxisScale yScale = profileDisplay.getYAxisScale();
+        yScale.setTickBase(start);
+
+
+        //double averageTickSpacing = (end - start);
+        yScale.setMajorTickSpacing(averageTickSpacing);
+
+        //yScale.setMinorTickSpacing(averageTickSpacing * (1.0f/step));
+        yScale.setLabelTable(labelTable);
+        yScale.setMajorTicks(values);
+        //xScale.setTitle("Time (" + dt.getFormatTimeZone().getDisplayName() + ")");
+
+
+    }
+
+    /**
+     * Set y (altitude) axis pressure values
+     *
+     * @throws VisADException   VisAD error
+     */
+    private void setYAxisPressureLabels() throws VisADException {
+       // try {
+            /** default pressure labels */
+        String[] DEFAULT_PRESSURE_LABELS = new String[] {
+                "1000",  "700", "500",  "250",   "100"
+        };
+
+        /** pressure labels being used */
+        String[] pressureLabels = DEFAULT_PRESSURE_LABELS;
+        Hashtable table = getPressureLabels(pressureLabels);
+        AxisScale yScale = profileDisplay.getYAxisScale();
+        java.util.Set keys = table.keySet();
+        Iterator iterator = keys.iterator();
+        double [] hkeys =  new double [keys.size()];
+        int i = 0;
+        for(Object d: keys){
+            hkeys[i++] = ((Double)d).doubleValue();
+        }
+        yScale.setMajorTicks(hkeys);
+        yScale.setLabelTable(table);
+        //double averageTickSpacing = (end-start)/(double)(numSteps);
+
+        //xScale.setTitle("Time (" + dt.getFormatTimeZone().getDisplayName() + ")");
+
+
+       // } catch (IOException re) {}  // can't happen
+    }
+    /**
+     * get y (altitude) axis pressure values hashtable
+     *
+     * @param labels   pressure labels
+     *
+     * @throws VisADException   VisAD error
+     */
+    public Hashtable getPressureLabels(String[] labels) throws VisADException {
+        int       numLabels  = labels.length;
+        double    value      = Double.NaN;
+        double    values[]   = new double[labels.length];
+        Hashtable labelTable = new Hashtable();
+        for (int i = 0; i < numLabels; i++) {
+            try {
+                value = Misc.parseNumber(labels[i]);
+            } catch (NumberFormatException ne) {
+                value = Double.NaN;
+            }
+            values[i] = value;
+        }
+        double[] heights =
+                AirPressure.getStandardAtmosphereCS().toReference(new double[][] {
+                        values
+                })[0];
+
+
+        for (int i = 0; i < numLabels; i++) {
+            labelTable.put(Double.valueOf(heights[i]), labels[i]);
+        }
+
+        return labelTable;
+        // set the field here in case there was an error.
+
+    }
     /**
      * Get the position as a lat/lon point
      *
@@ -657,26 +920,174 @@ public class TimeHeightControl extends LineProbeControl {
             //adding some control of probe: size, etc
             items.add(doMakeProbeMenu(new JMenu("Probe")));
         }
+
+        JMenuItem jmj;
+        jmj = new JMenuItem("Change Altitude Unit...");
+        jmj.addActionListener(new ObjectListener(Integer.valueOf(0)) {
+            public void actionPerformed(
+                    ActionEvent ev) {
+                Unit newUnit =
+                        getDisplayConventions().selectUnit(
+                                CommonUnit.meter, CommonUnits.HECTOPASCAL, null);
+                altUnit = newUnit;
+                if (newUnit != null) {
+                    try {
+                        reSetTimeHeightAltitudeUnit(
+                                altUnit);
+                    } catch (Exception exc) {
+                        logException(
+                                "After changing units", exc);
+                    }
+                }
+
+            }
+        });
+        items.add(jmj);
+        List paramItems = new ArrayList();
+        JMenuItem addParamItem = doMakeChangeParameterMenuItem();
+
+        paramItems.add(addParamItem);
+        List choices = getDataChoices();
+        for (int i = 0; i < choices.size(); i++) {
+            paramItems.addAll(getParameterMenuItems(i));
+        }
+
+        items.add(GuiUtils.makeMenu("Parameters", paramItems));
+    }
+    /**
+     * A hook to allow derived classes to have their own label in the menu
+     * for the change data call.
+     *
+     * @return Menu label for the change data call.
+     */
+    protected String getChangeParameterLabel() {
+        return "Add Parameter...";
+    }
+    /**
+     * Utility to make the menu item for changing the data choice
+     *
+     * @return The menu item
+     */
+    protected JMenuItem doMakeChangeParameterMenuItem() {
+        final JMenuItem selectChoices =
+                new JMenuItem(getChangeParameterLabel());
+        selectChoices.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                popupDataDialog("<html>Choose Parameter</html>",
+                        selectChoices);
+            }
+        });
+        List choices = getDataChoices();
+        if(choices.size() > 1)
+            selectChoices.setEnabled(false);
+        else
+            selectChoices.setEnabled(true);
+        return selectChoices;
+    }
+
+    private List getParameterMenuItems(final int row) {
+        List               items   = new ArrayList();
+        DataChoice dc = (DataChoice)getDataChoices().get(row);
+        JMenu paramMenu = new JMenu("Parameter " + dc.getName());
+        items.add(paramMenu);
+        JMenuItem jmi;
+
+        // change unit choice
+
+        // Remove this parameter
+        jmi = new JMenuItem("Remove");
+        if(dc.getName() != paramName)
+            paramMenu.add(jmi);
+        jmi.addActionListener(new ActionListener() {
+            public void actionPerformed(
+                    ActionEvent ev) {
+                removeField(row);
+                updateLegendLabel();
+            }
+        });
+
+        return items;
     }
 
     /**
-     * Actually create the color scales.  Override to only show in
-     * control window
+     * Called when the user chooses new data for this display
      *
-     * @throws RemoteException
-     * @throws VisADException
+     * @param newChoices List of new {@link ucar.unidata.data.DataChoice}-s
+     *
+     * @throws RemoteException    Java RMI problem
+     * @throws VisADException     VisAD problem
      */
-    protected void doMakeColorScales()
+    protected void addNewData(List newChoices)
             throws VisADException, RemoteException {
-        colorScales = new ArrayList();
-        if (colorScaleInfo == null) {
-            colorScaleInfo = getDefaultColorScaleInfo();
-        }
-        ColorScale colorScale = new ColorScale(getColorScaleInfo());
-        addDisplayable(colorScale, timeHeightView, FLAG_COLORTABLE);
-        colorScales.add(colorScale);
-
+        processNewData(newChoices);
+        doShare(SHARE_CHOICES, newChoices);
     }
+
+    /**
+     * Override base class method which is called when the user has selected
+     * new data choices.
+     *
+     * @param newChoices    new list of choices
+     *
+     * @throws RemoteException  Java RMI error
+     * @throws VisADException   VisAD Error
+     */
+    protected void processNewData(List newChoices)
+            throws VisADException, RemoteException {
+        DataChoice dc = (DataChoice) newChoices.get(0);
+        myTimeHeightControl = new MyTimeHeightControl(this);
+        myTimeHeightControl.controlContext = getControlContext();
+
+        myTimeHeightControl.init(dc);
+
+        RealTuple position = getPosition();
+
+        myTimeHeightControl.setPosition(position);
+        myTimeHeightControl.initDone();
+        addDisplayable(myTimeHeightControl.contourDisplay, timeHeightView);
+        JButton btn = new JButton(dc.getName());
+        controlPane.add(btn);
+        btn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)  {
+                try {
+                    JFrame frame = new JFrame();
+                    frame.add(myTimeHeightControl.doMakeContents());
+                    GuiUtils.showFrameAsDialog(controlPane, frame);
+                } catch (Exception ee){}
+
+            }
+        });
+        showNormalCursor();
+        appendDataChoices(newChoices);
+
+        //doMoveProbe();
+    }
+
+
+    /**
+     * remove all widget associated with additional parameter
+     * @return
+     */
+    private void removeField(int idx) {
+        if (idx < 0) {
+            return;
+        }
+        List choices = getDataChoices();
+        DataChoice dc = (DataChoice) choices.get(idx);
+        if (dc != null) {
+            removeDataChoice(dc);
+        }
+        try {
+            removeDisplayable(myTimeHeightControl.contourDisplay);
+            controlPane.remove(idx-1);
+            controlPane.repaint();
+        } catch (Exception ee){}
+        //fireStructureChanged();
+        doMoveProbe();  // update the side legend label if needed
+    }
+
 
     /**
      * Add tabs to the properties dialog.
@@ -768,6 +1179,23 @@ public class TimeHeightControl extends LineProbeControl {
     }
 
     /**
+     * Get whether the display is shown as contours.
+     *
+     * @param yesorno  <code>true</code> if want contours instead of an image.
+     */
+    public void setColorFill(boolean yesorno) {
+        colorFill = yesorno;
+    }
+
+    /**
+     * Get whether the display is an image or contours.
+     *
+     * @return  <code>true</code> if contours display, false if image
+     */
+    public boolean getColorFill() {
+        return colorFill;
+    }
+    /**
      * Get the foreground color
      *
      * @return the foreground color
@@ -805,4 +1233,403 @@ public class TimeHeightControl extends LineProbeControl {
         this.background = color;
     }
 
+    /**
+     * Get the background color
+     *
+     * @return the background color
+     */
+    public ColorTable getMyColorTable() {
+        if(myTimeHeightControl != null) {
+            myColorTable = myTimeHeightControl.getColorTable();
+            return myColorTable;
+        } else
+            return null;
+    }
+
+    /**
+     * Set the background color
+     *
+     * @param color   new color
+     */
+    public void setMyColorTable(ColorTable color) throws RemoteException, VisADException {
+        this.myColorTable = color;
+    }
+
+    /**
+     * Get the background color
+     *
+     * @return the background color
+     */
+    public ContourInfo getMyContourInfo( ){
+        if(myTimeHeightControl != null) {
+            myContourInfo = myTimeHeightControl.getContourInfo();
+            return myContourInfo;
+        } else
+            return null;
+    }
+
+    /**
+     * Set the background color
+     *
+     * @param contourInfo   new color
+     */
+    public void setMyContourInfo(ContourInfo contourInfo) throws RemoteException, VisADException {
+        this.myContourInfo = contourInfo;
+    }
+
+
+    /**
+     * Get the background color
+     *
+     * @return the background color
+     */
+    public String getMySmoothingType() {
+        if(myTimeHeightControl != null) {
+            mySmoothingType = myTimeHeightControl.getSmoothingType();
+            return mySmoothingType;
+        } else
+            return LABEL_NONE;
+    }
+
+    /**
+     * Set the background color
+     *
+     * @param smoothingType   new color
+     */
+    public void setMySmoothingType(String smoothingType) throws RemoteException, VisADException {
+        this.mySmoothingType = smoothingType;
+    }
+
+    /**
+     * Get the background color
+     *
+     * @return the background color
+     */
+    public int getMySmoothingFactor() {
+        if(myTimeHeightControl != null) {
+            mySmoothingFactor = myTimeHeightControl.getSmoothingFactor();
+            return mySmoothingFactor;
+        } else
+            return 6;
+    }
+
+    /**
+     * Set the background color
+     *
+     * @param smoothingFactor   new color
+     */
+    public void setMySmoothingType(int smoothingFactor) throws RemoteException, VisADException {
+        this.mySmoothingFactor = smoothingFactor;
+    }
+
+    /**
+     * This gets called by changing the altitude unit
+     *
+     * @param aUnit _more_
+     */
+    protected void reSetTimeHeightAltitudeUnit(Unit aUnit) throws VisADException {
+        if(aUnit.isConvertible(CommonUnits.HECTOPASCAL)){
+            setYAxisPressureLabels();
+        } else{
+            setYAxisLabels(latlonalt[2]);
+        }
+        updateLegendLabel();
+    }
+
+    static public class MyTimeHeightControl extends TimeHeightControl {
+        TimeHeightControl timeHeightControl;
+        Unit displayunit = null;
+        private Range colorRange = null;
+
+        ContourInfo contourInfo;
+
+        public MyTimeHeightControl() {
+            setAttributeFlags(FLAG_COLORTABLE | FLAG_CONTOUR | FLAG_DISPLAYUNIT | FLAG_SMOOTHING );
+        }
+        public MyTimeHeightControl(TimeHeightControl thc) {
+            this.timeHeightControl = thc;
+            setAttributeFlags(FLAG_COLORTABLE | FLAG_CONTOUR | FLAG_DISPLAYUNIT | FLAG_SMOOTHING );
+        }
+
+        /**
+         * Construct the display, frame, and controls
+         *
+         * @param dataChoice the data to use
+         *
+         * @return  true if successful
+         *
+         * @throws RemoteException  Java RMI error
+         * @throws VisADException   VisAD Error
+         */
+        public boolean init(DataChoice dataChoice)
+                throws VisADException, RemoteException {
+
+            timeHeightView = new TimeHeightViewManager(getViewContext(),
+                    new ViewDescriptor("timeheight_of_1_" + paramName),
+                    "showControlLegend=false;wireframe=true;") {}
+            ;
+            profileDisplay = timeHeightView.getTimeHeightDisplay();
+
+            //If foreground is not null  then this implies we have been unpersisted
+            if (foreground != null) {
+                timeHeightView.setColors(foreground, background);
+            }
+            //Call doMakeProbe here so we link to the right ViewManager
+            //If we do it after the addViewManager then we screw up persistence
+            //doMakeProbe();
+            contourDisplay = new Contour2DDisplayable("th_color_" + paramName,
+                    true, false);
+            contourDisplay.setVisible(true);
+
+            contourDisplay.setVisible(true);
+            addDisplayable(contourDisplay, timeHeightView,
+                    FLAG_COLORTABLE | FLAG_CONTOUR | FLAG_DISPLAYUNIT | FLAG_SMOOTHING);
+
+            if ( !setData(dataChoice)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Has this control been initialized
+         *
+         * @return Is this control initialized
+         */
+        public boolean getHaveInitialized() {
+            return true;
+        }
+
+        /**
+         * Called after init().  Load profile into display.
+         */
+        public void initDone() {
+            try {
+                loadProfile(getPosition());
+                profileDisplay.draw();
+            } catch (Exception exc) {
+                logException("initDone", exc);
+            }
+        }
+
+        /**
+         * Given the location of the profile SelectorPoint,
+         * create a data set for a profile at that location,
+         * and load it in display.
+         *
+         * @param position the location
+         *
+         * @throws VisADException   VisAD failure.
+         * @throws RemoteException  Java RMI failure.
+         */
+        public void loadProfile(RealTuple position)
+                throws VisADException, RemoteException {
+
+            if ( !getHaveInitialized()) {
+              //  return;
+            }
+            if(position == null)
+                position = getInitialPosition();
+
+            if ((fieldImpl == null) || (position == null)) {
+                return;
+            }
+            LatLonPoint llp = getPositionLL(position);
+
+            FieldImpl newFI = GridUtil.getProfileAtLatLonPoint(fieldImpl, llp,
+                    getDefaultSamplingModeValue());
+
+            if (newFI != null) {
+                displayTHForCoord(newFI, 2);
+            }
+
+        }
+
+        /**
+         * Make a 2D display of the range values against domain coordinate # NN.
+         *
+         * @param fi a VisAD FlatField or seqence of FlatFields with 3 or more
+         *           domain coordinates, manifold dimension 1.
+         * @param NN an integer, the index number of the coordinate to use
+         *               as profile or y axis of plot (0,1,2,...)
+         *
+         * @throws RemoteException  Java RMI error
+         * @throws VisADException   VisAD Error
+         */
+        protected void displayTHForCoord(FieldImpl fi, int NN)
+                throws VisADException, RemoteException {
+
+            //Have to assume that we have (time -> ((x,y,z)->(param)) because
+            // if we don't have a sequence, how can we do a TimeHeight XS?
+
+            Set        timeSet  = fi.getDomainSet();
+            double[][] timeVals = timeSet.getDoubles();
+
+            RealTupleType newDomainType = new RealTupleType(RealType.Altitude,
+                    RealType.Time);
+            TupleType    parmType     = GridUtil.getParamType(fi);
+            int          numParms     = parmType.getNumberOfRealComponents();
+
+            FunctionType newFieldType = new FunctionType(newDomainType, parmType);
+
+            SampledSet   ss           = GridUtil.getSpatialDomain(fi);
+            RealType height =
+                    (RealType) ((SetType) ss.getType()).getDomain().getComponent(NN);
+            float[][] latlonalt = ss.getSamples();
+            Unit      zUnit     = ss.getSetUnits()[NN];
+            if ( !height.equals(RealType.Altitude)) {
+                CoordinateSystem cs = ss.getCoordinateSystem();
+                latlonalt = cs.toReference(latlonalt, ss.getSetUnits());
+                zUnit = cs
+                        .getReferenceUnits()[cs.getReference().getIndex(RealType.Altitude)];
+            }
+
+            int        numTimes      = timeVals[0].length;
+            int        numAlts       = ss.getLength();
+
+            double[][] newDomainVals = new double[2][numTimes * numAlts];
+            int        l             = 0;
+            for (int j = 0; j < numTimes; j++) {
+                for (int i = 0; i < numAlts; i++) {
+                    newDomainVals[0][l] = latlonalt[NN][i];
+                    newDomainVals[1][l] = timeVals[0][j];
+                    l++;
+                }
+            }
+            Gridded2DDoubleSet newDomain = new Gridded2DDoubleSet(newDomainType,
+                    newDomainVals, numAlts, numTimes,
+                    (CoordinateSystem) null,
+                    new Unit[] { zUnit,
+                            timeSet.getSetUnits()[0] }, (ErrorEstimate[]) null);
+
+            float[][] newRangeVals = new float[numParms][numTimes * numAlts];
+            int       index        = 0;
+            for (int i = 0; i < numTimes; i++) {
+                FlatField ff   = (FlatField) fi.getSample(i);
+                float[][] vals = ff.getFloats(false);
+                for (int j = 0; j < numParms; j++) {
+                    System.arraycopy(vals[j], 0, newRangeVals[j], index, numAlts);
+                }
+                index += numAlts;
+            }
+
+            FlatField profile = new FlatField(newFieldType, newDomain);
+
+            profile.setSamples(newRangeVals, false);
+            if (checkFlag(FLAG_SMOOTHING)
+                    && !getSmoothingType().equals(LABEL_NONE)) {
+                profile = (FlatField)GridUtil.smooth((FieldImpl) profile, getSmoothingType(),
+                        getSmoothingFactor());
+            }
+            contourDisplay.loadData(profile);
+            contourDisplay.setVisible(true);
+            // add in the color filled type
+
+
+        }  // end method displayTHForCoord
+
+
+        protected String getTitle() {
+            //Use the bottom legend text as the window title
+            return " ";
+        }
+        public void setTitle(String title) {
+
+        }
+
+        /**
+         * Make the UI contents for this control window.
+         *
+         * @return  UI container
+         *
+         * @throws RemoteException  Java RMI error
+         * @throws VisADException   VisAD Error
+         */
+        protected Container doMakeContents()
+                throws VisADException, RemoteException {
+
+            // TODO:  This is what should be done - however legends don't show up.
+            return doMakeWidgetComponent() ;
+            //return GuiUtils.centerBottom(profileDisplay.getComponent(),
+            //                             doMakeWidgetComponent());
+        }
+        /**
+         * make widgets for check box for latest data time on left of x axis.
+         *
+         * @param controlWidgets to fill
+         *
+         * @throws RemoteException  Java RMI error
+         * @throws VisADException   VisAD Error
+         */
+        public void getControlWidgets(List controlWidgets)
+                throws VisADException, RemoteException {
+            controlWidgets.add(contourWidget = new ContourWidget(this,
+                    getContourInfo()));
+            addRemovable(contourWidget);
+
+            controlWidgets.add(getColorTableWidget(getRangeForColorTable()));
+
+            controlWidgets.add(new WrapperWidget(this,
+                    GuiUtils.rLabel("Smoothing:"), doMakeSmoothingWidget()));
+
+        }
+
+        public String getColorWidgetLabel() {
+            return "Color";
+        }
+        /**
+         * User has asked to see a different new parameter in this existing display.
+         * Do everything needed to load display with new kind of parameter.
+         *
+         * @param dataChoice    choice for data
+         * @return  true if successfule
+         *
+         * @throws RemoteException  Java RMI error
+         * @throws VisADException   VisAD Error
+         */
+        protected boolean setData(DataChoice dataChoice)
+                throws VisADException, RemoteException {
+            super.setData(dataChoice);
+            paramName = dataChoice.getName();
+            GridDataInstance di = (GridDataInstance)doMakeDataInstance(dataChoice);
+            contourInfo = getContourInfo();
+            colorRange = di.getRange(0);
+            displayunit = ((GridDataInstance) di).getRawUnit(0);
+            this.fieldImpl = ((GridDataInstance)di).getGrid();
+
+            return true;
+        }
+
+        /**
+         * Get the range for the color table.
+         *
+         * @return range being used
+         * @throws RemoteException  some RMI exception occured
+         * @throws VisADException  error getting the range in VisAD
+         */
+        public Range getRangeForColorTable()
+                throws RemoteException, VisADException {
+            return colorRange;
+        }
+
+        public Unit getDisplayUnit() {
+            Unit unit = displayunit;
+
+            setDisplayUnit(unit);
+
+            return unit;
+        }
+
+        public void setMyColorTable(ColorTable color) throws RemoteException, VisADException {
+            setColorTable(color);
+        }
+        public void setMyContourInfo(ContourInfo contourInfo) throws RemoteException, VisADException {
+            setContourInfo(contourInfo);
+        }
+
+        public void setMySmoothType(String smoothType)  {
+            setSmoothingType(smoothType);
+        }
+    }
 }
