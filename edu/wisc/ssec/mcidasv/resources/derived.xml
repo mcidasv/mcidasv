@@ -6201,4 +6201,15 @@
         </operands>
     </derived>
     <!-- End Inq 3158 -->
+    <derived description="Grid 2D Trajectory (from %N1% &amp; %N2%)" formula="DerivedGridFactory.createFlowVectorsN(D1, D2)" id="gridTrajectory2" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category value="inherit" append="Derived" childidx="0" categoryidx="0" display="true"/>
+            <category value="display:gridtrajectorycontrol11"/>
+        </categories>
+        <operands>
+            <paramgroup categories="GRID-2D-*;" name="u_v"/>
+            <paramgroup categories="GRID-3D-*;" name="u_v"/>
+            <paramgroup categories="GRID-3D-*;" name="GridRelative_uv"/>
+        </operands>
+    </derived>
 </derived_parameters>
