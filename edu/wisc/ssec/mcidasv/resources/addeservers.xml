@@ -58,6 +58,7 @@ This file overrides IDV addeservers.xml
       type="point"/>
   </server>
 
+  <!-- Removing as part of inquiry 3211 - RMC 07/2025
   <server name="lead.unidata.ucar.edu">
     <group
       names="BLIZZARD,DDSTALL,EAST,EASTALL,GEOCALL,GLOBAL,GLOBALL,GOESRALL,GOESSALL,GOESTALL,IMAGEALL,L2GEALL,L2GEAST,L2GOESR,L2GOESS,L2GWALL,L2GWEST,NEXRCALL,NEXRCOMP,NPGEALL,NPGEAST,NPGOESR,NPGOESS,NPGRALL,NPGSALL,NPGWALL,NPGWEST,RTDDST,RTGEOC,RTGOESR,RTGOESS,RTGOEST,RTIMAGES,RTSNCL,SNCLALL,TOPO,WEST,WESTALL"
@@ -78,6 +79,7 @@ This file overrides IDV addeservers.xml
       names="RTWXTEXT"
       type="wxtext" />
   </server>
+  -->
   
   <server name="atm.ucar.edu" active="true">
     <group
