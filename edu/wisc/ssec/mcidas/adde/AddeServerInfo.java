@@ -115,7 +115,6 @@ public class AddeServerInfo extends Object {
     if (list == null) {
       list = new String[] {
                 "adde.ucar.edu",
-                "lead.unidata.ucar.edu",
                 "atm.ucar.edu"
     		 };
     }
