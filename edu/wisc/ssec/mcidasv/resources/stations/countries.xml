@@ -71,7 +71,7 @@
         <station name="Estonia" lat="58.67192972" lon="25.54248537" elev="0"/>
         <station name="Ethiopia" lat="8.62278679" lon="39.60080098" elev="0"/>
         <station name="Finland" lat="64.49884603" lon="26.2746656" elev="0"/>
-        <station name="Fiji" lat="-17.42858032" lon="165.4519543" elev="0"/>
+        <station name="Fiji" lat="-17.7134" lon="178.065" elev="0"/>
         <station name="Falkland Islands" lat="-51.74483954" lon="-59.35238956" elev="0"/>
         <station name="France" lat="46.9" lon="2.5" elev="0"/>
         <station name="Faroe Islands" lat="62.05385403" lon="-6.88095423" elev="0"/>
@@ -117,7 +117,7 @@
         <station name="Kenya" lat="0.59988022" lon="37.79593973" elev="0"/>
         <station name="Kyrgyzstan" lat="41.46221943" lon="74.54165513" elev="0"/>
         <station name="Cambodia" lat="12.72004786" lon="104.9069433" elev="0"/>
-        <station name="Kiribati" lat="0.86001503" lon="-45.61110513" elev="0"/>
+        <station name="Kiribati" lat="1.416667" lon="173" elev="0"/>
         <station name="Saint Kitts and Nevis" lat="17.2645995" lon="-62.68755265" elev="0"/>
         <station name="South Korea" lat="36.38523983" lon="127.8391609" elev="0"/>
         <station name="Kosovo" lat="42.57078707" lon="20.87249811" elev="0"/>
