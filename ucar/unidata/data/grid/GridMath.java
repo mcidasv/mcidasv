@@ -51,6 +51,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ucar.unidata.data.grid.GridUtil.DEFAULT_ERROR_MODE;
+import edu.wisc.ssec.mcidasv.data.hydra.Statistics;
 
 /**
  * A class to handle grid math.  This handles math between grids on
@@ -71,6 +73,8 @@ public class GridMath {
 
     /** function for the applyFunctionOverTime routine */
     public static final String FUNC_UPROB = "ensembleUProbability";
+
+    public static final String PRCNTL = "percentile";
 
     /** function for the applyFunctionOverTime routine */
     public static final String FUNC_SUM = "sum";
@@ -3208,6 +3212,26 @@ public class GridMath {
 
     }
 
+    public static Statistics statisticsFF(FlatField grid) throws VisADException {
+        return new Statistics(grid);
+    }
+
+    public static float calculateL2Norm(float[] vector) {
+        float sum = 0.0f;
+        for (float v : vector) {
+            sum += v * v;
+        }
+        return (float)Math.sqrt(sum);
+    }
+
+    public static float calculateL1Norm(float[] vector) {
+        float sum = 0.0f;
+        for (float v : vector) {
+            sum += Math.abs(v);
+        }
+        return sum;
+    }
+    
     /**
      * McIDAS Inquiry #1935-3141
      * Max function that considers the possibility of NaN values
@@ -3261,4 +3285,396 @@ public class GridMath {
 
         return (a < b) ? a : b;
     }
+
+    /**
+     * Apply the function to the 2D grid.
+     * The function is one of the FUNC_ enums
+     *
+     * @param grid   grid to average
+     * @param statThreshold percent for FUNC_PRCNTL, probability threshold for FUNC_UPROB
+     *
+     * @param function One of the FUNC_ enums
+     *
+     * @return the new time series point field
+     *
+     * @throws VisADException  On badness
+     */
+
+    public static FieldImpl applyFunctionOverGrid2D(FieldImpl grid, String function, String statThreshold)
+            throws VisADException {
+
+        FieldImpl sampledFI = null;
+        try {
+            if (GridUtil.isTimeSequence(grid)) {
+
+                TupleType    rangeType  = null;
+                Gridded2DSet newDomain  = null;
+                Set sequenceDomain = Util.getDomainSet(grid);
+                for (int timeStepIdx = 0;
+                     timeStepIdx < sequenceDomain.getLength(); timeStepIdx++) {
+                    FlatField sample = (FlatField)grid.getSample(timeStepIdx);
+                    if (timeStepIdx == 0) {
+						SampledSet spatialDomain = GridUtil.getSpatialDomain(grid);
+                        if(spatialDomain.getManifoldDimension() == 2) {
+                            grid = GridUtil.make2DGridFromSlice(grid);
+                        }
+                        RealTuple point = GridUtil.getCenterPoint(grid);
+                        Data sample1 =
+                                ((FlatField) grid.getSample(0)).evaluate(point,
+                                        Data.NEAREST_NEIGHBOR, DEFAULT_ERROR_MODE);// set up the functiontype
+                        if(!(sample1 instanceof RealTuple) && (sample1 instanceof Real)){
+                            sample1 = new RealTuple(new Real[] { (Real) sample1 });
+                        }
+                        FunctionType sampledType1 =
+                                new FunctionType(
+                                        ((SetType) sequenceDomain.getType()).getDomain(),
+                                        sample1.getType());
+                        sampledFI = new FieldImpl(sampledType1,
+                                sequenceDomain);
+                    }
+
+                    Data   funcFF0 = applyFunctionOverGrid2DFF((FlatField) sample, function, statThreshold);
+
+                    if (funcFF0 == null) {
+                        continue;
+                    }
+                    sampledFI.setSample(timeStepIdx, funcFF0, false);
+                }
+            } else {
+                sampledFI = null;
+            }
+            return sampledFI;
+        } catch (RemoteException re) {
+            throw new VisADException(
+                    "RemoteException in applyFunctionOverLevels");
+        }
+
+    }
+
+    public static FieldImpl applyFunctionOverGrid2D(FieldImpl grid)
+            throws VisADException {
+        FieldImpl aveFI = applyFunctionOverGrid2D(grid, "average", "0");
+        FieldImpl maxFI = applyFunctionOverGrid2D(grid, "max", "0");
+        FieldImpl percentileFI = applyFunctionOverGrid2D(grid, "percentile", "95");
+
+        return aveFI;
+    }
+
+    /**
+     * Evaluate the function of the grid and the function1 to the grid1.
+     *
+     * @param grid   2d grid to apply function (max, min, average)
+     * @param grid1  2d grid to apply function1 (percentile)
+     *
+     * @param function One of the FUNC_ enums
+     * @param function1 another function name
+     * @return the new time series point field
+     *
+     * @throws VisADException  On badness
+     */
+    public static FieldImpl applyFunctionOverGrid2D(FieldImpl grid, String function, FieldImpl grid1,
+                                                    String function1, float percentile)
+            throws VisADException {
+        FieldImpl sampledFI = null;
+        try {
+            if (GridUtil.isTimeSequence(grid)) {
+                Set          timeDomain = grid.getDomainSet();
+
+                for (int timeStepIdx = 0;
+                     timeStepIdx < timeDomain.getLength(); timeStepIdx++) {
+                    FieldImpl sample =
+                            (FieldImpl) grid.getSample(timeStepIdx);
+                    FieldImpl sample1 =
+                            (FieldImpl) grid1.getSample(timeStepIdx);
+
+                    if (timeStepIdx == 0) {
+                        RealTuple point = GridUtil.getCenterPoint(grid);
+                        Data sample0 =
+                                ((FlatField) grid.getSample(0)).evaluate(point,
+                                        Data.NEAREST_NEIGHBOR, DEFAULT_ERROR_MODE);// set up the functiontype
+
+                        FunctionType sampledType1 =
+                                new FunctionType(
+                                        ((SetType) timeDomain.getType()).getDomain(),
+                                        sample0.getType());
+                        sampledFI = new FieldImpl(sampledType1,
+                                timeDomain);
+                    }
+                    if (sample == null) {
+                        continue;
+                    }
+
+                    Real  funcFF = applyFunctionOverGrid2DFF((FlatField) sample,
+                                        function, (FlatField) sample1, function1, percentile);
+
+                    sampledFI.setSample(timeStepIdx, funcFF, false);
+                }
+            } else {
+                sampledFI = null;
+            }
+            return sampledFI;
+        } catch (RemoteException re) {
+            throw new VisADException(
+                    "RemoteException in applyFunctionOverLevels");
+        }
+
+    }
+    
+    /**
+     * Apply the function to the 2D grid.
+     *
+     * @param grid   grid to average
+     * @param statThreshold percent for FUNC_PRCNTL, probability threshold for FUNC_UPROB
+     *
+     * @param function One of the FUNC_ enums
+     *
+     * @return the new time series point field
+     *
+     * @throws VisADException  On badness
+     */
+    private static Data applyFunctionOverGrid2DFF(FlatField grid, String function, String statThreshold)
+            throws VisADException {
+        final boolean doMax = function.equals(FUNC_MAX);
+        final boolean doMin = function.equals(FUNC_MIN);
+        final boolean doAve = function.equals(FUNC_AVERAGE);
+        final boolean doPer = function.equals(FUNC_PRCNTL) || function.equals(PRCNTL);
+
+        TupleType    newRangeType = GridUtil.getParamType(grid);
+
+        Data data = null;
+        try {
+            GriddedSet domainSet =
+                    (GriddedSet) GridUtil.getSpatialDomain(grid);
+            int[] lengths = domainSet.getLengths();
+            int   sizeX   = lengths[0];
+            int   sizeY   = lengths[1];
+            float[][] samples   = grid.getFloats(false);
+
+            float result = 0.0f;
+            for (int np = 0; np < samples.length; np++) {
+                float[] paramVals = samples[np];
+
+                int len = paramVals.length;
+                if(doPer){
+                    float percent = Float.valueOf(statThreshold);
+                    result = evaluatePercentile(paramVals,0, len,percent);
+                } else {
+                    result = 0.0f;
+                    int numCount = 0;
+                    float resultp0 = evaluatePercentile(paramVals,0, len,25);
+                    float resultp1 = evaluatePercentile(paramVals,0, len,75);
+                    for (int k = 0; k < len; k++) {
+                        float value = paramVals[k];
+                        if (value != value) {
+                            continue;
+                        }
+
+                        if (doMax) {
+                            result = Math.max(result, value);
+                        } else if (doMin) {
+                            result = Math.min(result, value);
+                        } else if (doAve) {
+                            result = result + value;
+                            numCount++;
+                        } else {
+                            if(value >= resultp0 && value <=resultp1 ) {
+                                result += value;
+                                numCount++;
+                            }
+                        }
+
+                    }
+                    if (doAve) {
+                        result = result / numCount;
+                    }
+                }
+            }
+
+            Real real = new Real(newRangeType.getRealComponents()[0], (double)result);
+            data = new RealTuple(new Real[] { (Real) real });
+            //newField = new FlatField(newFT, newDomain);
+            //newField.setSamples(newValues, false);
+
+        } catch (RemoteException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return data;
+
+    }
+
+    /**
+     * Evaluate the function1 of the grid1 and Apply the function to the grid.
+     *
+     * @param grid   2d grid to apply function (max, min, average)
+     * @param grid1  2d grid to apply function1 (percentile)
+     *
+     * @return the new time series point field
+     *
+     * @throws VisADException  On badness
+     */
+    private static Real applyFunctionOverGrid2DFF(FlatField grid, String function, FlatField grid1,
+                                                       String function1, float percentile)
+            throws VisADException {
+        final boolean doMax = function.equals(FUNC_MAX);
+        final boolean doMin = function.equals(FUNC_MIN);
+        final boolean doAve = function.equals(FUNC_AVERAGE);
+        final boolean doPer1 = function1.equals(FUNC_PRCNTL);
+
+        TupleType  newRangeType = GridUtil.getParamType(grid);
+        Real real = null;
+        try {
+            float[][] samples   = grid.getFloats(false);
+            float[][] samples1   = grid1.getFloats(false);
+
+            float result = 0;
+            for (int np = 0; np < samples.length; np++) {
+                float[] paramVals = samples[np];
+                float[] paramVals1 = samples1[np];
+
+                if(doPer1){
+                    int len = paramVals1.length;
+                    float resultP = evaluatePercentile(paramVals1,0, len,percentile);
+                    result = 0;
+
+                    int numCount = 0;
+                    for (int k = 0; k < len; k++) {
+                        float value = paramVals[k];
+                        float value1 = paramVals1[k];
+                        if (value != value) {
+                            continue;
+                        }
+                        if(value1 > resultP) {
+                            if (doMax) {
+                                result = Math.max(result, value);
+                            } else if (doMin) {
+                                result = Math.min(result, value);
+                            } else {
+                                result += value;
+                                numCount++;
+                            }
+                        }
+                    }
+                    if (doAve) {
+                        result = result / numCount;
+                    }
+                }
+            }
+
+            real = new Real(newRangeType.getRealComponents()[0], (double)result);
+
+        } catch (VisADException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return real;
+
+    }
+    
+    public static FlatField robustScalerFF(FlatField grid)
+            throws VisADException {
+
+        FlatField newField = null;
+        try {
+            GriddedSet domainSet =
+                    (GriddedSet) GridUtil.getSpatialDomain(grid);
+            int[] lengths = domainSet.getLengths();
+            int   sizeX   = lengths[0];
+            int   sizeY   = lengths[1];
+            int   sizeZ   = ((lengths.length == 2)
+                    || (domainSet.getManifoldDimension() == 2))
+                    ? 1
+                    : lengths[2];
+            float[][] samples   = grid.getFloats();
+
+            float[][] newValues = new float[1][sizeX * sizeY  * sizeZ];
+            GridUtil.RobustScaler scaler = new GridUtil.RobustScaler();
+            scaler.fit(samples);  // Compute medians and IQR
+
+            // Transform the data
+            float[][] scaledData = scaler.transform(samples);
+
+            FunctionType newFT = (FunctionType)grid.getType();
+
+            newField = new FlatField(newFT, grid.getDomainSet());
+            newField.setSamples(scaledData, false);
+
+        } catch (RemoteException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return newField;
+
+    }
+    
+    public static FlatField quantileTransformerFF(FlatField grid)
+            throws VisADException {
+
+        FlatField newField = null;
+        try {
+            GriddedSet domainSet =
+                    (GriddedSet) GridUtil.getSpatialDomain(grid);
+            int[] lengths = domainSet.getLengths();
+            int   sizeX   = lengths[0];
+            int   sizeY   = lengths[1];
+            int   sizeZ   = ((lengths.length == 2)
+                    || (domainSet.getManifoldDimension() == 2))
+                    ? 1
+                    : lengths[2];
+            float[] samples   = grid.getFloats()[0];
+
+            float[][] newValues = new float[1][sizeX * sizeY  * sizeZ];
+            GridUtil.QuantileTransformer qt = new GridUtil.QuantileTransformer(samples.length, samples.length);
+            qt.fit(samples);
+
+// Get the quantiles
+            float[] x_transformed = qt.transform(samples, float[].class, true);
+            qt.shutdown();
+            FunctionType newFT = (FunctionType)grid.getType();
+            newValues[0] = x_transformed;
+            newField = new FlatField(newFT, grid.getDomainSet());
+            newField.setSamples(newValues, false);
+
+        } catch (RemoteException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return newField;
+
+    }
+    
+    public static FlatField powerTransformerFF(FlatField grid, String lambda)
+            throws VisADException {
+        return powerTransformerFF(grid, Double.parseDouble(lambda));
+    }
+
+    public static FlatField powerTransformerFF(FlatField grid, double lambda)
+            throws VisADException {
+
+        FlatField newField = null;
+        try {
+            GriddedSet domainSet =
+                    (GriddedSet) GridUtil.getSpatialDomain(grid);
+            int[] lengths = domainSet.getLengths();
+            int   sizeX   = lengths[0];
+            int   sizeY   = lengths[1];
+            int   sizeZ   = ((lengths.length == 2)
+                    || (domainSet.getManifoldDimension() == 2))
+                    ? 1
+                    : lengths[2];
+            float[] samples   = grid.getFloats()[0];
+
+            float[][] newValues = new float[1][sizeX * sizeY  * sizeZ];
+
+// Get the quantiles
+            float[] x_transformed = GridUtil.yeoJohnsonTransform(samples, lambda);
+
+            FunctionType newFT = (FunctionType)grid.getType();
+            newValues[0] = x_transformed;
+            newField = new FlatField(newFT, grid.getDomainSet());
+            newField.setSamples(newValues, false);
+
+        } catch (RemoteException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return newField;
+
+    }
 }
+
