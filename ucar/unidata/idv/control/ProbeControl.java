@@ -40,6 +40,8 @@ import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.point.PointOb;
 import ucar.unidata.data.point.PointObFactory;
+import ucar.unidata.data.point.PointObTuple;
+import ucar.unidata.data.storm.StormTrackPoint;
 import ucar.unidata.idv.control.chart.LineState;
 import ucar.unidata.idv.control.chart.TimeSeriesChart;
 import ucar.unidata.ui.ImageUtils;
@@ -56,6 +58,8 @@ import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.ShapeUtility;
 import ucar.visad.Util;
+import ucar.visad.data.CalendarDateTime;
+import ucar.visad.data.CalendarDateTimeSet;
 import ucar.visad.display.Animation;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.PointProbe;
@@ -64,12 +68,15 @@ import ucar.visad.display.SelectorPoint;
 
 import visad.Data;
 import visad.FieldImpl;
+import visad.FlatField;
+import visad.FunctionType;
 import visad.Real;
 import visad.RealTuple;
 import visad.RealTupleType;
 import visad.RealType;
 import visad.Set;
 import visad.SetType;
+import visad.Tuple;
 import visad.TupleType;
 import visad.Unit;
 import visad.VisADException;
@@ -1908,7 +1915,18 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
         if (rowInfo.isPoint()) {
             String stationName = rowInfo.getStationName();
             if ((stationName != null) && (stationName.length() > 0)) {
+                if(rowInfo.getPointParameter() == null)
+                    try{
+                        rowInfo.setPointParameter(rowInfo.toString());
+                    } catch (Exception dd){}
                 return rowInfo.getPointParameter() + "@" + stationName;
+            } else if(rowInfo.getDataInstance() != null){
+                try {
+                    Data data = rowInfo.getDataInstance().getData();
+                    FunctionType ftype = (FunctionType)data.getType();
+                    return ftype.getRange().toString();
+                } catch (Exception ee){}
+            
             }
             return rowInfo.getPointParameter();
         }
@@ -2420,32 +2438,93 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
 
             PointOb closest     = null;
             double  minDistance = 0;
-
-            for (int i = 0; i < numObs; i++) {
-                PointOb ob = (PointOb) pointObs.getSample(i);
-                double distance =
-                    ucar.visad.Util.bearingDistance(ob.getEarthLocation(),
-                        elt).getValue();
-                if ((closest == null) || (distance < minDistance)) {
-                    closest     = ob;
-                    minDistance = distance;
+            if (pointObs.getSample(0) instanceof PointOb) {
+                for (int i = 0; i < numObs; i++) {
+                    PointOb ob = (PointOb) pointObs.getSample(i);
+                    double distance =
+                            ucar.visad.Util.bearingDistance(ob.getEarthLocation(),
+                                    elt).getValue();
+                    if ((closest == null) || (distance < minDistance)) {
+                        closest = ob;
+                        minDistance = distance;
+                    }
                 }
-            }
-            if (closest == null) {
-                return null;
-            }
-
-            EarthLocation closestEL = closest.getEarthLocation();
-            for (int i = 0; i < numObs; i++) {
-                PointOb ob = (PointOb) pointObs.getSample(i);
-                if (ob.getEarthLocation().equals(closestEL)) {
-                    obs.add(ob);
+                if (closest == null) {
+                    return null;
                 }
+
+                EarthLocation closestEL = closest.getEarthLocation();
+                for (int i = 0; i < numObs; i++) {
+                    PointOb ob = (PointOb) pointObs.getSample(i);
+                    if (ob.getEarthLocation().equals(closestEL)) {
+                        obs.add(ob);
+                    }
+                }
+                sample = PointObFactory.makeTimeSequenceOfPointObs(obs, 0,
+                        info.getPointIndex());
+            } else if (info.toString().contains("streamflow")) {
+                FlatField ob0 = (FlatField) pointObs.getSample(0);
+                Tuple tuple = (Tuple)ob0.getSample(0);
+                //RealTuple realTuple = (RealTuple)((Tuple)ob0.getSample(0)).getComponent(1);
+                Data [] datas = ((RealTuple)((Tuple)ob0.getSample(0)).getComponent(1)).getComponents();
+                //((Data)((RealTuple)((Tuple)ob0.getSample(0)).getComponent(1)).getComponents()[0]).getType().toString();
+                int dataIdx = 0;
+                for(Data data: datas) {
+                    String typeName = data.getType().toString();
+                    if(removeUnitString(typeName).equals(info.toString())) {
+                        break;
+                    } else {
+                        dataIdx++;
+                    }
+                }
+                int timeLen = pointObs.getDomainSet().getLength();
+                CalendarDateTimeSet timeSet = (CalendarDateTimeSet)pointObs.getDomainSet();
+                double[][]          timeValues = timeSet.getDoubles(false);
+                int idx = findClosestPointIdx(ob0, elt);
+
+                for(int i = 0; i < timeLen; i++) {
+                    FlatField ob00 = (FlatField) pointObs.getSample(i);
+                    int stLen = ob00.getDomainSet().getLength();
+                    CalendarDateTime dt = new CalendarDateTime(timeValues[0][i],
+                                                               timeSet.getCalendar());
+                   //for(int j = 0; j < stLen; j++) {
+                    int j = idx;
+                         //PointOb tp = (PointOb)ob00.getSample(j) ;
+                    RealTuple locationTpl = (RealTuple)((Tuple)ob00.getSample(j)).getComponent(0);
+                    EarthLocation earthLocation = new EarthLocationTuple((Real)locationTpl.getComponent(0),
+                             (Real)locationTpl.getComponent(1), (Real)locationTpl.getComponent(2));
+                    Data dataTpl = (Data)((Tuple)ob00.getSample(j)).getComponent(1);
+                    PointOb pob = new PointObTuple(earthLocation, dt, dataTpl) ;
+                    obs.add(pob);
+                    //}
+                }
+
+                FunctionType sType =
+                        new FunctionType(((SetType)pointObs.getDomainSet().getType()).getDomain(),
+                                datas[dataIdx].getType());
+                sample = new FieldImpl(sType, pointObs.getDomainSet());
+                for (int i = 0; i < numObs; i++) {
+                    FlatField obi = (FlatField) pointObs.getSample(i);
+                    //Tuple tuplei = (Tuple)obi.getSample(0);
+                    //RealTuple realTuplei = (RealTuple)((Tuple)obi.getSample(0)).getComponent(1);
+                    Data [] dataA = ((RealTuple)((Tuple)obi.getSample(idx)).getComponent(1)).getComponents();
+                    Data data = dataA[dataIdx];
+                    sample.setSample(i, data, false);
+                }
+                //return sample;
+            } else {
+                obs.add(pointObs);
+                sample = PointObFactory.makeTimeSequenceOfPointObs(obs, 0, 0);
+                //return sample;
             }
-            sample = PointObFactory.makeTimeSequenceOfPointObs(obs, 0,
-                    info.getPointIndex());
-            if (useRowInfoCache) {
+            if (useRowInfoCache && obs.get(0) instanceof PointOb) {
                 info.setStationName((PointOb) obs.get(0), this);
+                info.setPointSample(sample, elt);
+                setTimesForAnimation();
+            } else {
+                FunctionType ftype = (FunctionType)pointObs.getType();
+                String tname =  ftype.getRange().toString();
+                info.setPointParameter(tname);
                 info.setPointSample(sample, elt);
                 setTimesForAnimation();
             }
@@ -2580,7 +2659,13 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
         return new Data[] { sample, rt };
     }
 
-
+    private static String removeUnitString(String name) {
+        if ((name.indexOf("[") > -1) && (name.indexOf("]") > -1)) {
+            return name.substring(0, name.indexOf("[")).trim();
+        } else {
+            return name;
+        }
+    }
 
     /**
      * Get the real values for the given time step
@@ -2828,7 +2913,29 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
         amExporting = false;
     }
 
-
+    public int findClosestPointIdx(FlatField obs, EarthLocation elt) throws
+            VisADException, RemoteException {
+        int                   size    = obs.getLength();
+        float[][] data = obs.getFloats();
+        double minDistance = 1000;
+        int idx = 0;
+        for (int j = 0; j < size; j++) {
+            float lat = data[0][j];
+            float lon = data[1][j];
+            float alt = data[2][j];
+            EarthLocation   stpLoc   = new EarthLocationTuple(new Real(RealType.Latitude, lat),
+                    new Real(RealType.Longitude, lon), new Real(RealType.Altitude, alt));
+            int[]           selectPt = boxToScreen(earthToBox(elt));
+            int[]           obScreen = boxToScreen(earthToBox(stpLoc));
+            double distance = GuiUtils.distance(obScreen, selectPt);
+            if (distance < minDistance) {
+                idx = j;
+                minDistance  = distance;
+            }
+        }
+        return idx;
+    }
+    
     /**
      *  Set the DataTemplate property.
      *
