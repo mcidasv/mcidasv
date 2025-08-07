@@ -5054,23 +5054,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         JMenuItem mi;
 
-        captureMenu.add(
-            mi = (JMenuItem) GuiUtils.setIcon(
-                GuiUtils.makeMenuItem(
-                    "Image...  Ctrl+I", this,
-                    "doSaveImageInThread"), "/auxdata/ui/icons/camera.png"));
+        JMenuItem imageItem = GuiUtils.makeMenuItem("Image...  Ctrl+I", this, "doSaveImageInThread");
+        imageItem.setToolTipText("Capture Image");
+        captureMenu.add(GuiUtils.setIcon(imageItem, "/auxdata/ui/icons/camera.png"));
 
-        // mi.setMnemonic(GuiUtils.charToKeyCode("C"));
-        captureMenu.add(
-            mi = (JMenuItem) GuiUtils.setIcon(
-                GuiUtils.makeMenuItem(
-                    "Movie...  Ctrl+M", this,
-                    "startImageCapture"), "/auxdata/ui/icons/film.png"));
+        JMenuItem movieItem = GuiUtils.makeMenuItem("Movie...  Ctrl+M", this, "startImageCapture");
+        movieItem.setToolTipText("Capture Movie");
+        captureMenu.add(GuiUtils.setIcon(movieItem, "/auxdata/ui/icons/film.png"));
 
-        // mi.setMnemonic(GuiUtils.charToKeyCode("M"));
-        captureMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Print...",
-                this, "doPrintImage", null,
-                true), "/auxdata/ui/icons/printer.png"));
+        JMenuItem printItem = GuiUtils.makeMenuItem("Print...", this, "doPrintImage");
+        printItem.setToolTipText("Print...");
+        captureMenu.add(GuiUtils.setIcon(printItem, "/auxdata/ui/icons/printer.png"));
+	
         viewMenu.add(makeShowMenu());
 
         if (this.viewMenu == null) {
@@ -5094,8 +5089,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param viewStateMenu the menu to init
      */
     public void initViewStateMenu(JMenu viewStateMenu) {
-        viewStateMenu.add(GuiUtils.makeMenuItem("Save Current Viewpoint",
-                getViewManager(), "doSaveState"));
+        JMenuItem viewItem = GuiUtils.makeMenuItem("Save Current Viewpoint", getViewManager(), "doSaveState");
+        viewItem.setToolTipText("Save current viewpoint");
+        viewStateMenu.add(viewItem);
         viewStateMenu.addSeparator();
         makeViewStateMenu(viewStateMenu);
     }
