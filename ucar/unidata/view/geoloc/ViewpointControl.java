@@ -561,6 +561,7 @@ public class ViewpointControl implements ActionListener {
         viewMenu.add(pMenu = new JCheckBoxMenuItem("Perspective View",
                 isPerspective));
         pMenu.setMnemonic('P');
+        pMenu.setToolTipText("Enable/Disable perspective view");
         pMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if ( !okToAcceptChangesFromPerspectiveWidgets) {
@@ -576,9 +577,11 @@ public class ViewpointControl implements ActionListener {
         mi.setIcon(GuiUtils.getScaledImageIcon(ICON_USERVIEW, null, true));
         mi.setActionCommand(CMD_ROTATEDIALOG);
         mi.addActionListener(this);
+        mi.setToolTipText("Open Viewpoint Settings window");
         makeVerticalRangeMenuItem(viewMenu);
         viewMenu.add(rotateMenu = new JCheckBoxMenuItem("Auto-Rotate View",
                 autoRotate));
+        rotateMenu.setToolTipText("Enable/Disable display rotation");
         rotateMenu.setMnemonic('R');
         rotateMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -621,6 +624,7 @@ public class ViewpointControl implements ActionListener {
 
         viewMenu.add(mi);
         mi.setMnemonic('V');
+        mi.setToolTipText("Open Vertical Scale window");
         mi.setIcon(GuiUtils.getScaledImageIcon(ICON_SETVERTICALRANGE, null,
                 true));
         mi.setActionCommand(CMD_SETVERTICALRANGE);
