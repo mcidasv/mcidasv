@@ -185,6 +185,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         JMenuItem menuItem;
 
         menuItem = new JMenuItem("Create Formula");
+        menuItem.setToolTipText("Open Formula Editor window");
         menuItem.addActionListener(e -> showFormulaDialog());
         menuItems.add(menuItem);
 
@@ -237,14 +238,17 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         menuItems.add(MENU_SEPARATOR);
 
         menuItem = new JMenuItem("Jython Library");
+        menuItem.setToolTipText("Open Jython Library window");
         menuItem.addActionListener(e -> showJythonEditor());
         menuItems.add(menuItem);
 
         menuItem = new JMenuItem("Jython Shell");
+        menuItem.setToolTipText("Open Jython Shell window");
         menuItem.addActionListener(e -> createShell());
         menuItems.add(menuItem);
 
         menuItem = new JMenuItem("Load Jython Script");
+        menuItem.setToolTipText("Select a Jython script to run");
         menuItem.addActionListener(e -> {
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Python Files (*.py)", "py");
             String file = FileManager.getReadFile("Load Script", filter);
@@ -256,10 +260,12 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         menuItems.add(MENU_SEPARATOR);
 
         menuItem = new JMenuItem("Import");
+        menuItem.setToolTipText("Import formulas");
         menuItem.addActionListener(e -> importFormulas());
         menuItems.add(menuItem);
 
         menuItem = new JMenuItem("Export");
+        menuItem.setToolTipText("Export Formulas");
         menuItem.addActionListener(e -> exportFormulas());
         menuItems.add(menuItem);
 
