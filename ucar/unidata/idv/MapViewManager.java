@@ -1795,31 +1795,29 @@ public class MapViewManager extends NavigatedViewManager {
         viewMenu.addSeparator();
 
         if (isFullScreen()) {
-            viewMenu.add(
-                GuiUtils.setIcon(
-                    GuiUtils.makeMenuItem(
-                        "Reset Full Screen", this,
-                        "resetFullScreen"), "/auxdata/ui/icons/arrow_in.png"));
+            JMenuItem fullItem = GuiUtils.makeMenuItem("Reset Full Screen", this, "resetFullScreen");
+            fullItem.setToolTipText("Exit Full Screen mode");
+            viewMenu.add(GuiUtils.setIcon(fullItem, "/auxdata/ui/icons/arrow_in.png"));
+    
         } else {
-            viewMenu.add(
-                GuiUtils.setIcon(
-                    GuiUtils.makeMenuItem(
-                        "Full Screen", this,
-                        "setFullScreen"), "/auxdata/ui/icons/arrow_out.png"));
+            JMenuItem fullItem = GuiUtils.makeMenuItem("Full Screen", this, "setFullScreen");
+            fullItem.setToolTipText("Enter Full Screen mode");
+            viewMenu.add(GuiUtils.setIcon(fullItem, "/auxdata/ui/icons/arrow_out.png"));
         }
+    
         viewMenu.addSeparator();
-        viewMenu.add(
-            GuiUtils.setIcon(
-                GuiUtils.makeMenuItem(
-                    "Animation Timeline", this,
-                    "showTimeline"), "/auxdata/ui/icons/timeline_marker.png"));
+    
+        JMenuItem timelineItem = GuiUtils.makeMenuItem("Animation Timeline", this, "showTimeline");
+            timelineItem.setToolTipText("Open Animation Timeline window");
+            viewMenu.add(GuiUtils.setIcon(timelineItem, "/auxdata/ui/icons/timeline_marker.png"));
 
-        viewMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Flythrough",
-            this, "showFlythrough"), "/auxdata/ui/icons/plane.png"));
+        JMenuItem flythroughItem = GuiUtils.makeMenuItem("Flythrough", this, "showFlythrough");
+            flythroughItem.setToolTipText("Open Flythrough window");
+            viewMenu.add(GuiUtils.setIcon(flythroughItem, "/auxdata/ui/icons/plane.png"));
 
-        viewMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Properties",
-            this,
-            "showPropertiesDialog"), "/auxdata/ui/icons/information.png"));
+        JMenuItem propertiesItem = GuiUtils.makeMenuItem("Properties", this, "showPropertiesDialog");
+            propertiesItem.setToolTipText("Open Properties window");
+            viewMenu.add(GuiUtils.setIcon(propertiesItem, "/auxdata/ui/icons/information.png"));
     }
 
     /**
@@ -3310,22 +3308,26 @@ public class MapViewManager extends NavigatedViewManager {
 
         if ( !getUseGlobeDisplay()) {
             projMenu.addSeparator();
-            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("New/Edit...",
-                    this,
-                    "showProjectionManager"), "/auxdata/ui/icons/world_edit.png"));
-            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Use Displayed Area",
-                    this,
-                    "setCurrentAsProjection"), "/auxdata/ui/icons/world_rect.png"));
-            projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Custom Viewpoint",
-                    this,
-                    "makeCustomProjectionManager"
-                    ), "/auxdata/ui/icons/world_rect.png"));
-        }
-        projMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Go to Address",
-                this, "goToAddress"), "/auxdata/ui/icons/house_go.png"));
 
+            JMenuItem newEditItem = GuiUtils.makeMenuItem("New/Edit...", this, "showProjectionManager");
+            newEditItem.setToolTipText("Open Projection Manager window");
+            projMenu.add(GuiUtils.setIcon(newEditItem, "/auxdata/ui/icons/world_edit.png"));
+	
+			JMenuItem dispAreaItem = GuiUtils.makeMenuItem("Use Displayed Area", this, "setCurrentAsProjection");
+            dispAreaItem.setToolTipText("Set the current viewpoint as the projection");
+            projMenu.add(GuiUtils.setIcon(dispAreaItem, "/auxdata/ui/icons/world_rect.png"));
+	
+			JMenuItem viewItem = GuiUtils.makeMenuItem("Custom Viewpoint", this, "makeCustomProjectionManager");
+            viewItem.setToolTipText("Open Custom Viewpoint window");
+            projMenu.add(GuiUtils.setIcon(viewItem, "/auxdata/ui/icons/world_rect.png"));
+        }
+
+        JMenuItem addressItem = GuiUtils.makeMenuItem("Go to Address", this, "goToAddress");
+        addressItem.setToolTipText("Open Go To Address window");
+        projMenu.add(GuiUtils.setIcon(addressItem, "/auxdata/ui/icons/house_go.png"));
 
         projMenu.addSeparator();
+
         if ( !getUseGlobeDisplay()) {
             createCBMI(projMenu, PREF_PROJ_USEFROMDATA).setToolTipText(
                 "Automatically change the projection to the native data projection of new displays");
@@ -3333,9 +3335,11 @@ public class MapViewManager extends NavigatedViewManager {
             createCBMI(projMenu, PREF_PROJ_USEFROMDATA).setToolTipText(
                 "Automatically change viewpoint to the native data projection of new displays");
         }
-        createCBMI(projMenu, PREF_SHAREVIEWS);
-        projMenu.add(GuiUtils.makeMenuItem("Set Share Group", this,
-                                           "showSharableDialog"));
+
+        JMenuItem shareGroupItem = GuiUtils.makeMenuItem("Set Share Group", this, "showSharableDialog");
+        shareGroupItem.setToolTipText("Open Sharable Properties window");
+        projMenu.add(shareGroupItem);
+
         return projMenu;
     }
 
