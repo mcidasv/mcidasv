@@ -227,6 +227,7 @@ import visad.meteorology.SatelliteData;
 import visad.util.DataUtility;
 
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.control.RGBCompositeControl;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
@@ -9804,6 +9805,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         } catch (Exception exc) {
             logException("Moving to a new view", exc);
         }
+
+	    if (this instanceof RGBCompositeControl) {
+            ((RGBCompositeControl)this).reapplyAllGammaSettings();
+        }
+
         newViewManager.controlMoved(this);
     }
 
