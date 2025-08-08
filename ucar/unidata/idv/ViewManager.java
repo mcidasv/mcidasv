@@ -4668,18 +4668,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         if (getShowSideLegend()) {
             if ( !legendState.equals(IdvLegend.STATE_HIDDEN)) {
-                displayMenu.add(GuiUtils.makeMenuItem("Hide Legend", this,
-                        "setSideLegendPosition", IdvLegend.STATE_HIDDEN));
+                JMenuItem hideItem = GuiUtils.makeMenuItem("Hide Legend", getViewManager(), "setSideLegendPosition", IdvLegend.STATE_HIDDEN);
+                hideItem.setToolTipText("Hide the Legend from the Main Display window");
+                displayMenu.add(hideItem);
             }
 
             if ( !legendState.equals(IdvLegend.STATE_DOCKED)) {
-                displayMenu.add(GuiUtils.makeMenuItem("Embed Legend", this,
-                        "setSideLegendPosition", IdvLegend.STATE_DOCKED));
+                JMenuItem embedItem = GuiUtils.makeMenuItem("Embed Legend", getViewManager(), "setSideLegendPosition", IdvLegend.STATE_DOCKED);
+                embedItem.setToolTipText("Add the Legend to the Main Display window");
+                displayMenu.add(embedItem);
             }
 
             if ( !legendState.equals(IdvLegend.STATE_FLOAT)) {
-                displayMenu.add(GuiUtils.makeMenuItem("Float Legend", this,
-                        "setSideLegendPosition", IdvLegend.STATE_FLOAT));
+                JMenuItem floatItem = GuiUtils.makeMenuItem("Float Legend", getViewManager(), "setSideLegendPosition", IdvLegend.STATE_FLOAT);
+                floatItem.setToolTipText("Float the Legend as a separate window");
+                displayMenu.add(floatItem);
             }
 
             displayMenu.addSeparator();
@@ -4690,13 +4693,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
             if ( !didone) {
                 didone = true;
-                displayMenu.add(GuiUtils.makeMenuItem("Remove All Displays",
-                        this, "clearDisplays"));
+                JMenuItem removeItem = GuiUtils.makeMenuItem("Remove All Displays", getViewManager(), "clearDisplays");
+                removeItem.setToolTipText("Remove all displayed layers");
+                displayMenu.add(removeItem);
 
                 if (animationMenu == null) {
                     animationMenu = new JMenu("Visibility Animation");
                     /**** BEGIN MCV ADDONS ****/
                     animationCB   = new JCheckBoxMenuItem(ON);
+                    animationCB.setToolTipText("Toggle visibility animation on and off");
                     animationCB.setSelected(ON.equals(getVisibilityAnimationCheckBox()));
                     animationCB.addActionListener(new ObjectListener(null) {
                         public void actionPerformed(ActionEvent event) {
@@ -4707,6 +4712,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     });
                     animationMenu.add(animationCB);
                     item = new JMenuItem(FASTER);
+                    item.setToolTipText("Speed up visibility animation");
                     item.setSelected(FASTER.equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
@@ -4715,6 +4721,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     });
                     animationMenu.add(item);
                     item = new JMenuItem(SLOWER);
+                    item.setToolTipText("Slow down visibility animation");
                     item.setSelected(SLOWER.equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
@@ -6993,9 +7000,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param colorMenu The Color menu to initialize
      */
     public void initColorMenu(JMenu colorMenu) {
-        colorMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Set Colors...",
-                this,
-                "showColorPairDialog"), "/auxdata/ui/icons/color_swatch.png"));
+        JMenuItem colorItem = GuiUtils.makeMenuItem("Set Colors", this, "showColorPairDialog");
+        colorItem.setToolTipText("Set the foreground and background colors of the display");
+        colorMenu.add(GuiUtils.setIcon(colorItem, "/auxdata/ui/icons/color_swatch.png"));
 
         JMenu deleteMenu = new JMenu("Delete");
 
