@@ -259,7 +259,7 @@
     <property name="commons-httpclient.version" value="3.1" />
     <property name="jcodec.version" value="0.2.6-SNAPSHOT" />
     <property name="idv.version" value="6.3u1-SNAPSHOT" />
-    <property name="ncidv.version" value="5.9.0-SNAPSHOT" />
+    <property name="ncidv.version" value="5.9.0" />
     <property name="visad.version" value="2.0-SNAPSHOT" />
     <property name="flatlaf.version" value="3.6" />
     <property name="batik.version" value="1.18" />
