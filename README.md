@@ -39,7 +39,7 @@ Things of Interest
     |   |
     |   ├── linux-amd64                 * 64-bit Linux dependencies.
     |   ├── linux-i586                  * 32-bit Linux dependencies.
-    |   ├── macosx                      * OS X dependencies
+    |   ├── macosx                      * OS X dependencies.
     |   ├── share                       * Platform independent dependencies. This is
     |   |                                 where most JAR files will end up.
     |   ├── windows-amd64               * 64-bit Windows dependencies.
