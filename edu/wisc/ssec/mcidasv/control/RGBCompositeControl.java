@@ -361,6 +361,12 @@ public class RGBCompositeControl extends DisplayControlImpl {
         return gamma;
     }
 
+    public void reapplyAllGammaSettings() {
+        updateRedGamma(getRedGamma());
+        updateGrnGamma(getGrnGamma());
+        updateBluGamma(getBluGamma());
+    }
+
     /**
      * TJJ - quick hack, just do something visually jarring to test path
      */
