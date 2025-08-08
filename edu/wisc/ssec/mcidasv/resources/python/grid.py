@@ -639,3 +639,312 @@ def wrf_mslp(PSFC, HGT, T2):
   msl = noUnit(PSFC)*exp1*0.01 + (6.7 *  noUnit(HGT)  / 1000)
   mslp = newUnit(msl, "MSLP", "hPa")
   return mslp
+
+def substituteWithMissing(data, missingValue):
+    """change values in data  between low/high to newvalue """
+    from java.lang import Float
+    newData = data.clone();
+    if (GridUtil.isTimeSequence(newData)):
+        for t in range(newData.getDomainSet().getLength()):
+            rangeObject = newData.getSample(t)
+            values = rangeObject.getFloats(0);
+            for i in range(len(values)):
+                for j in range(len(values[0])):
+		            if (values[i][j] == missingValue):
+		               values[i][j] = float("NaN");
+            rangeObject.setSamples(values,1);
+    else:
+        rangeObject = newData;
+        values = rangeObject.getFloats(0);
+        for i in range(len(values)):
+            for j in range(len(values[0])):
+                if (values[i][j] == missingValue):
+                    values[i][i] = float("NaN");
+        rangeObject.setSamples(values,1);
+    return newData;
+
+def medianFilter(grid, user_missingValue=None, window_lenx=10, window_leny=10):
+  """ calculate median filter, need to replace the missingValue if it is not NaN
+  """
+  if user_missingValue == None or user_missingValue =="":
+    return GridUtil.medianFilter(grid, window_lenx, window_leny)
+  else:
+    grid0 = substituteWithMissing(grid, user_missingValue)
+    return GridUtil.medianFilter(grid0, window_lenx, window_leny)
+
+def classifier(grid, classifierStr, user_outFileName):
+  """ classifierStr is a string of a set of classifier info with format:
+        "low1 high1 value1; low2 high2 value2; low3 high3 value3;..."
+  """
+  return GridUtil.classifier(grid, classifierStr, user_outFileName)
+
+def applyFunctionOverGrid2D(grid, function, statThreshold):
+  """  apply spatial Max, Min, Average, Percentile over 2D grid:
+        function: "max", "max", "average", "percentile"
+        statThreshold is string format numerical value
+  """
+  return GridMath.applyFunctionOverGrid2D(grid, function, statThreshold)
+
+def gridNormalDistribution(grid,user_mean=None,user_std=None):
+  """ Returns a grid with values sampled from normal distrubuition(
+      user_mean,user_std). user_units can be change units of returned grid.
+      This also serves as a template code for creating grids sampled from
+      different distributions.
+  """
+  from visad import FlatField
+  import random
+  import edu.wisc.ssec.mcidasv.data.hydra.Statistics
+
+  def fillNormal(gridFF,user_mean,user_std):
+      mean = user_mean
+      std = user_std
+      if user_mean == None or user_mean =="":
+        statistics = GridMath.statisticsFF(gridFF)
+        mean = (statistics.mean()).getValue()
+        std = (statistics.standardDeviation()).getValue()
+      else:
+        mean = float(user_mean)
+        std = float(user_std)
+      tempFF=FlatField(gridFF.getType(),gridFF.getDomainSet())
+      vals=[random.gauss(mean,std) for itm in range(len(gridFF.getFloats()[0]))]
+      tempFF.setSamples([vals])
+      return tempFF
+  if GridUtil.isTimeSequence(grid):
+      uniformG=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+          uniformG.setSample(j,fillNormal(grid.getSample(j),user_mean,user_std))
+      return uniformG
+  else:
+      return fillNormal(grid,user_mean,user_std)
+
+def gridUniformDistribution(grid,user_min=None,user_max=None):
+  """ Returns a grid with values sampled from uniform distrubuition(
+        user_min,user_max). user_units can be change units of returned grid.
+        This also serves as a template code for creating grids sampled from
+        different distributions.
+  """
+  from visad import FlatField
+  import random
+  import edu.wisc.ssec.mcidasv.data.hydra.Statistics
+
+  def fillUniform(gridFF,user_min,user_max):
+      import random
+      min = user_min
+      max = user_max
+
+        #also fun the return by input grid
+      if user_min == None or user_min =="":
+          statistics = GridMath.statisticsFF(gridFF)
+          min = (statistics.min()).getValue()
+          max = (statistics.max()).getValue()
+      else:
+          min = float(user_min)
+          max = float(user_max)
+      tempFF=FlatField(gridFF.getType(),gridFF.getDomainSet())#put units here
+      vals=[random.uniform(min,max) for itm in range(len(gridFF.getFloats()[0]))]
+      tempFF.setSamples([vals])
+      return tempFF
+
+  if GridUtil.isTimeSequence(grid):
+      uniformG=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+            uniformG.setSample(j,fillUniform(grid.getSample(j),user_min,user_max))
+      return uniformG
+  else:
+      return fillUniform(grid,user_min,user_max)
+
+def gridStandardScaler(grid,user_mean=None,user_std=None):
+  """ StandardScaler standardizes grid values by removing the mean and scaling to
+      variance using statistics on the samples to improve the performance and
+      convergence of machine learning models, particularly those sensitive to
+      feature scales. It is sensitive to outliers, and the features may scale
+      differently from each other in the presence of outliers.
+  """
+  from visad import FlatField
+  import random
+  import edu.wisc.ssec.mcidasv.data.hydra.Statistics
+
+  def fillStandardScaler(gridFF,user_mean,user_std):
+      import random
+      mean = user_mean
+      std = user_std
+
+        #also fun the return by input grid
+      if user_mean == None or user_mean =="":
+          statistics = GridMath.statisticsFF(gridFF)
+          mean = (statistics.mean()).getValue()
+          std = (statistics.standardDeviation()).getValue()
+      else:
+          mean = float(user_mean)
+          std = float(user_std)
+      tempFF=FlatField(gridFF.getType(),gridFF.getDomainSet())#put units here
+      values = gridFF.getFloats()[0]
+      vals=[(values[itm] - mean)/std for itm in range(len(gridFF.getFloats()[0]))]
+
+      tempFF.setSamples([vals])
+      return tempFF
+
+  if GridUtil.isTimeSequence(grid):
+      standardScaler=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+            standardScaler.setSample(j,fillStandardScaler(grid.getSample(j),user_mean,user_std))
+      return standardScaler
+  else:
+      return fillStandardScaler(grid,user_mean,user_std)
+
+def gridMinMaxScaler(grid,user_min,user_max):
+  """ Rescale the grid values individually to a common range [user_min, user_max] linearly using statistics and
+      it is also known as min-max normalization. It doesn't reduce the effect of outliers, but it linearly scales
+      them down into a fixed range, where the largest occurring data point corresponds to the maximum value
+      and the smallest one corresponds to the minimum value.
+  """
+  from visad import FlatField
+  import random
+  import edu.wisc.ssec.mcidasv.data.hydra.Statistics
+
+  if GridUtil.isTimeSequence(grid):
+      scalerG=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+            scalerG.setSample(j,fillMinMaxScaler(grid.getSample(j),user_min,user_max))
+      return scalerG
+  else:
+      return fillMinMaxScaler(grid,user_min,user_max)
+
+def fillMinMaxScaler(gridFF,user_min,user_max):
+      import random
+
+      statistics = GridMath.statisticsFF(gridFF)
+      min = (statistics.min()).getValue()
+      max = (statistics.max()).getValue()
+        #also fun the return by input grid
+      if user_min == None or user_min =="":
+          user_max = max
+          user_min = min
+      else:
+          user_min = float(user_min)
+          user_max = float(user_max)
+      tempFF=FlatField(gridFF.getType(),gridFF.getDomainSet())#put units here
+      values = gridFF.getFloats()[0]
+      vals=[(user_max-user_min)*(values[itm]-min)/(max-min) + user_min for itm in range(len(gridFF.getFloats()[0]))]
+      tempFF.setSamples([vals])
+      #print "values = " , values[0]
+      #print "min = ", min
+      #print "man = ", max
+      #print "vals = " , vals[0]
+      return tempFF
+
+def gridQuantileTransform(grid):
+  """ Rescale the grid values individually to a common range [user_min, user_max] linearly using statistics and
+      it is also known as min-max normalization
+  """
+  from visad import FlatField
+
+  if GridUtil.isTimeSequence(grid):
+      scalerG=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+            scalerG.setSample(j,fillQuantileTransform(grid.getSample(j)))
+      return scalerG
+  else:
+      return fillQuantileTransform(grid)
+
+def fillQuantileTransform(gridFF):
+
+      tempFF=GridMath.quantileTransformerFF(gridFF)#put units here
+      return tempFF
+
+def gridPowerTransform(grid, user_lambda):
+  """ Power transforms are a family of parametric, monotonic transformations that are applied
+      to make data more Gaussian-like. This is useful for modeling issues related to
+      heteroscedasticity (non-constant variance), or other situations where normality is desired.
+      Currently, power_transform supports the Yeo-Johnson transform and Yeo-Johnson supports
+      both positive or negative data..
+  """
+  from visad import FlatField
+
+  if GridUtil.isTimeSequence(grid):
+      scalerG=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+            scalerG.setSample(j,fillPowerTransform(grid.getSample(j), user_lambda))
+      return scalerG
+  else:
+      return fillPowerTransform(grid, user_lambda)
+
+def fillPowerTransform(gridFF, user_lambda):
+    if user_lambda == None or user_lambda =="":
+        data = gridFF.getFloats()[0]
+        user_lambda = GridUtil.findOptimalLambda(data, -5, 5, 0.1)
+
+    tempFF=GridMath.powerTransformerFF(gridFF, user_lambda)#put units here
+    return tempFF
+
+def gridRobustScaler(grid):
+  """ Rescale the grid values individually to a common range [user_min, user_max] linearly using statistics and
+      it is also known as min-max normalization
+      This Scaler removes the median and scales the data according to the quantile range
+      (defaults to IQR: Interquartile Range). The IQR is the range between the 1st quartile (25th quantile) and
+      the 3rd quartile (75th quantile).
+      However, outliers can often influence the sample mean / variance in a negative way. In such cases,
+      using the median and the interquartile range often give better results.
+  """
+  from visad import FlatField
+
+  if GridUtil.isTimeSequence(grid):
+      scalerG=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+            scalerG.setSample(j,fillRobustScaler(grid.getSample(j)))
+      return scalerG
+  else:
+      return fillRobustScaler(grid)
+
+def fillRobustScaler(gridFF):
+    tempFF=GridMath.robustScalerFF(gridFF)#put units here
+    return tempFF
+
+def gridNormalizer(grid, user_norm="Max"):
+  """ Normalize samples individually to unit norm.
+      Each sample (i.e. each row of the data matrix) with at least one non zero component
+      is rescaled independently of other samples so that its norm (l1, l2 or inf) equals one.
+  """
+  from java.lang import Float
+  from visad import FlatField
+  import edu.wisc.ssec.mcidasv.data.hydra.Statistics
+
+  def fillNormalizer(gridFF):
+        #also fun the return by input grid
+      tempFF=FlatField(gridFF.getType(),gridFF.getDomainSet())#put units here
+      values = gridFF.getFloats()[0]
+      if user_norm == "l1":
+          norm = GridMath.calculateL1Norm(values)
+          for itm in range(len(gridFF.getFloats()[0])):
+              if not Float.isNaN(values[itm]):
+                  values[itm] = values[itm]/norm
+      elif user_norm == "l2":
+          norm = GridMath.calculateL2Norm(values)
+          for itm in range(len(gridFF.getFloats()[0])):
+              if not Float.isNaN(values[itm]):
+                  values[itm] = values[itm]/norm
+      else:
+          # vals=[(values[itm]-min)/(max-min) for itm in range(len(gridFF.getFloats()[0]))]
+          statistics = GridMath.statisticsFF(gridFF)
+          min = (statistics.min()).getValue()
+          max = (statistics.max()).getValue()
+          for itm in range(len(gridFF.getFloats()[0])):
+              if not Float.isNaN(values[itm]):
+                  values[itm] = (values[itm]-min)/(max-min)
+
+      # tempFF.setSamples([vals])
+      #print "values = " , values[0]
+
+      tempFF.setSamples([values])
+      #print "min = ", min
+      #print "man = ", max
+      #print "vals = " , vals[0]
+      return tempFF
+
+  if GridUtil.isTimeSequence(grid):
+      scalerG=grid.clone()
+      for j,time in enumerate(grid.domainEnumeration()):
+            scalerG.setSample(j,fillNormalizer(grid.getSample(j)))
+      return scalerG
+  else:
+      return fillNormalizer(grid)

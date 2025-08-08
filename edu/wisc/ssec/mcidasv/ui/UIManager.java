@@ -1929,6 +1929,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi.setMnemonic(GuiUtils.charToKeyCode("M"));
         inBundleMenu.add(mi);
         mi.addActionListener(ae -> showBundleDialog(bundleType));
+        mi.setToolTipText("Open Local Favorite Bundles Manager window");
 
         final List bundles = getPersistenceManager().getBundles(bundleType);
         if (bundles.isEmpty()) {
@@ -1987,6 +1988,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         mi = new JMenuItem("Show Data Explorer");
         McVGuiUtils.setMenuImage(mi, Constants.ICON_DATAEXPLORER_SMALL);
+        mi.setToolTipText("Bring Data Explorer window to the front");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
@@ -3565,10 +3567,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         mi = new JMenuItem("Create Layer from Data Source...");
         mi.addActionListener(ae -> showDashboard("Data Sources"));
+        mi.setToolTipText("Open Data Sources tab of Data Explorer");
         displayMenu.add(mi);
 
         mi = new JMenuItem("Layer Controls...");
         mi.addActionListener(ae -> showDashboard("Layer Controls"));
+        mi.setToolTipText("Open Layer Controls tab of Data Explorer");
         displayMenu.add(mi);
 
         displayMenu.addSeparator();
@@ -3576,12 +3580,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
         cd = (ControlDescriptor)controlsHash.get("Range Rings");
         mi = makeControlDescriptorItem(cd);
         mi.setText("Add Range Rings");
+        mi.setToolTipText("Add Range Rings to the Main Display");
         displayMenu.add(mi);
 
         cd = (ControlDescriptor)controlsHash.get("Range and Bearing");
         mi = makeControlDescriptorItem(cd);
         McVGuiUtils.setMenuImage(mi, Constants.ICON_RANGEANDBEARING_SMALL);
         mi.setText("Add Range and Bearing");
+        mi.setToolTipText("Add Range and Bearing to the Main Display");
         displayMenu.add(mi);
 
         displayMenu.addSeparator();
@@ -3589,11 +3595,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
         cd = (ControlDescriptor)controlsHash.get("Transect Drawing Control");
         mi = makeControlDescriptorItem(cd);
         mi.setText("Draw Transect...");
+        mi.setToolTipText("Add a transect line to the Main Display");
         displayMenu.add(mi);
 
         cd = (ControlDescriptor)controlsHash.get("Drawing Control");
         mi = makeControlDescriptorItem(cd);
         mi.setText("Draw Freely...");
+        mi.setToolTipText("Add a Drawing Control layer to the Main Display");
         displayMenu.add(mi);
 
         displayMenu.addSeparator();
@@ -3602,6 +3610,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi = makeControlDescriptorItem(cd);
         McVGuiUtils.setMenuImage(mi, Constants.ICON_LOCATION_SMALL);
         mi.setText("Add Location Indicator");
+        mi.setToolTipText("Add a Location Indicator to the Main Display");
         displayMenu.add(mi);
 
         ControlDescriptor locationDescriptor = idv.getControlDescriptor("locationcontrol");
@@ -3621,9 +3630,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi = new JMenuItem("Add Background Image");
         McVGuiUtils.setMenuImage(mi, Constants.ICON_BACKGROUND_SMALL);
         mi.addActionListener(ae -> getIdv().doMakeBackgroundImage());
+        mi.setToolTipText("Add a WMS background to the Main Display");
         displayMenu.add(mi);
 
         mi = new JMenuItem("Reset Map Layer to Defaults");
+        mi.setToolTipText("Return the map layer to default settings");
         mi.addActionListener(ae -> {
             // TODO: Call IdvUIManager.addDefaultMap()... should be made private
 //                addDefaultMap();

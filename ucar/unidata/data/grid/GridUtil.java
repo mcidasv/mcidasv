@@ -61,6 +61,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Parameter;
 import ucar.unidata.util.Range;
+import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 
 import ucar.visad.GeoUtils;
@@ -134,13 +135,17 @@ import visad.util.DataUtility;
 import java.awt.geom.Rectangle2D;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -150,9 +155,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -6253,6 +6260,163 @@ public class GridUtil {
     }
 
     /**
+     * Write grid out to a CSV ascii file
+     *
+     * @param grid grid to write
+     * @param filename  filename
+     *
+     * @throws Exception  problem writing grid
+     */
+    public static void writeGridToCsv(FieldImpl grid, String filename)
+            throws Exception {
+
+        Object loadId =
+                JobManager.getManager().startLoad("Writing grid to csv", true);
+
+        // Use try-with-resources for automatic closing of the writer
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename)))) {
+
+            // --- This entire data extraction block is identical to the XLS version ---
+            List<DateTime> times = new ArrayList<>();
+            List<FlatField> fields = new ArrayList<>();
+
+            if (isTimeSequence(grid)) {
+                SampledSet timeSet = (SampledSet) getTimeSet(grid);
+                double[][] timeValues = timeSet.getDoubles(false);
+                Unit timeUnit = timeSet.getSetUnits()[0];
+                int numTimes = timeSet.getLength();
+                CalendarDateTimeSet cdt = null;
+                if (numTimes > 1) {
+                    cdt = (CalendarDateTimeSet) timeSet;
+                    for (int timeIdx = 0; timeIdx < numTimes; timeIdx++) {
+                        CalendarDateTime cdti =
+                                new CalendarDateTime(timeValues[0][timeIdx], cdt.getCalendar());
+                        JobManager.getManager().setDialogLabel1(loadId,
+                                "Reading grid time:" + (timeIdx + 1) + "/" + numTimes);
+                        FlatField ff = (FlatField) grid.getSample(timeIdx);
+                        if (ff == null) {
+                            continue;
+                        }
+                        times.add(cdti);
+                        fields.add(ff);
+                    }
+                } else {
+                    RealTuple ss = ((SingletonSet) timeSet).getData();
+                    if (ss != null) {
+                        visad.Data[] vdata = ss.getComponents();
+                        JobManager.getManager().setDialogLabel1(loadId,
+                                "Reading grid time:" + 1 + "/" + numTimes);
+                        FlatField ff = (FlatField) grid.getSample(0);
+                        if (ff != null) {
+                            times.add((CalendarDateTime) vdata[0]);
+                            fields.add(ff);
+                        }
+                    }
+                }
+            } else if (grid instanceof FlatField) {
+                fields.add((FlatField) grid);
+            } else {
+                System.err.println("Could not find any grid fields to write");
+                // Return early if there's nothing to write
+                return;
+            }
+
+            if (fields.isEmpty()) {
+                System.err.println("No valid fields found to write to CSV.");
+                return;
+            }
+            // --- End of data extraction block ---
+
+
+            // --- New CSV Writing Logic ---
+
+            // 1. Get spatial domain from the first field (assuming all fields share the same domain)
+            FlatField firstField = fields.get(0);
+            SampledSet ss = getSpatialDomain(firstField);
+            SampledSet latLonSet = null;
+            if (ss.getCoordinateSystem() != null) {
+                latLonSet = Util.convertDomain(ss, ss.getCoordinateSystem().getReference(), null);
+            } else {
+                latLonSet = ss;
+            }
+
+            float[][] domainVals = latLonSet.getSamples(false);
+            boolean latFirst = isLatLonOrder(latLonSet);
+            boolean hasAltitude = domainVals.length > 2;
+            int numSpatialPoints = domainVals[0].length;
+
+            // 2. Build and write the header row
+            List<String> header = new ArrayList<>();
+            header.add(latFirst ? "Latitude" : "Longitude");
+            header.add(latFirst ? "Longitude" : "Latitude");
+            if (hasAltitude) {
+                header.add("Altitude");
+            }
+            // Add a column header for each time step
+            for (DateTime dt : times) {
+                header.add(dt.toString());
+            }
+            // If there are no times, use the grid's name as the header for the single data column
+            if (times.isEmpty()) {
+                header.add(grid.getType().toString());
+            }
+            writer.println(toCsvRow(header));
+
+            // 3. Write data row by row
+            JobManager.getManager().setDialogLabel1(loadId, "Writing data rows...");
+
+            // Get all the range data first to avoid repeated calls inside the loop
+            List<float[][]> allRangeVals = new ArrayList<>();
+            for (FlatField ff : fields) {
+                allRangeVals.add(ff.getFloats(false));
+            }
+
+            for (int rowIdx = 0; rowIdx < numSpatialPoints; rowIdx++) {
+                List<String> dataRow = new ArrayList<>();
+                // Add coordinate values for the current row
+                dataRow.add(String.valueOf(domainVals[latFirst ? 0 : 1][rowIdx]));
+                dataRow.add(String.valueOf(domainVals[latFirst ? 1 : 0][rowIdx]));
+                if (hasAltitude) {
+                    dataRow.add(String.valueOf(domainVals[2][rowIdx]));
+                }
+
+                // Add the data value from each time step for the current spatial point
+                for (float[][] rangeVals : allRangeVals) {
+                    dataRow.add(String.valueOf(rangeVals[0][rowIdx]));
+                }
+
+                writer.println(toCsvRow(dataRow));
+            }
+
+        } catch (Exception exc) {
+            LogUtil.logException("Writing grid to CSV file: " + filename, exc);
+            // re-throw the exception so the caller knows something went wrong
+            throw exc;
+        } finally {
+            JobManager.getManager().stopLoad(loadId);
+        }
+    }
+
+    /**
+     * A helper method to convert a list of strings into a properly formatted CSV row.
+     * It handles values containing commas or quotes by enclosing them in double quotes.
+     *
+     * @param values The list of strings for one row.
+     * @return A single, comma-separated string for the row.
+     */
+    private static String toCsvRow(List<String> values) {
+        return values.stream()
+                .map(value -> {
+                    if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+                        // Enclose in double quotes and escape existing double quotes
+                        return "\"" + value.replace("\"", "\"\"") + "\"";
+                    }
+                    return value;
+                })
+                .collect(Collectors.joining(","));
+    }
+    
+    /**
      * Write grid out to a netCDF CF compliant file
      *
      * @param grid grid  to write
@@ -9091,4 +9255,1162 @@ public class GridUtil {
         return result;
     }
 
+    public static class Normalize2DArray {
+
+        // Method to normalize a 2D array with NaN handling
+        public static double[][] normalize(double[][] data) {
+            int rows = data.length;
+            int cols = data[0].length;
+
+            // Step 1: Find the minimum and maximum values, ignoring NaN values
+            double min = Double.MAX_VALUE;
+            double max = Double.MIN_VALUE;
+
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (!Double.isNaN(data[i][j])) {  // Ignore NaN
+                        if (data[i][j] < min) {
+                            min = data[i][j];
+                        }
+                        if (data[i][j] > max) {
+                            max = data[i][j];
+                        }
+                    }
+                }
+            }
+
+            // Step 2: Normalize the array using the formula: (value - min) / (max - min)
+            double range = max - min;
+            double[][] normalizedData = new double[rows][cols];
+
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (Double.isNaN(data[i][j])) {
+                        normalizedData[i][j] = Double.NaN;  // Keep NaN as it is
+                    } else {
+                        normalizedData[i][j] = (data[i][j] - min) / range;
+                    }
+                }
+            }
+
+            return normalizedData;
+        }
+
+        public static float[][] normalize(float[][] data) {
+            int rows = data.length;
+            int cols = data[0].length;
+
+            // Step 1: Find the minimum and maximum values, ignoring NaN values
+            float min = Float.MAX_VALUE;
+            float max = Float.MIN_VALUE;
+
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (!Double.isNaN(data[i][j])) {  // Ignore NaN
+                        if (data[i][j] < min) {
+                            min = data[i][j];
+                        }
+                        if (data[i][j] > max) {
+                            max = data[i][j];
+                        }
+                    }
+                }
+            }
+
+            // Step 2: Normalize the array using the formula: (value - min) / (max - min)
+            float range = max - min;
+            float[][] normalizedData = new float[rows][cols];
+
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (Float.isNaN(data[i][j])) {
+                        normalizedData[i][j] = Float.NaN;  // Keep NaN as it is
+                    } else {
+                        normalizedData[i][j] = (data[i][j] - min) / range;
+                    }
+                }
+            }
+
+            return normalizedData;
+        }
+
+        // Main method to test normalization with NaN values
+    }
+	
+	/***
+     * The formula of the Robustscaler in sklearn is:
+     *  X_scale = (X_i - X_med)/(X_percentile75 - X_percentile25)
+     *
+     ***/
+    public static class RobustScaler {
+
+        private static double[] medians;
+        private static double[] iqr;
+
+        // Fit the scaler: Compute the median and IQR for each feature
+        public static void fit(double[][] data) {
+            int nFeatures = data[0].length;
+            medians = new double[nFeatures];
+            iqr = new double[nFeatures];
+
+            for (int i = 0; i < nFeatures; i++) {
+                double[] featureColumn = getColumn(data, i);
+                Arrays.sort(featureColumn);
+
+                // Compute median
+                medians[i] = computeMedian(featureColumn);
+
+                // Compute IQR (75th percentile - 25th percentile)
+                double q75 = computePercentile(featureColumn, 75);
+                double q25 = computePercentile(featureColumn, 25);
+                iqr[i] = q75 - q25;
+            }
+        }
+
+        public static void fit(float[][] data) {
+            int nFeatures = data.length;
+            medians = new double[nFeatures];
+            iqr = new double[nFeatures];
+
+            for (int i = 0; i < nFeatures; i++) {
+                double[] featureColumn = getColumn(data, i);
+                Arrays.sort(featureColumn);
+
+                // Compute median
+                medians[i] = computeMedian(featureColumn);
+
+                // Compute IQR (75th percentile - 25th percentile)
+                double q75 = computePercentile(featureColumn, 75);
+                double q25 = computePercentile(featureColumn, 25);
+                iqr[i] = q75 - q25;
+            }
+        }
+
+        public static  double[][] toDoubleArray(float[][] arr) {
+            if (arr == null)
+                return null;
+            final int n = arr.length;
+            final int m = arr[0].length;
+            double[][] ret = new double[n][m];
+            for (int j = 0; j < n; j++) {
+                for (int i = 0; i < m; i++) {
+                    ret[j][i] = (double) arr[j][i];
+                }
+            }
+            return ret;
+        }
+
+        public  static float[][] toFloatArray(double[][] arr) {
+            if (arr == null)
+                return null;
+            final int n = arr.length;
+            final int m = arr[0].length;
+            float[][] ret = new float[n][m];
+            for (int j = 0; j < n; j++) {
+                for (int i = 0; i < m; i++) {
+                    ret[j][i] = (float) arr[j][i];
+                }
+            }
+            return ret;
+        }
+
+
+        // Transform the data using the computed median and IQR
+        public static double[][] transform(double[][] data) {
+            int nSamples = data[0].length;
+            int nFeatures = data.length;
+            double[][] scaledData = new double[nFeatures][nSamples];
+
+            for (int j = 0; j < nFeatures; j++) {
+                for (int i = 0; i < nSamples; i++) {
+                    // Subtract median and divide by IQR
+                    if (iqr[j] != 0) {
+                        scaledData[j][i] =(data[j][i] - medians[j]) / iqr[j];
+                    } else {
+                        scaledData[j][i] = data[j][i] - medians[j]; // Prevent division by zero
+                    }
+                }
+            }
+            return scaledData;
+        }
+
+        public static float[][] transform(float[][] data) {
+            int nSamples = data[0].length;
+            int nFeatures = data.length;
+            float[][] scaledData = new float[nFeatures][nSamples];
+
+            for (int j = 0; j < nFeatures; j++) {
+                for (int i = 0; i < nSamples; i++) {
+                    // Subtract median and divide by IQR
+                    if (iqr[j] != 0) {
+                        scaledData[j][i] =(float)((data[j][i] - medians[j]) / iqr[j]);
+                    } else {
+                        scaledData[j][i] = (float)(data[j][i] - medians[j]); // Prevent division by zero
+                    }
+                }
+            }
+            return scaledData;
+        }
+
+        // Helper method to get a specific column from a 2D array
+        private static  double[] getColumn(double[][] data, int columnIndex) {
+            double[] column = new double[data.length];
+            for (int i = 0; i < data[0].length; i++) {
+                column[i] = data[columnIndex][i];
+            }
+            return column;
+        }
+
+        private static  double[] getColumn(float[][] data, int columnIndex) {
+            double[] column = new double[data[0].length];
+            for (int i = 0; i < data[0].length; i++) {
+                column[i] = (double)(data[columnIndex][i]);
+            }
+            return column;
+        }
+
+        // Compute the median of a sorted array
+        private static double computeMedian(double[] sortedArray) {
+            int n = sortedArray.length;
+            if (n % 2 == 0) {
+                return (sortedArray[n / 2 - 1] + sortedArray[n / 2]) / 2.0;
+            } else {
+                return sortedArray[n / 2];
+            }
+        }
+
+        // Compute the percentile of a sorted array
+        private static double computePercentile(double[] sortedArray, double percentile) {
+            int n = sortedArray.length;
+            double index = percentile / 100.0 * (n - 1);
+            int lower = (int) Math.floor(index);
+            int upper = (int) Math.ceil(index);
+            return sortedArray[lower] + (sortedArray[upper] - sortedArray[lower]) * (index - lower);
+        }
+
+        // Main method for testing
+        public static void main(String[] args) {
+            // Example data (2D array with multiple features)
+            double[][] data = {
+                    {1.0, 2.0, 10.0},
+                    {2.0, 5.0, 15.0},
+                    {3.0, 8.0, 20.0},
+                    {4.0, 11.0, 25.0},
+                    {5.0, 14.0, 30.0}
+            };
+
+            RobustScaler scaler = new RobustScaler();
+            scaler.fit(data);  // Compute medians and IQR
+
+            // Transform the data
+            double[][] scaledData = scaler.transform(data);
+
+            // Print scaled data
+            System.out.println("Scaled Data:");
+            for (double[] row : scaledData) {
+                System.out.println(Arrays.toString(row));
+            }
+        }
+    }
+	
+	public static class QuantileTransformer implements  Serializable, Comparable<QuantileTransformer> {
+
+        //private  final Logger log = Logger.getLogger(QuantileTransformer.class);
+        private static final long serialVersionUID = 1537967572554342221L;
+
+        private  double LOWER_BOUND_Y = 0;
+        private  double UPPER_BOUND_Y = 1;
+        private  int LIKELY_IN_CACHE_SIZE = 8;
+
+        private int nQuantiles;
+        private int subsample;
+        private double[] references;
+        private double[] quantiles;
+        private double lowerBoundX;
+        private double upperBoundX;
+
+        private  java.util.Set<QuantileTransformer> transformerCache = new HashSet<>();
+
+        /**
+         * Stores transformers in a private cache. When an existing transformer is found that results in
+         * <code>compareTo==0</code> with <code>transformer</code> then the cached object will be
+         * returned. Otherwise <code>transformer</code> will be returned. <br/>
+         * <br/>
+         * Instead of making the <code>QuantileTransformer</code> constructor private, set your local
+         * transformer to the result of this cache method to prevent duplicating transformers in memory.
+         * <br/>
+         * <br/>
+         * The implementation synchronizes on the transformer cache so this method <b>is</b>
+         * thread-safe.
+         *
+         * @param transformer
+         *            The transformer
+         * @return A cached copy of the transformer
+         */
+        public  QuantileTransformer getQuantileTransformerFromCache(QuantileTransformer transformer) {
+            if (transformer == null) {
+                return null;
+            }
+            synchronized (transformerCache) {
+                for (QuantileTransformer qt : transformerCache) {
+                    if (qt.compareTo(transformer) == 0) {
+                        return qt;
+                    }
+                }
+                transformerCache.add(transformer);
+                return transformer;
+            }
+        }
+
+        /**
+         * Clears the cache of transformers. <br/>
+         * <br/>
+         * The implementation synchronizes on the transformer cache so this method <b>is</b>
+         * thread-safe.
+         */
+        public  void clearCache() {
+            synchronized (transformerCache) {
+                Trace.msg("Clearing quantile transformer cache");
+                transformerCache.clear();
+            }
+        }
+
+        /**
+         * Create an empty quantile transformer with the specified number of quantiles and subsample.
+         *
+         * @param nQuantiles
+         *            Number of quantiles
+         * @param subsample
+         *            Number of subsamples
+         */
+        public QuantileTransformer(int nQuantiles, int subsample) {
+            this.nQuantiles = nQuantiles;
+            this.subsample = subsample;
+        }
+
+        /**
+         * Construct a quantile transformer from an existing internal representation. <br/>
+         * <br/>
+         * Only not use this constructor if you have the internal state of an existing quantile
+         * transformer! <br/>
+         * <br/>
+         * This constructor is useful from porting a scikit-learn <a href=
+         * "https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.QuantileTransformer.html">sklearn.preprocessing.QuantileTransformer</a>
+         * since the implementations share the same internal objects.
+         *
+         * @param nQuantiles
+         *            Number of quantiles
+         * @param subsample
+         *            Number of subsamples
+         * @param references
+         *            The references
+         * @param quantiles
+         *            The quantiles
+         */
+        public QuantileTransformer(int nQuantiles, int subsample, double[] references, double[] quantiles) {
+            this.nQuantiles = nQuantiles;
+            this.subsample = subsample;
+            setReferences(references);
+            setQuantiles(quantiles);
+        }
+
+
+        public <I> void fit(I x) {
+            if (double[].class.equals(x.getClass())) {
+                fit((double[]) x);
+            } else if (float[].class.equals(x.getClass())) {
+                double[] input = toDoubleArray((float[]) x);
+                fit(input);
+            } else {
+                throw new UnsupportedOperationException("The input type " + x.getClass().getName() + " is not supported for this operation");
+            }
+        }
+
+
+        public <I, O> O transform(I x, Class<O> returnType, boolean rowMajorOrder) {
+            if (double[].class.equals(x.getClass())) {
+                return transform((double[]) x, returnType);
+            } else if (float[].class.equals(x.getClass())) {
+                Trace.msg("Performing cast before transform, this is not optimal");
+                double[] input = toDoubleArray((float[]) x);
+                return transform(input, returnType);
+            } else {
+                throw new UnsupportedOperationException("The input type " + x.getClass().getName() + " is not supported for this operation");
+            }
+        }
+
+        private void setQuantiles(double[] quantiles) {
+            this.quantiles = quantiles;
+            this.lowerBoundX = this.quantiles[0];
+            this.upperBoundX = this.quantiles[this.quantiles.length - 1];
+        }
+
+        private void setReferences(double[] references) {
+            this.references = references;
+        }
+
+        @SuppressWarnings("unchecked")
+        private <T> T transform(double x, Class<T> returnType) {
+            Double result;
+            if (x == lowerBoundX) {
+                result = LOWER_BOUND_Y;
+            } else if (x == upperBoundX) {
+                result = UPPER_BOUND_Y;
+            } else if (!Double.isNaN(x)) {
+                result = 0.5 * (interp(x, this.quantiles, this.references) - interpReverseNegated(x, this.quantiles, this.references));
+            } else {
+                result = x;
+            }
+            if (Double.class.equals(returnType) || double.class.equals(returnType)) {
+                return (T) result;
+            } else if (Float.class.equals(returnType) || float.class.equals(returnType)) {
+                return (T) Float.valueOf(result.floatValue());
+            } else {
+                throw new UnsupportedOperationException("The returnType " + returnType.getName() + " is not supported for this operation");
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        private <T> T transform(double[] x, Class<T> returnType) {
+            final int xLen = x.length;
+            double[] result = new double[xLen];
+            for (int i = 0; i < xLen; i++) {
+                if (Double.isNaN(x[i])) {
+                    result[i] = Double.NaN;
+                } else {
+                    result[i] = 0.5
+                            * (interp(x[i], this.quantiles, this.references) - interpReverseNegated(x[i], this.quantiles, this.references));
+                }
+            }
+            eqApply(x, lowerBoundX, result, LOWER_BOUND_Y);
+            eqApply(x, upperBoundX, result, UPPER_BOUND_Y);
+            if (double[].class.equals(returnType)) {
+                return (T) result;
+            } else if (float[].class.equals(returnType)) {
+                return (T) toFloatArray(result);
+            } else {
+                throw new UnsupportedOperationException("The returnType " + returnType.getName() + " is not supported for this operation");
+            }
+        }
+
+        @SuppressWarnings("unused")
+        private double[] interp(double[] x, double[] xp, double[] fp) {
+            double[] afp = fp;
+            double[] axp = xp;
+            double[] ax = x;
+            int lenxp = xp.length;
+            double[] af = new double[ax.length];
+            int lenx = ax.length;
+            double[] dy = afp;
+            double[] dx = axp;
+            double[] dz = ax;
+            double[] dres = af;
+            double lval = fp[0];
+            double rval = fp[lenxp - 1];
+            if (lenxp == 1) {
+                double xp_val = dx[0];
+                double fp_val = dy[0];
+                for (int i = 0; i < lenx; ++i) {
+                    double x_val = dz[i];
+                    dres[i] = (x_val < xp_val) ? lval : ((x_val > xp_val) ? rval : fp_val);
+                }
+            } else {
+                int j = 0;
+                double[] slopes = null;
+                /* only pre-calculate slopes if there are relatively few of them. */
+                if (lenxp <= lenx) {
+                    slopes = new double[lenxp - 1];
+                }
+                if (slopes != null) {
+                    for (int i = 0; i < lenxp - 1; ++i) {
+                        slopes[i] = (dy[i + 1] - dy[i]) / (dx[i + 1] - dx[i]);
+                    }
+                }
+                for (int i = 0; i < lenx; ++i) {
+                    double x_val = dz[i];
+
+                    if (Double.isNaN(x_val)) {
+                        dres[i] = x_val;
+                        continue;
+                    }
+
+                    j = binarySearchWithGuess(x_val, dx, lenxp, j);
+                    if (j == -1) {
+                        dres[i] = lval;
+                    } else if (j == lenxp) {
+                        dres[i] = rval;
+                    } else if (j == lenxp - 1) {
+                        dres[i] = dy[j];
+                    } else if (dx[j] == x_val) {
+                        /* Avoid potential non-finite interpolation */
+                        dres[i] = dy[j];
+                    } else {
+                        double slope = (slopes != null) ? slopes[j] : (dy[j + 1] - dy[j]) / (dx[j + 1] - dx[j]);
+
+                        /* If we get nan in one direction, try the other */
+                        dres[i] = slope * (x_val - dx[j]) + dy[j];
+                        if ((Double.isNaN(dres[i]))) {
+                            dres[i] = slope * (x_val - dx[j + 1]) + dy[j + 1];
+                            if ((Double.isNaN(dres[i])) && dy[j] == dy[j + 1]) {
+                                dres[i] = dy[j];
+                            }
+                        }
+                    }
+                }
+            }
+            return af;
+        }
+
+        private double interp(double x, double[] xp, double[] fp) {
+            final int lenxp = xp.length;
+            double dres;
+            if (lenxp == 1) {
+                double xp_val = xp[0];
+                double fp_val = fp[0];
+                dres = (x < xp_val) ? fp[0] : ((x > xp_val) ? fp[lenxp - 1] : fp_val);
+            } else {
+                int j = 0;
+                double[] slopes = null;
+                // only pre-calculate slopes if there are relatively few of them
+                if (lenxp <= 1) {
+                    slopes = new double[lenxp - 1];
+                }
+                if (slopes != null) {
+                    for (int i = 0; i < lenxp - 1; ++i) {
+                        slopes[i] = (fp[i + 1] - fp[i]) / (xp[i + 1] - xp[i]);
+                    }
+                }
+                j = binarySearchWithGuess(x, xp, lenxp, j);
+                if (j == -1) {
+                    dres = fp[0];
+                } else if (j == lenxp) {
+                    dres = fp[lenxp - 1];
+                } else if (j == lenxp - 1) {
+                    dres = fp[j];
+                } else if (xp[j] == x) {
+                    // Avoid potential non-finite interpolation
+                    dres = fp[j];
+                } else {
+                    double slope = (slopes != null) ? slopes[j] : (fp[j + 1] - fp[j]) / (xp[j + 1] - xp[j]);
+                    // If we get nan in one direction, try the other
+                    dres = slope * (x - xp[j]) + fp[j];
+                    if (Double.isNaN(dres)) {
+                        dres = slope * (x - xp[j + 1]) + fp[j + 1];
+                        if (Double.isNaN(dres) && fp[j] == fp[j + 1]) {
+                            dres = fp[j];
+                        }
+                    }
+                }
+            }
+            return dres;
+        }
+
+        private double interpReverseNegated(double x, double[] xp, double[] fp) {
+            x = -x;
+            final int lenxp = xp.length;
+            final int lenxpminusone = lenxp - 1;
+            final int lenfpminusone = fp.length - 1;
+            double dres;
+            if (lenxp == 1) {
+                double xp_val = -xp[lenxpminusone];
+                double fp_val = -fp[lenfpminusone];
+                dres = (x < xp_val) ? -fp[lenfpminusone] : ((x > xp_val) ? -fp[lenfpminusone - (lenxp - 1)] : fp_val);
+            } else {
+                int j = 0;
+                double[] slopes = null;
+                // only pre-calculate slopes if there are relatively few of them
+                if (lenxp <= 1) {
+                    slopes = new double[lenxp - 1];
+                }
+                if (slopes != null) {
+                    for (int i = 0; i < lenxp - 1; ++i) {
+                        slopes[i] = (-fp[lenfpminusone - (i + 1)] - -fp[lenfpminusone - i])
+                                / (-xp[lenxpminusone - (i + 1)] - -xp[lenxpminusone - i]);
+                    }
+                }
+                j = binarySearchWithGuessReverseNegated(x, xp, lenxp, j, lenxpminusone);
+                if (j == -1) {
+                    dres = -fp[lenfpminusone];
+                } else if (j == lenxp) {
+                    dres = -fp[lenfpminusone - (lenxp - 1)];
+                } else if (j == lenxp - 1) {
+                    dres = -fp[lenfpminusone - j];
+                } else if (-xp[lenxpminusone - j] == x) {
+                    // Avoid potential non-finite interpolation
+                    dres = -fp[lenfpminusone - j];
+                } else {
+                    double slope = (slopes != null) ? slopes[j]
+                            : (-fp[lenfpminusone - (j + 1)] - -fp[lenfpminusone - j]) / (-xp[lenxpminusone - (j + 1)] - -xp[lenxpminusone - j]);
+                    // If we get nan in one direction, try the other
+                    dres = slope * (x - -xp[lenxpminusone - j]) + -fp[lenfpminusone - j];
+                    if (Double.isNaN(dres)) {
+                        dres = slope * (x - -xp[lenxpminusone - (j + 1)]) + -fp[lenfpminusone - (j + 1)];
+                        if (Double.isNaN(dres) && -fp[lenfpminusone - j] == -fp[lenfpminusone - (j + 1)]) {
+                            dres = -fp[lenfpminusone - j];
+                        }
+                    }
+                }
+            }
+            return dres;
+        }
+
+        private void fit(double[] x) {
+            int nSamples = x.length;
+            this.nQuantiles = Math.max(1, Math.min(this.nQuantiles, nSamples));
+            setReferences(linspace(0, 1, this.nQuantiles, true));
+            denseFit(x);
+        }
+
+        private void denseFit(double[] x) {
+            int nSamples = x.length;
+            double[] references = this.references;
+            double[] quantiles;
+            if (this.subsample < nSamples) {
+                throw new UnsupportedOperationException("See line 2272 in sklearn.preprocessing._data.py for implementation details.");
+            }
+            quantiles = nanPercentile(x, references);
+            setQuantiles(quantiles);
+        }
+
+        private  void partition(double[] a, int[] indicesAll) {
+            Arrays.sort(a);
+        }
+
+        private  double[] linspace(double start, double stop, int num, boolean endpoint) {
+            int div = endpoint ? (num - 1) : num;
+            double delta = stop - start;
+            double[] y = new double[num];
+            for (int i = 0; i < y.length; i++) {
+                y[i] = i;
+            }
+            double step;
+            if (div > 0) {
+                step = delta / div;
+                if (step == 0) {
+                    y = divide(y, div);
+                    y = multiply(y, delta);
+                } else {
+                    y = multiply(y, step);
+                }
+            } else {
+                step = Double.NaN;
+                y = multiply(y, delta);
+            }
+            y = add(y, start);
+            if (endpoint && num > 1) {
+                y[y.length - 1] = stop;
+            }
+            return y;
+        }
+
+        private  double[] nanPercentile(double[] a, double[] q) {
+            a = removeNan(a);
+            int Nx = a.length;
+            double[] indices = multiply(q, (Nx - 1));
+            int[] indicesBelow = floor(indices);
+            int[] indicesAbove = add(indicesBelow, 1);
+            for (int i = 0; i < indicesAbove.length; i++) {
+                if (indicesAbove[i] > Nx - 1) {
+                    indicesAbove[i] = Nx - 1;
+                }
+            }
+            partition(a, null);
+            double[] weightsAbove = subtract(indices, indicesBelow);
+            double[] xBelow = take(a, indicesBelow);
+            double[] xAbove = take(a, indicesAbove);
+            double[] r = lerp(xBelow, xAbove, weightsAbove);
+            return r;
+        }
+
+        private  double[] lerp(double[] a, double[] b, double[] t) {
+            double[] bMinusA = subtract(b, a);
+            double[] lerpInterpolation = add(a, multiply(t, bMinusA));
+            for (int i = 0; i < b.length; i++) {
+                if (t[i] >= 0.5) {
+                    lerpInterpolation[i] = b[i] - bMinusA[i] * (1 - t[i]);
+                }
+            }
+            return lerpInterpolation;
+        }
+
+        private  int[] add(int[] x1, int x2) {
+            final int len = x1.length;
+            int[] out = new int[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = x1[i] + x2;
+            }
+            return out;
+        }
+
+        private  double[] add(double[] x1, double[] x2) {
+            final int len = x1.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = x1[i] + x2[i];
+            }
+            return out;
+        }
+
+        private  double[] multiply(double[] x1, double[] x2) {
+            final int len = x1.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = x1[i] * x2[i];
+            }
+            return out;
+        }
+
+        private  double[] subtract(double[] x1, int[] x2) {
+            final int len = x1.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = x1[i] - x2[i];
+            }
+            return out;
+        }
+
+        private  double[] subtract(double[] x1, double[] x2) {
+            final int len = x1.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = x1[i] - x2[i];
+            }
+            return out;
+        }
+
+        private  double[] add(double[] a, double d) {
+            final int len = a.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = a[i] + d;
+            }
+            return out;
+        }
+
+        private  double[] multiply(double[] a, double d) {
+            final int len = a.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = a[i] * d;
+            }
+            return out;
+        }
+
+        private  double[] divide(double[] a, double d) {
+            final int len = a.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = a[i] / d;
+            }
+            return out;
+        }
+
+        private  double[] take(double[] a, int[] indicesBelow) {
+            final int len = indicesBelow.length;
+            double[] out = new double[len];
+            for (int i = 0; i < len; i++) {
+                out[i] = a[indicesBelow[i]];
+            }
+            return out;
+        }
+
+        private  int[] floor(double[] indices) {
+            final int len = indices.length;
+            int[] floors = new int[len];
+            for (int i = 0; i < len; i++) {
+                floors[i] = (int) Math.floor(indices[i]);
+            }
+            return floors;
+        }
+
+        private  double[] removeNan(double[] a) {
+            final int len = a.length;
+            List<Double> noNan = new ArrayList<Double>(len);
+            for (int i = 0; i < len; i++) {
+                if (!Double.isNaN(a[i])) {
+                    noNan.add(a[i]);
+                }
+            }
+            return toDoubleArray(noNan.toArray(), true);
+        }
+
+        private  double[] toDoubleArray(Object[] boxedArray, boolean throwNPE) {
+            int len = boxedArray.length;
+            double[] array = new double[len];
+            for (int i = 0; i < len; i++) {
+                array[i] = boxedArray[i] == null && !throwNPE ? Double.NaN : ((Number) (boxedArray[i])).doubleValue();
+            }
+            return array;
+        }
+
+        private static  double[] toDoubleArray(float[] arr) {
+            if (arr == null)
+                return null;
+            final int n = arr.length;
+            double[] ret = new double[n];
+            for (int i = 0; i < n; i++) {
+                ret[i] = (double) arr[i];
+            }
+            return ret;
+        }
+
+        private  double[] flatten(double[][] x) {
+            return Arrays.stream(x).flatMapToDouble(Arrays::stream).toArray();
+        }
+
+        private  static float[] toFloatArray(double[] arr) {
+            if (arr == null)
+                return null;
+            final int n = arr.length;
+            float[] ret = new float[n];
+            for (int i = 0; i < n; i++) {
+                ret[i] = (float) arr[i];
+            }
+            return ret;
+        }
+
+        private  int binarySearchWithGuess(double key, double[] arr, int len, int guess) {
+            int imin = 0;
+            int imax = len;
+            // Handle keys outside of the arr range first
+            if (key > arr[len - 1]) {
+                return len;
+            } else if (key < arr[0]) {
+                return -1;
+            }
+            // If len <= 4 use linear search. From above we know key >= arr[0] when we start.
+            if (len <= 4) {
+                return linearSearch(key, arr, len, 1);
+            }
+            if (guess > len - 3) {
+                guess = len - 3;
+            }
+            if (guess < 1) {
+                guess = 1;
+            }
+            // check most likely values: guess - 1, guess, guess + 1
+            if (key < arr[guess]) {
+                if (key < arr[guess - 1]) {
+                    imax = guess - 1;
+                    // last attempt to restrict search to items in cache
+                    if (guess > LIKELY_IN_CACHE_SIZE && key >= arr[guess - LIKELY_IN_CACHE_SIZE]) {
+                        imin = guess - LIKELY_IN_CACHE_SIZE;
+                    }
+                } else {
+                    // key >= arr[guess - 1]
+                    return guess - 1;
+                }
+            } else {
+                // key >= arr[guess]
+                if (key < arr[guess + 1]) {
+                    return guess;
+                } else {
+                    // key >= arr[guess + 1]
+                    if (key < arr[guess + 2]) {
+                        return guess + 1;
+                    } else {
+                        // key >= arr[guess + 2]
+                        imin = guess + 2;
+                        // last attempt to restrict search to items in cache
+                        if (guess < len - LIKELY_IN_CACHE_SIZE - 1 && key < arr[guess + LIKELY_IN_CACHE_SIZE]) {
+                            imax = guess + LIKELY_IN_CACHE_SIZE;
+                        }
+                    }
+                }
+            }
+            // finally, find index by bisection
+            while (imin < imax) {
+                int imid = imin + ((imax - imin) >> 1);
+                if (key >= arr[imid]) {
+                    imin = imid + 1;
+                } else {
+                    imax = imid;
+                }
+            }
+            return imin - 1;
+        }
+
+        private  int linearSearch(double key, double[] arr, int len, int i0) {
+            int i;
+            for (i = i0; i < len && key >= arr[i]; i++)
+                ;
+            return i - 1;
+        }
+
+        private  int binarySearchWithGuessReverseNegated(double key, double[] arr, int len, int guess, int lenminusone) {
+            int imin = 0;
+            int imax = len;
+            // Handle keys outside of the arr range first
+            if (key > -arr[lenminusone - (len - 1)]) {
+                return len;
+            } else if (key < -arr[lenminusone]) {
+                return -1;
+            }
+            // If len <= 4 use linear search. From above we know key >= arr[0] when we start.
+            if (len <= 4) {
+                return linearSearchReverseNegated(key, arr, len, 1, lenminusone);
+            }
+            if (guess > len - 3) {
+                guess = len - 3;
+            }
+            if (guess < 1) {
+                guess = 1;
+            }
+            // check most likely values: guess - 1, guess, guess + 1
+            if (key < -arr[lenminusone - guess]) {
+                if (key < -arr[lenminusone - (guess - 1)]) {
+                    imax = guess - 1;
+                    // last attempt to restrict search to items in cache
+                    if (guess > LIKELY_IN_CACHE_SIZE && key >= -arr[lenminusone - (guess - LIKELY_IN_CACHE_SIZE)]) {
+                        imin = guess - LIKELY_IN_CACHE_SIZE;
+                    }
+                } else {
+                    // key >= arr[guess - 1]
+                    return guess - 1;
+                }
+            } else {
+                // key >= arr[guess]
+                if (key < -arr[lenminusone - (guess + 1)]) {
+                    return guess;
+                } else {
+                    // key >= arr[guess + 1]
+                    if (key < -arr[lenminusone - (guess + 2)]) {
+                        return guess + 1;
+                    } else {
+                        // key >= arr[guess + 2]
+                        imin = guess + 2;
+                        // last attempt to restrict search to items in cache
+                        if (guess < len - LIKELY_IN_CACHE_SIZE - 1 && key < -arr[lenminusone - (guess + LIKELY_IN_CACHE_SIZE)]) {
+                            imax = guess + LIKELY_IN_CACHE_SIZE;
+                        }
+                    }
+                }
+            }
+            // finally, find index by bisection
+            while (imin < imax) {
+                int imid = imin + ((imax - imin) >> 1);
+                if (key >= -arr[lenminusone - imid]) {
+                    imin = imid + 1;
+                } else {
+                    imax = imid;
+                }
+            }
+            return imin - 1;
+        }
+
+        private  int linearSearchReverseNegated(double key, double[] arr, int len, int i0, int lenminusone) {
+            int i;
+            for (i = i0; i < len && key >= -arr[lenminusone - i]; i++)
+                ;
+            return i - 1;
+        }
+
+        /**
+         * if x[i] == val_x then set y[i] == val_y
+         *
+         * @param x
+         * @param val_x
+         * @param y
+         * @param val_y
+         */
+        private  void eqApply(double[] x, double val_x, double[] y, double val_y) {
+            int len = x.length;
+            for (int i = 0; i < len; i++) {
+                if (x[i] == val_x) {
+                    y[i] = val_y;
+                }
+            }
+        }
+
+
+        public int getColInputCount() {
+            // Currently the implementation only supports one dimensional inputs/outputs
+            return 1;
+        }
+
+
+        public int getColOutputCount() {
+            // Currently the implementation only supports one dimensional inputs/outputs
+            return 1;
+        }
+
+
+        public void shutdown() {
+            // DO NOT REMOVE REFERENCES TO INTERNAL OBJECTS HERE SINCE CACHED COPIES OF THE TRANSFORMER
+            // MIGHT BE SHARED
+        }
+
+        @Override
+        public int compareTo(QuantileTransformer other) {
+            if (nQuantiles != other.nQuantiles) {
+                return -1;
+            }
+            if (subsample != other.subsample) {
+                return -1;
+            }
+            if (lowerBoundX != other.lowerBoundX) {
+                return -1;
+            }
+            if (upperBoundX != other.upperBoundX) {
+                return -1;
+            }
+            if (!Arrays.equals(references, other.references)) {
+                return -1;
+            }
+            if (!Arrays.equals(quantiles, other.quantiles)) {
+                return -1;
+            }
+            return 0;
+        }
+
+    }
+    
+    public static double[] yeoJohnsonTransform(double[] data, double lambda) {
+        double[] transformedData = new double[data.length];
+
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] >= 0) {
+                if (lambda == 0) {
+                    transformedData[i] = Math.log(data[i] + 1);
+                } else {
+                    transformedData[i] = (Math.pow(data[i] + 1, lambda) - 1) / lambda;
+                }
+            } else {
+                if (lambda == 2) {
+                    transformedData[i] = -Math.log(-data[i] + 1);
+                } else {
+                    transformedData[i] = -(Math.pow(-data[i] + 1, 2 - lambda) - 1) / (2 - lambda);
+                }
+            }
+        }
+
+        return transformedData;
+    }
+
+    public static float[] yeoJohnsonTransform(float[] data, double lambda) {
+        double[] input = QuantileTransformer.toDoubleArray(  data);
+        return QuantileTransformer.toFloatArray(yeoJohnsonTransform(input, lambda));
+    }
+
+    /**
+     *  A classifier in machine learning is an algorithm that automatically orders or
+     *  categorizes data into one or more of a set of “classes.”
+     *
+     * @param field the input field
+     * @param classifierStr input string of classifier
+     * @param  outFileName output file name
+     * @throws  Exception for bad
+     * @return the classifier fieldimpl
+     */
+    public static FieldImpl classifier(FieldImpl field, String classifierStr, String outFileName) throws Exception  {
+        List<String> classifyList = StringUtil.split(classifierStr, ";");
+        for(String classifyItem: classifyList){
+            List<String> itemList = StringUtil.split(classifyItem, " ");
+            if(classifyItem.length() == 0 || itemList.size() < 3)
+                break;
+            float low = Float.parseFloat(itemList.get(0));
+            float high = Float.parseFloat(itemList.get(1));
+            float classify = Float.parseFloat(itemList.get(2));
+            field = replaceRangeValues(field, low, high, classify);
+        }
+
+        exportGridToNetcdf(field,outFileName);
+        return field;
+    }
+
+    /**
+     * Process for classifier
+     *
+     * @param grid the input field
+     * @param low lower range
+     * @param  high higher range
+     * @param newValue replace value
+     * @throws  VisADException for bad
+     * @throws  RemoteException for bad
+     * @return the field with new values
+     */
+    public static FieldImpl replaceRangeValues(FieldImpl grid, float low, float high, float newValue)
+            throws VisADException, RemoteException {
+        boolean   isSequence = GridUtil.isTimeSequence(grid);
+        FieldImpl retField   = null;
+        if (isSequence) {
+            Set          s         = GridUtil.getTimeSet(grid);
+            for (int i = 0; i < s.getLength(); i++) {
+                FieldImpl funcFF = null;
+
+                FlatField f = replaceRangeValuesFF(((FlatField) grid.getSample(i)),
+                        low, high, newValue);
+                if (i == 0) {
+                    FunctionType ftype =
+                            new FunctionType(
+                                    ((SetType) s.getType()).getDomain(),
+                                    f.getType());
+                    retField = new FieldImpl(ftype, s);
+                }
+                retField.setSample(i, f, false);
+            }
+
+
+        } else {
+            retField = replaceRangeValuesFF(((FlatField) grid), low, high,newValue);
+        }
+        return retField;
+    }
+
+    /**
+     * Process classifier
+     *
+     * @param grid
+     * @param low lower range
+     * @param  high higher range
+     * @param newValue replace value
+     * @throws VisADException for bad
+     * @return the flatfield with new values
+     */
+    private static FlatField replaceRangeValuesFF(FlatField grid,  float low, float high, float newValue)
+            throws VisADException {
+
+        FlatField newField = null;
+        try {
+            GriddedSet domainSet =
+                    (GriddedSet) GridUtil.getSpatialDomain(grid);
+            int[] lengths = domainSet.getLengths();
+            int   sizeX   = lengths[0];
+            int   sizeY   = lengths[1];
+            int   sizeZ   = ((lengths.length == 2)
+                    || (domainSet.getManifoldDimension() == 2))
+                    ? 1
+                    : lengths[2];
+            float[][] samples   = grid.getFloats(false);
+
+            float[][] newValues = new float[samples.length][sizeX * sizeY  * sizeZ];
+            for (int np = 0; np < samples.length; np++) {
+                float[] paramVals = samples[np];
+                float[] newVals   = newValues[np];
+                for (int j = 0; j < sizeY; j++) {
+                    for (int i = 0; i < sizeX; i++) {
+                        for (int k = 0; k < sizeZ; k++) {
+                            int   index = k * sizeX * sizeY + j * sizeX + i;
+                            float value = paramVals[index];
+                            if (value >= low && value <= high) {
+                                newVals[index] =  newValue;
+                            }  else
+                                newVals[index] = value;
+                        }
+                    }
+                }
+            }
+
+            FunctionType newFT = (FunctionType)grid.getType();
+
+            newField = new FlatField(newFT, domainSet);
+            newField.setSamples(newValues, false);
+
+        } catch (RemoteException re) {
+            throw new VisADException("RemoteException checking missing data");
+        }
+        return newField;
+
+    }
 }
+

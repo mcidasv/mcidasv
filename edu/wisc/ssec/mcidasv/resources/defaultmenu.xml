@@ -24,12 +24,12 @@
                   mnemonic="F"
                   action="action:bundle.favorite.save"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/save-as-fave-bundle16.png"
-                  tooltip="Save as a bundle" />
+                  tooltip="Save session as a favorite bundle" />
         <menuitem label="Save Bundle..." 
                   mnemonic="B"
                   action="action:bundle.save"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/document-save16.png"
-                  tooltip="Save to a file on disk" />
+                  tooltip="Save session as a bundle" />
         <separator />
         <menu id="file.default.layout"
               label="Default Layout"
@@ -163,49 +163,60 @@
         <menuitem label="User's Guide"
                   mnemonic="U"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/book_open.png"
-                  action="help:idv.index" />
+                  action="help:idv.index"
+                  tooltip="Open McIDAS-V User's Guide" />
         <menuitem label="Getting Started"
                   mnemonic="S"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/book_next.png"
-                  action="help:idv.quickstart" />
+                  action="help:idv.quickstart"
+                  tooltip="Open Quick Start section of User's Guide" />
         <separator />
         <menuitem label="Show Help Tips"
                   mnemonic="T"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/dialog-information16.png"
-                  action="action:help.showhelptips" />
+                  action="action:help.showhelptips"
+                  tooltip="Open Help Tips window" />
         <menuitem label="Show Console"
                   mnemonic="C"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/utilities-system-monitor16.png"
-                  action="action:help.showconsole" />
+                  action="action:help.showconsole"
+                  tooltip="Open Console window for debug output" />
         <menuitem label="Show Support Request Form"
                   mnemonic="F"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/email_go.png"
-                  action="action:help.showsupportform" />
+                  action="action:help.showsupportform"
+                  tooltip="Send support request" />
         <menuitem label="Visit Online Forums"
                   mnemonic="O"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/report_go.png"
-                  action="https://mcidas.ssec.wisc.edu/forums/" />
+                  action="https://mcidas.ssec.wisc.edu/forums/"
+                  tooltip="Open McIDAS-V User Forums webpage" />
         <menuitem label="Search Online Resources"
                   mnemonic="E"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/world_go.png"
-                  action="https://www.ssec.wisc.edu/mcidas/software/v/" />
+                  action="https://www.ssec.wisc.edu/mcidas/software/v/"
+                  tooltip="Open main McIDAS-V webpage" />
         <separator />
         <menuitem label="Check for new version"
                   mnemonic="V"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-desktop-multimedia16.png"
-                  action="action:version.check" />
+                  action="action:version.check"
+                  tooltip="Check if a new McIDAS-V release is available" />
         <menuitem label="Check for new notice"
                   mnemonic="N"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/exclamation.png"
-                  action="action:notice.check" />
+                  action="action:notice.check"
+                  tooltip="Check if a new notice is available" />
         <separator />
         <menuitem label="Release Notes"
                   mnemonic="R"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/note.png"
-                  action="help:idv.releasenotes" />
+                  action="help:idv.releasenotes"
+                  tooltip="Open release notes" />
         <menuitem label="About McIDAS-V"
                   mnemonic="A"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/mcidasv-round16.png"
-                  action="action:help.showabout" />
+                  action="action:help.showabout"
+                  tooltip="Show general information about McIDAS-V" />
     </menu>
 </menus>

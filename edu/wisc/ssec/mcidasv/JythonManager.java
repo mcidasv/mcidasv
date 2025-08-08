@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.Comparator;
 
 import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
 import org.python.util.PythonInterpreter;
@@ -184,6 +185,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         JMenuItem menuItem;
 
         menuItem = new JMenuItem("Create Formula");
+        menuItem.setToolTipText("Open Formula Editor window");
         menuItem.addActionListener(e -> showFormulaDialog());
         menuItems.add(menuItem);
 
@@ -193,19 +195,60 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         } else {
             editItems = doMakeEditMenuItems();
         }
-        menuItems.add(makeMenu("Edit Formulas", editItems));
+        // Remove any accidental top-level "Edit Formulas" header
+        editItems.removeIf(item -> (item instanceof String) && ((String)item).equalsIgnoreCase("Edit Formulas"));
+
+        // Sort within each group
+        List<Object> sortedGroupedItems = new ArrayList<>();
+        Object currentGroupHeader = null;
+        List<JMenuItem> currentGroupItems = new ArrayList<>();
+
+        for (Object item : editItems) {
+            if (item instanceof String) {
+                if (!currentGroupItems.isEmpty()) {
+                    currentGroupItems.sort(Comparator.comparing(JMenuItem::getText, String.CASE_INSENSITIVE_ORDER));
+                    if (currentGroupHeader != null) sortedGroupedItems.add(currentGroupHeader);
+                    sortedGroupedItems.addAll(currentGroupItems);
+                    currentGroupItems.clear();
+                }
+                currentGroupHeader = item;
+            } else if (item instanceof JMenuItem) {
+                currentGroupItems.add((JMenuItem)item);
+            } else {
+                if (!currentGroupItems.isEmpty()) {
+                    currentGroupItems.sort(Comparator.comparing(JMenuItem::getText, String.CASE_INSENSITIVE_ORDER));
+                    if (currentGroupHeader != null) sortedGroupedItems.add(currentGroupHeader);
+                    sortedGroupedItems.addAll(currentGroupItems);
+                    currentGroupItems.clear();
+                }
+                currentGroupHeader = null;
+                sortedGroupedItems.add(item);
+            }
+        }
+
+        if (!currentGroupItems.isEmpty()) {
+            currentGroupItems.sort(Comparator.comparing(JMenuItem::getText, String.CASE_INSENSITIVE_ORDER));
+            if (currentGroupHeader != null) sortedGroupedItems.add(currentGroupHeader);
+            sortedGroupedItems.addAll(currentGroupItems);
+        }
+
+        sortMenuItems(sortedGroupedItems);
+        menuItems.add(makeMenu("Edit Formulas", sortedGroupedItems));
 
         menuItems.add(MENU_SEPARATOR);
 
         menuItem = new JMenuItem("Jython Library");
+        menuItem.setToolTipText("Open Jython Library window");
         menuItem.addActionListener(e -> showJythonEditor());
         menuItems.add(menuItem);
 
         menuItem = new JMenuItem("Jython Shell");
+        menuItem.setToolTipText("Open Jython Shell window");
         menuItem.addActionListener(e -> createShell());
         menuItems.add(menuItem);
 
         menuItem = new JMenuItem("Load Jython Script");
+        menuItem.setToolTipText("Select a Jython script to run");
         menuItem.addActionListener(e -> {
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Python Files (*.py)", "py");
             String file = FileManager.getReadFile("Load Script", filter);
@@ -217,16 +260,44 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         menuItems.add(MENU_SEPARATOR);
 
         menuItem = new JMenuItem("Import");
+        menuItem.setToolTipText("Import formulas");
         menuItem.addActionListener(e -> importFormulas());
         menuItems.add(menuItem);
 
         menuItem = new JMenuItem("Export");
+        menuItem.setToolTipText("Export Formulas");
         menuItem.addActionListener(e -> exportFormulas());
         menuItems.add(menuItem);
 
         return menuItems;
     }
 
+    // Recursively sort nested JMenu children
+    private void sortMenuItems(List<?> items) {
+        items.sort((o1, o2) -> {
+            if (o1 instanceof JMenuItem && o2 instanceof JMenuItem) {
+                return ((JMenuItem) o1).getText().compareToIgnoreCase(((JMenuItem) o2).getText());
+            }
+            return 0;
+        });
+
+        for (Object item : items) {
+            if (item instanceof JMenu) {
+                JMenu submenu = (JMenu) item;
+                List<JMenuItem> subItems = new ArrayList<>();
+                for (int i = 0; i < submenu.getItemCount(); i++) {
+                    JMenuItem child = submenu.getItem(i);
+                    if (child != null) subItems.add(child);
+                }
+                sortMenuItems(subItems);
+                submenu.removeAll();
+                for (JMenuItem sortedChild : subItems) {
+                    submenu.add(sortedChild);
+                }
+            }
+        }
+    }
+    
     /**
      * Determine if the user should be warned about a potential bug that we've been unable to resolve.
      *
