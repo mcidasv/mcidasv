@@ -800,9 +800,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
         bottomPanel.add(new JLabel("Vertical Position: "));
         bottomPanel.add(doMakeZPositionSlider());
 
-        JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        mainPanel.add(topPanel);
-        mainPanel.add(bottomPanel);
+        JPanel mainPanel = new JPanel(new MigLayout("wrap 1", "[grow]", ""));
+        mainPanel.add(topPanel, "growx");
+        mainPanel.add(bottomPanel, "growx");
 
         return mainPanel;
     }
