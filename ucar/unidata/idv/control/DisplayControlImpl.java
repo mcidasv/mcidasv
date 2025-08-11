@@ -12818,7 +12818,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return;
         }
         selectRangeEnabled = value;
-        selectRangeWidget.setEnabledCbx(value);
+        if (selectRangeWidget != null) {
+            selectRangeWidget.setEnabledCbx(value);
+        }
         if (getHaveInitialized()) {
             try {
                 applySelectRange();
