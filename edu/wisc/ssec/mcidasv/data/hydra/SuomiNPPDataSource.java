@@ -1658,7 +1658,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		if (pIdx == 0) {
         			defaultSubset = adapters[pIdx].getDefaultSubset();
         		}
-        		categories = DataCategory.parseCategories("IMAGE");
+        		categories = DataCategory.parseCategories("Image;IMAGE-2D;GRID-2D");
         	}
         	// only increment count if we created an adapter, some products are skipped
     		if (adapterCreated) pIdx++;
