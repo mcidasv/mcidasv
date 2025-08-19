@@ -6216,5 +6216,23 @@
             <paramgroup categories="GRID-3D-*;" name="u_v"/>
             <paramgroup categories="GRID-3D-*;" name="GridRelative_uv"/>
         </operands>
+    </derived>
+    <derived
+        id="thetae"
+        description="Equiv. Potential Temperature (from %N1% &amp; %N2%)"
+        label="Equivalent Potential Temperature"
+        isdefault="true" 
+        isenduser="false"
+        formula="DerivedGridFactory.createEquivalentPotentialTemperature (D1, D2)"
+		override="true">
+        <categories>
+            <category
+                value="inherit"
+                append="Derived"
+                childidx="0"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="T_RH"/>
+        </operands>
      </derived>
 </derived_parameters>
