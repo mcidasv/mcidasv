@@ -4061,8 +4061,7 @@
             <category append="Derived" childidx="0" value="inherit"/>
         </categories>
         <operands categories="">
-            <params categories="GRID-2D-*;" p1="TEMP" p2="RH"/>
-            <params categories="GRID-3D-*;" p1="TEMP" p2="RH"/>
+            <paramgroup categories="" name="T_RH"/>
             <paramgroup categories="GRID-2D-*;" name="NUCAPS_T_RH"/>
         </operands>
     </derived>
