@@ -6234,5 +6234,23 @@
         <operands categories="">
             <paramgroup categories="" name="T_RH"/>
         </operands>
-     </derived>
+    </derived>
+    <derived
+        id="mixingratio"
+        description="Mixing ratio (from %N1% &amp; %N2%)"
+        label="Mixing ratio"
+        isdefault="true" 
+        isenduser="false"
+        formula="DerivedGridFactory.createMixingRatio (D1, D2)"
+		override="true">
+        <categories>
+            <category
+                value="inherit"
+                append="Derived"
+                childidx="0"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="T_RH"/>
+        </operands>
+    </derived> 
 </derived_parameters>
