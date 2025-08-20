@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractButton;
 import javax.swing.GroupLayout;
@@ -154,6 +155,8 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     private JPanel panelASCII = new JPanel();
     private JPanel panelImage = new JPanel();
     private final JTextComponent textMissing = new JTextField();
+
+    private static File lastDir = null;
     
     private final List<TwoFacedObject> listByteFormat = CollectionHelpers.list(
         new TwoFacedObject("1-byte unsigned integer", HeaderInfo.kFormat1ByteUInt),
@@ -749,11 +752,30 @@ public class FlatFileChooser extends IdvChooser implements Constants {
      * @return Selected data file.
      */
     private static File getDataFile(File thisFile) {
+	    Preferences prefs = Preferences.userNodeForPackage(FlatFileChooser.class);
+
+        // If no file provided, try in-memory lastDir first
+        if (thisFile == null && lastDir != null) {
+            thisFile = lastDir;
+        }
+
+        // If still nothing, fall back to stored preference
+        if (thisFile == null) {
+            String storedDir = prefs.get("flatfile.lastDir", null);
+            if (storedDir != null) {
+                thisFile = new File(storedDir);
+            }
+        }
+
         JFileChooser fileChooser = new JFileChooser(thisFile);
         fileChooser.setMultiSelectionEnabled(false);
         int status = fileChooser.showOpenDialog(null);
         if (status == JFileChooser.APPROVE_OPTION) {
             thisFile = fileChooser.getSelectedFile();
+            // Save directory in memory (for same session)
+            lastDir = thisFile.getParentFile();
+            // Save directory in preferences (for next session)
+            prefs.put("flatfile.lastDir", lastDir.getAbsolutePath());
         }
         return thisFile;
     }
