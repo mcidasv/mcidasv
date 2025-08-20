@@ -46,6 +46,7 @@ import visad.georef.EarthLocationTuple;
 
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -152,29 +153,30 @@ public class CursorReadoutWindow {
         JComponent contents   = (JComponent) vm.getContents();
         Rectangle  b          = contents.bounds();
         Point      loc        = contents.getLocationOnScreen();
-        Dimension  screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        int        left       = loc.x;
-        if (left < 0) {
-            left = 0;
+        // Usable area (excludes taskbar, etc.)
+        Rectangle usableBounds = GraphicsEnvironment
+            .getLocalGraphicsEnvironment()
+            .getMaximumWindowBounds();
+
+        int left = loc.x;
+        if (left < usableBounds.x) {
+            left = usableBounds.x;
         }
 
         int right = left + window.getBounds().width;
-        if (right > screenSize.width) {
-            left += screenSize.width - right;
+        if (right > usableBounds.x + usableBounds.width) {
+            left = usableBounds.x + usableBounds.width - window.getBounds().width;
         }
 
-
-        int top    = loc.y + contents.bounds().height;
+        int top = loc.y + b.height;
         int bottom = top + window.getBounds().height;
 
-        if (bottom > screenSize.height) {
-            top += screenSize.height - bottom - 10;
+        if (bottom > usableBounds.y + usableBounds.height) {
+            top = usableBounds.y + usableBounds.height - window.getBounds().height - 10;
         }
 
-
         window.setLocation(left, top);
-
     }
 
     /**
