@@ -5810,9 +5810,8 @@ public class GuiUtils extends LayoutUtil {
             public void focusGained(FocusEvent e) {}
             public void focusLost(FocusEvent e) {
                 if (dialogArray[0] != null) {
-                    dialogArray[0].dispose();
+                    SwingUtilities.invokeLater(dialogArray[0]::dispose);
                 }
-                dialogArray[0] = null;
             }
         });
         KeyListener keyListener = new KeyAdapter() {
@@ -5820,9 +5819,8 @@ public class GuiUtils extends LayoutUtil {
                 if ((ke.getKeyCode() == KeyEvent.VK_ENTER)
                         || (ke.getKeyCode() == KeyEvent.VK_ESCAPE)) {
                     if (dialogArray[0] != null) {
-                        dialogArray[0].dispose();
+                        SwingUtilities.invokeLater(dialogArray[0]::dispose);
                     }
-                    dialogArray[0] = null;
                 }
             }
         };
@@ -5841,9 +5839,8 @@ public class GuiUtils extends LayoutUtil {
                 closeBtn.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent ae) {
                         if (dialogArray[0] != null) {
-                            dialogArray[0].dispose();
+                            SwingUtilities.invokeLater(dialogArray[0]::dispose);
                         }
-                        dialogArray[0] = null;
                     }
                 });
                 JComponent panel = leftCenter(GuiUtils.top(closeBtn), slider);
