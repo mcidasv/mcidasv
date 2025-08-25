@@ -62,6 +62,7 @@ public class DataSourceFactory {
         dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_DNB");
         dataSourceClassList.add("edu.wisc.ssec.hydra.data.SIPS_VIIRS_FSN");
         dataSourceClassList.add("edu.wisc.ssec.hydra.data.CLAVRX_VIIRS_DataSource");
+        dataSourceClassList.add("edu.wisc.ssec.hydra.data.PACEDataSource");
     }
 
     public DataSource createDataSource(File[] files) throws Exception {
