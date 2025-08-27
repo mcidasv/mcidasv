@@ -193,6 +193,10 @@ public abstract class DataSource {
             desc = "CrIS_SNDR";
         } else if (filename.startsWith("SATMS_npp") || filename.startsWith("GATMO-SATMS_npp")) {
             desc = "ATMS SDR";
+        } else if (filename.startsWith("SATMS_j01") || filename.startsWith("GATMO-SATMS_j01")) {
+            desc = "ATMS SDR";
+        } else if (filename.startsWith("SATMS_j02") || filename.startsWith("GATMO-SATMS_j02")) {
+            desc = "ATMS SDR";
         } else if (filename.contains("L1B.AIRS_Rad")) {
             desc = "AIRS L1B";
         } else if (filename.startsWith("IASI_xxx_1C")) {
