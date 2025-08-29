@@ -1406,6 +1406,7 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
                     if (useSpeedForColor || coloredByAnother) {
                         Range compRange = ranges[ranges.length - 1];
                         flowColorRange = compRange;
+						setRange(compRange);
                     }
 
                     if ( !Double.isInfinite(max) && !Double.isInfinite(min)) {
