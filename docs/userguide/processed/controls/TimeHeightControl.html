@@ -32,8 +32,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TimeHeig
 <div class="pagesubtitle">Overview</div>
 <p>A Time/Height Display is a display of samples of a 3D parameter along a vertical
   profile line from top to bottom of the available data, with time as the independent
-  coordinate (X-axis). Dependent on the field used in the display, available display options include Contour, Color Shaded, Flow, and Wind Barb Time/Height Displays. Note that the options in the Layer Controls will differ dependent on the field used to create the display.</p>
-<div class="images"><img src="images/TimeHeightControlGui.gif" alt="Image 1: Time-Height Display and Controls Window" ><br>
+coordinate (X-axis). Dependent on the field used in the display, available display options include Contour, Color-Filled, Color Shaded, Flow, and Wind Barb Time/Height Displays. Note that the options in the Layer Controls will differ dependent on the field used to create the display.</p>
+<div class="images"><img src="images/TimeHeightControlGui.gif" width="472" height="529" alt="Image 1: Time/Height Display and Controls Window"/><br>
 <span class="caption">Image 1: Time/Height Display and Controls Window</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
@@ -47,6 +47,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TimeHeig
       pointer is moved over the color bar, the value at a particular color is
       shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows for opening the <a href="../tools/ColorTableEditor.html">Color
     Table Editor</a>, changing the range, selecting other color tables, etc.</li>
+  <li class="propertylistitem"><strong>Smoothing -</strong> Smooths the display. There are seven types of smoothing: None, 5-point, 9-point, Gaussian Weighted, Cressman Weighted, Circular Aperture, and Rectangular Aperture. The amount of smoothness can be set for all except the 5 and 9-point smoothers. The higher the amount, the smoother the display. For the Cressman, Circular and Rectangular aperture smoothing types.  This item is available with Contour and Color-Filled Time/Height Displays.</li>
   <li class="propertylistitem"><strong>Latest Data on Left -</strong> Reorders
     the X-axis of the display to show the latest data on the left when checked,
     and on the right when unchecked.</li>
@@ -63,6 +64,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TimeHeig
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Time/Height Display -</strong> Allows the user to change many aspects of the display shown in both the Main Display window, and in the <strong>Layer Controls</strong> tab of the Data Explorer.</li>
   <li class="propertylistitem"><strong>Probe -</strong> Allows the user to change many display preferences of the probe, see the <a href="Chart.html#viewprobe"><strong>View-&gt;Probe</strong></a> menu option on the Charts page.</li>
+  <li class="propertylistitem"><strong>Change Altitude Unit -</strong> Allows the user to switch the vertical unit used in the display between meters (m) and pressure (hPa).</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
