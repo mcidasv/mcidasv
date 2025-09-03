@@ -1689,12 +1689,19 @@ public class DrawingControl extends DisplayControlImpl {
                     GuiUtils.filler());
 
             JPanel globalWidthPanel = addGlobalWidthPanel();
-            contents = GuiUtils.centerBottom(contents,
+
+            JComponent toolbar = GuiUtils.leftRight(
                     GuiUtils.label("Z Position: ",
-                            zPositionPanel));
-            contents = GuiUtils.centerBottom(contents,
+                            zPositionPanel),
                     GuiUtils.label("Global Line Width: ",
-                            globalWidthPanel));
+                            globalWidthPanel)
+            );
+
+            contents = GuiUtils.centerBottom(contents,
+                    toolbar);
+//            contents = GuiUtils.leftCenter(contents,
+//                    GuiUtils.label("Global Line Width: ",
+//                            globalWidthPanel));
             return GuiUtils.centerBottom(contents, msgLabel);
         }
 
@@ -1703,29 +1710,34 @@ public class DrawingControl extends DisplayControlImpl {
 
     // McIDAS Inquiry #3212-3141
     private JPanel addGlobalWidthPanel() {
-        JButton applyToAllBtn = new JButton("Apply");
-        JTextField globalWidthText = new JTextField();
+        JTextField globalWidthText = new JTextField(5);
         globalWidthText.setText(String.valueOf(lineWidth));
-        globalWidthText.setToolTipText("Enter an integer value between 1 and 10");
+        setGlobalLineWidth(lineWidth);
+        globalWidthText.setToolTipText("Enter an integer value between 1 and 10 and press return");
 
-        applyToAllBtn.addActionListener(new ActionListener() {
+        globalWidthText.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 float newWidth = Float.parseFloat(globalWidthText.getText());
-
-                if (newWidth < 1) newWidth = 1;
-                if (newWidth > 10) newWidth = 10;
-
-                // crude rounding
-                newWidth = ((float) ((int) newWidth));
-
-                for (Object glyph : glyphs)
-                    ((PolyGlyph) glyph).setLineWidth(newWidth);
-
-                setLineWidth((int) newWidth);
+                setGlobalLineWidth(newWidth);
             }
         });
+        JPanel outPanel = new JPanel();
+        outPanel.add(globalWidthText);
+        return outPanel;
+    }
 
-        return GuiUtils.hgrid(globalWidthText, applyToAllBtn);
+    private void setGlobalLineWidth(float value) {
+        float newWidth = value;
+        if (newWidth < 1) newWidth = 1;
+        if (newWidth > 10) newWidth = 10;
+
+        // crude rounding
+        newWidth = ((float) ((int) newWidth));
+
+        for (Object glyph : glyphs)
+            ((PolyGlyph) glyph).setLineWidth(newWidth);
+
+        setLineWidth((int) newWidth);
     }
 
 
