@@ -30,6 +30,8 @@ package ucar.unidata.idv.control;
 
 import org.python.util.PythonInterpreter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -39,6 +41,7 @@ import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.idv.ControlContext;
+import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.drawing.DrawingCommand;
 import ucar.unidata.idv.control.drawing.DrawingGlyph;
@@ -81,16 +84,7 @@ import visad.VisADRay;
 import visad.georef.EarthLocation;
 
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -102,6 +96,7 @@ import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -201,6 +196,7 @@ public class DrawingControl extends DisplayControlImpl {
     /** The current coordinate type */
     private int coordType = DrawingGlyph.COORD_LATLON;
 
+    private static final Logger logger = LoggerFactory.getLogger(DisplayControl.class);
 
     /** The current line width */
     private int lineWidth = 1;
@@ -1691,14 +1687,45 @@ public class DrawingControl extends DisplayControlImpl {
         if (displayOnly) {
             zPositionPanel = GuiUtils.hgrid(doMakeZPositionSlider(),
                     GuiUtils.filler());
+
+            JPanel globalWidthPanel = addGlobalWidthPanel();
             contents = GuiUtils.centerBottom(contents,
                     GuiUtils.label("Z Position: ",
                             zPositionPanel));
+            contents = GuiUtils.centerBottom(contents,
+                    GuiUtils.label("Global Line Width: ",
+                            globalWidthPanel));
             return GuiUtils.centerBottom(contents, msgLabel);
         }
 
         return contents;
+    }
 
+    // McIDAS Inquiry #3212-3141
+    private JPanel addGlobalWidthPanel() {
+        JButton applyToAllBtn = new JButton("Apply");
+        JTextField globalWidthText = new JTextField();
+        globalWidthText.setText(String.valueOf(lineWidth));
+        globalWidthText.setToolTipText("Enter an integer value between 1 and 10");
+
+        applyToAllBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                float newWidth = Float.parseFloat(globalWidthText.getText());
+
+                if (newWidth < 1) newWidth = 1;
+                if (newWidth > 10) newWidth = 10;
+
+                // crude rounding
+                newWidth = ((float) ((int) newWidth));
+
+                for (Object glyph : glyphs)
+                    ((PolyGlyph) glyph).setLineWidth(newWidth);
+
+                setLineWidth((int) newWidth);
+            }
+        });
+
+        return GuiUtils.hgrid(globalWidthText, applyToAllBtn);
     }
 
 
@@ -2049,7 +2076,7 @@ public class DrawingControl extends DisplayControlImpl {
      */
     public static JComboBox doMakeLineWidthBox(int lineWidth) {
         int[]  widths = {
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13
         };
         Vector values = new Vector();
         for (int i = 0; i < widths.length; i++) {
