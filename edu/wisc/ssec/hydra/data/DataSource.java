@@ -30,6 +30,8 @@ package edu.wisc.ssec.hydra.data;
 
 import edu.wisc.ssec.adapter.MultiSpectralData;
 import edu.wisc.ssec.hydra.Hydra;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.util.Range;
 
 import java.io.File;
@@ -251,6 +253,8 @@ public abstract class DataSource {
         return makeDateTimeStamp(millis);
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(DataSource.class);
+
     public static Date getDateTimeFromFilename(String filename) {
         Date datetime = null;
 
@@ -464,6 +468,12 @@ public abstract class DataSource {
                 int idx = 15;
                 String yyyyMMddHHmm = filename.substring(idx, idx + 13);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HHmm");
+                datetime = sdf.parse(yyyyMMddHHmm);
+            } else if (filename.startsWith("PACE")) {
+                // PACE_OCI.20240902T180431.L1B.V2.nc
+                int idx = 9;
+                String yyyyMMddHHmm = filename.substring(idx, idx + 15);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
                 datetime = sdf.parse(yyyyMMddHHmm);
             }
         } catch (Exception e) {

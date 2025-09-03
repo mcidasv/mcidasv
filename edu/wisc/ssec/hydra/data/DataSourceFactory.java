@@ -28,6 +28,9 @@
 
 package edu.wisc.ssec.hydra.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -65,6 +68,8 @@ public class DataSourceFactory {
         dataSourceClassList.add("edu.wisc.ssec.hydra.data.PACEDataSource");
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceFactory.class);
+
     public DataSource createDataSource(File[] files) throws Exception {
         DataSource dataSource = null;
 
@@ -86,7 +91,7 @@ public class DataSourceFactory {
             }
         }
         if (dataSource == null) {
-            throw new Exception("No suitable DataSource fournd for: " + files[0]);
+            throw new Exception("No suitable DataSource found for: " + files[0]);
         }
 
         synchronized (dataSourceList) {

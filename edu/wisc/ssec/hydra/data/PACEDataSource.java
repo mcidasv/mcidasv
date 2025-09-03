@@ -28,9 +28,12 @@
 
 package edu.wisc.ssec.hydra.data;
 
+import edu.wisc.ssec.adapter.MultiDimensionReader;
 import edu.wisc.ssec.adapter.MultiDimensionSubset;
 import edu.wisc.ssec.adapter.NetCDFFile;
 import edu.wisc.ssec.adapter.SwathSoundingData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ import java.util.HashMap;
 
 
 public class PACEDataSource extends AtmSoundingDataSource {
-
+    private static final Logger logger = LoggerFactory.getLogger(PACEDataSource.class);
 
     public PACEDataSource(File directory) throws Exception {
         this(directory.listFiles());
@@ -50,6 +53,15 @@ public class PACEDataSource extends AtmSoundingDataSource {
 
     public PACEDataSource(File[] files) throws Exception {
         super(files);
+    }
+
+    public SwathSoundingData buildAdapter(MultiDimensionReader reader, String xtrack, String track, String levelIndex, String levelsName, float[] levelValues,
+                                          String array, String range, String geoXtrack, String geoTrack,
+                                          String lonArray, String latArray, String[] arrayDims, String[] lonArrayDims, String[] latArrayDims,
+                                          String fillValueName) {
+        // see AtmSoundingDataSource#buildAdapter for the different sorts of things we'll
+        // need to provide
+        return super.buildAdapter(reader, xtrack, track, levelIndex, levelsName, levelValues, array, range, geoXtrack, geoTrack, lonArray, latArray, arrayDims, lonArrayDims, latArrayDims, fillValueName);
     }
 
     void init(File[] files) throws Exception {
@@ -94,9 +106,8 @@ public class PACEDataSource extends AtmSoundingDataSource {
     }
 
     public boolean canUnderstand(File[] files) {
-        if (files[0].getName().startsWith("PACE") && files[0].getName().contains("L1B") && files[0].getName().endsWith(".nc")) {
-            return true;
-        }
-        return false;
+        return files[0].getName().startsWith("PACE")
+               && files[0].getName().contains("L1B")
+               && files[0].getName().endsWith(".nc");
     }
 }

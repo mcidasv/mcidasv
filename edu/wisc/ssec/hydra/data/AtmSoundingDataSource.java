@@ -38,6 +38,8 @@ import edu.wisc.ssec.adapter.AtmSoundingAdapter;
 import edu.wisc.ssec.adapter.SwathSoundingData;
 import edu.wisc.ssec.adapter.MultiDimensionReader;
 import edu.wisc.ssec.adapter.RangeProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.VisADException;
 import visad.Data;
 
@@ -46,6 +48,8 @@ import java.util.Date;
 
 
 public class AtmSoundingDataSource extends DataSource {
+
+    private static final Logger logger = LoggerFactory.getLogger(AtmSoundingDataSource.class);
 
     String dateTimeStamp = null;
 
