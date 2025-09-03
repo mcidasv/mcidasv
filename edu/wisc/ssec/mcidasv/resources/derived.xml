@@ -6252,4 +6252,42 @@
             <paramgroup categories="" name="T_RH"/>
         </operands>
     </derived> 
+    <derived description="Direction (from %N1% and %N2%)" formula="dirFromUandV(D1,D2)" id="dirFromUV" isdefault="true" isenduser="false"  override="true">
+        <categories>
+            <category value="display:imagedisplay"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:multidisplay.statistics"/>
+            <category value="display:timelonshade"/>
+            <category value="display:vprofile1"/>
+            <category value="display:multidisplay.readouttable"/>
+            <category value="display:imagecontour"/>
+            <category value="display:timeheightshade"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:multidisplay.histogram"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:contourxsfilled"/>
+            <category value="display:contourxs"/>
+            <category value="display:colorxs"/>
+            <category value="display:timeheightcf"/>
+            <category value="display:probe"/>
+            <category value="display:multidisplay.timeseries"/>
+            <category value="display:dataxs"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:multidisplay.table"/>
+            <category value="display:timeheight"/>
+            <category value="display:timelatshade"/>
+            <category value="display:vprofile"/>
+            <category append="Derived" childidx="0" value="inherit"/>
+        </categories>
+        <operands categories="GRID-2D*; - GRID-3D-*">
+            <paramgroup categories="" name="u_v"/>
+            <paramgroup categories="" name="GridRelative_uv"/>
+        </operands>
+    </derived>
 </derived_parameters>
