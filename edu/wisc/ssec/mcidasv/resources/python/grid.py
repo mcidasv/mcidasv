@@ -948,3 +948,13 @@ def gridNormalizer(grid, user_norm="Max"):
       return scalerG
   else:
       return fillNormalizer(grid)
+
+def dirFromUandV(u, v):
+    # calculate direction from u and v wind components
+    radDir = atan2(-u, -v)
+    # convert radians to degrees
+    degDir = radDir * (180/3.14159265359)
+    # convert to 0 - 360 degrees
+    degDir2 = (noUnit(degDir) + 360) % 360
+    # allow to probe with units of degrees
+    return newUnit(degDir2, 'degrees', 'degrees')
