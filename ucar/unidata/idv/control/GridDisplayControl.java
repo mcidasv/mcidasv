@@ -760,7 +760,7 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
      * @throws VisADException if there was a problem creating a new
      *                        {@link TrivialMapProjection}.
      */
-    private static MapProjection validateProjection(TrivialMapProjection mp)
+    private MapProjection validateProjection(TrivialMapProjection mp)
         throws VisADException
     {
         RealTupleType tupType = mp.getReference();
@@ -806,7 +806,7 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
      * @see LatLonPointImpl#lonNormal(double)
      * @see LatLonPointImpl#latNormal(double)
      */
-    public static Rectangle2D normalizeRectangle(final Rectangle2D bb) {
+    public Rectangle2D normalizeRectangle(final Rectangle2D bb) {
         Rectangle2D r2d = null;
         if (bb != null) {
             float normalizedMinLon = (float)lonNormal((float)bb.getX());
