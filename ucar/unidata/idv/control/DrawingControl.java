@@ -1683,25 +1683,22 @@ public class DrawingControl extends DisplayControlImpl {
      * @return the shapes panel
      */
     protected JComponent doMakeShapesPanel() {
-        JComponent contents = GuiUtils.inset(doMakeTablePanel(), 4);
+        JComponent contents = GuiUtils.inset(doMakeTablePanel(), 20);
         if (displayOnly) {
             zPositionPanel = GuiUtils.hgrid(doMakeZPositionSlider(),
                     GuiUtils.filler());
 
             JPanel globalWidthPanel = addGlobalWidthPanel();
 
-            JComponent toolbar = GuiUtils.leftRight(
-                    GuiUtils.label("Z Position: ",
+            JComponent toolbar = GuiUtils.topBottom(
+                    GuiUtils.label(" Z Position: ",
                             zPositionPanel),
-                    GuiUtils.label("Global Line Width: ",
-                            globalWidthPanel)
+                    GuiUtils.left(globalWidthPanel)
             );
 
             contents = GuiUtils.centerBottom(contents,
                     toolbar);
-//            contents = GuiUtils.leftCenter(contents,
-//                    GuiUtils.label("Global Line Width: ",
-//                            globalWidthPanel));
+
             return GuiUtils.centerBottom(contents, msgLabel);
         }
 
@@ -1710,6 +1707,7 @@ public class DrawingControl extends DisplayControlImpl {
 
     // McIDAS Inquiry #3212-3141
     private JPanel addGlobalWidthPanel() {
+        JLabel label = new JLabel("Global Line Width: ");
         JTextField globalWidthText = new JTextField(5);
         globalWidthText.setText(String.valueOf(lineWidth));
         setGlobalLineWidth(lineWidth);
@@ -1722,6 +1720,7 @@ public class DrawingControl extends DisplayControlImpl {
             }
         });
         JPanel outPanel = new JPanel();
+        outPanel.add(label);
         outPanel.add(globalWidthText);
         return outPanel;
     }
