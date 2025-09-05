@@ -1707,21 +1707,24 @@ public class DrawingControl extends DisplayControlImpl {
 
     // McIDAS Inquiry #3212-3141
     private JPanel addGlobalWidthPanel() {
-        JLabel label = new JLabel("Global Line Width: ");
-        JTextField globalWidthText = new JTextField(5);
-        globalWidthText.setText(String.valueOf(lineWidth));
-        setGlobalLineWidth(lineWidth);
-        globalWidthText.setToolTipText("Enter an integer value between 1 and 10 and press return");
-
-        globalWidthText.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                float newWidth = Float.parseFloat(globalWidthText.getText());
-                setGlobalLineWidth(newWidth);
-            }
-        });
         JPanel outPanel = new JPanel();
-        outPanel.add(label);
-        outPanel.add(globalWidthText);
+        if (isProbsevere) {
+            JLabel label = new JLabel("Global Line Width: ");
+            JTextField globalWidthText = new JTextField(5);
+            globalWidthText.setText(String.valueOf(lineWidth));
+            setGlobalLineWidth(lineWidth);
+            globalWidthText.setToolTipText("Enter an integer value between 1 and 10 and press return");
+
+            globalWidthText.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    float newWidth = Float.parseFloat(globalWidthText.getText());
+                    setGlobalLineWidth(newWidth);
+                }
+            });
+
+            outPanel.add(label);
+            outPanel.add(globalWidthText);
+        }
         return outPanel;
     }
 
@@ -3273,6 +3276,7 @@ public class DrawingControl extends DisplayControlImpl {
      */
     public void setNoteText(String n) {
         initNoteText = n;
+        noteTextArea.setEditable(false);
         if (noteTextArea != null) {
             noteTextArea.setText(n);
         }
