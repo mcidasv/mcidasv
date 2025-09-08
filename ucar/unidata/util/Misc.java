@@ -304,9 +304,8 @@ public class Misc {
         }
         if (deg) {
             // McIDAS Inquiry #2905-3141
-            // this is a placeholder, I couldn't get \u00B0 / ° to render correctly
-            formatted += "*";
-            logger.info("3141 " + formatted.trim());
+            // \u00B0 is unicode for °
+            formatted += "\u00B0";
         }
         return formatted.trim();
     }

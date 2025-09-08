@@ -40,6 +40,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -54,6 +55,7 @@ import ucar.unidata.gis.maps.LatLonLabelData;
 import ucar.unidata.idv.control.MapDisplayControl;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlObjectStore;
 import visad.VisADException;
@@ -65,6 +67,9 @@ import visad.VisADException;
 public class LatLonLabelPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+
+    private static final Logger logger =
+            Logger.getLogger(LatLonLabelPanel.class.getName());
 
 	/** flag for ignoring events */
     private boolean ignoreEvents = false;
@@ -138,6 +143,11 @@ public class LatLonLabelPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if ( !ignoreEvents) {
                     latLonLabelData.setVisible(onOffCbx.isSelected());
+
+                    // McIDAS Inquiry #2905-3141
+                    // As Bob noted in Request 4, changing the font induces an update
+                    // which results in rendering the degree sign
+                    latLonLabelData.setFont(fontSelector.getFont());
                 }
             }
         });
