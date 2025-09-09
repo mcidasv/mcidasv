@@ -36,24 +36,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.logging.Logger;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import org.python.core.PyObject;
 
+import ucar.unidata.ui.LatLonLabelPanel;
 import visad.ConstantMap;
 import visad.Data;
 import visad.VisADException;
@@ -201,7 +192,9 @@ public class HydraCombo extends HydraControl {
     
     private JComponent getComboTab() {
         computeButton.addActionListener(e -> {
-            comboPanel.queueCombination();
+            // proceed with computation only if operators
+            // are defined correctly
+            if (!comboPanel.queueCombination()) return;
             computeButton.setEnabled(false);
             showWaitCursor();
         });
@@ -269,6 +262,9 @@ public class HydraCombo extends HydraControl {
         private final CombineOperations abcd;
         
         private final MultiSpectralDisplay display;
+
+        private static final Logger logger =
+                Logger.getLogger(HydraCombo.class.getName());
         
         private final HydraCombo control;
 
@@ -399,10 +395,62 @@ public class HydraCombo extends HydraControl {
             return panel;
         }
         
-        public void queueCombination() {
+        public boolean queueCombination() {
+
+            // McIDAS Inquiry #3078-3141
+            int[] operators = {
+                    ab.getBox().getSelectedIndex(),
+                    abcd.getBox().getSelectedIndex(),
+                    cd.getBox().getSelectedIndex()};
+
+            int [] missing = {0, 0, 0};
+            for (int i = 0; i < operators.length; i++) {
+                int operator = operators[i];
+                logger.info("Idx: " + operator);
+                if (operator == 4) missing[i] = 1;
+            }
+            int missingCount = Arrays.stream(missing).sum();
+            if (missingCount != 0) {
+                String message = "All operators must be defined! ";
+
+                if (missingCount == 1) {
+                    message += "Missing operator #";
+
+                    for (int i = 0; i < missing.length; i++) {
+                        if (missing[i] != 0) {
+                            message += (i + 1) + ".";
+                            break;
+                        }
+                    }
+                } else if (missingCount == 2) {
+                    message += "Missing operators #";
+
+                    int cnt = 0;
+                    for (int i = 0; i < missing.length; i++) {
+                        if (missing[i] != 0 && cnt == 0) {
+                            message += (i + 1) + " and #";
+                            cnt += 1;
+                        } else if (missing[i] != 0) {
+                            message += (i + 1) + ".";
+                        }
+                    }
+                } else {
+                    message += "Missing operators #1, #2, and #3.";
+                }
+
+                JOptionPane.showMessageDialog(
+                        new JFrame(),
+                        message,
+                        "Missing Operator",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return false;
+            }
+
             String jy = "combo="+abcd.getJython();
             System.err.println("jython=" + jy);
             console.queueLine(jy);
+            return true;
         }
         
         public Hashtable<String, Object> persistData() {
