@@ -37,7 +37,7 @@
 
 
     -->
-<!--    <property name="uiscale" value="1"/>-->
+    <property name="uiscale" value="1"/>
     <!--
       Used to control the "mcidasv.darkmode" property via the Ant commandline (like uiscale).
       Default behavior is to disable the dark mode L&F.
