@@ -394,57 +394,39 @@ public class HydraCombo extends HydraControl {
             panel.add(new JLabel(")"));
             return panel;
         }
+
+        private void showUndefinedOperatorsBox(String messageModifier) {
+            JOptionPane.showMessageDialog(
+                    new JFrame(),
+                    messageModifier,
+                    "Missing Operator",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
         
         public boolean queueCombination() {
-
+            String notDefined = "-----";
             // McIDAS Inquiry #3078-3141
-            int[] operators = {
-                    ab.getBox().getSelectedIndex(),
-                    abcd.getBox().getSelectedIndex(),
-                    cd.getBox().getSelectedIndex()};
 
-            int [] missing = {0, 0, 0};
-            for (int i = 0; i < operators.length; i++) {
-                int operator = operators[i];
-                logger.info("Idx: " + operator);
-                if (operator == 4) missing[i] = 1;
-            }
-            int missingCount = Arrays.stream(missing).sum();
-            if (missingCount != 0) {
-                String message = "All operators must be defined! ";
-
-                if (missingCount == 1) {
-                    message += "Missing operator #";
-
-                    for (int i = 0; i < missing.length; i++) {
-                        if (missing[i] != 0) {
-                            message += (i + 1) + ".";
-                            break;
-                        }
-                    }
-                } else if (missingCount == 2) {
-                    message += "Missing operators #";
-
-                    int cnt = 0;
-                    for (int i = 0; i < missing.length; i++) {
-                        if (missing[i] != 0 && cnt == 0) {
-                            message += (i + 1) + " and #";
-                            cnt += 1;
-                        } else if (missing[i] != 0) {
-                            message += (i + 1) + ".";
-                        }
-                    }
-                } else {
-                    message += "Missing operators #1, #2, and #3.";
+            if (!a.getValue().equals(notDefined) && !b.getValue().equals(notDefined)) {
+                if (ab.getBox().getSelectedIndex() == 4) {
+                    showUndefinedOperatorsBox("Expected an operator between arguments #1 and #2");
+                    return false;
                 }
+            }
 
-                JOptionPane.showMessageDialog(
-                        new JFrame(),
-                        message,
-                        "Missing Operator",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                return false;
+            if (!c.getValue().equals(notDefined)) {
+                if (abcd.getBox().getSelectedIndex() == 4) {
+                    showUndefinedOperatorsBox("Expected an operator between arguments #2 and #3");
+                    return false;
+                }
+            }
+
+            if (!c.getValue().equals(notDefined) && !d.getValue().equals(notDefined)) {
+                if (cd.getBox().getSelectedIndex() == 4) {
+                    showUndefinedOperatorsBox("Expected an operator between arguments #3 and #4");
+                    return false;
+                }
             }
 
             String jy = "combo="+abcd.getJython();
