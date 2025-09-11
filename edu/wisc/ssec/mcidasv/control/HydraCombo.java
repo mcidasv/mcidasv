@@ -37,7 +37,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Logger;
+
+import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -263,8 +266,7 @@ public class HydraCombo extends HydraControl {
         
         private final MultiSpectralDisplay display;
 
-        private static final Logger logger =
-                Logger.getLogger(HydraCombo.class.getName());
+        private static final Logger logger = LoggerFactory.getLogger(HydraCombo.class);
         
         private final HydraCombo control;
 
