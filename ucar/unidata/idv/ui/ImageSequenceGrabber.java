@@ -2423,7 +2423,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                             age.addFrame(image);
                             age.finish();
                         } else {
-                            age.setDelay((int) (displayRate * 1000));
+                            // restore milliseconds per frame
+                            age.setDelay((int)(1000.0 / displayRate));
                             age.addFrame(image);
                         }
 
