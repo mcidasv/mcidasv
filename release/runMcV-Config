@@ -1,4 +1,4 @@
--#!/bin/sh
+#!/bin/sh
 
 # _file "path" : print the file of a path.
 function _file(){
@@ -87,7 +87,7 @@ if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
   cp "$dirname/runMcV.prefs" "${MCV_USERPATH}/runMcV.prefs"
 fi
 
-JAVA_FLAGS= -Dsun.java2d.uiScale=1
+JAVA_FLAGS=
 
 # Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
