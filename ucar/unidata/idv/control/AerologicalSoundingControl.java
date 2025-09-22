@@ -31,6 +31,8 @@ package ucar.unidata.idv.control;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ucar.unidata.data.DataUtil;
+import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.HodographViewManager;
 import ucar.unidata.idv.SoundingViewManager;
@@ -55,15 +57,13 @@ import ucar.unidata.view.sounding.RealEvaluatorCell;
 import ucar.unidata.view.sounding.Sounding;
 
 import ucar.visad.UtcDate;
+import ucar.visad.VisADMath;
 import ucar.visad.display.*;
 
 import ucar.visad.functiontypes.AirTemperatureProfile;
 import ucar.visad.functiontypes.CartesianHorizontalWindOfPressure;
 import ucar.visad.functiontypes.DewPointProfile;
-import ucar.visad.quantities.AirPressure;
-import ucar.visad.quantities.AirTemperature;
-import ucar.visad.quantities.CartesianHorizontalWind;
-import ucar.visad.quantities.PolarHorizontalWind;
+import ucar.visad.quantities.*;
 
 import visad.*;
 
@@ -83,6 +83,7 @@ import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.*;
@@ -688,6 +689,10 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
                     AerologicalDisplay.POINTER_PRESSURE)) {
                 Real pressure = (Real) event.getNewValue();
                 pointerPresRef.setData(pressure);
+                if(windProfiles != null && tempProfiles != null){
+                    float rri = computeBulkRi(pressure, (FlatField) tempProfiles[currIndex], (FlatField)windProfiles[currIndex]);
+                    readoutTable.setBulkRi(new Real(rri));
+                }
                 readoutTable.setPressure(pressure);
             } else if (event.getPropertyName().equals(
                     AerologicalDisplay.CURSOR_TEMPERATURE)) {
@@ -960,6 +965,8 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
         dewProRef.setData(dewPro);
         tempProRef.setData(tempPro);
         windProRef.setData(windPro);
+        float blh = computeBLH((FlatField)tempPro);
+        readoutTable.setBlh(new Real(blh));
         updateLegendAndList();
     }
 
@@ -1047,6 +1054,11 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
         }
         soundingTable.setSoundings(tableSoundings);
         soundingTable.setCurrentSounding(currIndex);
+        //calculate BLH here and update sounding Table
+        float blh = computeBLH((FlatField) tempPros[0]);
+
+        readoutTable.setBlh(new Real(blh));
+
         if (viewTabs != null) {
             viewTabs.setEnabledAt(viewTabs.indexOfTab(HODOGRAPH_DISPLAY),
                                   haveWinds);
@@ -1054,6 +1066,141 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
 
 
         setSounding(currIndex);
+    }
+
+    /**
+     * Provides blh based on the temperature profile.
+     */
+    public float computeBLH(FlatField tempPros) throws VisADException, RemoteException {
+
+        //float blh = 0.0f;
+        if(tempPros.isMissing())
+            return Float.NaN;
+
+        if(Double.isNaN(Arrays.stream(tempPros.getValues()[0]).sum()))
+            return Float.NaN;
+
+        Set  domain = tempPros.getDomainSet();
+        Unit[] vtu = domain.getSetUnits();
+        float[][] domSamples = domain.getSamples(false);
+        boolean isDescending = false;
+        boolean    isPressure             = false;
+        boolean    isGeopotentialAltitude = false;
+        if ( !Unit.canConvert(vtu[0], CommonUnit.meter)) {  // other than height
+            if (Unit.canConvert(vtu[0], CommonUnits.MILLIBAR)) {
+                isPressure = true;
+                // pressure value domSamples smaller is higher
+                isDescending = domSamples[0][0] < domSamples[0][1];
+            } else if (Unit.canConvert(
+                    vtu[0], GeopotentialAltitude.getGeopotentialMeter())) {
+                isGeopotentialAltitude = true;
+                // altitude value domSamples smaller is lower
+                isDescending = domSamples[0][0] > domSamples[0][1];
+            } else {
+                throw new VisADException("unknown vertical coordinate");
+            }
+        }
+
+        float[] refVals = Set.copyFloats(domSamples)[0];
+        if (isPressure) {  // convert to altitude using standard atmos
+            CoordinateSystem vcs =DataUtil.getPressureToHeightCS( DataUtil.STD_ATMOSPHERE);
+            refVals = vcs.toReference(new float[][] {
+                    refVals
+            }, new Unit[] { vtu[0] })[0];
+            vtu[0]        = vcs.getReferenceUnits()[0];
+        } else if (isGeopotentialAltitude) {
+            refVals = GeopotentialAltitude.toAltitude(refVals, vtu[0],
+                    Gravity.newReal(), refVals, CommonUnit.meter,
+                    false);
+            vtu[0] = CommonUnit.meter;
+        }
+
+        //float[][] domFloats = Set.copyFloats(domSamples);
+        float[] altData = refVals; //cs.toReference(domFloats)[0];
+        int altStartIdx = 0;
+        int altEndIdx = 0;
+        // pressure value domFloats smaller is higher
+        //boolean isDescending = domFloats[0][0] < domFloats[0][1];
+        if(isDescending){
+            altEndIdx = altData.length-1;
+            while (Float.isNaN(altData[altStartIdx]) || altData[altStartIdx] > 5000) {
+                altStartIdx++;
+                if(altStartIdx >= altEndIdx)
+                    break;
+            }
+        } else {
+            //altStartIdx = altData.length-1;
+            while (Float.isNaN(altData[altEndIdx]) || altData[altEndIdx] < 5000) {
+                altEndIdx++;
+                if(altEndIdx > altData.length)
+                    break;
+            }
+        }
+
+        if(altStartIdx == altEndIdx)
+            return  Float.NaN;
+        FlatField dtempdp = (FlatField)tempPros.derivative(0);
+        float [] tempgrd = Arrays.copyOfRange(dtempdp.getFloats()[0], altStartIdx, altEndIdx);
+        float [] alt = Arrays.copyOfRange(altData, altStartIdx, altEndIdx);
+
+        int[] sortedIdx = QuickSort.sort(tempgrd);
+        int index = 0;
+        //if(Math.abs(tempgrd[0]) < tempgrd[sortedIdx.length-1])
+        //   index = sortedIdx.length-1;
+
+        return alt[sortedIdx[index]];
+    }
+
+    /**
+     * Provides bulk Richardsonn number based on the temperature profile.
+     */
+    public float computeBulkRi(Real pressure, FlatField tempPros, FlatField windPros) throws VisADException, RemoteException {
+        Unit   tempdomainUnit     = tempPros.getDomainUnits()[0];
+        Unit   winddomainUnit     = windPros.getDomainUnits()[0];
+
+        FlatField potTempPro =
+                (FlatField) PotentialTemperature.create(tempPros.getDomainSet(),
+                        tempPros);
+        float deltaH = 200;
+        Real alt = (Real)AirPressure.toAltitude(pressure);
+        if(tempdomainUnit.isConvertible(Pressure.getRealType().getDefaultUnit()) &&
+                winddomainUnit.isConvertible(GeopotentialAltitude.getGeopotentialMeter()) ) {
+            Real h1 = (Real) alt.add(new Real(100));
+            Real h2 = (Real) alt.subtract(new Real(100));
+            Real theta1 = (Real) potTempPro.evaluate((Real)AirPressure.fromAltitude(h1));
+            Real theta2 = (Real) potTempPro.evaluate((Real)AirPressure.fromAltitude(h2));
+            Data wind1 = windPros.evaluate((Real) GeopotentialAltitude.fromAltitude(h1));
+            Data wind2 = windPros.evaluate((Real) GeopotentialAltitude.fromAltitude(h2));
+            double u1 = ((RealTuple) wind1).getValues()[0] * Math.cos((float) ((RealTuple) wind1).getValues()[1]);
+            double v1 = ((RealTuple) wind1).getValues()[0] * Math.sin((float) ((RealTuple) wind1).getValues()[1]);
+            double u2 = ((RealTuple) wind2).getValues()[0] * Math.cos((float) ((RealTuple) wind2).getValues()[1]);
+            double v2 = ((RealTuple) wind2).getValues()[0] * Math.sin((float) ((RealTuple) wind2).getValues()[1]);
+            float deltaSpeed = (float) ((u1 - u2) * (u1 - u2) + (v1 - v2) * (v1 - v2));
+            float ri = (float) (9.8 * deltaH * (theta1.getValue() - theta2.getValue()) * 2
+                    / ((theta1.getValue() + theta2.getValue()) * deltaSpeed));
+
+            return ri;
+        } else if (tempdomainUnit.isConvertible(Pressure.getRealType().getDefaultUnit()) &&
+                winddomainUnit.isConvertible(Pressure.getRealType().getDefaultUnit()) ) {
+            Real h1 = (Real) alt.add(new Real(100));
+            Real h2 = (Real) alt.subtract(new Real(100));
+            Real theta1 = (Real) potTempPro.evaluate((Real)AirPressure.fromAltitude(h1));
+            Real theta2 = (Real) potTempPro.evaluate((Real)AirPressure.fromAltitude(h2));
+            Data wind1 = windPros.evaluate((Real) AirPressure.fromAltitude(h1));
+            Data wind2 = windPros.evaluate((Real) AirPressure.fromAltitude(h2));
+            double u1 = ((RealTuple) wind1).getValues()[0] * Math.cos((float) ((RealTuple) wind1).getValues()[1]);
+            double v1 = ((RealTuple) wind1).getValues()[0] * Math.sin((float) ((RealTuple) wind1).getValues()[1]);
+            double u2 = ((RealTuple) wind2).getValues()[0] * Math.cos((float) ((RealTuple) wind2).getValues()[1]);
+            double v2 = ((RealTuple) wind2).getValues()[0] * Math.sin((float) ((RealTuple) wind2).getValues()[1]);
+            float deltaSpeed = (float) ((u1 - u2) * (u1 - u2) + (v1 - v2) * (v1 - v2));
+            float ri = (float) (9.8 * deltaH * (theta1.getValue() - theta2.getValue()) * 2
+                    / ((theta1.getValue() + theta2.getValue()) * deltaSpeed));
+
+            return ri;
+        } else {
+
+            return 0.0f;
+        }
     }
 
     /**
@@ -1893,3 +2040,4 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
 
     }
 }
+
