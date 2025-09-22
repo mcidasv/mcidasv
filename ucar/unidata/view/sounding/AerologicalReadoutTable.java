@@ -154,6 +154,12 @@ public final class AerologicalReadoutTable extends JTable {
     private CinReadout cinReadout;
 
     /**
+	 * The boundary readout.
+	*/
+	private BoundaryLayerHeightReadout blhReadout;
+	private BulkRichardsonNumReadout bulkRiReadout;
+
+    /**
      * Constructs from nothing.
      *
      * @throws VisADException if a core VisAD failure occurs.
@@ -183,6 +189,8 @@ public final class AerologicalReadoutTable extends JTable {
             lclAltitudeReadout          = new LCLAltitudeReadout();
             capeReadout                 = new CapeReadout();
             cinReadout                  = new CinReadout();
+            blhReadout                  = new BoundaryLayerHeightReadout();
+			bulkRiReadout               = new BulkRichardsonNumReadout();
 
             // Background:
             tableModel.addRowEntry(new SeparatorRowEntry("Background:"));
@@ -245,6 +253,9 @@ public final class AerologicalReadoutTable extends JTable {
 
         tableModel.addRowEntry(new RealRowEntry(capeReadout, ""));
         tableModel.addRowEntry(new RealRowEntry(cinReadout, ""));
+        tableModel.addRowEntry(new SeparatorRowEntry("Boundary Layer:"));
+        tableModel.addRowEntry(new RealRowEntry(blhReadout, "    "));
+		tableModel.addRowEntry(new RealRowEntry(bulkRiReadout, "    "));
         setModel(tableModel);
 
         TableColumnModel columnModel = getColumnModel();
@@ -439,6 +450,22 @@ public final class AerologicalReadoutTable extends JTable {
      */
     public void setCin(Real cin) {
         cinReadout.setCin(cin);
+    }
+
+        /**
+     * Sets the profile BLH property.
+     * @param h       The new profile blh.
+     */
+    public void setBlh(Real h) {
+        blhReadout.setBlh(h);
+    }
+
+    /**
+     * Sets the profile Bulk Richardson property.
+     * @param h       The new profile ri.
+     */
+    public void setBulkRi(Real h) {
+        bulkRiReadout.setBulkRi(h);
     }
 
     /**
@@ -1383,6 +1410,59 @@ public final class AerologicalReadoutTable extends JTable {
                 setReal(cin);
             } catch (Exception e) {
                 System.err.println("Couldn't set CIN readout: " + e);
+            }
+        }
+    }
+    /**
+     * Provides support for boundary layer height readouts.
+     */
+    protected class BoundaryLayerHeightReadout extends MyReadout {
+
+        /**
+         * Constructs from nothing.
+         * @throws ParseException       Invalid internal unit specification.
+         */
+        public BoundaryLayerHeightReadout() throws ParseException {
+            super("Height", "m", 2);
+        }
+
+        /**
+         * Sets the value of the blh property.
+         * @param blh           The new value.
+         */
+        public void setBlh(Real blh) {
+
+            try {
+                setReal(blh);
+            } catch (Exception e) {
+                System.err.println("Couldn't set BLH readout: " + e);
+            }
+        }
+    }
+
+
+    /**
+     * Provides support for boundary layer Bulk Richardson Number.
+     */
+    protected class BulkRichardsonNumReadout extends MyReadout {
+
+        /**
+         * Constructs from nothing.
+         * @throws ParseException       Invalid internal unit specification.
+         */
+        public BulkRichardsonNumReadout() throws ParseException {
+            super("Bulk RiNumber", " ", 2);
+        }
+
+        /**
+         * Sets the value of the blh property.
+         * @param brn          The new value.
+         */
+        public void setBulkRi(Real brn) {
+            try {
+                setReal(brn);
+            } catch (Exception e) {
+                System.err.println("Couldn't set BLH readout: " + e);
             }
         }
     }
