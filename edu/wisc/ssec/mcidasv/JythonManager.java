@@ -91,29 +91,9 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
     public JythonShell createShell() {
         if (jythonShell == null) {
             jythonShell = new JythonShell(getIdv());
-            
-        }
-        jythonShell.toFront();
-        return jythonShell;
-    }
-
-    public JythonShell createShellWithScript(String file) {
-        if (jythonShell == null) {
-            jythonShell = new JythonShell(getIdv());
 
         }
         jythonShell.toFront();
-        String cmd = "";
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                cmd += line + "\n";
-            }
-        } catch (IOException e) {
-            logger.info("Error reading scripting file: " + e.getMessage());
-        }
-
-        jythonShell.eval(cmd);
         return jythonShell;
     }
     
@@ -247,14 +227,21 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         menuItem.addActionListener(e -> createShell());
         menuItems.add(menuItem);
 
-        menuItem = new JMenuItem("Load Jython Script");
+        // McIDAS Inquiry #2701-3141
+        menuItem = new JMenuItem("Load Jython Script...");
         menuItem.setToolTipText("Select a Jython script to run");
         menuItem.addActionListener(e -> {
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Python Files (*.py)", "py");
-            String file = FileManager.getReadFile("Load Script", filter);
-            createShellWithScript(file);
+            createShell();
+            jythonShell.loadScript();
         });
+        menuItems.add(menuItem);
 
+        menuItem = new JMenuItem("Run Jython Script...");
+        menuItem.setToolTipText("Select a Jython script to run");
+        menuItem.addActionListener(e -> {
+            createShell();
+            jythonShell.loadAndRunScript();
+        });
         menuItems.add(menuItem);
 
         menuItems.add(MENU_SEPARATOR);

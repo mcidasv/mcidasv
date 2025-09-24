@@ -45,6 +45,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import java.util.ArrayList;
@@ -55,16 +58,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.JTextComponent;
 
 import org.joda.time.DateTime;
@@ -84,6 +79,7 @@ import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
 
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.StringUtil;
 import visad.Data;
 import visad.MathType;
@@ -383,6 +379,30 @@ public class JythonShell extends InteractiveShell {
         }
         output(sb.toString());
     }
+
+    // McIDAS Inquiry #2701-3141
+    public void loadScript() {
+        String cmd = getScriptFromFile();
+        this.setMultilineText(cmd);
+    }
+
+    public void loadAndRunScript() {
+        String cmd = getScriptFromFile();
+        this.setMultilineText(cmd);
+        SwingUtilities.invokeLater(this::handleEvaluationAction);
+    }
+
+    private String getScriptFromFile() {
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Python Files (*.py)", "py");
+        String file = FileManager.getReadFile("Load Script", filter);
+        String cmd = "";
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) cmd += line + "\n";
+        } catch (IOException e) {}
+
+        return cmd;
+    }
     
     /**
      * Add the idv action
@@ -628,6 +648,8 @@ public class JythonShell extends InteractiveShell {
         //items.add(makeMenuItem("Save Commands to History", this, "saveHistory"));
         items.add(makeMenuItem("List Saved History", this, "listHistory"));
         items.add(makeMenuItem("List Current Variables", this, "listVars"));
+        items.add(makeMenuItem("Load Script...", this, "loadScript"));
+        items.add(makeMenuItem("Run Script...", this, "loadAndRunScript"));
         menuBar.add(makeMenu("File", items));
         items.clear();
         items.add(makeMenuItem("Reset Jython Shell", this, "clear"));
