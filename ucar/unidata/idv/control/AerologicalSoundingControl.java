@@ -689,7 +689,7 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
                     AerologicalDisplay.POINTER_PRESSURE)) {
                 Real pressure = (Real) event.getNewValue();
                 pointerPresRef.setData(pressure);
-                if(windProfiles != null && tempProfiles != null){
+                if(windProfiles != null && windProfiles[currIndex] != null){
                     float rri = computeBulkRi(pressure, (FlatField) tempProfiles[currIndex], (FlatField)windProfiles[currIndex]);
                     readoutTable.setBulkRi(new Real(rri));
                 }
@@ -2040,4 +2040,5 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
 
     }
 }
+
 
