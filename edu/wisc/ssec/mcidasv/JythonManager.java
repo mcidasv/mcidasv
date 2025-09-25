@@ -164,7 +164,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         List menuItems = new ArrayList(100);
         JMenuItem menuItem;
 
-        menuItem = new JMenuItem("Create Formula");
+        menuItem = new JMenuItem("Create Formula...");
         menuItem.setToolTipText("Open Formula Editor window");
         menuItem.addActionListener(e -> showFormulaDialog());
         menuItems.add(menuItem);
@@ -213,23 +213,23 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         }
 
         sortMenuItems(sortedGroupedItems);
-        menuItems.add(makeMenu("Edit Formulas", sortedGroupedItems));
+        menuItems.add(makeMenu("Edit Formulas...", sortedGroupedItems));
 
         menuItems.add(MENU_SEPARATOR);
 
-        menuItem = new JMenuItem("Jython Library");
+        menuItem = new JMenuItem("Jython Library...");
         menuItem.setToolTipText("Open Jython Library window");
         menuItem.addActionListener(e -> showJythonEditor());
         menuItems.add(menuItem);
 
-        menuItem = new JMenuItem("Jython Shell");
+        menuItem = new JMenuItem("Jython Shell...");
         menuItem.setToolTipText("Open Jython Shell window");
         menuItem.addActionListener(e -> createShell());
         menuItems.add(menuItem);
 
         // McIDAS Inquiry #2701-3141
         menuItem = new JMenuItem("Load Jython Script...");
-        menuItem.setToolTipText("Select a Jython script to run");
+        menuItem.setToolTipText("Select a Jython script to load");
         menuItem.addActionListener(e -> {
             createShell();
             jythonShell.loadScript();
@@ -246,12 +246,12 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
 
         menuItems.add(MENU_SEPARATOR);
 
-        menuItem = new JMenuItem("Import");
+        menuItem = new JMenuItem("Import...");
         menuItem.setToolTipText("Import formulas");
         menuItem.addActionListener(e -> importFormulas());
         menuItems.add(menuItem);
 
-        menuItem = new JMenuItem("Export");
+        menuItem = new JMenuItem("Export...");
         menuItem.setToolTipText("Export Formulas");
         menuItem.addActionListener(e -> exportFormulas());
         menuItems.add(menuItem);
