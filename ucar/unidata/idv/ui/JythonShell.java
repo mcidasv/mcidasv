@@ -406,6 +406,13 @@ public class JythonShell extends InteractiveShell {
             s = s.substring(0, maxLen) + "...";
         }
 
+        // escape for HTML so values like "<type '...'>" display correctly
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
+    }
+
+
     // McIDAS Inquiry #2701-3141
     public void loadScript() {
         String cmd = getScriptFromFile();
