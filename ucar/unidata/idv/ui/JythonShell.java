@@ -357,28 +357,54 @@ public class JythonShell extends InteractiveShell {
         }
     }
 
+    // Updated for McV inquiry 3235
     /**
      * List the variables in the interpreter
      */
     public void listVars() {
-        PyStringMap locals = (PyStringMap)getInterpreter().getLocals();
+        PyStringMap locals = (PyStringMap) getInterpreter().getLocals();
         StringBuilder sb = new StringBuilder("Variables:<br>");
+        // Collect keys into a list of strings
+        List<String> keys = new ArrayList<>();
         for (Object key : locals.keys()) {
-            String name = key.toString();
+            keys.add(key.toString());
+        }
+        // Sort alphabetically, ignoring case
+        Collections.sort(keys, String.CASE_INSENSITIVE_ORDER);
+        // Iterate in sorted order
+        for (String name : keys) {
             PyObject obj = locals.get(new PyString(name));
             if ((obj instanceof PyFunction)
                     || (obj instanceof PyReflectedFunction)
                 //                    || (obj instanceof PyJavaClass)
                     || (obj instanceof PyJavaPackage)
                     || (obj instanceof PySystemState)
-                    || (obj instanceof PyJavaPackage)
-                    || name.startsWith("__") || "JyVars".equals(name)) {
+                    || name.startsWith("__")
+                    || "JyVars".equals(name)) {
                 continue;
             }
-            sb.append("&nbsp;&nbsp;&nbsp;").append(name).append("<br>");
+            // Get truncated value string
+            String valueStr = summarizeValue(obj, 80); // limit to 80 chars
+            sb.append("&nbsp;&nbsp;&nbsp;")
+              .append(name)
+              .append(" - ")
+              .append(valueStr)
+              .append("<br>");
         }
         output(sb.toString());
     }
+
+    /** Return a short, safe summary of the value */
+    private String summarizeValue(PyObject obj, int maxLen) {
+        if (obj == null) {
+            return "null";
+        }
+        String s = obj.toString();
+
+        // if it's too long, truncate and append "..."
+        if (s.length() > maxLen) {
+            s = s.substring(0, maxLen) + "...";
+        }
 
     // McIDAS Inquiry #2701-3141
     public void loadScript() {
