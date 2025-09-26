@@ -87,7 +87,7 @@
 
     <!-- Tools menu -->
     <menu label="Tools" id="menu.tools" mnemonic="T">
-        <menuitem label="Manage ADDE Datasets"
+        <menuitem label="Manage ADDE Datasets..."
                   mnemonic="A"
                   action="action:edit.addedatasets"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-data16.png"
@@ -98,32 +98,32 @@
         -->
         <menu label="Text Data" mnemonic="D" id="data.special" />
         <separator />
-        <menuitem label="Color Tables"
+        <menuitem label="Color Tables..."
                   mnemonic="C"
                   action="action:edit.colortables"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/x-office-presentation16.png"
                   tooltip="Create and edit color tables" />
-        <menuitem label="Layout Model Editor" 
+        <menuitem label="Layout Model Editor..." 
                   mnemonic="S"
                   action="action:edit.stationmodels"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/accessories-text-editor16.png"
                   tooltip="Define layout templates for station and point data" />
         <menu label="Parameters" mnemonic="P">
-            <menuitem label="Aliases" 
+            <menuitem label="Aliases..." 
                       mnemonic="A"
                       action="action:edit.paramaliases"
                       tooltip="Define aliases for data fields" />
-            <menuitem label="Defaults" 
+            <menuitem label="Defaults..." 
                       mnemonic="D"
                       action="action:edit.paramdefaults"
                       tooltip="Define default display features for data fields" />
-            <menuitem label="Groups"
+            <menuitem label="Groups..."
                       mnemonic="G"
                       action="action:edit.paramgroups"
                       tooltip="Define Parameter Groups" />
         </menu>
         <menu label="Projections" mnemonic="R">
-            <menuitem label="Edit Map Projections" mnemonic="M"
+            <menuitem label="Edit Map Projections..." mnemonic="M"
                 action="action:edit.projections" tooltip="Create and change saved projections" />
             <!--
                 <menuitem label="Save Current View" /> <menuitem label="Delete Saved
@@ -133,7 +133,7 @@
             <menu label="Restore Saved View" id="menu.tools.projections.restoresavedviews" />
             <menu label="Delete Saved Views" mnemonic="D"
                 id="menu.tools.projections.deletesaved" />
-            <menuitem label="Save Current View"
+            <menuitem label="Save Current View..."
                       action="jython:idv.getVMManager().getLastActiveViewManager().doSaveState();"
                       tooltip="Save the current view" />
         </menu>
@@ -181,7 +181,7 @@
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/utilities-system-monitor16.png"
                   action="action:help.showconsole"
                   tooltip="Open Console window for debug output" />
-        <menuitem label="Show Support Request Form"
+        <menuitem label="Show Support Request Form..."
                   mnemonic="F"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/email_go.png"
                   action="action:help.showsupportform"
