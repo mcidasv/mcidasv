@@ -1815,7 +1815,7 @@ public class MapViewManager extends NavigatedViewManager {
             flythroughItem.setToolTipText("Open Flythrough window");
             viewMenu.add(GuiUtils.setIcon(flythroughItem, "/auxdata/ui/icons/plane.png"));
 
-        JMenuItem propertiesItem = GuiUtils.makeMenuItem("Properties", this, "showPropertiesDialog");
+        JMenuItem propertiesItem = GuiUtils.makeMenuItem("Properties...", this, "showPropertiesDialog");
             propertiesItem.setToolTipText("Open Properties window");
             viewMenu.add(GuiUtils.setIcon(propertiesItem, "/auxdata/ui/icons/information.png"));
     }
@@ -3317,12 +3317,12 @@ public class MapViewManager extends NavigatedViewManager {
             dispAreaItem.setToolTipText("Set the current viewpoint as the projection");
             projMenu.add(GuiUtils.setIcon(dispAreaItem, "/auxdata/ui/icons/world_rect.png"));
 	
-			JMenuItem viewItem = GuiUtils.makeMenuItem("Custom Viewpoint", this, "makeCustomProjectionManager");
+			JMenuItem viewItem = GuiUtils.makeMenuItem("Custom Viewpoint...", this, "makeCustomProjectionManager");
             viewItem.setToolTipText("Open Custom Viewpoint window");
             projMenu.add(GuiUtils.setIcon(viewItem, "/auxdata/ui/icons/world_rect.png"));
         }
 
-        JMenuItem addressItem = GuiUtils.makeMenuItem("Go to Address", this, "goToAddress");
+        JMenuItem addressItem = GuiUtils.makeMenuItem("Go to Address...", this, "goToAddress");
         addressItem.setToolTipText("Open Go To Address window");
         projMenu.add(GuiUtils.setIcon(addressItem, "/auxdata/ui/icons/house_go.png"));
 
@@ -3336,7 +3336,7 @@ public class MapViewManager extends NavigatedViewManager {
                 "Automatically change viewpoint to the native data projection of new displays");
         }
 
-        JMenuItem shareGroupItem = GuiUtils.makeMenuItem("Set Share Group", this, "showSharableDialog");
+        JMenuItem shareGroupItem = GuiUtils.makeMenuItem("Set Share Group...", this, "showSharableDialog");
         shareGroupItem.setToolTipText("Open Sharable Properties window");
         projMenu.add(shareGroupItem);
 
