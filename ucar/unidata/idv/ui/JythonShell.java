@@ -681,8 +681,8 @@ public class JythonShell extends InteractiveShell {
         //items.add(makeMenuItem("Save Commands to History", this, "saveHistory"));
         items.add(makeMenuItem("List Saved History", this, "listHistory"));
         items.add(makeMenuItem("List Current Variables", this, "listVars"));
-        items.add(makeMenuItem("Load Script...", this, "loadScript"));
-        items.add(makeMenuItem("Run Script...", this, "loadAndRunScript"));
+        items.add(makeMenuItem("Load Jython Script...", this, "loadScript"));
+        items.add(makeMenuItem("Run Jython Script...", this, "loadAndRunScript"));
         menuBar.add(makeMenu("File", items));
         items.clear();
         items.add(makeMenuItem("Reset Jython Shell", this, "clear"));
