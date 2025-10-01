@@ -271,7 +271,29 @@ public abstract class JPSSUtilities {
 		}
 		return isValid;
 	}
-	
+
+    /**
+     * An unusual method used to filter out files of type "GCRSO-SCRIF-SCRIS",
+     * where CrIS Science and Full Spectrum data are combined by CLASS into
+     * a single granule.  These are deemed an odd aggregation that does not
+     * make sense combined into a single product, and are disallowed.
+     *
+     * @param fileList List of files to validate.
+     *
+     * @return {@code false} if {@code fileList} passes checks. Note reverse
+     * of typical boolean logic!  True is retuned if data is INVALID.
+     */
+
+    public static boolean isInvalidCris(List fileList) {
+        for (Object o : fileList) {
+            String filename = (String) o;
+            if (filename.contains("SCRIF-SCRIS")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * Determine if the set if filenames constitutes contiguous SNPP granules
 	 * of the same geographic coverage.
