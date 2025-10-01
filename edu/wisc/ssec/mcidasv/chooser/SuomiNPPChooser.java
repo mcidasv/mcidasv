@@ -120,7 +120,8 @@ public class SuomiNPPChooser extends FileChooser {
         // to support.
         if (JPSSUtilities.isInvalidCris(fileNames)) {
             JOptionPane.showMessageDialog(null,
-                    "This type of CrIS data aggregation is not supported.");
+                    "CrIS files containing both Full Spectral Science SDR (SCRIF)\n" +
+                    "and Science SDR (SCRIS) are not supported.");
             return false;
         }
 
