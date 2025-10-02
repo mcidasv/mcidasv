@@ -114,7 +114,17 @@ public class SuomiNPPChooser extends FileChooser {
         for (int i = 0; i < files.length; i++) {
         	fileNames.add(files[i].getName());
         }
-        
+
+        // Kick out attempts to load "GCRSO-SCRIF-SCRIS" products, which for some
+        // reason CLASS will provide, but scientists have told us we do not need
+        // to support.
+        if (JPSSUtilities.isInvalidCris(fileNames)) {
+            JOptionPane.showMessageDialog(null,
+                    "CrIS files containing both Full Spectral Science SDR (SCRIF)\n" +
+                    "and Science SDR (SCRIS) are not supported.");
+            return false;
+        }
+
         // ensure these files make sense as a set to create a single SNPP data source
     	if (! JPSSUtilities.isValidSet(fileNames)) {
         	JOptionPane.showMessageDialog(null, 

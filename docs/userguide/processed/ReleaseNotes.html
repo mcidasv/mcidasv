@@ -63,6 +63,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#McXNetcdf2.0">McIDAS-X netCDF File Compatibility</a></strong></li>
     <li><strong><a class="faq-question-link" href="#probSevere2.0">ProbSevere Data</a></strong></li>
     <li><strong><a class="faq-question-link" href="#channels2.0">Channel Combination Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#ml2.0">Machine Learning Formulas and Functions</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_2.0">Display
@@ -75,6 +76,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#layerLabels2.0">Updated Layer Labels</a></strong></li>
     <li><strong><a class="faq-question-link" href="#ospo2.0">OSPO Satellite Enhancements</a></strong></li>
     <li><strong><a class="faq-question-link" href="#vert2.0">Change Vertical Unit</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#csv2.0">Export Vertical Profile to CSV</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#sounding2.0">Additional Sounding Parameters</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_2.0">Other
@@ -178,6 +181,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
         </li>
         </ul>
     </div>
+    </div>
+    <div class="faq-category"><a name="ml2.0" id="ml2.0"></a>
+    <h4>Machine Learning Formulas and Functions</h4>
+    <div class="faq-answer">Added added a variety of formulas and functions that can be used to process raw datasets, making them suitable for applications like machine learning..</div>
 	</div>
 </div>
 <div class="faq-bottom">
@@ -202,6 +209,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-category"><a name="vert2.0" id="vert2.0"></a>
     <h4>Change Vertical Unit</h4>
     <div class="faq-answer">Added the ability to change the vertical unit of Time/Height and Vertical Cross Section displays to either meters (m) or pressure (hPa).  This is done through the View&gt;Change Altitude Unit menu item in the Layer Controls tab of the Data Explorer.</div>
+	</div>
+    <div class="faq-category"><a name="csv2.0" id="csv2.0"></a>
+    <h4>Export Vertical Profile to CSV</h4>
+    <div class="faq-answer">Added the ability to export Vertical Profile display data to CSV for either the currently viewed or all displayed times. This is done through the File>Save menu item in the Layer Controls</div>
+	</div>
+    <div class="faq-category"><a name="sounding2.0" id="sounding2.0"></a>
+    <h4>Additional Sounding Parameters</h4>
+    <div class="faq-answer">Added additional parameters to the table that appears next to sounding displays for boundary layer height and Bulk Richardson Number.  Note that Bulk Richardson Number is reported at the pressure level under the cursor and is only available in soundings that include wind data.</div>
 	</div>
 </div>
 <div class="faq-bottom">
@@ -288,7 +303,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
         </ul>
       </li>
       <li>Added several functions and formulas to correct for Rayleigh scattering for any VIIRS SDR and Imagery EDR data containing any visible or near infrared bands (SVM01-SVM07 and SVI01-SVI02).  These derived fields can be found in the Field Selector under Imagery > JPSS Functions > VIIRS EDR/SDR Rayleigh Corrected. Rayleigh correction mitigates scattering from particles in the atmosphere, allowing for cleaner displays where surface features are more visible.</li>
-      <li>Added VIIRS SDR and Imagery EDR functions and formulas to create a sandwich RGB. A sandwich RGB allows for viewing visible and infrared data in the same display. The display shows visible data overlaid with infrared data over a user-defined temperature range. This overlay allows for viewing infrared temperature data with the texture of visible data. These formulas can be found under Imagery &gt; JPSS Functions &gt; VIIRS EDR/SDR &gt; RGBs &gt; VIIRS EDR/SDR Sandwich.&nbsp;</li>
+      <li>Added VIIRS SDR and Imagery EDR functions and formulas to create a sandwich RGB. A sandwich RGB allows for viewing visible and infrared data in the same display. The display shows visible data overlaid with infrared data over a user-defined temperature range. This overlay allows for viewing infrared temperature data with the texture of visible data. These formulas can be found under Imagery &gt; JPSS Functions &gt; VIIRS EDR/SDR &gt; RGBs &gt; VIIRS EDR/SDR Sandwich.</li>
+      <li>Added the ability to load and run scripts through menu items in the Main Display (Tools&gt;Formulas&gt;Load/Run Jython Script) and through the Jython Shell (File&gt;Load/Run Jython Script).&nbsp; Load Jython Script opens the Jython Shell window (if not already open) and enters the text of the script into the Jython Shell.&nbsp; This script will be run when the user clicks Evaluate.&nbsp; Run Jython Script opens the Jython Shell (if not already open) and runs the script in one step.&nbsp; &nbsp; &nbsp;</li>
       </ul>
     </div>
   </div>
