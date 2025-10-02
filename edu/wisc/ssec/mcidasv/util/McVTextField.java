@@ -341,7 +341,13 @@ public class McVTextField extends JTextField {
         }
         
         if (!isValid) {
-            this.selectAll();
+            // McIDAS Inquiry #3121-3141
+            // This might be the culprit!
+
+            // this.selectAll();
+
+            // It's hard to be sure because the bug is not easy to reproduce
+            // but it seems like the most likely source of the issue
         }
         
         return isValid;
