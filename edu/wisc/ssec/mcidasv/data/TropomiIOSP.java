@@ -135,7 +135,7 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
         if (McIDASV.isWindows() && BAD_WIN_PATH.matcher(filePath).matches()) {
             filePath = filePath.substring(1);
         }
-        logger.trace("original path: '{}', path used: '{}'", raf, filePath);
+        // logger.trace("original path: '{}', path used: '{}'", raf, filePath);
         filename = Paths.get(filePath).getFileName().toString();
         return TROPOMI_MATCHER.matcher(filename).matches();
     }
