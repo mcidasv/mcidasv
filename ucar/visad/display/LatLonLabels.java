@@ -298,7 +298,14 @@ public class LatLonLabels extends TextDisplayable {
     }
 
     public boolean getDegUse() {return useDeg;}
-    public void setDegUse(boolean b) {useDeg = b;}
+
+    public void setDegUse(boolean b) throws VisADException, RemoteException {
+        if (this.useDeg == b) {
+        return;
+    }
+        this.useDeg = b;
+        createLabels();
+    }
 
     /**
      * @return the isLatitude

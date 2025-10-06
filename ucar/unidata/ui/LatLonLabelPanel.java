@@ -143,10 +143,6 @@ public class LatLonLabelPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if ( !ignoreEvents) {
                     latLonLabelData.setVisible(onOffCbx.isSelected());
-
-                    // McIDAS Inquiry #2905-3141
-                    // As Bob noted in Request 4, changing the font induces an update
-                    // which results in rendering the degree sign
                     latLonLabelData.setFont(fontSelector.getFont());
                 }
             }
@@ -285,20 +281,32 @@ public class LatLonLabelPanel extends JPanel {
         ignoreEvents = false;
 
         try {
-            useDegCbx = new JCheckBox("°", latLonLabelData.getLatLonLabels().getDegUse());
+            useDegCbx = new JCheckBox("Use degree symbol (°)",
+                    latLonLabelData.getLatLonLabels().getDegUse());
             useDegCbx.setToolTipText("Add degree symbol to labels");
             useDegCbx.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        latLonLabelData.getLatLonLabels().setDegUse(useDegCbx.isSelected());
-                        applyStateToData();
-                        LatLonPanel llp = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getLonPanel();
-                        llp.applyStateToData();
-                    } catch (VisADException | RemoteException ex) {
-                        ;
-                    }
+                        boolean selected = useDegCbx.isSelected();
+
+                        latLonLabelData.getLatLonLabels().setDegUse(selected);
+                        latLonLabelData.setFont(fontSelector.getFont());
+
+                        MapDisplayControl mdc =
+                                ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl();
+                        LatLonLabelPanel latPanel = mdc.getLatLabelPanel();
+                        LatLonLabelPanel lonPanel = mdc.getLonLabelPanel();
+
+                        latPanel.getLatLonLabelData().getLatLonLabels().setDegUse(selected);
+                        lonPanel.getLatLonLabelData().getLatLonLabels().setDegUse(selected);
+
+                        latPanel.getLatLonLabelData().setFont(latPanel.fontSelector.getFont());
+                        lonPanel.getLatLonLabelData().setFont(lonPanel.fontSelector.getFont());
+
+                    } catch (VisADException | RemoteException ex) {;}
                 }
             });
+
         } catch (VisADException | RemoteException e) {
             useDegCbx = new JCheckBox("°", false);
             useDegCbx.setToolTipText("Add degree symbol to labels");
