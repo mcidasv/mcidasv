@@ -2077,6 +2077,17 @@ public class XmlEncoder extends XmlUtil {
                         setObject(id, theObject);
                     }
                     return new ObjectClass(theObject);
+                } catch (java.io.InvalidClassException ice) {
+                    String msg = ice.getMessage();
+                    // Only suppress MapProjection incompatibility
+                    if (msg != null && msg.contains("visad.georef.MapProjection")) {
+                        LogUtil.message("Skipping incompatible visad.georef.MapProjection object: " + msg);
+                        return null;  // allow display to rebuild projection
+                    } else {
+                        // Any other InvalidClassException might be a real problem
+                        logException("Error deserializing object.", ice);
+                        return null;
+                    }
                 } catch (Exception exc) {
                     logException("Error deserializing object.", exc);
                     return null;
