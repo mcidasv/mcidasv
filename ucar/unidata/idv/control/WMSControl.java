@@ -876,7 +876,7 @@ public class WMSControl extends ImageControl implements ImageObserver {
             }
             Rectangle screenBounds = navDisplay.getScreenBounds();
             imageWidth = (int) (screenBounds.width * scale);
-            Rectangle2D.Double rect = getNavigatedDisplay().getLatLonBox();
+            Rectangle2D.Double rect = getNavigatedDisplay().getLatLonBox(false, true);
             if ((scale > 1.0) && !inGlobe) {
                 double newWidth  = scale * rect.getWidth();
                 double newHeight = scale * rect.getHeight();
