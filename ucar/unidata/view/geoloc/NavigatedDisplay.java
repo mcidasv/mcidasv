@@ -2656,13 +2656,13 @@ public abstract class NavigatedDisplay extends DisplayMaster {
     }
 
     /**
+     * Commenting out to restore zoom functionality in Region tab - RMC Inq 3150
      * Zoom in on the display
      *
      * @param  scale  x zoom factor
      *
      * ( > 1 = zoom in, 1 > zoom > 0 =  zoom out).  using
      * 2.0 and .5 seems to work well.
-     */
     public void resetClipDistance(double scale)  {
 
         //System.out.println("Current zoom = " + scale);
@@ -2677,4 +2677,6 @@ public abstract class NavigatedDisplay extends DisplayMaster {
         //System.out.println("Scale = " + scale + " Front = " + getClipDistanceFront() + "Rear = " + getClipDistanceBack());
 
     }
+    */
 }
+
