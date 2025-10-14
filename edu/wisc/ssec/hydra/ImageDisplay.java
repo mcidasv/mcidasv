@@ -282,7 +282,6 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
         pCntrl.addControlListener(this);
 
         dspMaster.setMouseFunctions(Hydra.getMouseFunctionMap());
-        dspMaster.setWheelEventMap(PreviewDisplay.NO_SCROLL_ZOOM_WHEEL_FUNCTIONS);
         boolean addProbe = true;
         imgCntrl = null;
 
