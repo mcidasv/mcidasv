@@ -30,6 +30,9 @@ package edu.wisc.ssec.mcidasv.data;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -171,6 +174,65 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
             ncfile.addDimension(null, new Dimension("line", dimLen[1]));
             ncfile.addDimension(null, new Dimension("ele", dimLen[2]));
             populateDataTree(ncfile, newGroups);
+
+            try {
+            // Extract filename without path and extension
+            String filenameOnly = Paths.get(filename).getFileName().toString();
+            if (filenameOnly.endsWith(".nc")) {
+                filenameOnly = filenameOnly.substring(0, filenameOnly.length() - 3);
+            }
+
+            String startStr = null;
+            if (filenameOnly.length() >= 35) {
+                // Start time always begins at char 21 (index 20) and is 15 chars long
+                startStr = filenameOnly.substring(20, 35); // e.g., "20251014T183758"
+            } else {
+                // Fallback: regex search
+                java.util.regex.Matcher m = java.util.regex.Pattern
+                    .compile("(\\d{8}T\\d{6})")
+                    .matcher(filenameOnly);
+                if (m.find()) startStr = m.group(1);
+            }
+
+            if (startStr != null) {
+                // Parse to Instant
+                java.time.format.DateTimeFormatter fmt =
+                    java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")
+                                                      .withZone(java.time.ZoneOffset.UTC);
+                java.time.Instant start = java.time.Instant.from(fmt.parse(startStr));
+                String isoTime = start.toString(); // ISO 8601 format
+
+                // --- Global attribute ---
+                ncfile.addAttribute(null, new ucar.nc2.Attribute("time_coverage_start", isoTime));
+
+                // --- Time dimension ---
+                ucar.nc2.Dimension timeDim = new ucar.nc2.Dimension("time", 1);
+                ncfile.addDimension(null, timeDim);
+
+                // --- Time variable ---
+                ucar.nc2.Variable timeVar = new ucar.nc2.Variable(ncfile, null, null, "time");
+                timeVar.setDataType(ucar.ma2.DataType.DOUBLE);
+                timeVar.setDimensions("time");
+                timeVar.addAttribute(new ucar.nc2.Attribute("standard_name", "time"));
+                timeVar.addAttribute(new ucar.nc2.Attribute("long_name", "time"));
+                timeVar.addAttribute(new ucar.nc2.Attribute("units", "seconds since 1970-01-01T00:00:00Z"));
+                timeVar.addAttribute(new ucar.nc2.Attribute("calendar", "gregorian"));
+
+                // Value in seconds since epoch
+                ucar.ma2.ArrayDouble.D1 timeData = new ucar.ma2.ArrayDouble.D1(1);
+                timeData.set(0, start.getEpochSecond());
+                timeVar.setCachedData(timeData, false);
+
+                ncfile.addVariable(null, timeVar);
+
+                logger.info("Added time_coverage_start={} and time variable={}", isoTime, start.getEpochSecond());
+            } else {
+                logger.warn("Could not extract start time from filename: {}", filenameOnly);
+            }
+
+        } catch (Exception e) {
+            logger.warn("Error deriving time info from filename: {}", filename, e);
+        }
 
             ncfile.finish();
         } catch (ClassNotFoundException e) {
