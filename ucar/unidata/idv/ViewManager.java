@@ -7727,6 +7727,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
 
     /**
+     * Get the display matrix array
+     *
+     * @return display matrix
+     */
+    public double[] getDisplayInitMatrix() {
+        return initMatrix;
+    }
+
+    /**
      * Toggle the animation string visibility.
      * @param visible  true to make it visible
      * @deprecated Use setAniReadout now
