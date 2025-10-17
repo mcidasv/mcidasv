@@ -206,6 +206,9 @@ public class GridTrajectoryControlNew extends DrawingControl {
     float trackOffsetValue = 4.0f;
 
     /** _more_ */
+    int tracerType = 7;
+
+    /** _more_ */
     int smoothFactorValue = 10;
 
     /** _more_ */
@@ -481,10 +484,13 @@ public class GridTrajectoryControlNew extends DrawingControl {
         float flowScaleValue = 4.0f;
 
         /** a traj offset value */
-        float arrowHeadSizeValue = 1.0f;
+        float arrowHeadSizeValue = 0.5f;
 
         /** a traj offset value */
         float trajOffsetValue = 4.0f;
+
+        /** _more_ */
+        int tracerTypeValue = 8;
 
         /** slider components */
         private JComponent[] widthSliderComps;
@@ -512,10 +518,14 @@ public class GridTrajectoryControlNew extends DrawingControl {
                                                                       "Ribbon",
                                                                       "Cylinder",
                                                                       "Deform Ribbon",
-                                                                      "Point" };
+                                                                      "Point", "Tracer" };
+        private  String[] tracerFormLabels = new String[] {
+                "Arrow", "Sphere", "Dot"};
 
         /** types of smoothing functions */
-        private int[] trajForm = new int[] { 0, 1, 2, 3, 4 };
+        private int[] trajForm = new int[] { 0, 1, 2, 3, 4, 5 };
+
+        private  int[] tracerForm = new int[] { 7, 8, 9};
 
         /** vector/traj length component */
         JComponent trajFormComponent;
@@ -540,6 +550,24 @@ public class GridTrajectoryControlNew extends DrawingControl {
 
         /** _more_ */
         Data topoData = null;
+
+        /** _more_ */
+        boolean isTracer = false;
+
+        /** _more_ */
+        boolean isLine = true;
+
+        /** _more_ */
+        JComboBox tracerFormBox = null;
+
+        /** _more_ */
+        //JComboBox tracerSizeBox = null;
+
+        /** a component to change the vector arrow head size */
+        JComboBox vectorAHSizeBox;
+
+        /** _more_ */
+        JCheckBox arrowCbx;
 
         /**
          * Default constructor; does nothing.
@@ -760,7 +788,7 @@ public class GridTrajectoryControlNew extends DrawingControl {
 
             //super.getControlWidgets(controlWidgets);
 
-            JCheckBox arrowCbx = new JCheckBox("Arrow", arrowHead);
+            arrowCbx = new JCheckBox(" Arrow", arrowHead);
 
             arrowCbx.addActionListener(new ActionListener() {
                                            public void actionPerformed(
@@ -768,8 +796,10 @@ public class GridTrajectoryControlNew extends DrawingControl {
                                                arrowHead =
                                                ((JCheckBox) e.getSource()).isSelected();
                                                if (arrowHead) {
+                                                   getGridDisplay().setTracerType(7);
                                                    getGridDisplay().setArrowHead(
                                                    arrowHead);
+	                                               tracerFormBox.setSelectedIndex(0);
                                                } else {
                                                    getGridDisplay().setArrowHead(
                                                    arrowHead);
@@ -787,13 +817,20 @@ public class GridTrajectoryControlNew extends DrawingControl {
 
                 trajLengthWidget = new ValueSliderWidget(this, 1, 21,
                         "trajOffset", "LengthOffset");
+
                 smoothWidget = new ValueSliderWidget(this, 11, 31,
                         "smoothFactor", "smoothFactor");
 
                 List<TwoFacedObject> trajFormList =
                     TwoFacedObject.createList(trajForm, trajFormLabels);
+                List<TwoFacedObject> tracerFormList =
+                        TwoFacedObject.createList(tracerForm, tracerFormLabels);
                 JComboBox trajFormBox = new JComboBox();
+                tracerFormBox = new JComboBox();
+
                 GuiUtils.setListData(trajFormBox, trajFormList);
+                GuiUtils.setListData(tracerFormBox, tracerFormList);
+
                 trajFormBox.setSelectedItem(
                     TwoFacedObject.findId(getTrajFormType(),
                                           trajFormList));
@@ -812,10 +849,36 @@ public class GridTrajectoryControlNew extends DrawingControl {
                                 } else {
                                     arrowCbx.setEnabled(true);
                                 }
-                                
+                                if(select.getLabel() == "Tracer"){
+                                    isTracer = true;
+                                } else {
+                                    isTracer = false;
+                                };
+                                if(select.getLabel() == "Line") {
+                                    isLine = true;
+                                    arrowCbx.setSelected(arrowHead);
+                                } else {
+                                    arrowCbx.setSelected(false);
+                                    isLine = false;
+                                };
+                                enableTracerCompnoentBox();
+                                enableArrowCompnoentBox();
                             }
                         });
+
+
+                tracerFormBox.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        TwoFacedObject select =
+                                (TwoFacedObject) ((JComboBox) e.getSource()).getSelectedItem();
+                        setTracerType((int)select.getId());
+
+                    }
+                });
+
                 String formLabel;
+                String tracerformLabel = "Tracer Type: ";
+                String tracersizeLabel = "Tracer Size: ";
                 if(isStreamline)
                     formLabel = "Streamline Form: ";
                 else
@@ -829,16 +892,39 @@ public class GridTrajectoryControlNew extends DrawingControl {
                         GuiUtils.rLabel(formLabel),
                         GuiUtils.left(trajFormBox)));
 
+                controlWidgets.add(new WrapperWidget(this,
+                        GuiUtils.rLabel(tracerformLabel),
+                        GuiUtils.left(tracerFormBox )));
+
                 trajLengthComponent =
                     GuiUtils.hbox(GuiUtils.rLabel("Length Offset: "),
                                   trajLengthWidget.getContents(false),
                                   arrowCbx);
-                Insets spacer = new Insets(0, 30, 0, 0);
+
+                //Insets spacer = new Insets(0, 30, 0, 0);
                 controlWidgets.add(new WrapperWidget(this,
                         GuiUtils.rLabel("Length Offset: "),
                         GuiUtils.left(
-                            GuiUtils.hbox(trajLengthWidget.getContents(false),
-                                          arrowCbx))));
+                                GuiUtils.hbox(trajLengthWidget.getContents(false),
+                                        arrowCbx))));
+                vectorAHSizeBox = new JComboBox(new String[] { "0.5", "1.0", "1.5", "2.0",
+                        "2.5", "3.0" , "4"});
+                vectorAHSizeBox.setToolTipText("Set the tracer size");
+                vectorAHSizeBox.setMaximumSize(new Dimension(30, 16));
+                vectorAHSizeBox.setEditable(true);
+
+                vectorAHSizeBox.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String item = (String)((JComboBox) e.getSource()).getSelectedItem();
+                        float selectsize = Float.parseFloat(item);
+                        setArrowHeadSize(selectsize);
+
+                    }
+                });
+                controlWidgets.add(new WrapperWidget(this,
+                        GuiUtils.rLabel("Arrow/Tracer Size: "),
+                        GuiUtils.left(vectorAHSizeBox)));
+
                 if(isStreamline){
                     smoothComponent = GuiUtils.hbox(GuiUtils.rLabel("Smooth Factor: "),
                             smoothWidget.getContents(false));
@@ -849,10 +935,12 @@ public class GridTrajectoryControlNew extends DrawingControl {
 
             }
 
-
+            tracerFormBox.setSelectedIndex(0);
 
             enableTrajLengthBox();
-
+            enableTracerCompnoentBox();
+            enableArrowCompnoentBox();
+            //GuiUtils.enableTree(tracerFormBox, isTracer);
 
             List timeL = getDataSelection().getTimes();
             if ((timeL == null) && getHadDataChoices()) {
@@ -913,6 +1001,15 @@ public class GridTrajectoryControlNew extends DrawingControl {
             }
         }
 
+        private void enableTracerCompnoentBox() {
+            GuiUtils.enableTree(vectorAHSizeBox, isTracer|isLine);
+            GuiUtils.enableTree(tracerFormBox, isTracer);
+        }
+
+        private void enableArrowCompnoentBox() {
+            GuiUtils.enableTree(vectorAHSizeBox, isLine|isTracer);
+            GuiUtils.enableTree(arrowCbx, isLine);
+        }
 
         /**
          * _more_
@@ -1057,8 +1154,10 @@ public class GridTrajectoryControlNew extends DrawingControl {
          */
         public void setLevels(Object[] levels) {
 
-            if (levels == null) {
+            if (levels == null && getGridDataInstance() != null) {
                 levels = getGridDataInstance().getLevels();
+            } else{
+                return;
             }
 
             setOkToFireEvents(false);
@@ -1146,7 +1245,7 @@ public class GridTrajectoryControlNew extends DrawingControl {
                             max = Math.max(compRange.getMax(), max);
                             min = Math.min(compRange.getMin(), min);
                         } else {
-                            for (int i = startComp; i < numComps; i++) {
+                            for (int i = startComp; i < ranges.length; i++) {
                                 Range compRange = ranges[i];
                                 max = Math.max(compRange.getMax(), max);
                                 //min = Math.min(compRange.getMin(), min);
@@ -1362,6 +1461,53 @@ public class GridTrajectoryControlNew extends DrawingControl {
             }
         }
 
+
+        public void setTracerType(int type) {
+            tracerTypeValue = type;
+            if (getGridDisplay() != null) {
+                try {
+                    if (gtc != null) {
+                        gtc.setTracerType(type);
+                    }
+                    getGridDisplay().setTracerType(type);
+                    getGridDisplay().setArrowHeadSize(arrowHeadSizeValue);
+                    getGridDisplay().setStreamline(isStreamline);
+                    getGridDisplay().resetTrojectories();
+                } catch (Exception ex) {
+                    logException("setFlowScale: ", ex);
+                }
+
+            }
+
+
+        }
+
+        public void setArrowHeadSize(float f) {
+            arrowHeadSizeValue = f;
+            if (getGridDisplay() != null) {
+                try {
+                    getGridDisplay().setTrajOffset(trajOffsetValue);
+                    getGridDisplay().setArrowHeadSize(arrowHeadSizeValue);
+                    if (trajFormType == TrajectoryParams.LINE ||
+                            trajFormType == TrajectoryParams.TRACER) {
+                        getGridDisplay().resetTrojectories();
+                    }
+                } catch (Exception ex) {
+                    logException("setFlowScale: ", ex);
+                }
+
+            }
+        }
+
+        /**
+         * _more_
+         *
+         * @return _more_
+         */
+        public float getArrowHeadSize() {
+            return arrowHeadSizeValue;
+        }
+
         /**
          * _more_
          *
@@ -1426,6 +1572,12 @@ public class GridTrajectoryControlNew extends DrawingControl {
                     getGridDisplay().setTrajFormType(trajForm.intValue());
                     //getGridDisplay().resetTrojectories();
                     getGridDisplay().setArrowHead(arrowHead);
+                    getGridDisplay().setArrowHeadSize(arrowHeadSizeValue);
+                    if(trajForm.intValue() == 0){
+                        getGridDisplay().setTracerType(7);
+                        if(tracerFormBox != null)
+                            tracerFormBox.setSelectedIndex(0);
+                    }
                     getGridDisplay().resetTrojectories();
                     //setLineWidth(super.getLineWidth());
                 } catch (Exception ex) {
@@ -3589,6 +3741,16 @@ public class GridTrajectoryControlNew extends DrawingControl {
     public void setTrackOffsetValue(float ah) {
         trackOffsetValue = ah;
     }
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public void setTracerType(int type) {
+        tracerType = type;
+    }
+
 
     /**
      * _more_
