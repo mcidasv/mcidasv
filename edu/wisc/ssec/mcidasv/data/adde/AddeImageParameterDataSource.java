@@ -61,6 +61,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,9 +75,11 @@ import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
 import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
+
 import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
+import visad.DisplayRenderer;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.MathType;
@@ -90,7 +93,7 @@ import visad.georef.MapProjection;
 import visad.meteorology.ImageSequence;
 import visad.meteorology.ImageSequenceImpl;
 import visad.meteorology.SingleBandedImage;
-import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
+
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataCategory;
@@ -108,9 +111,9 @@ import ucar.unidata.data.imagery.AddeImageInfo;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.geoloc.LatLonPoint;
-import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
@@ -373,14 +376,31 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             this.saveShowPreview = this.showPreview;
         }
         
-        this.fromBundle = true;
+        fromBundle = true;
         List<AddeImageDescriptor> descriptors = (List<AddeImageDescriptor>) getImageList();
         this.source = descriptors.get(0).getSource(); // TODO: why not use the source from
                                                       // each AddeImageDescriptor?
+
+        boolean isRelative = false;
         for (AddeImageDescriptor descriptor : descriptors) {
+            if (descriptor.getIsRelative()) isRelative = true;
             if (!isFromFile(descriptor)) {
                 this.hasRemoteChoices = true;
                 break;
+            }
+        }
+
+        // For bundles with relative times, turn wireframe box off, it may be inaccurate at this point in time.
+        logger.debug("isRelative: " + isRelative);
+        ViewManager vm = getIdv().getVMManager().getLastActiveViewManager();
+        if (vm instanceof MapViewManager && isRelative) {
+            DisplayRenderer renderer = vm.getDisplayRenderer();
+            try {
+                renderer.setBoxOn(false);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            } catch (VisADException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -1274,12 +1294,35 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (isABISensor) {
             String memo = previewDir.getMemoField().toLowerCase();
             boolean isMesoOrTarget = false;
+            boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
             if ((memo.contains("meso")) || (memo.contains("targ"))) isMesoOrTarget = true;
+
+            // alert user that bundle data may have geographically relocated, if they used relative times
+            if (fromBundle && isMesoOrTarget) {
+                boolean bundleDialog = getIdv().getStore().get(Constants.PREF_RELATIVE_TIME_BUNDLE, false);
+                // don't create a dialog though if we are running in background/offscreen mode
+                if (! offScreen) {
+                    if (! bundleDialog) {
+                        String msg = "Your bundle contains a targeted sector (e.g. ABI MESO).\n" +
+                                "These domains can shift geographically, to focus on regional events. \n" +
+                                "If you do not see your satellite image, zoom your display out, it may have moved.\n";
+                        JCheckBox jcbPlugin = new JCheckBox("Do not show this message again");
+                        Object[] params = { msg, jcbPlugin };
+                        JOptionPane.showMessageDialog(
+                                null, params, "Bundle with Relative Time ADDE Request(s)", JOptionPane.OK_OPTION
+                        );
+                        boolean dontShow = jcbPlugin.isSelected();
+                        getIdv().getStore().put(Constants.PREF_RELATIVE_TIME_BUNDLE, dontShow);
+                    }
+                } else {
+                    logger.warn("Note: Bundle with MESO or TARGET sector, data may have geographically relocated!");
+                }
+            }
+
             logger.info("Preview Directory memo field: " + memo);
             if (isPolling() && isMesoOrTarget) {
                 MapViewManager mvm = (MapViewManager) getIdv().getViewManager();
                 mvm.setUseProjectionFromData(false);
-                boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
                 if (! domainShiftNoticeTargetShown) {
                     if (! offScreen) {
                         String msg = "You currently have polling active, and are working with\n" +
@@ -1362,6 +1405,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         src = replaceKey(src, MAG_KEY, (lMag + " " + eMag));
         src = replaceKey(src, BAND_KEY, bi.getBandNumber());
         src = replaceKey(src, UNIT_KEY, unit);
+
 //        if (aid.getIsRelative()) {
 //            logger.trace("injecting POS={}", aid.getRelativeIndex());
 //            src = replaceKey(src, "POS", (Object)aid.getRelativeIndex());
@@ -1867,7 +1911,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 throw new BadDataException("Making area projection: " + e.getMessage(), e);
             }
         }
-        AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
+        AREACoordinateSystem macs = (AREACoordinateSystem) sampleMapProjection;
         int[] dirBlk = macs.getDirBlock();
         if (numLines == 0) {
             double elelin[][] = new double[2][2];
@@ -2080,10 +2124,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 (FunctionType) imageArray[0].getType();
             FunctionType ftype = new FunctionType(RealType.Time,
                                      imageFunction);
+
             return new ImageSequenceImpl(ftype, imageArray);
         } catch (Exception exc) {
             throw new ucar.unidata.util.WrapperException(exc);
         }
+
     }
     
     /**
@@ -2107,7 +2153,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                                         boolean fromSequence, 
                                         String readLabel, DataSelection subset)
             throws VisADException, RemoteException {
-        
+
         if (aid == null) {
             return null;
         }
@@ -2245,6 +2291,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 }
                 src = replaceKey(src, SIZE_KEY, saveNumLine + ' ' + saveNumEle);
                 src = replaceKey(src, MAG_KEY, saveLineMag + ' ' + saveEleMag);
+            }
+
+            // Relative bundles actually have the correct line/elem stored, at the time they were saved
+            // This is likely to change over time, so we should not use it in these cases.
+            logger.debug("fromBundle: " + fromBundle + ", isRelative: " + aid.getIsRelative());
+            if (fromBundle && aid.getIsRelative()) {
+                src = removeKey(src, LINELE_KEY);
             }
 
             AreaAdapter aa = new AreaAdapter(src, false);

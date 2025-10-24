@@ -163,6 +163,9 @@ public interface Constants extends IdvConstants {
      */
     String PANEL_NAME = "Panel";
 
+    /** For the "do not show again" option when dialog is shown warning users of this state */
+    String PREF_RELATIVE_TIME_BUNDLE = "Bundle contains relative time ADDE requests";
+
     /** Server preference manager. */
     String PREF_LIST_ADDE_SERVERS = "ADDE Servers";
 
