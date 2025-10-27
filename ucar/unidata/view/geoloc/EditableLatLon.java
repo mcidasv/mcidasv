@@ -208,6 +208,7 @@ public class EditableLatLon extends ProjectionImpl {
      */
     public EditableLatLon(String name) {
         super(name, true);
+        this.name = name;
         this.earth = EarthEllipsoid.DEFAULT;
         this.defaultMapArea = new ProjectionRect(-90, -45, 90, 45);
         this.addParameter("latitude0", latitude0);
@@ -224,6 +225,7 @@ public class EditableLatLon extends ProjectionImpl {
      */
     public EditableLatLon(String name, ProjectionRect defaultMapArea) {
         super(name, true);
+        this.name = name;
         this.earth = EarthEllipsoid.DEFAULT;
         this.defaultMapArea = defaultMapArea;
         this.addParameter("latitude0", latitude0);
