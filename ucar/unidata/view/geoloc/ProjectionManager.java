@@ -975,32 +975,11 @@ public class ProjectionManager implements ActionListener {
 
             acceptButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
+                    preview();
                     accept();
                 }
             });
-            previewButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    ProjectionClass projClass =
-                        findProjectionClass(editProjection);
-                    if (null != projClass) {
-                        ArrayList<String> fix = setProjFromDialog(projClass, editProjection);
-                        setProjection(editProjection);
-
-                        // McIDAS Inquiry #934-3141: for some reason the text fields
-                        // would reset after changing the projection
-                        // this just takes the previous values and explicitly
-                        // sets the correct values back in the text fields
-
-                        for (int i = 0; i < projClass.paramList.size(); i++) {
-                            ProjectionParam pp = (ProjectionParam) projClass.paramList.get(i);
-                            logger.info(pp.getTextField().getText());
-                            pp.getTextField().setText(fix.get(i));
-                            logger.info(pp.getTextField().getText());
-                            logger.info(fix.get(i));
-                        }
-                    }
-                }
-            });
+            previewButton.addActionListener(e -> preview());
             cancelButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     NewProjectionDialog.this.setVisible(false);
@@ -1081,6 +1060,28 @@ public class ProjectionManager implements ActionListener {
         /**
          * user has hit the "accept/save" button
          */
+        private void preview() {
+            ProjectionClass projClass =
+                    findProjectionClass(editProjection);
+            if (null != projClass) {
+                ArrayList<String> fix = setProjFromDialog(projClass, editProjection);
+                setProjection(editProjection);
+
+                // McIDAS Inquiry #934-3141: for some reason the text fields
+                // would reset after changing the projection
+                // this just takes the previous values and explicitly
+                // sets the correct values back in the text fields
+
+                for (int i = 0; i < projClass.paramList.size(); i++) {
+                    ProjectionParam pp = (ProjectionParam) projClass.paramList.get(i);
+                    logger.info(pp.getTextField().getText());
+                    pp.getTextField().setText(fix.get(i));
+                    logger.info(pp.getTextField().getText());
+                    logger.info(fix.get(i));
+                }
+            }
+        }
+
         private void accept() {
             ProjectionClass projClass = findProjectionClass(editProjection);
             if (null == projClass) {
