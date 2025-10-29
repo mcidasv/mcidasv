@@ -1095,6 +1095,7 @@ public class ProjectionManager implements ActionListener {
                 JOptionPane.showMessageDialog(
                         this,
                         "The name cannot be blank");
+                return;
             } else {
                 setProjFromDialog(projClass, editProjection);
             }
