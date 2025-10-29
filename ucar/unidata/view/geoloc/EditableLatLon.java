@@ -80,7 +80,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Getter for latitude0
      * @return latitude0
      */
-    public double getLatitude0() {
+    public double getUpperLeftLatitude() {
         return this.latitude0;
     }
 
@@ -88,7 +88,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Getter for latitude1
      * @return
      */
-    public double getLatitude1() {
+    public double getLowerRightLatitude() {
         return this.latitude1;
     }
 
@@ -96,7 +96,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Getter for longitude0
      * @return
      */
-    public double getLongitude0() {
+    public double getUpperLeftLongitude() {
         return this.longitude0;
     }
 
@@ -104,7 +104,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Getter for longitude1
      * @return
      */
-    public double getLongitude1() {
+    public double getLowerRightLongitude() {
         return this.longitude1;
     }
 
@@ -112,7 +112,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Setter for latitude0
      * @param latitude0
      */
-    public void setLatitude0(double latitude0) {
+    public void setUpperLeftLatitude(double latitude0) {
         this.latitude0 = latitude0;
         resize();
     }
@@ -121,7 +121,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Setter for latitude1
      * @param latitude1
      */
-    public void setLatitude1(double latitude1) {
+    public void setLowerRightLatitude(double latitude1) {
         this.latitude1 = latitude1;
         resize();
     }
@@ -130,7 +130,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Setter for longitude0
      * @param longitude0
      */
-    public void setLongitude0(double longitude0) {
+    public void setUpperLeftLongitude(double longitude0) {
         this.longitude0 = longitude0;
         resize();
     }
@@ -139,7 +139,7 @@ public class EditableLatLon extends ProjectionImpl {
      * Setter for longitude1
      * @param longitude1
      */
-    public void setLongitude1(double longitude1) {
+    public void setLowerRightLongitude(double longitude1) {
         this.longitude1 = longitude1;
         resize();
     }
