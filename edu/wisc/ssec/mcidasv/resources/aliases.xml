@@ -639,4 +639,31 @@
   <!-- end inq2679 -->
 
   <alias aliases="HDFEOS/GRIDS/VIIRS_Grid_*.*/Data_Fields/*.*_EVI*.*,HDFEOS/GRIDS/VIIRS_Grid_*.*/Data_Fields/*.*_NDVI,viirs_sdr_rc_ndvi" label="" name="NDVI"/>
+  
+  <alias
+      name="CAPE2"
+	  label="Convective Available Potential Energy"
+      aliases="Convective_Available_Potential_Energy_layer_between_two_pressure_difference_from_ground_layer,
+	  Convective_Available_Potential_Energy_surface,
+	  Convective_Available_Potential_Energy_isobaric,
+	  Convective_available_potential_energy_surface,
+	  Convective_Available_Potential_Energy_boundary_layer_cloud,
+	  Convective_available_potential_energy_pressure_difference_layer,
+	  CAPE_layer_between_two_pressure_difference_from_ground_layer,
+	  Surface_based_CAPE,
+	  Mixed_layer_CAPE,
+	  Most_unstable_CAPE,Virtual_temperature_based_CAPE,
+	  CAPE_surface,
+	  CAPE_isobaric,
+	  SBCAPE,
+	  MLCAPE,
+	  MUCAPE,
+	  VTCAPE,
+	  cape,
+	  CAPE_0-3km,
+	  CAPE_0-1km,
+	  CAPE_ML,
+	  CAPE_MU,
+	  CAPE_SB,
+	  mucape" />
 </aliases>

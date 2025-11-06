@@ -413,4 +413,6 @@
   <param name="viirs_edr_rc_ndvi" range_max="1.0" range_min="-1.0" table="NDVI"/>
 
   <param ci_base="0.0" ci_interval="10.0" ci_max="370.0" ci_min="-10.0" ci_width="1" name="dirFromUV" range_max="360.0" range_min="0.0" table="Direction" unit="degrees"/>
+
+  <param ci_base="0.0" ci_interval="500.0" ci_max="18000.0" ci_min="0.0" ci_width="1" name="CAPE2" range_max="4000.0" range_min="0.0" table="Sandwich" unit="Joules/kg"/>
 </params>
