@@ -6314,4 +6314,28 @@
             <params categories="" p1="CAPE2"/>
         </operands>
     </derived>
+    <derived description="Realistic Maximum Updraft Speed (from %N1%)" formula="(sqrt(2*D1))/2" id="realMaxUpdraftSpeed" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:probe"/>
+            <category value="display:timelonshade"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:multidisplay.histogram"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagecontour"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:dataxs"/>
+            <category value="display:timelatshade"/>
+            <category append="Derived" childidx="0" value="inherit"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="CAPE2"/>
+        </operands>
+    </derived>
 </derived_parameters>
