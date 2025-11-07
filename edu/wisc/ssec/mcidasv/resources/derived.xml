@@ -6338,4 +6338,28 @@
             <params categories="" p1="CAPE2"/>
         </operands>
     </derived>
+    <derived description="Updraft Speed Needed to Overcome CIN (from %N1%)" formula="sqrt(2*abs(D1))" id="updraftOvercomeCin" isdefault="true" isenduser="false">
+        <categories>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagecontour"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:timelonshade"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:dataxs"/>
+            <category value="display:probe"/>
+            <category value="display:timelatshade"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:multidisplay.histogram"/>
+            <category value="display:valuedisplay"/>
+            <category append="Derived" childidx="0" value="inherit"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="CIN"/>
+        </operands>
+    </derived>
 </derived_parameters>

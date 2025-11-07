@@ -666,4 +666,32 @@
 	  CAPE_MU,
 	  CAPE_SB,
 	  mucape" />
+  <alias
+      name="CIN"
+	  label="Convective Inhibition"
+      aliases="cin,
+	  mucin,
+	  CIN,
+	  CIN_surface,
+	  CIN_isobaric,
+	  CIN_layer_between_two_pressure_difference_from_ground_layer,
+	  Convective_Inhibition_surface,
+	  Convective_inhibition_surface,
+	  Convective_Inhibition_layer_between_two_pressure_difference_from_ground_layer,
+	  Convective_inhibition_layer_between_two_pressure_difference_from_ground_layer,
+	  Convective_Inhibition_isobaric,
+	  Convective_inhibition_isobaric,
+	  Convective_inhibition_pressure_difference_layer,
+	  Surface_based_CIN,
+	  Mixed_layer_CIN,
+	  Most_unstable_CIN,
+	  SBCIN,
+	  MLCIN,
+	  MUCIN,
+	  VTCIN,
+	  CIN_0-3km,
+	  CIN_0-1km,
+	  CIN_ML,
+	  CIN_MU,
+	  CIN_SB"/>
 </aliases>
