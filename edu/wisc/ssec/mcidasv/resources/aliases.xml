@@ -220,7 +220,8 @@
      SFX_X002T2M_P,
      SFX_T2M_SEA,
      SFX_T2M_TEB,
-     SFX_T2M_WAT"/>
+     SFX_T2M_WAT,
+     t2m"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -387,7 +388,8 @@
      100_metre_U_wind_component_surface,
      Neutral_wind_at_10_m_u-component_surface,
      VAR_10U,
-     VAR_100U"/>
+     VAR_100U,
+     u10"/>
   <alias
      name="V"
      label="V component of wind"
@@ -478,7 +480,8 @@
      100_metre_V_wind_component_surface,
      Neutral_wind_at_10_m_v-component_surface,
      VAR_10V,
-     VAR_100V"/>
+     VAR_100V,
+     v10"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -547,7 +550,8 @@
      Dewpoint_temperature_isobaric_weightedMean,
      Dewpoint_temperature_Analysis_height_above_ground,
      Dewpoint_temperature_height_above_ground_UnknownProbType193,
-     2_metre_dewpoint_temperature_surface"/>
+     2_metre_dewpoint_temperature_surface,
+     d2m"/>
   <alias
      name="THETA"
      label="Potential Temperature"
@@ -587,7 +591,8 @@
      Mean_sea_level_pressure_ETA_model_msl,
      Mean_sea_level_pressure_surface,
      Surface_pressure_surface,
-     WRF MSLP"/>
+     WRF MSLP,
+     msl"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
