@@ -231,7 +231,7 @@ public abstract class ShadowType extends Object implements java.io.Serializable 
   ShadowRealTupleType[] componentWithRef;
   int[] componentIndex;
 
-  ScreenAnnotator screenAnnotator;
+//  ScreenAnnotator screenAnnotator;
 
   public ShadowType(MathType type, DataDisplayLink link, ShadowType parent)
       throws VisADException, RemoteException {
@@ -253,7 +253,7 @@ public abstract class ShadowType extends Object implements java.io.Serializable 
     MultipleDisplayScalar = false;
     MappedDisplayScalar = false;
     p_cntrl = display.getProjectionControl();
-    screenAnnotator = new ScreenAnnotatorJ3D(display);
+//    screenAnnotator = new ScreenAnnotatorJ3D(display);
   }
 
   public DataDisplayLink getLink() {
