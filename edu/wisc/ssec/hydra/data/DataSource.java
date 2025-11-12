@@ -243,6 +243,8 @@ public abstract class DataSource {
             desc = "SST ACSPO";
         } else if (filename.contains("_ABI-L2-")) {
             desc = "ABI L2";
+        } else if (filename.startsWith("PACE_OCI") && filename.contains("L1B") && filename.endsWith(".nc")) {
+            desc = "NASA PACE";
         }
 
         return desc;
