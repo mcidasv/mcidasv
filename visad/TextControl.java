@@ -169,31 +169,33 @@ public class TextControl extends Control {
     super.nullControl();
   }
 
-  public float getAngle() {
-    return 0.0f;
-  }
+// Removed for McIDAS Inquiry #3076-3141
 
-  public float getPitch() {
-    return 0.0f;
-  }
-
-  public float getGroundElevation() {
-    return 0.0f;
-  }
-
-  public float getElevation() {
-    return 0.0f;
-  }
-
-  private ShadowType.LabelStuff labelStuff;
-
-  public ShadowType.LabelStuff getLabelStuff() {
-    return labelStuff;
-  }
-
-  public void setLabelStuff(ShadowType.LabelStuff ls) {
-    labelStuff = ls;
-  }
+//  public float getAngle() {
+//    return 0.0f;
+//  }
+//
+//  public float getPitch() {
+//    return 0.0f;
+//  }
+//
+//  public float getGroundElevation() {
+//    return 0.0f;
+//  }
+//
+//  public float getElevation() {
+//    return 0.0f;
+//  }
+//
+//  private ShadowType.LabelStuff labelStuff;
+//
+//  public ShadowType.LabelStuff getLabelStuff() {
+//    return labelStuff;
+//  }
+//
+//  public void setLabelStuff(ShadowType.LabelStuff ls) {
+//    labelStuff = ls;
+//  }
 
                             /** set the font; in the initial release this has no effect
   *
