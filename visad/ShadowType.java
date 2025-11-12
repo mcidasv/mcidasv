@@ -231,7 +231,7 @@ public abstract class ShadowType extends Object implements java.io.Serializable 
   ShadowRealTupleType[] componentWithRef;
   int[] componentIndex;
 
-//  ScreenAnnotator screenAnnotator;
+  ScreenAnnotator screenAnnotator;
 
   public ShadowType(MathType type, DataDisplayLink link, ShadowType parent)
       throws VisADException, RemoteException {
@@ -253,7 +253,7 @@ public abstract class ShadowType extends Object implements java.io.Serializable 
     MultipleDisplayScalar = false;
     MappedDisplayScalar = false;
     p_cntrl = display.getProjectionControl();
-//    screenAnnotator = new ScreenAnnotatorJ3D(display);
+    screenAnnotator = new ScreenAnnotatorJ3D(display);
   }
 
   public DataDisplayLink getLink() {
@@ -3133,27 +3133,27 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
 
 // Removed for McIDAS Inquiry #3076-3141
 
-//  public static class LabelStuff {
-//    public String text;
-//    public int textColor;
-//    public float xoff;
-//    public float yoff;
-//
-//    public LabelStuff(String label, float x, float y, byte r, byte g, byte b) {
-//      this(label, x, y, r, g, b, (byte) 255);
-//    }
-//
-//    public LabelStuff(String label, float x, float y, byte r, byte g, byte b, byte a) {
-//      text = label;
-//      xoff = x;
-//      yoff = y;
-//      textColor = ((Byte.toUnsignedInt(a) & 0xFF) << 24) |
-//              ((Byte.toUnsignedInt(r) & 0xFF) << 16) |
-//              ((Byte.toUnsignedInt(g) & 0xFF) << 8)  |
-//              ((Byte.toUnsignedInt(b) & 0xFF));
-//    }
-//
-//  };
+  public static class LabelStuff {
+    public String text;
+    public int textColor;
+    public float xoff;
+    public float yoff;
+
+    public LabelStuff(String label, float x, float y, byte r, byte g, byte b) {
+      this(label, x, y, r, g, b, (byte) 255);
+    }
+
+    public LabelStuff(String label, float x, float y, byte r, byte g, byte b, byte a) {
+      text = label;
+      xoff = x;
+      yoff = y;
+      textColor = ((Byte.toUnsignedInt(a) & 0xFF) << 24) |
+              ((Byte.toUnsignedInt(r) & 0xFF) << 16) |
+              ((Byte.toUnsignedInt(g) & 0xFF) << 8)  |
+              ((Byte.toUnsignedInt(b) & 0xFF));
+    }
+
+  };
 
   public static boolean useNewFontRendering() {
     String useNewFontRendering = 
