@@ -6,42 +6,77 @@
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
  * https://www.ssec.wisc.edu/mcidas/
- * 
+ *
  * All Rights Reserved
- * 
+ *
  * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * McIDAS-V is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
 package edu.wisc.ssec.hydra.data;
 
-import edu.wisc.ssec.adapter.MultiDimensionReader;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import edu.wisc.ssec.adapter.PACE_Spectrum;
+import edu.wisc.ssec.adapter.SwathAdapter;
+import edu.wisc.ssec.adapter.SpectrumAdapter;
 import edu.wisc.ssec.adapter.MultiDimensionSubset;
+import edu.wisc.ssec.adapter.GranuleAggregation;
 import edu.wisc.ssec.adapter.NetCDFFile;
-import edu.wisc.ssec.adapter.SwathSoundingData;
+import edu.wisc.ssec.adapter.RangeProcessor;
+import edu.wisc.ssec.adapter.AggregationRangeProcessor;
+import edu.wisc.ssec.adapter.MultiDimensionAdapter;
+import edu.wisc.ssec.adapter.MultiSpectralAggr;
+import edu.wisc.ssec.adapter.MultiSpectralData;
+import edu.wisc.ssec.hydra.Hydra;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.rmi.RemoteException;
+import java.util.Date;
+
+import ucar.unidata.util.ColorTable;
+import visad.Data;
+import visad.VisADException;
 
 
-public class PACEDataSource extends AtmSoundingDataSource {
+public class PACEDataSource extends DataSource {
+
     private static final Logger logger = LoggerFactory.getLogger(PACEDataSource.class);
+
+    String dateTimeStamp = null;
+
+    Date dateTime;
+
+    String description = null;
+
+    float nadirResolution;
+
+    File[] files = null;
+
+    String[] bandNames = null;
+    float[] centerWavelength = null;
+
+    private ArrayList<MultiSpectralData> msdPace = new ArrayList<>();
+    private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<>();
+    private HashMap<String, MultiSpectralData> msdMap = new HashMap<>();
 
     public PACEDataSource(File directory) throws Exception {
         this(directory.listFiles());
@@ -52,62 +87,300 @@ public class PACEDataSource extends AtmSoundingDataSource {
     }
 
     public PACEDataSource(File[] files) throws Exception {
-        super(files);
-    }
 
-    public SwathSoundingData buildAdapter(MultiDimensionReader reader, String xtrack, String track, String levelIndex, String levelsName, float[] levelValues,
-                                          String array, String range, String geoXtrack, String geoTrack,
-                                          String lonArray, String latArray, String[] arrayDims, String[] lonArrayDims, String[] latArrayDims,
-                                          String fillValueName) {
-        // see AtmSoundingDataSource#buildAdapter for the different sorts of things we'll
-        // need to provide
-        return super.buildAdapter(reader, xtrack, track, levelIndex, levelsName, levelValues, array, range, geoXtrack, geoTrack, lonArray, latArray, arrayDims, lonArrayDims, latArrayDims, fillValueName);
-    }
+        logger.info("TJJ PACEDataSource constructor in...");
 
-    void init(File[] files) throws Exception {
-        NetCDFFile reader = new NetCDFFile(files[0].getAbsolutePath());
-
-        double[] dvals = {0.0050, 0.0161, 0.0384, 0.0769, 0.1370, 0.2244, 0.3454, 0.5064, 0.7140, 0.9753, 1.2972, 1.6872, 2.1526, 2.7009, 3.3398, 4.0770, 4.9204, 5.8776, 6.9567, 8.1655, 9.5119, 11.0038, 12.6492, 14.4559, 16.4318, 18.5847, 20.9224, 23.4526, 26.1829, 29.1210, 32.2744, 35.6505, 39.2566, 43.1001, 47.1882, 51.5278, 56.1260, 60.9895, 66.1253, 71.5398, 77.2396, 83.2310, 89.5204, 96.1138, 103.0172, 110.2366, 117.7775, 125.6456, 133.8462, 142.3848, 151.2664, 160.4959, 170.0784, 180.0183, 190.3203, 200.9887, 212.0277, 223.4415, 235.2338, 247.4085, 259.9691, 272.9191, 286.2617, 300.0000, 314.1369, 328.6753, 343.6176, 358.9665, 374.7241, 390.8926, 407.4738, 424.4698, 441.8819, 459.7118, 477.9607, 496.6298, 515.7200, 535.2322, 555.1669, 575.5248, 596.3062, 617.5112, 639.1398, 661.1920, 683.6673, 706.5654, 729.8857, 753.6275, 777.7897, 802.3714, 827.3713, 852.7880, 878.6201, 904.8659, 931.5236, 958.5911, 986.0666, 1013.9476, 1042.2319, 1070.9170, 1100.0000};
-
-        float[] vals = new float[101];
-        for (int k = 0; k < vals.length; k++) {
-            vals[k] = (float) dvals[k];
+        if (!canUnderstand(files)) {
+            throw new Exception("PACEDataSource doesn't understand input files");
         }
 
-        SwathSoundingData dataBlue = buildAdapter(reader, "number_of_scans", "ccd_pixels", "blue_bands", "blue_wavelength", vals, "TAirStd", "Temperature", "longitude", "latitude",
-                "longitude", "latitude", null, new String[]{"fakeDim2", "fakeDim3"}, new String[]{"fakeDim0", "fakeDim1"}, null);
+        ArrayList<File> dataList = new <File>ArrayList();
+        for (int i = 0; i < files.length; i++) {
+            String fname = files[i].getName();
+            if (fname.startsWith("PACE_OCI") && fname.contains("L1B") && fname.endsWith(".nc")) {
+                dataList.add(files[i]);
+            }
+        }
 
-        HashMap subset = dataBlue.getDefaultSubset();
-        DataSelection dataSel = new MultiDimensionSubset(subset);
-        DataChoice dataChoice = new DataChoice(this, "Temp", null);
-        dataChoice.setDataSelection(dataSel);
-        myDataChoices.add(dataChoice);
-        mySoundingDatas.add(dataBlue);
+        logger.info("TJJ num good files: " + files.length);
 
-        SwathSoundingData dataRed = buildAdapter(reader, "number_of_scans", "ccd_pixels", "red_bands", "red_wavelength", vals, "H2OMMRStd", "WV", "longitude", "latitude",
-                "longitude", "latitude", null, new String[]{"fakeDim2", "fakeDim3"}, new String[]{"fakeDim0", "fakeDim1"}, null);
-        dataRed.setDataRange(new float[]{0, 20});
-        subset = dataRed.getDefaultSubset();
-        dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "WV", null);
-        dataChoice.setDataSelection(dataSel);
-        myDataChoices.add(dataChoice);
-        mySoundingDatas.add(dataRed);
+        ArrayList<String> sortedList = DataSource.getTimeSortedFilenameList(dataList);
+        for (int i = 0; i < sortedList.size(); i++) {
+            files[i] = new File(sortedList.get(i));
+        }
 
-        SwathSoundingData dataSwir = buildAdapter(reader, "number_of_scans", "SWIR_pixels", "SWIR_bands", "SWIR_wavelength", vals, "O3VMRStd", "O3", "longitude", "latitude",
-                "longitude", "latitude", null, new String[]{"fakeDim2", "fakeDim3"}, new String[]{"fakeDim0", "fakeDim1"}, null);
-        dataSwir.setDataRange(new float[]{0, 20});
-        subset = dataSwir.getDefaultSubset();
-        dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "O3", null);
-        dataChoice.setDataSelection(dataSel);
-        myDataChoices.add(dataChoice);
-        mySoundingDatas.add(dataSwir);
+        File file = files[0];
+
+        logger.info("TJJ time stuff...");
+
+        dateTimeStamp = DataSource.getDateTimeStampFromFilename(file.getName());
+        description = DataSource.getDescriptionFromFilename(file.getName());
+        dateTime = DataSource.getDateTimeFromFilename(file.getName());
+
+        try {
+            init(files);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            logger.error(Arrays.toString(e.getStackTrace()));
+        }
+
+        logger.info("TJJ PACEDataSource constructor out...");
     }
 
     public boolean canUnderstand(File[] files) {
-        return files[0].getName().startsWith("PACE")
-               && files[0].getName().contains("L1B")
-               && files[0].getName().endsWith(".nc");
+        if (files[0].getName().startsWith("PACE_OCI")
+                && files[0].getName().contains("L1B")
+                && files[0].getName().endsWith(".nc")) {
+            return true;
+        }
+        return false;
+    }
+
+    void init(File[] files) throws Exception {
+
+        logger.info("TJJ PACEDataSource init() in...");
+
+        ArrayList<NetCDFFile> ncdfal = new ArrayList<>();
+        for (int k = 0; k < files.length; k++) {
+            ncdfal.add(new NetCDFFile(files[k].getAbsolutePath()));
+        }
+        GranuleAggregation aggReader = new GranuleAggregation(ncdfal, "number_of_scans");
+
+        MultiSpectralData msd = null;
+        String[] productPaths;
+        String path = "observation_data/";
+        productPaths = new String[] { path + "rhot_blue", path + "rhot_red", path + "rhot_SWIR" };
+        msd = buildPACE(aggReader, productPaths);
+        nadirResolution = 14000;
+
+        multiSpectralData.add(msd);
+
+        DataChoice choice = setDataChoice(msd, 0, "rhot_blue");
+
+        msdMap.put(choice.getName(), msd);
+        logger.info("TJJ PACEDataSource init() out...");
+    }
+
+    MultiSpectralData buildPACE(GranuleAggregation reader, String[] productPaths) throws Exception {
+
+        logger.info("TJJ buildPACE() in, LEN PRODUCT PATHS: " + productPaths.length);
+
+        boolean unsigned = false;
+        boolean unpack = false;
+        boolean range_check_after_scaling = false;
+
+        MultiSpectralData aggrMSDs;
+        String[] channelIndex_names = {"blue_bands", "red_bands", "SWIR_bands"};
+        String[] channelNames = {"sensor_band_parameters/blue_wavelength", "sensor_band_parameters/red_wavelength", "sensor_band_parameters/SWIR_wavelength"};
+
+        // for (int bandRangeIndex = 0; bandRangeIndex < productPaths.length; bandRangeIndex++) {
+        for (int bandRangeIndex = 0; bandRangeIndex < 1; bandRangeIndex++) {
+
+            String productPath = productPaths[bandRangeIndex];
+
+            HashMap metadata = fillSwathMetadataTable(
+                    "number_of_scans",
+                    "ccd_pixels",
+                    channelIndex_names[bandRangeIndex],
+                    null,
+                    productPath,
+                    "reflectance",
+                    "number_of_scans",
+                    "ccd_pixels",
+                    "geolocation_data/longitude",
+                    "geolocation_data/latitude",
+                    null,
+                    null,
+                    null,
+                    unsigned, unpack, range_check_after_scaling, "PACE"
+            );
+
+            HashMap<String, Object> spectTable = SpectrumAdapter.getEmptyMetadataTable();
+            spectTable.put("array_name", productPath);
+            spectTable.put("product_name", "PACE");
+            spectTable.put(SpectrumAdapter.channelIndex_name, channelIndex_names[bandRangeIndex]);
+            spectTable.put(SpectrumAdapter.channelType, "channel_number");
+            spectTable.put(SpectrumAdapter.channels_name, channelNames[bandRangeIndex]);
+            spectTable.put(SpectrumAdapter.x_dim_name, "number_of_scans");
+            spectTable.put(SpectrumAdapter.y_dim_name, "ccd_pixels");
+            spectTable.put(SpectrumAdapter.FOVindex_name, null);
+
+            float scale = 1.0f;
+            float offset = 0.0f;
+
+            float[] range = getValidRange();
+            double[] missing = getMissing();
+            RangeProcessor rngProcessor = new RangeProcessor(reader, metadata, scale, offset, range[0], range[1], missing);
+
+            AggregationRangeProcessor aggrRangeProcessor = new AggregationRangeProcessor(reader, rngProcessor);
+            reader.addPreProcessor(productPath, aggrRangeProcessor);
+
+            logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create SwathAdapter");
+            SwathAdapter adapter = new SwathAdapter(reader, metadata);
+            logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create PACE_Spectrum");
+            SpectrumAdapter psa = new PACE_Spectrum(reader, spectTable);
+            logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create MultiSpectralData");
+            MultiSpectralData msd = new MultiSpectralData(adapter, psa);
+            // TJJ temporary hardcode from ncdump, but still not affecting display range
+            msd.setDataRange(new float[] { 0.0f, 1.3f } );
+            logger.info("TJJ Valid Range: " + msd.getDataRange().toString());
+            msdPace.add(msd);
+
+        }
+
+        aggrMSDs = new MultiSpectralAggr(msdPace.toArray(new MultiSpectralData[msdPace.size()]), "radiances");
+        // Start of blue range
+        aggrMSDs.setInitialWavenumber(305.0f);
+
+        logger.info("TJJ buildPACE() out...");
+        return aggrMSDs;
+    }
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public boolean getDoFilter(DataChoice choice) {
+        return true;
+    }
+
+    @Override
+    public boolean getOverlayAsMask(DataChoice choice) {
+        return false;
+    }
+
+    public boolean hasMultiSpectralData() {
+        return true;
+    }
+
+    @Override
+    public boolean isSounder() {
+        return true;
+    }
+
+    public HashMap fillSwathMetadataTable(String xtrack, String track, String channel, String fovIndex,
+                                          String array, String range, String geoXtrack, String geoTrack,
+                                          String lonArray, String latArray, String[] arrayDims, String[] lonArrayDims, String[] latArrayDims,
+                                          boolean unsigned, boolean unpack, boolean range_check_after_scaling, String product_name) {
+
+        logger.info("TJJ fillSwathMetadataTable() in...");
+        HashMap metadata = SwathAdapter.getEmptyMetadataTable();
+
+        metadata.put(SwathAdapter.xtrack_name, xtrack);
+        metadata.put(SwathAdapter.track_name, track);
+        metadata.put(SpectrumAdapter.channelIndex_name, channel);
+        if (fovIndex != null) {
+            metadata.put(SpectrumAdapter.FOVindex_name, fovIndex);
+        }
+        metadata.put(SwathAdapter.geo_xtrack_name, geoXtrack);
+        metadata.put(SwathAdapter.geo_track_name, geoTrack);
+        metadata.put(SwathAdapter.array_name, array);
+        metadata.put(SwathAdapter.range_name, range);
+        metadata.put(SwathAdapter.lon_array_name, lonArray);
+        metadata.put(SwathAdapter.lat_array_name, latArray);
+        if (unsigned) {
+            metadata.put("unsigned", "true");
+        }
+        if (unpack) {
+            metadata.put("unpack", "true");
+        }
+        if (range_check_after_scaling) {
+            metadata.put("range_check_after_scaling", "true");
+        }
+        if (lonArrayDims != null) {
+            metadata.put(SwathAdapter.lon_array_dimension_names, lonArrayDims);
+        }
+        if (latArrayDims != null) {
+            metadata.put(SwathAdapter.lat_array_dimension_names, latArrayDims);
+        }
+        if (arrayDims != null) {
+            metadata.put(SwathAdapter.array_dimension_names, arrayDims);
+        }
+        if (product_name != null) {
+            metadata.put("product_name", product_name);
+        }
+
+        logger.info("TJJ fillSwathMetadataTable() out...");
+        return metadata;
+    }
+
+    @Override
+    public MultiSpectralData getMultiSpectralData(DataChoice choice) {
+        return msdMap.get(choice.getName());
+    }
+
+    public MultiSpectralData getMultiSpectralData(String name) {
+        return msdMap.get(name);
+    }
+
+    DataChoice setDataChoice(MultiSpectralData adapter, int idx, String name) {
+        HashMap subset = adapter.getDefaultSubset();
+        DataSelection dataSel = new MultiDimensionSubset(subset);
+        DataChoice dataChoice = new DataChoice(this, name, null);
+        dataChoice.setDataSelection(dataSel);
+        myDataChoices.add(dataChoice);
+        return dataChoice;
+    }
+
+    @Override
+    public Data getData(DataChoice dataChoice, DataSelection dataSelection)
+            throws VisADException, RemoteException {
+        try {
+            MultiDimensionAdapter adapter = getMultiSpectralData(dataChoice);
+
+            MultiDimensionSubset select = (MultiDimensionSubset) dataChoice.getDataSelection();
+            HashMap subset = select.getSubset();
+
+            Data data = adapter.getData(subset);
+            return data;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public static double[] getMissing() {
+        double[] missing = new double[] {
+                -32767.f,
+        };
+        return missing;
+    }
+
+    public static float[] getValidRange() {
+        float[] validRange = new float[2];
+        validRange[0] = 0.0f;
+        validRange[1] = 1.3f;
+        return validRange;
+    }
+
+    public ColorTable getDefaultColorTable(DataChoice choice) {
+        return Hydra.invGrayTable;
+    }
+
+    @Override
+    public float getNadirResolution(DataChoice choice) throws Exception {
+        return nadirResolution;
+    }
+
+    public String toString() {
+
+        StringBuilder result = new StringBuilder();
+        result.append("PACEDataSource toString(): \n");
+        result.append("{\n");
+        for (
+                String key : msdMap.keySet()) {
+            MultiSpectralData value = msdMap.get(key);
+            result.append("\t").append("Adapter name: " + key).append("-> ").append(value.toString()).append(",\n");
+
+        }
+        result.append("}");
+        return result.toString();
+
     }
 }
