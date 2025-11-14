@@ -2583,6 +2583,7 @@ public class MultiSpectralDataSource extends DataSource {
     public String toString() {
 
         StringBuilder result = new StringBuilder();
+        result.append("MultiSpectralDataSource toString(): \n");
         result.append("{\n");
         for (
                 String key : adapterMap.keySet()) {
