@@ -85,7 +85,7 @@ public class NASA_CrIS_DataSource extends DataSource {
 
     public NASA_CrIS_DataSource(File[] files) throws Exception {
         if (!canUnderstand(files)) {
-            throw new Exception("NOAA_SNPP_DataSource doesn't understand input files");
+            throw new Exception("NASA_CrIS_DataSource doesn't understand input files");
         }
 
         ArrayList<File> dataList = new <File>ArrayList();
