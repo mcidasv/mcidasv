@@ -50,6 +50,8 @@ import java.text.DecimalFormat;
 
 import java.lang.Float;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import ucar.unidata.util.GuiUtils;
@@ -113,6 +115,8 @@ import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 
 public class Hydra {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceFactory.class);
 
     private static float textSizeFactor = 1;
     private static int fontSize = 24;
@@ -204,8 +208,10 @@ public class Hydra {
 
     public void dataSourceSelected(File dir) {
         try {
+            logger.trace("Bef createDataSource()");
             dataSource = dataSourceFactory.createDataSource(dir);
         } catch (Exception e) {
+            logger.trace("dataSourceSelected Exception: " + e.getMessage());
             e.printStackTrace();
         }
 

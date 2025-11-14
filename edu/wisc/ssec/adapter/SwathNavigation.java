@@ -36,7 +36,12 @@ import visad.RealTupleType;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SwathNavigation implements Navigation {
+
+    private static final Logger logger = LoggerFactory.getLogger(SwathNavigation.class);
 
     public static SwathNavigation createNavigation(SwathAdapter swathAdapter) throws Exception {
         String product_name;
@@ -73,7 +78,9 @@ public class SwathNavigation implements Navigation {
         } else if ("AMSA_1B_NCDF".equals(product_name)) {
             swathNav = new MHS_EPS_1B_LonLatNavigation(swathAdapter);
         } else {
+            logger.trace("Bef generic SwathNavigation(swathAdapter)");
             swathNav = new SwathNavigation(swathAdapter);
+            logger.trace("Aft generic SwathNavigation(swathAdapter)");
         }
 
         return swathNav;
@@ -113,6 +120,8 @@ public class SwathNavigation implements Navigation {
     RangeProcessor latRngProcessor;
 
     public SwathNavigation(SwathAdapter swathAdapter) throws Exception {
+
+        logger.trace("Constructor in...");
 
         HashMap metadata = (HashMap) swathAdapter.getMetadata();
         reader = swathAdapter.getGeoReader();

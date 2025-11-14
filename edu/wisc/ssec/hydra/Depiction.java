@@ -40,14 +40,18 @@ import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
 import visad.VisADException;
 
 import java.rmi.RemoteException;
 
-
 public class Depiction {
+
+    private static final Logger logger = LoggerFactory.getLogger(Depiction.class);
 
     ImageDisplay imageDisplay;
     DisplayMaster dspMaster;
@@ -55,7 +59,7 @@ public class Depiction {
     DisplayableData imageDsp;
     String name;
     String dateTimeStr;
-    String tooltip = "options for this image";
+    String tooltip = "Options for this image";
     JComponent parentComponent;
     final javax.swing.JLabel show = new javax.swing.JLabel();
     final javax.swing.JLabel remove = new javax.swing.JLabel();
@@ -87,6 +91,8 @@ public class Depiction {
     }
 
     Depiction(DisplayMaster dspMaster, DisplayableData imageDsp, DepictionControl clrCntrl, DatasetInfo info, boolean isRemovable, boolean isMask) {
+
+        logger.info("Constructor in...");
         this.dspMaster = dspMaster;
         this.clrCntrl = clrCntrl;
         this.imageDsp = imageDsp;

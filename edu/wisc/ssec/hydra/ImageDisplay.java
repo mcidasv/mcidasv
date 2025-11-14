@@ -58,6 +58,9 @@ import java.util.ArrayList;
 
 import java.lang.Runnable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.MapLines;
 import ucar.visad.display.DisplayableData;
@@ -69,7 +72,6 @@ import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 
 import visad.georef.MapProjection;
 import visad.georef.EarthLocationTuple;
-
 
 import visad.*;
 import visad.MouseBehavior;
@@ -84,6 +86,8 @@ import edu.wisc.ssec.adapter.MultiSpectralData;
 
 
 public class ImageDisplay extends HydraDisplay implements ActionListener, ControlListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(ImageDisplay.class);
 
     JFrame frame;
 
@@ -242,6 +246,7 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
             throws VisADException, RemoteException {
         super();
 
+        logger.trace("Constructor in...");
         this.initialized = false;
         this.mapProjection = mapProj;
         this.lastMapProjection = mapProj;
@@ -352,6 +357,8 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
     }
 
     public void buildUI(boolean createFrame) {
+
+        logger.trace("buildUI() in...");
         if (SwingUtilities.isEventDispatchThread()) {
             outerPanel = (JPanel) buildComponent();
         } else {
@@ -399,7 +406,7 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
             }
         });
 
-        linkButton.setToolTipText("add to set of displays sharing zoom/translate");
+        linkButton.setToolTipText("Add to set of displays sharing zoom/translate");
         if (share) { // if initialize to false, don't allow
             linkButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {

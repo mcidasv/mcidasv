@@ -91,6 +91,7 @@ import java.util.Objects;
 public class DataBrowser extends HydraDisplay implements ActionListener, TreeSelectionListener, TreeExpansionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DataBrowser.class);
+
     private static final String HYDRA_LAST_PATH_ID = "mcidasv.hydra.lastpath";
 
     // TJJ - keep around as original version McV drop-in was based on, but do not display any more
@@ -981,6 +982,8 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
         JButton displayButton = new JButton("Display");
         displayButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+
+                logger.trace("DataBrowser actionPerformed: " + e.getActionCommand());
                 setCursorToWait();
 
                 class Task extends SwingWorker<String, Object> {
@@ -989,6 +992,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
                     boolean imageCreated = false;
 
                     public String doInBackground() {
+                        logger.trace("DataBrowser doInBackground()");
                         if (windowSelect.getSelectedItem().equals("New")) {
                             mode = 0;
                             windowNumber = 1;
@@ -1018,6 +1022,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
                                 mode = 2;
                             }
 
+                            logger.trace("hydra: " + hydra);
                             if (hydra != null && hydra.multiDisplay) {
                                 int num = windowSelect.getItemCount();
                                 WindowItem item = (WindowItem) windowSelect.getItemAt(num - 1);
@@ -1026,6 +1031,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
                         }
 
                         // check if a selected leaf node references an instance of Compute
+                        logger.trace("selectedLeafNode: " + selectedLeafNode);
                         if (selectedLeafNode != null) {
                             LeafInfo leafInfo = (LeafInfo) selectedLeafNode.getUserObject();
                             Object source = leafInfo.source;

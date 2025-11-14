@@ -38,7 +38,12 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SwathAdapter extends GeoSfcAdapter {
+
+    private static final Logger logger = LoggerFactory.getLogger(SwathAdapter.class);
 
     String nav_type = "Interp";
     boolean lon_lat_trusted = true;
@@ -200,8 +205,8 @@ public class SwathAdapter extends GeoSfcAdapter {
             RealTupleType domainTupType = new RealTupleType(domainRealTypes[0], domainRealTypes[1]);
             swathDomain = new Linear2DSet(domainTupType, 0, lengths[0] - 1, lengths[0], 0, lengths[1] - 1, lengths[1]);
         } catch (Exception e) {
-            System.out.println("Navigation failed to create");
-            e.printStackTrace();
+            logger.error("Navigation failed to create");
+            logger.error(e.getMessage());
         }
 
         if (XTrackLen <= 256) {

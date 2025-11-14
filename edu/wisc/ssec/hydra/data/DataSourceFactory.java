@@ -71,6 +71,7 @@ public class DataSourceFactory {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceFactory.class);
 
     public DataSource createDataSource(File[] files) throws Exception {
+        logger.trace("createDataSource() in...");
         DataSource dataSource = null;
 
         ArrayList<File> fal = new ArrayList();
@@ -78,16 +79,20 @@ public class DataSourceFactory {
             if (files[k] == null) {
                 throw new Exception("files can't be null");
             }
+            logger.trace("Adding File: " + files[k]);
             fal.add(files[k]);
         }
 
         Iterator<String> iter = dataSourceClassList.iterator();
         while (iter.hasNext()) {
             Class ds = Class.forName(iter.next());
+            logger.trace("iterator value: " + ds.getName());
             try {
                 dataSource = (DataSource) ds.getConstructor(new Class[]{ArrayList.class}).newInstance(fal);
+                logger.info("dataSource instantiation SUCCESS: " + dataSource);
                 break;
             } catch (Exception e) {
+                logger.error("NOPE, Exception: " + e.getMessage());
             }
         }
         if (dataSource == null) {
@@ -95,12 +100,14 @@ public class DataSourceFactory {
         }
 
         synchronized (dataSourceList) {
+            logger.info("dataSource added to dataSourceList: " + dataSource.getDescription());
             dataSourceList.add(dataSource);
         }
         return dataSource;
     }
 
     public DataSource createDataSource(File dir) throws Exception {
+        logger.info("DataSourceFactory.createDataSource() in, dir: " + dir.getName());
         Iterator<String> iter = dataSourceClassList.iterator();
         DataSource dataSource = null;
         while (iter.hasNext()) {
@@ -143,6 +150,8 @@ public class DataSourceFactory {
     }
 
     public static ArrayList<DataSource> getDataSources() {
+
+        logger.info("DataSourceFactory.getDataSource() in...");
         ArrayList<DataSource> list = new ArrayList();
 
         synchronized (dataSourceList) {
