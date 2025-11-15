@@ -144,7 +144,7 @@ public class PACEDataSource extends DataSource {
         for (int k = 0; k < files.length; k++) {
             ncdfal.add(new NetCDFFile(files[k].getAbsolutePath()));
         }
-        GranuleAggregation aggReader = new GranuleAggregation(ncdfal, "number_of_scans");
+        GranuleAggregation aggReader = new GranuleAggregation(ncdfal, "scans");
 
         MultiSpectralData msd = null;
         String[] productPaths;
@@ -179,14 +179,18 @@ public class PACEDataSource extends DataSource {
             String productPath = productPaths[bandRangeIndex];
 
             HashMap metadata = fillSwathMetadataTable(
-                    "number_of_scans",
-                    "ccd_pixels",
+                    //"number_of_scans",
+                    "scans",
+                    //"ccd_pixels",
+                    "pixels",
                     channelIndex_names[bandRangeIndex],
                     null,
                     productPath,
                     "reflectance",
-                    "number_of_scans",
-                    "ccd_pixels",
+                    //"number_of_scans",
+                    "scans",
+                    //"ccd_pixels",
+                    "pixels",
                     "geolocation_data/longitude",
                     "geolocation_data/latitude",
                     null,
@@ -201,8 +205,8 @@ public class PACEDataSource extends DataSource {
             spectTable.put(SpectrumAdapter.channelIndex_name, channelIndex_names[bandRangeIndex]);
             spectTable.put(SpectrumAdapter.channelType, "channel_number");
             spectTable.put(SpectrumAdapter.channels_name, channelNames[bandRangeIndex]);
-            spectTable.put(SpectrumAdapter.x_dim_name, "number_of_scans");
-            spectTable.put(SpectrumAdapter.y_dim_name, "ccd_pixels");
+            spectTable.put(SpectrumAdapter.x_dim_name, "scans");
+            spectTable.put(SpectrumAdapter.y_dim_name, "pixels");
             spectTable.put(SpectrumAdapter.FOVindex_name, null);
 
             float scale = 1.0f;
@@ -222,15 +226,20 @@ public class PACEDataSource extends DataSource {
             logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create MultiSpectralData");
             MultiSpectralData msd = new MultiSpectralData(adapter, psa);
             // TJJ temporary hardcode from ncdump, but still not affecting display range
-            msd.setDataRange(new float[] { 0.0f, 1.3f } );
+            msd.setDataRange(new float[] { 0.0f, 3.0f } );
             logger.info("TJJ Valid Range: " + msd.getDataRange().toString());
             msdPace.add(msd);
 
         }
 
-        aggrMSDs = new MultiSpectralAggr(msdPace.toArray(new MultiSpectralData[msdPace.size()]), "radiances");
+        aggrMSDs = new MultiSpectralAggr(msdPace.toArray(new MultiSpectralData[msdPace.size()]), "reflectance");
         // Start of blue range
         aggrMSDs.setInitialWavenumber(305.0f);
+        logger.info("TJJ data range [0] BEF: " + aggrMSDs.getDataRange()[0]);
+        aggrMSDs.setDataRange(getValidRange());
+        logger.info("TJJ data range [0] AFT: " + aggrMSDs.getDataRange()[0]);
+        logger.info("TJJ aggrMSDS Parameter: " + aggrMSDs.getParameter());
+        logger.info("TJJ aggrMSDS ArrayName: " + aggrMSDs.getArrayName());
 
         logger.info("TJJ buildPACE() out...");
         return aggrMSDs;
@@ -355,7 +364,7 @@ public class PACEDataSource extends DataSource {
     public static float[] getValidRange() {
         float[] validRange = new float[2];
         validRange[0] = 0.0f;
-        validRange[1] = 1.3f;
+        validRange[1] = 3.0f;
         return validRange;
     }
 
