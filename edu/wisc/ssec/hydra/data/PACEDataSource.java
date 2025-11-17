@@ -86,8 +86,16 @@ public class PACEDataSource extends DataSource {
         this(files.toArray(new File[]{null}));
     }
 
-    public PACEDataSource(File[] files) throws Exception {
+    private int getPaceVersion(File file) {
+        String name = file.getName();
+        if (!name.startsWith("PACE_OCI")) return -1;
+        if (name.endsWith("V3.nc")) return 3;
+        if (name.endsWith("V2.nc")) return 2;
+        return -1;
+    }
 
+    public PACEDataSource(File[] files) throws Exception {
+		
         logger.info("TJJ PACEDataSource constructor in...");
 
         if (!canUnderstand(files)) {
@@ -137,14 +145,19 @@ public class PACEDataSource extends DataSource {
     }
 
     void init(File[] files) throws Exception {
+        this.files = files;
 
         logger.info("TJJ PACEDataSource init() in...");
+
+        int version = getPaceVersion(files[0]);
+
+        String scanDim = (version == 3? "scans" : "number_of_scans");
 
         ArrayList<NetCDFFile> ncdfal = new ArrayList<>();
         for (int k = 0; k < files.length; k++) {
             ncdfal.add(new NetCDFFile(files[k].getAbsolutePath()));
         }
-        GranuleAggregation aggReader = new GranuleAggregation(ncdfal, "scans");
+        GranuleAggregation aggReader = new GranuleAggregation(ncdfal, scanDim);
 
         MultiSpectralData msd = null;
         String[] productPaths;
@@ -178,19 +191,21 @@ public class PACEDataSource extends DataSource {
 
             String productPath = productPaths[bandRangeIndex];
 
+            int version = getPaceVersion(files[0]);
+            boolean isV3 = (version == 3);
+
+            String scanDim = isV3 ? "scans" : "number_of_scans";
+            String pixDim  = isV3 ? "pixels" : "ccd_pixels";
+
             HashMap metadata = fillSwathMetadataTable(
-                    //"number_of_scans",
-                    "scans",
-                    //"ccd_pixels",
-                    "pixels",
+                    scanDim,
+                    pixDim,
                     channelIndex_names[bandRangeIndex],
                     null,
                     productPath,
                     "reflectance",
-                    //"number_of_scans",
-                    "scans",
-                    //"ccd_pixels",
-                    "pixels",
+                    scanDim,
+                    pixDim,
                     "geolocation_data/longitude",
                     "geolocation_data/latitude",
                     null,
@@ -205,8 +220,8 @@ public class PACEDataSource extends DataSource {
             spectTable.put(SpectrumAdapter.channelIndex_name, channelIndex_names[bandRangeIndex]);
             spectTable.put(SpectrumAdapter.channelType, "channel_number");
             spectTable.put(SpectrumAdapter.channels_name, channelNames[bandRangeIndex]);
-            spectTable.put(SpectrumAdapter.x_dim_name, "scans");
-            spectTable.put(SpectrumAdapter.y_dim_name, "pixels");
+            spectTable.put(SpectrumAdapter.x_dim_name, scanDim);
+            spectTable.put(SpectrumAdapter.y_dim_name, pixDim);
             spectTable.put(SpectrumAdapter.FOVindex_name, null);
 
             float scale = 1.0f;
@@ -226,8 +241,9 @@ public class PACEDataSource extends DataSource {
             logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create MultiSpectralData");
             MultiSpectralData msd = new MultiSpectralData(adapter, psa);
             // TJJ temporary hardcode from ncdump, but still not affecting display range
-            msd.setDataRange(new float[] { 0.0f, 3.0f } );
+            //msd.setDataRange(new float[] { 0.0f, 3.0f } );
             logger.info("TJJ Valid Range: " + msd.getDataRange().toString());
+            msd.setDataRange(getValidRange());
             msdPace.add(msd);
 
         }
@@ -363,8 +379,8 @@ public class PACEDataSource extends DataSource {
 
     public static float[] getValidRange() {
         float[] validRange = new float[2];
-        validRange[0] = 0.0f;
-        validRange[1] = 3.0f;
+        validRange[0] = 40.0f;
+        validRange[1] = 120.0f;
         return validRange;
     }
 
