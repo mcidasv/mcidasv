@@ -96,7 +96,7 @@ public class PACEDataSource extends DataSource {
 
     public PACEDataSource(File[] files) throws Exception {
 		
-        logger.info("TJJ PACEDataSource constructor in...");
+        logger.info("PACEDataSource constructor in...");
 
         if (!canUnderstand(files)) {
             throw new Exception("PACEDataSource doesn't understand input files");
@@ -110,7 +110,7 @@ public class PACEDataSource extends DataSource {
             }
         }
 
-        logger.info("TJJ num good files: " + files.length);
+        logger.info("num good files: " + files.length);
 
         ArrayList<String> sortedList = DataSource.getTimeSortedFilenameList(dataList);
         for (int i = 0; i < sortedList.size(); i++) {
@@ -119,7 +119,7 @@ public class PACEDataSource extends DataSource {
 
         File file = files[0];
 
-        logger.info("TJJ time stuff...");
+        logger.info("time stuff...");
 
         dateTimeStamp = DataSource.getDateTimeStampFromFilename(file.getName());
         description = DataSource.getDescriptionFromFilename(file.getName());
@@ -132,7 +132,7 @@ public class PACEDataSource extends DataSource {
             logger.error(Arrays.toString(e.getStackTrace()));
         }
 
-        logger.info("TJJ PACEDataSource constructor out...");
+        logger.info("PACEDataSource constructor out...");
     }
 
     public boolean canUnderstand(File[] files) {
@@ -147,60 +147,52 @@ public class PACEDataSource extends DataSource {
     void init(File[] files) throws Exception {
         this.files = files;
 
-        logger.info("TJJ PACEDataSource init() in...");
+        logger.info("PACEDataSource init() in...");
 
         int version = getPaceVersion(files[0]);
-
-        String scanDim = (version == 3? "scans" : "number_of_scans");
+        String scanDim = (version == 3 ? "scans" : "number_of_scans");
 
         ArrayList<NetCDFFile> ncdfal = new ArrayList<>();
-        for (int k = 0; k < files.length; k++) {
-            ncdfal.add(new NetCDFFile(files[k].getAbsolutePath()));
+        for (File f : files) {
+            ncdfal.add(new NetCDFFile(f.getAbsolutePath()));
         }
         GranuleAggregation aggReader = new GranuleAggregation(ncdfal, scanDim);
 
-        MultiSpectralData msd = null;
-        String[] productPaths;
         String path = "observation_data/";
-        productPaths = new String[] { path + "rhot_blue", path + "rhot_red", path + "rhot_SWIR" };
-        msd = buildPACE(aggReader, productPaths);
-        nadirResolution = 14000;
+        String[] productPaths = { path + "rhot_blue", path + "rhot_red", path + "rhot_SWIR" };
+        String[] channelIndexNames = { "blue_bands", "red_bands", "SWIR_bands" };
+        String[] channelNames = {
+            "sensor_band_parameters/blue_wavelength",
+            "sensor_band_parameters/red_wavelength",
+            "sensor_band_parameters/SWIR_wavelength"
+        };
 
+        MultiSpectralData msd = buildPACE(aggReader, productPaths, channelIndexNames, channelNames);
         multiSpectralData.add(msd);
-
-        DataChoice choice = setDataChoice(msd, 0, "rhot_blue");
-
+        DataChoice choice = setDataChoice(msd, 0, "Reflectance");
         msdMap.put(choice.getName(), msd);
-        logger.info("TJJ PACEDataSource init() out...");
+
+        logger.info("PACEDataSource init() out...");
     }
 
-    MultiSpectralData buildPACE(GranuleAggregation reader, String[] productPaths) throws Exception {
+    MultiSpectralData buildPACE(GranuleAggregation reader, String[] productPaths, String[] channelIndexNames, String[] channelNames) throws Exception {
 
-        logger.info("TJJ buildPACE() in, LEN PRODUCT PATHS: " + productPaths.length);
+        int version = getPaceVersion(files[0]);
+        boolean isV3 = (version == 3);
+        String scanDim = isV3 ? "scans" : "number_of_scans";
+        String pixDim = isV3 ? "pixels" : "ccd_pixels";
 
         boolean unsigned = false;
         boolean unpack = false;
         boolean range_check_after_scaling = false;
 
-        MultiSpectralData aggrMSDs;
-        String[] channelIndex_names = {"blue_bands", "red_bands", "SWIR_bands"};
-        String[] channelNames = {"sensor_band_parameters/blue_wavelength", "sensor_band_parameters/red_wavelength", "sensor_band_parameters/SWIR_wavelength"};
-
-        // for (int bandRangeIndex = 0; bandRangeIndex < productPaths.length; bandRangeIndex++) {
-        for (int bandRangeIndex = 0; bandRangeIndex < 1; bandRangeIndex++) {
-
-            String productPath = productPaths[bandRangeIndex];
-
-            int version = getPaceVersion(files[0]);
-            boolean isV3 = (version == 3);
-
-            String scanDim = isV3 ? "scans" : "number_of_scans";
-            String pixDim  = isV3 ? "pixels" : "ccd_pixels";
-
-            HashMap metadata = fillSwathMetadataTable(
+        for (int k = 0; k < productPaths.length; k++) {
+            String productPath = productPaths[k];
+            logger.info("buildPACE() loop for product: " + productPath);
+            HashMap<String, Object> metadata = fillSwathMetadataTable(
                     scanDim,
                     pixDim,
-                    channelIndex_names[bandRangeIndex],
+                    channelIndexNames[k],
                     null,
                     productPath,
                     "reflectance",
@@ -211,15 +203,18 @@ public class PACEDataSource extends DataSource {
                     null,
                     null,
                     null,
-                    unsigned, unpack, range_check_after_scaling, "PACE"
+                    unsigned,
+                    unpack,
+                    range_check_after_scaling,
+                    "PACE"
             );
 
             HashMap<String, Object> spectTable = SpectrumAdapter.getEmptyMetadataTable();
             spectTable.put("array_name", productPath);
             spectTable.put("product_name", "PACE");
-            spectTable.put(SpectrumAdapter.channelIndex_name, channelIndex_names[bandRangeIndex]);
+            spectTable.put(SpectrumAdapter.channelIndex_name, channelIndexNames[k]);
             spectTable.put(SpectrumAdapter.channelType, "channel_number");
-            spectTable.put(SpectrumAdapter.channels_name, channelNames[bandRangeIndex]);
+            spectTable.put(SpectrumAdapter.channels_name, channelNames[k]);
             spectTable.put(SpectrumAdapter.x_dim_name, scanDim);
             spectTable.put(SpectrumAdapter.y_dim_name, pixDim);
             spectTable.put(SpectrumAdapter.FOVindex_name, null);
@@ -229,35 +224,26 @@ public class PACEDataSource extends DataSource {
 
             float[] range = getValidRange();
             double[] missing = getMissing();
-            RangeProcessor rngProcessor = new RangeProcessor(reader, metadata, scale, offset, range[0], range[1], missing);
 
+            RangeProcessor rngProcessor = new RangeProcessor(reader, metadata, scale, offset, range[0], range[1], missing);
             AggregationRangeProcessor aggrRangeProcessor = new AggregationRangeProcessor(reader, rngProcessor);
             reader.addPreProcessor(productPath, aggrRangeProcessor);
 
-            logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create SwathAdapter");
             SwathAdapter adapter = new SwathAdapter(reader, metadata);
-            logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create PACE_Spectrum");
+
             SpectrumAdapter psa = new PACE_Spectrum(reader, spectTable);
-            logger.info("TJJ band range chunk #" + (bandRangeIndex + 1) + ", create MultiSpectralData");
-            MultiSpectralData msd = new MultiSpectralData(adapter, psa);
-            // TJJ temporary hardcode from ncdump, but still not affecting display range
-            //msd.setDataRange(new float[] { 0.0f, 3.0f } );
-            logger.info("TJJ Valid Range: " + msd.getDataRange().toString());
+
+            MultiSpectralData msd = new MultiSpectralData(adapter, psa, "Reflectance", "Reflectance", null, null);
+
             msd.setDataRange(getValidRange());
             msdPace.add(msd);
 
         }
 
-        aggrMSDs = new MultiSpectralAggr(msdPace.toArray(new MultiSpectralData[msdPace.size()]), "reflectance");
-        // Start of blue range
+        MultiSpectralAggr aggrMSDs = new MultiSpectralAggr(msdPace.toArray(new MultiSpectralData[msdPace.size()]), "radiances");
         aggrMSDs.setInitialWavenumber(305.0f);
-        logger.info("TJJ data range [0] BEF: " + aggrMSDs.getDataRange()[0]);
         aggrMSDs.setDataRange(getValidRange());
-        logger.info("TJJ data range [0] AFT: " + aggrMSDs.getDataRange()[0]);
-        logger.info("TJJ aggrMSDS Parameter: " + aggrMSDs.getParameter());
-        logger.info("TJJ aggrMSDS ArrayName: " + aggrMSDs.getArrayName());
 
-        logger.info("TJJ buildPACE() out...");
         return aggrMSDs;
     }
 
@@ -294,7 +280,6 @@ public class PACEDataSource extends DataSource {
                                           String lonArray, String latArray, String[] arrayDims, String[] lonArrayDims, String[] latArrayDims,
                                           boolean unsigned, boolean unpack, boolean range_check_after_scaling, String product_name) {
 
-        logger.info("TJJ fillSwathMetadataTable() in...");
         HashMap metadata = SwathAdapter.getEmptyMetadataTable();
 
         metadata.put(SwathAdapter.xtrack_name, xtrack);
@@ -331,7 +316,6 @@ public class PACEDataSource extends DataSource {
             metadata.put("product_name", product_name);
         }
 
-        logger.info("TJJ fillSwathMetadataTable() out...");
         return metadata;
     }
 
@@ -377,10 +361,11 @@ public class PACEDataSource extends DataSource {
         return missing;
     }
 
+    // TJJ - Need to pull range out of file metadata, it varies V2 to V3
     public static float[] getValidRange() {
         float[] validRange = new float[2];
-        validRange[0] = 40.0f;
-        validRange[1] = 120.0f;
+        validRange[0] = 0.0f;
+        validRange[1] = 3.0f;
         return validRange;
     }
 
