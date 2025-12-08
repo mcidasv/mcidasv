@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -135,21 +136,18 @@ public class RangeProcessor {
 
             if (offset != null) {
                 if (scale.length != offset.length) {
-                    throw new Exception(
-                            "RangeProcessor: scale and offset array lengths must be equal");
+                    throw new Exception("RangeProcessor: scale and offset array lengths must be equal");
                 }
             } else {
                 offset = new float[scaleOffsetLen];
-                for (int i = 0; i < offset.length; i++)
-                    offset[i] = 0f;
+                Arrays.fill(offset, 0f);
             }
 
         }
 
         missing = getAttributeAsDoubleArray(array_name, (String) metadata.get("fill_value_name"));
 
-        // if we are working with unsigned data, need to convert missing vals to
-        // unsigned too
+        // if we are working with unsigned data, need to convert missing vals to unsigned too
         if (unsigned) {
             if (missing != null) {
                 for (int i = 0; i < missing.length; i++) {
@@ -319,7 +317,7 @@ public class RangeProcessor {
      * @return Processed range.
      */
 
-    public float[] processRangeQualityFlag(byte[] values, Map<String, double[]> subset, QualityFlag qf) {
+    public float[] processRangeQualityFlag(int[] values, Map<String, double[]> subset, QualityFlag qf) {
 
         if (subset != null) {
             if (subset.get(multiScaleDimName) != null) {
@@ -391,11 +389,8 @@ public class RangeProcessor {
                 break;
         }
 
-        int i = 0;
         for (int k = 0; k < values.length; k++) {
-            val = (float) values[k];
-            i = Util.unsignedByteToInt(values[k]);
-            val = (float) ((i / divisor) & mask);
+            val = (float) ((values[k] / divisor) & mask);
             newValues[k] = val;
         }
 

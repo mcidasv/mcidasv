@@ -205,7 +205,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    public Object getArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
-     return readArray(array_name, start, count, stride);
+       return readArray(array_name, start, count, stride);
    }
 
    public HDFArray getGlobalAttribute(String attr_name) throws Exception {
@@ -852,31 +852,47 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   if (a != null) {
 			   Object newPrim = null;
 			   if (a.getDataType() == DataType.USHORT) {
-				   int[] intArr = new int[totalLength];
-				   short[] ushorts = (short[])a.copyTo1DJavaArray();
-				   for (int i = 0; i < ushorts.length; i++) {
-					   short tmp = ushorts[i];
-					   if (tmp < 0) {
-						   intArr[i] = Short.toUnsignedInt(tmp);
-					   } else {
-						   intArr[i] = tmp;
-					   }
-				   }
-				   newPrim = intArr;
+                   int[] intArr = new int[totalLength];
+                   short[] ushorts = (short[]) a.copyTo1DJavaArray();
+                   for (int i = 0; i < ushorts.length; i++) {
+                       short tmp = ushorts[i];
+                       if (tmp < 0) {
+                           intArr[i] = Short.toUnsignedInt(tmp);
+                       } else {
+                           intArr[i] = tmp;
+                       }
+                   }
+                   newPrim = intArr;
+               } else if (a.getDataType() == DataType.UBYTE) {
+                   arrayType = DataType.UBYTE;
+                   int[] intArr = new int[totalLength];
+                   byte[] ubytes = (byte[]) a.copyTo1DJavaArray();
+                   for (int i = 0; i < ubytes.length; i++) {
+                       byte tmp = ubytes[i];
+                       if (tmp < 0) {
+                           intArr[i] = Byte.toUnsignedInt(tmp);
+                       } else {
+                           intArr[i] = tmp;
+                       }
+                   }
+                   newPrim = intArr;
 			   } else {
 				   newPrim = a.get1DJavaArray(DataType.FLOAT);
 			   }
 
 			   Object primArray = processArray(
-					   mapName, array_name, arrayType, granIdx, newPrim, rngProcessor, start, count
+					   mapName, arrayType, granIdx, newPrim, rngProcessor, start, count
 			   );
-			   if (a.getSize() > remaining) {
-				   System.arraycopy(primArray, 0, finalArray, destPos, remaining);
-			   } else {
-				   System.arraycopy(primArray, 0, finalArray, destPos, (int) a.getSize());
-			   }
-			   destPos += a.getSize();
-			   remaining -= (int) a.getSize();
+
+               if (primArray != null) {
+                   if (a.getSize() > remaining) {
+                       System.arraycopy(primArray, 0, finalArray, destPos, remaining);
+                   } else {
+                       System.arraycopy(primArray, 0, finalArray, destPos, (int) a.getSize());
+                   }
+                   destPos += a.getSize();
+                   remaining -= (int) a.getSize();
+               }
 		   }
 		   granIdx++;
 	   }
@@ -909,7 +925,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    /* pass individual granule pieces just read from dataset through the RangeProcessor */
-   private Object processArray(String mapName, String array_name, DataType arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
+   private Object processArray(String mapName, DataType arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
 
 	   if (rngProcessor == null) {
 		   return values;
@@ -927,11 +943,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   } else {
 				   outArray = rngProcessor.processRange((short[]) values, null);
 			   }
-		   } else if (arrayType == DataType.BYTE) {
+		   } else if (arrayType == DataType.BYTE || arrayType == DataType.UBYTE) {
 			   // if variable is a bit-field quality flag, apply mask
 			   if ((qfMap != null) && (qfMap.containsKey(origName))) {
 				   QualityFlag qf = qfMap.get(origName);
-				   outArray = rngProcessor.processRangeQualityFlag((byte[]) values, null, qf);
+				   outArray = rngProcessor.processRangeQualityFlag((int []) values, null, qf);
 			   } else {
 				   outArray = rngProcessor.processRange((byte[]) values, null);
 			   }
