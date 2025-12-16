@@ -61,7 +61,7 @@
   <datasource
     id="FILE.NETCDF"
     factory="ucar.unidata.data.grid.GeoGridDataSource"
-    patterns="\.nc$,\.nc4$,\.cdf$,.*netCDF.*,\.ncml$,\.wmo$,\.WMO$,\.grb$,\.grib$,\.gr2,\.grib1$,\.grib2$,\.anl$,\.jnl$"
+    patterns="\.nc$,\.nc4$,\.cdf$,.*netCDF.*,\.ncml$,\.wmo$,\.WMO$,\.grb$,\.grib$,\.gr2,\.grib1$,\.grib2$,\.anl$,\.jnl$,\.ncf$"
     label="netCDF files">
     <property
       name="icon"
