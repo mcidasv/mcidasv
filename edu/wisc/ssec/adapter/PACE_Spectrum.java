@@ -40,55 +40,32 @@ public class PACE_Spectrum extends SpectrumAdapter {
     public HashMap new_subset = new HashMap();
 
     private float initialSpectralResolution = 0f;
-    private float spectralIncrement = 0f;
+    private float[] wavenumArray = null;
 
     public PACE_Spectrum(MultiDimensionReader reader, HashMap metadata) {
         super(reader, metadata);
     }
 
     public int computeNumChannels() {
-
-        String arrayName = (String) metadata.get("array_name");
-
-        // TJJ this part very hacky for the moment, hardcoding some stuff
-        logger.info("PACE array name: " + arrayName);
-        int numChannels = 0;
-        if (arrayName.contains("blue")) {
-            numChannels = 119;
-            initialSpectralResolution = 305.0f;
-        }
-        if (arrayName.contains("red")) {
-            numChannels = 163;
-            initialSpectralResolution = 595.0f;
-        }
-        if (arrayName.contains("SWIR")) {
-            numChannels = 9;
-            initialSpectralResolution = 900.0f;
-        }
-
-        // FIXME TJJ - this is not correct!
-        // some bands have specific center wavelengths and varying bandwidths, not a constant increment
-        // this is just to get things working
-
-        spectralIncrement = 2.5f;
-        // initialSpectralResolution = CrIS_FSR_SDR_Utility.getWavenumberStart(arrayName);
-        // spectralIncrement = CrIS_FSR_SDR_Utility.getWavenumberIncrement(arrayName);
-
+        logger.info("computeNumChannels() in...");
+        int numChannels = (int) metadata.get("num_channels");
+        initialSpectralResolution = (float) metadata.get("first_wavenumber");
+        logger.info("num channels: " + numChannels + ", first band: " + initialSpectralResolution);
+        wavenumArray = (float[]) metadata.get("wavenumber_array");
         return numChannels;
     }
 
-    // XXX TJJ - THIS WILL NEED TO BE FIXED!
+    // For PACE, the wavenumbers are not always a fixed increment apart, so we have been passed
+    // the entire array via the metadata hashmap in the constructor.  Just return that array.
     public float[] getChannels() throws Exception {
-        float[] spectrum = new float[numChannels];
-        for (int k = 0; k < numChannels; k++) {
-            spectrum[k] = initialSpectralResolution + k * (spectralIncrement);
-        }
-        return spectrum;
+        logger.info("initialSpectralResolution: " + initialSpectralResolution);
+        logger.info("wavenumArray[0]: " + wavenumArray[0]);
+        return wavenumArray;
     }
 
     public float getInitialWavenumber() {
-        return 305.0f;
-        // return CrIS_FSR_SDR_Utility.getWavenumberStart(getArrayName());
+        logger.info("getInitialWavenumber() in, val: " + initialSpectralResolution);
+        return initialSpectralResolution;
     }
 
 }

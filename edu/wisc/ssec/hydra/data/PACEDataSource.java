@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import edu.wisc.ssec.adapter.HDFArray;
 import edu.wisc.ssec.adapter.PACE_Spectrum;
 import edu.wisc.ssec.adapter.SwathAdapter;
 import edu.wisc.ssec.adapter.SpectrumAdapter;
@@ -73,6 +74,9 @@ public class PACEDataSource extends DataSource {
 
     String[] bandNames = null;
     float[] centerWavelength = null;
+
+    // make this a class variable, since getValidRange() is a public method
+    private static float[] overallMinMax = new float[2];
 
     private ArrayList<MultiSpectralData> msdPace = new ArrayList<>();
     private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<>();
@@ -119,8 +123,6 @@ public class PACEDataSource extends DataSource {
 
         File file = files[0];
 
-        logger.info("time stuff...");
-
         dateTimeStamp = DataSource.getDateTimeStampFromFilename(file.getName());
         description = DataSource.getDescriptionFromFilename(file.getName());
         dateTime = DataSource.getDateTimeFromFilename(file.getName());
@@ -147,19 +149,29 @@ public class PACEDataSource extends DataSource {
     void init(File[] files) throws Exception {
         this.files = files;
 
-        logger.info("PACEDataSource init() in...");
+        logger.trace("PACEDataSource init() in...");
 
         int version = getPaceVersion(files[0]);
         String scanDim = (version == 3 ? "scans" : "number_of_scans");
 
+        NetCDFFile metaDataHandle = null;
+
         ArrayList<NetCDFFile> ncdfal = new ArrayList<>();
         for (File f : files) {
             ncdfal.add(new NetCDFFile(f.getAbsolutePath()));
+            if (metaDataHandle == null) {
+                metaDataHandle = new NetCDFFile(f.getAbsolutePath());
+            }
         }
+
         GranuleAggregation aggReader = new GranuleAggregation(ncdfal, scanDim);
 
-        String path = "observation_data/";
-        String[] productPaths = { path + "rhot_blue", path + "rhot_red", path + "rhot_SWIR" };
+        String spectraPath = "sensor_band_parameters/";
+        String[] spectraPaths = { spectraPath + "blue_wavelength", spectraPath + "red_wavelength", spectraPath + "SWIR_wavelength" };
+
+        String dataPath = "observation_data/";
+        String[] productPaths = { dataPath + "rhot_blue", dataPath + "rhot_red", dataPath + "rhot_SWIR" };
+
         String[] channelIndexNames = { "blue_bands", "red_bands", "SWIR_bands" };
         String[] channelNames = {
             "sensor_band_parameters/blue_wavelength",
@@ -167,28 +179,47 @@ public class PACEDataSource extends DataSource {
             "sensor_band_parameters/SWIR_wavelength"
         };
 
-        MultiSpectralData msd = buildPACE(aggReader, productPaths, channelIndexNames, channelNames);
+        MultiSpectralData msd = buildPACE(aggReader, productPaths, spectraPaths, channelIndexNames, channelNames, metaDataHandle);
         multiSpectralData.add(msd);
         DataChoice choice = setDataChoice(msd, 0, "Reflectance");
         msdMap.put(choice.getName(), msd);
 
-        logger.info("PACEDataSource init() out...");
+        logger.trace("PACEDataSource init() out...");
     }
 
-    MultiSpectralData buildPACE(GranuleAggregation reader, String[] productPaths, String[] channelIndexNames, String[] channelNames) throws Exception {
+    MultiSpectralData buildPACE(
+            GranuleAggregation reader,
+            String[] productPaths,
+            String[] spectraPaths,
+            String[] channelIndexNames,
+            String[] channelNames,
+            NetCDFFile metaDataHandle
+            ) throws Exception {
 
         int version = getPaceVersion(files[0]);
         boolean isV3 = (version == 3);
         String scanDim = isV3 ? "scans" : "number_of_scans";
-        String pixDim = isV3 ? "pixels" : "ccd_pixels";
+        // The name of this dimension CHANGES FOR SWIR BANDS!, so set this within the product loop
+        String pixDim = null;
 
         boolean unsigned = false;
         boolean unpack = false;
         boolean range_check_after_scaling = false;
+        float firstWavenum = 0.0f;
+
+        // in case some products have different valid max/min values, track overall range
+        float overallValidMin = 0.0f;
+        float overallValidMax = 0.0f;
 
         for (int k = 0; k < productPaths.length; k++) {
             String productPath = productPaths[k];
             logger.info("buildPACE() loop for product: " + productPath);
+            if (productPath.contains("SWIR")) {
+                pixDim = isV3 ? "pixels" : "SWIR_pixels";
+            } else {
+                pixDim = isV3 ? "pixels" : "ccd_pixels";
+            }
+
             HashMap<String, Object> metadata = fillSwathMetadataTable(
                     scanDim,
                     pixDim,
@@ -219,10 +250,44 @@ public class PACEDataSource extends DataSource {
             spectTable.put(SpectrumAdapter.y_dim_name, pixDim);
             spectTable.put(SpectrumAdapter.FOVindex_name, null);
 
+            // Load metadata for the band groups and wavelengths of all bands
+            int dimLen = metaDataHandle.getDimensionLength(channelIndexNames[k]);
+            logger.debug("dimension length for: " + channelIndexNames[k] + " is: " + dimLen);
+            int[] startArr = new int[1];
+            startArr[0] = 0;
+            int[] countArr = new int[1];
+            countArr[0] = dimLen;
+            int[] strideArr = new int[1];
+            strideArr[0] = 1;
+            float[] spectraArr = metaDataHandle.getFloatArray(spectraPaths[k], startArr, countArr, strideArr);
+            logger.info("THESE BETTER MATCH, dimLen: " + dimLen + ", and spectraArr.length: " + spectraArr.length);
+            spectTable.put("num_channels", spectraArr.length);
+            logger.info("First wavenumber in this spectra group: " + spectraArr[0]);
+            spectTable.put("first_wavenumber", spectraArr[0]);
+            if (firstWavenum == 0.0f) {
+                firstWavenum = spectraArr[0];
+            }
+            spectTable.put("wavenumber_array", spectraArr);
+
+            // pull out valid min & max from observation data
+            HDFArray validMinArr = metaDataHandle.getArrayAttribute(productPaths[k], "valid_min");
+            float validMin = ((float[]) validMinArr.getArray())[0];
+            HDFArray validMaxArr = metaDataHandle.getArrayAttribute(productPaths[k], "valid_max");
+            float validMax = ((float[]) validMaxArr.getArray())[0];
+
+            logger.debug("valid min: " + validMin + ", valid max: " + validMax);
+
+            // I don't know for certain each band group has the same min and max, so track overall min max
+            // Use that in the aggregated reader
+            if (validMin < overallValidMin) overallValidMin = validMin;
+            if (validMax > overallValidMax) overallValidMax = validMax;
+
             float scale = 1.0f;
             float offset = 0.0f;
 
-            float[] range = getValidRange();
+            float[] range = new float[2];
+            range[0] = validMin;
+            range[1] = validMax;
             double[] missing = getMissing();
 
             RangeProcessor rngProcessor = new RangeProcessor(reader, metadata, scale, offset, range[0], range[1], missing);
@@ -235,14 +300,16 @@ public class PACEDataSource extends DataSource {
 
             MultiSpectralData msd = new MultiSpectralData(adapter, psa, "Reflectance", "Reflectance", null, null);
 
-            msd.setDataRange(getValidRange());
+            overallMinMax[0] = overallValidMin;
+            overallMinMax[1] = overallValidMax;
+            msd.setDataRange(overallMinMax);
             msdPace.add(msd);
 
         }
 
         MultiSpectralAggr aggrMSDs = new MultiSpectralAggr(msdPace.toArray(new MultiSpectralData[msdPace.size()]), "radiances");
-        aggrMSDs.setInitialWavenumber(305.0f);
-        aggrMSDs.setDataRange(getValidRange());
+        aggrMSDs.setInitialWavenumber(firstWavenum);
+        aggrMSDs.setDataRange(overallMinMax);
 
         return aggrMSDs;
     }
@@ -361,12 +428,10 @@ public class PACEDataSource extends DataSource {
         return missing;
     }
 
-    // TJJ - Need to pull range out of file metadata, it varies V2 to V3
+    // Valid range has been pulled out of file metadata, it varies V2 to V3
+    // So just return the static float array we filled during build/init
     public static float[] getValidRange() {
-        float[] validRange = new float[2];
-        validRange[0] = 0.0f;
-        validRange[1] = 3.0f;
-        return validRange;
+        return overallMinMax;
     }
 
     public ColorTable getDefaultColorTable(DataChoice choice) {
@@ -383,11 +448,9 @@ public class PACEDataSource extends DataSource {
         StringBuilder result = new StringBuilder();
         result.append("PACEDataSource toString(): \n");
         result.append("{\n");
-        for (
-                String key : msdMap.keySet()) {
+        for (String key : msdMap.keySet()) {
             MultiSpectralData value = msdMap.get(key);
             result.append("\t").append("Adapter name: " + key).append("-> ").append(value.toString()).append(",\n");
-
         }
         result.append("}");
         return result.toString();
