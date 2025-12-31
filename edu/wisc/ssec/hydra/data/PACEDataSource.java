@@ -244,7 +244,8 @@ public class PACEDataSource extends DataSource {
             spectTable.put("array_name", productPath);
             spectTable.put("product_name", "PACE");
             spectTable.put(SpectrumAdapter.channelIndex_name, channelIndexNames[k]);
-            spectTable.put(SpectrumAdapter.channelType, "channel_number");
+            //spectTable.put(SpectrumAdapter.channelType, "channel_number");
+            spectTable.put(SpectrumAdapter.channelType, "Wavelength");
             spectTable.put(SpectrumAdapter.channels_name, channelNames[k]);
             spectTable.put(SpectrumAdapter.x_dim_name, scanDim);
             spectTable.put(SpectrumAdapter.y_dim_name, pixDim);
