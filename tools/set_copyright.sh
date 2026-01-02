@@ -4,7 +4,7 @@
 # the only caveat is that we'll have to require that each file
 # has the LGPL header, otherwise this won't work.
 
-NEW_COPYRIGHT_RANGE="2007-2025"
+NEW_COPYRIGHT_RANGE="2007-2026"
 
 SRC_DIRS="edu ucar visad release/install4j-custom-code"
 
