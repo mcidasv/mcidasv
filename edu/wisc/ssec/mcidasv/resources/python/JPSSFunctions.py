@@ -397,10 +397,10 @@ def VIIRSSeaSprayRGB(I1, I2, I4, I5):
 
 # VIIRS SDR Ash RGB
 def VIIRSAshRGB(M14, M15, M16):
-    # https://rammb.cira.colostate.edu/training/visit/quick_guides/GOES_Ash_RGB.pdf
-    # red = M16 - M15 (12.013um - 10.763um); -6.7C to 2.6C rescaled to 0 to 255
-    # grn = M15 - M14 (10.763um - 8.55um);   -6C to 6.3C rescaled to 0 to 255
-    # blu = M15 (10.763um);                  243.6K to 302.4K rescaled to 0 to 255
+    # https://rammb2.cira.colostate.edu/wp-content/uploads/2025/12/QuickGuide_VIIRS_Ash_RGB.pdf
+    # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescaled to 0 to 255
+    # grn = M15 - M14 (10.763um - 8.55um);   -4C to 5C rescaled to 0 to 255
+    # blu = M15 (10.763um);                  242.95K to 303.05K rescaled to 0 to 255
     
     inM14 = M14
     M14 = unpackage(M14)
@@ -411,9 +411,9 @@ def VIIRSAshRGB(M14, M15, M16):
     
     grd750 = makeGrid(M14, 750)
     
-    red = rescale(M16-M15, -6.7, 2.6, 0, 255)
-    grn = rescale(M15-M14, -6.0, 6.3, 0, 255)
-    blu = rescale(M15, 243.6, 302.4, 0, 255)
+    red = rescale(M16-M15, -4, 2, 0, 255)
+    grn = rescale(M15-M14, -4, 5, 0, 255)
+    blu = rescale(M15, 242.95, 303.05, 0, 255)
     
     rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
 
@@ -903,13 +903,13 @@ def VIIRSEdrSeaSprayRGB(I1, I2, I4, I5):
 
 # VIIRS EDR Ash RGB
 def VIIRSEdrAshRGB(M14, M15, M16):
-    # https://rammb.cira.colostate.edu/training/visit/quick_guides/GOES_Ash_RGB.pdf
-    # red = M16 - M15 (12.013um - 10.763um); -6.7C to 2.6C rescaled to 0 to 255
-    # grn = M15 - M14 (10.763um - 8.55um);   -6C to 6.3C rescaled to 0 to 255
-    # blu = M15 (10.763um);                  243.6K to 302.4K rescaled to 0 to 255
-    red = rescale(M16-M15, -6.7, 2.6, 0, 255)
-    grn = rescale(M15-M14, -6.0, 6.3, 0, 255)
-    blu = rescale(M15, 243.6, 302.4, 0, 255)
+    # https://rammb2.cira.colostate.edu/wp-content/uploads/2025/12/QuickGuide_VIIRS_Ash_RGB.pdf
+    # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescaled to 0 to 255
+    # grn = M15 - M14 (10.763um - 8.55um);   -4C to 5C rescaled to 0 to 255
+    # blu = M15 (10.763um);                  242.95K to 303.05K rescaled to 0 to 255
+    red = rescale(M16-M15, -4, 2.6, 0, 255)
+    grn = rescale(M15-M14, -4, 6.3, 0, 255)
+    blu = rescale(M15, 242.95, 303.05, 0, 255)
     return mycombineRGB(red, grn, blu)
 
 
