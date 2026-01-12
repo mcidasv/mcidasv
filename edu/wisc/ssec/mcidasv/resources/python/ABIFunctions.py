@@ -204,6 +204,17 @@ def ABIDustRGB(b11T, b13T, b14T, b15T):
     blu = rescale(b13T, 261.2, 288.7, 0, 255)
     return combineRGB(red, grn, blu)
 
+# ABI Color Vision Deficiency (CVD) Dust RGB
+def ABICvdDustRGB(b11T, b13T, b15T):
+    # https://rammb2.cira.colostate.edu/wp-content/uploads/2025/12/QuickGuide_GOES_Dust_CVD.pdf
+    # red = band13 - band11; 6C to -.5C rescaled to 0 to 255; gamma 1.5
+    # grn = band15 - band13; -6C to 2.5C rescaled to 0 to 255; gamma 1.5
+    # blu = band13; -40C to 40C rescaled to 0 to 255; gamma 1.0
+    red = 255*(rescale(b13T-b11T, 6, -.5, 0, 1)**(1/1.5))
+    grn = 255*(rescale(b15T-b13T, -6, 2.5, 0, 1)**(1/1.5))
+    blu = rescale(b13T, 233.15, 313.15, 0, 255)
+    return combineRGB(red, grn, blu)
+
 # ABI Differential Water Vapor RGB
 def ABIDifferentialWaterVaporRGB(b8T, b10T):
     # https://rammb2.cira.colostate.edu/wp-content/uploads/2020/01/QuickGuide_GOESR_DifferentialWaterVaporRGB_final-1.pdf

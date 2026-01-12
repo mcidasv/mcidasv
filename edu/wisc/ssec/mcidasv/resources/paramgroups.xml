@@ -93,6 +93,15 @@
     <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_11_0um_nom" p4="temp_12_0um_nom"/>
     <params p1="brightness_temperature_08um6" p2="brightness_temperature_10um4" p3="brightness_temperature_11um2" p4="brightness_temperature_12um3"/>
   </paramgroup>
+  <paramgroup description="ABI Dust CVD RGB" name="ABI_RGB_CVD_Dust">
+    <params p1="186_Band11_TEMP" p2="186_Band13_TEMP" p3="186_Band15_TEMP"/>
+    <params p1="188_Band11_TEMP" p2="188_Band13_TEMP" p3="188_Band15_TEMP"/>
+    <params p1="190_Band11_TEMP" p2="190_Band13_TEMP" p3="190_Band15_TEMP"/>
+    <params p1="192_Band11_TEMP" p2="192_Band13_TEMP" p3="192_Band15_TEMP"/>
+    <params p1="CMI_C11" p2="CMI_C13" p3="CMI_C15"/>
+    <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_12_0um_nom"/>
+    <params p1="brightness_temperature_08um6" p2="brightness_temperature_10um4" p3="brightness_temperature_12um3"/>
+  </paramgroup>
   <paramgroup description="ABI Differential Water Vapor RGB" name="ABI_RGB_DifferentialWaterVapor">
     <params p1="186_Band8_TEMP" p2="186_Band10_TEMP"/>
     <params p1="188_Band8_TEMP" p2="188_Band10_TEMP"/>
