@@ -907,8 +907,8 @@ def VIIRSEdrAshRGB(M14, M15, M16):
     # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescaled to 0 to 255
     # grn = M15 - M14 (10.763um - 8.55um);   -4C to 5C rescaled to 0 to 255
     # blu = M15 (10.763um);                  242.95K to 303.05K rescaled to 0 to 255
-    red = rescale(M16-M15, -4, 2.6, 0, 255)
-    grn = rescale(M15-M14, -4, 6.3, 0, 255)
+    red = rescale(M16-M15, -4, 2, 0, 255)
+    grn = rescale(M15-M14, -4, 5, 0, 255)
     blu = rescale(M15, 242.95, 303.05, 0, 255)
     return mycombineRGB(red, grn, blu)
 
