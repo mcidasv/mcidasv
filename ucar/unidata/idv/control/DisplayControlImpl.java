@@ -104,6 +104,7 @@ import javax.swing.text.JTextComponent;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 import nom.tam.fits.ImageData;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
@@ -153,11 +154,7 @@ import ucar.unidata.idv.TransectViewManager;
 import ucar.unidata.idv.ViewContext;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ui.DataSelectionWidget;
-import ucar.unidata.idv.ui.DataSelector;
-import ucar.unidata.idv.ui.DataTreeDialog;
-import ucar.unidata.idv.ui.IdvComponentHolder;
-import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.idv.ui.*;
 import ucar.unidata.ui.DndImageButton;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.Help;
@@ -12173,7 +12170,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         removeBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 try {
+                    // McIDAS Inquiry #2796-3141
+                    IntegratedDataViewer idv = getIdv();
                     doRemove();
+                    idv.getIdvUIManager().showDashboard();
+
                 } catch (Exception exc) {
                     logException("Removing display", exc);
                 }
