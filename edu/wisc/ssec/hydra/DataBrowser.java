@@ -779,6 +779,7 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
             if (!result[0].isBlank()) {
                 LeafInfo info = new LeafInfo(cmp, result[0], 0);
                 selectedLeafNode.setUserObject(info);
+				rootModel.nodeChanged(selectedLeafNode);
             }
 
         } else if (cmd.equals("OpenRemote")) {
