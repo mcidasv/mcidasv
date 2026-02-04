@@ -262,7 +262,7 @@ public class MultiChannelViewer extends HydraDisplay {
         captureSpectrum.setActionCommand("captureSpectrum");
         tools.add(captureSpectrum);
 
-        JMenuItem fourChannelCombine = new JMenuItem("FourChannelCombine");
+        JMenuItem fourChannelCombine = new JMenuItem("Four Channel Combine");
         fourChannelCombine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String cmd = e.getActionCommand();
@@ -415,7 +415,7 @@ public class MultiChannelViewer extends HydraDisplay {
         }
 
 
-        JFrame frame = Hydra.createAndShowFrame("FourChannelCombine", gui);
+        JFrame frame = Hydra.createAndShowFrame("Four Channel Combine", gui);
         frame.addWindowListener(new WindowAdapter() {
                                     public void windowClosing(WindowEvent e) {
                                         multiSpectDsp.removeSelector(idA);
