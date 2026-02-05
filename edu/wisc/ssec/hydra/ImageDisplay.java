@@ -61,6 +61,7 @@ import java.lang.Runnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.visad.display.Displayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.MapLines;
 import ucar.visad.display.DisplayableData;
@@ -321,7 +322,14 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
 
         dspMaster.addDisplayable(imageDsp);
 
-        mapBoundaryList = Hydra.addBaseMapVHRES(mapProjDsp);
+        Hydra.addBaseMap(mapProjDsp);
+        // collect all MapLines from the display
+        mapBoundaryList = new ArrayList<>();
+        for (Displayable d : mapProjDsp.getDisplayables()) {
+            if (d instanceof MapLines) {
+                mapBoundaryList.add((MapLines) d);
+            }
+        }
 
         FlatField image = (FlatField) imageDsp.getData();
         //- add probe
@@ -561,7 +569,7 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
 
         JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-        maplines = new JCheckBoxMenuItem("Coast Lines", true);
+        maplines = new JCheckBoxMenuItem("Map Lines", true);
         maplines.addActionListener(this);
         maplines.setActionCommand("coastlines");
         settingsMenu.add(maplines);
@@ -771,7 +779,7 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
             } else {
                 this.mapProjDsp.setMapProjection(mapProj, reset);
             }
-            Hydra.updateBaseMapVHRES(mapBoundaryList, mapProj);
+            //Hydra.updateBaseMapVHRES(mapBoundaryList, mapProj);
         } catch (VisADException e) {
             e.printStackTrace();
         } catch (RemoteException e) {
