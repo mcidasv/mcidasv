@@ -65,7 +65,7 @@ public class MyColorScale implements PropertyChangeListener {
     float start_x = -1f;
     float start_y = 1f;
     float width = 2f;
-    float height = 0.05f;
+    float height = 0.08f;
 
     float[][] clrTable;
     DisplayMaster dspMaster;
@@ -81,12 +81,12 @@ public class MyColorScale implements PropertyChangeListener {
         double[] xyz = ucar.visad.Util.getVWorldCoords((DisplayImpl) dspImpl, r.x, r.y, null);
 
         clrBar = new MyShapeDisplayable("clrBar",
-                createColorBar(-1f, 1f, 2f, 0.05f, clrTable));
+                createColorBar(start_x, start_y, width, height, clrTable));
         dspMaster.addDisplayable(clrBar);
 
         if (!Double.isNaN(lowRange)) {
             lbls = new MyShapeDisplayable("lbls",
-                    (createColorBarLabels(-1f, 1f, 2f, 0.05f, new double[]{lowRange, highRange}, new float[]{1f, 1f, 1f}))[0]);
+                    (createColorBarLabels(start_x, start_y, width, height, new double[]{lowRange, highRange}, new float[]{1f, 1f, 1f}))[0]);
             dspMaster.addDisplayable(lbls);
         }
     }
@@ -109,7 +109,7 @@ public class MyColorScale implements PropertyChangeListener {
     public void update(double[] range) throws Exception {
         if (lbls == null) {
             lbls = new MyShapeDisplayable("lbls",
-                    (createColorBarLabels(-1f, 1f, 2f, 0.05f, range, new float[]{1f, 1f, 1f}))[0]);
+                    (createColorBarLabels(start_x, start_y, width, height, range, new float[]{1f, 1f, 1f}))[0]);
             dspMaster.addDisplayable(lbls);
         } else {
             VisADGeometryArray ta = createColorBarLabels(start_x, start_y, width, height, range, new float[]{1f, 1f, 1f})[0];
