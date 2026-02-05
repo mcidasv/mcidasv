@@ -63,11 +63,11 @@ public class RGBComposite extends Compute {
     String dateTimeStr = null;
 
     public RGBComposite() {
-        super(3, "RGBComposite");
+        super(3, "RGB Composite");
     }
 
     public RGBComposite(DataBrowser dataBrowser) {
-        super(3, "RGBComposite");
+        super(3, "RGB Composite");
         this.dataBrowser = dataBrowser;
     }
 

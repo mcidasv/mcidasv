@@ -40,6 +40,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Component;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -49,11 +50,16 @@ import javax.swing.JFrame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 public class TransectDisplay extends HydraDisplay implements ActionListener {
+
+    float[] yRange = new float[2];      // current Y-axis range
+    float[] dataYrange = new float[2];  // full data min/max range
 
     DataReference transectDataRef = null;
     RealType rangeType = null;
@@ -137,6 +143,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         xAxis.setSnapToBox(true);
         xAxis.setLabelSize(Hydra.getFontSize());
         xmap.setScaleEnable(true);
+        xAxis.setLabel("Distance along transect (km)");
 
         AxisScale yAxis = ymap.getAxisScale();
         yAxis.setFont(font);
@@ -171,7 +178,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
 
         addValueLabel(transect, color);
 
-        frame = Hydra.createAndShowFrameFromEDT("Transect Display", doMakeComponent(), buildMenuBar(), new Dimension(400, 180), loc);
+        frame = Hydra.createAndShowFrameFromEDT("Transect Display", doMakeComponent(), buildMenuBar(), new Dimension(700, 350), loc);
         frame.toFront();
         frame.addWindowListener(this);
     }
@@ -326,6 +333,68 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 
+        JMenuItem axes = new JMenuItem("Axes");
+        axes.setActionCommand("Axes");
+
+        try {
+            FlatField data = (FlatField) transectDataRef.getData();
+            float[][] vals = data.getFloats(false);
+            float minVal = Float.MAX_VALUE;
+            float maxVal = -Float.MAX_VALUE;
+            for (float v : vals[0]) {
+                if (!Float.isNaN(v)) {
+                    if (v < minVal) minVal = v;
+                    if (v > maxVal) maxVal = v;
+                }
+            }
+            dataYrange[0] = minVal;
+            dataYrange[1] = maxVal;
+            yRange[0] = minVal;
+            yRange[1] = maxVal;
+        } catch (Exception ex) {
+            dataYrange[0] = 0f;
+            dataYrange[1] = 1f;
+            yRange[0] = 0f;
+            yRange[1] = 1f;
+        }
+
+        // Y-Axis Range Menu Item
+        JMenuItem axesItem = new JMenuItem("Y-Axis Range");
+        axesItem.setActionCommand("Axes");
+        axesItem.addActionListener(e -> {
+            if (!"Axes".equals(e.getActionCommand())) return;
+
+            JDialog dialog = new JDialog(frame, "Y-Axis Range", true);
+            dialog.setLocationRelativeTo(frame);
+
+            JPanel panel = new JPanel(new GridLayout(1, 1));
+
+            // RangeListener to update Y-axis
+            class Y implements RangeListener {
+                @Override
+                public void rangeChanged(float low, float high) {
+                    yRange[0] = low;
+                    yRange[1] = high;
+                    if (ymap != null) {
+                        try {
+                            ymap.setRange(low, high);
+                        } catch (VisADException | RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            // lowhigh is your existing helper for entering min/max
+            JPanel yPanel = new lowhigh(new Y(), "Y:", yRange[0], yRange[1], dataYrange[0], dataYrange[1]).panel;
+
+            panel.add(yPanel);
+            dialog.setContentPane(panel);
+            dialog.pack();
+            dialog.setVisible(true);
+        });
+
+        settingsMenu.add(axesItem);
         menuBar.add(settingsMenu);
 
         return menuBar;

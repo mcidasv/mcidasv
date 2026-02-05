@@ -209,7 +209,7 @@ public class MyScatterDisplay extends HydraDisplay {
             scatterDspMaster = makeScatterDisplay();
             doMakeComponent();
             menuBar = buildMenuBar();
-            frame = Hydra.createAndShowFrame("scatter", guiPanel, menuBar, new Dimension(440, 440));
+            frame = Hydra.createAndShowFrame("Scatter", guiPanel, menuBar, new Dimension(440, 440));
             frame.addWindowListener(this);
             init();
         } catch (Exception e) {
