@@ -34,18 +34,11 @@ REM Check for our supported runMcV arguments, and then pass 'em
 REM off to the appropriate argument handler (i.e. setuserpath, setlogpath, etc)
 :checkparameters
 IF '%1' == '' GOTO endparameters
-IF '%1' == '-script' GOTO setscript
 IF '%1' == '-userpath' GOTO setuserpath
 IF '%1' == '-logpath' GOTO setlogpath
 IF '%1' == '-tempuserpath' GOTO settempuserpath
 IF '%1' == '-guistart' GOTO setguistart
 SHIFT
-GOTO checkparameters
-
-:setscript
-SHIFT
-SHIFT
-SET /A Skip += 2
 GOTO checkparameters
 
 :setguistart
