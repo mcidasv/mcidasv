@@ -359,7 +359,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         }
 
         // Y-Axis Range Menu Item
-        JMenuItem axesItem = new JMenuItem("Y-Axis Range");
+        JMenuItem axesItem = new JMenuItem("Y-Axis Range...");
         axesItem.setActionCommand("Axes");
         axesItem.addActionListener(e -> {
             if (!"Axes".equals(e.getActionCommand())) return;

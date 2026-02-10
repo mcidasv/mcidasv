@@ -449,7 +449,7 @@ public class ColorControl implements DepictionControl, PropertyChangeListener {
         redPanel.add(new JLabel("Gamma:"));
         redPanel.add(gammaTxtFld);
 
-        JButton button = new JButton("reset");
+        JButton button = new JButton("Reset");
         redPanel.add(button);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -623,20 +623,20 @@ public class MyScatterDisplay extends HydraDisplay {
 
         buttonPanel.add(toggleButtonPanel);
 
-        final JButton displayTypeButton = new JButton("points ");
+        final JButton displayTypeButton = new JButton("Points ");
         displayTypeButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 try {
-                    if (displayTypeButton.getText().equals("points ")) {
+                    if (displayTypeButton.getText().equals("Points ")) {
                         scatterDsp.setVisible(false);
                         scatterMarkDsp.setVisible(false);
                         scatterDensityDsp.setVisible(true);
-                        displayTypeButton.setText("density");
+                        displayTypeButton.setText("Density");
                     } else {
                         scatterDensityDsp.setVisible(false);
                         scatterDsp.setVisible(true);
                         scatterMarkDsp.setVisible(true);
-                        displayTypeButton.setText("points ");
+                        displayTypeButton.setText("Points ");
                     }
                 } catch (VisADException exc) {
                     exc.printStackTrace();
@@ -647,7 +647,7 @@ public class MyScatterDisplay extends HydraDisplay {
         });
         buttonPanel.add(displayTypeButton);
 
-        JButton computeStatsButton = new JButton("stats");
+        JButton computeStatsButton = new JButton("Stats");
         computeStatsButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 
@@ -732,7 +732,7 @@ public class MyScatterDisplay extends HydraDisplay {
         backGroundClr.add(white);
         settingsMenu.add(backGroundClr);
 
-        JMenuItem axes = new JMenuItem("Axes");
+        JMenuItem axes = new JMenuItem("Axes...");
         axes.setActionCommand("Axes");
         axes.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -1648,7 +1648,7 @@ class lowhigh {
             }
         });
 
-        JButton button = new JButton("reset");
+        JButton button = new JButton("Reset");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateRange(initRange[0], initRange[1]);

@@ -142,6 +142,7 @@ public class Depiction {
 
         if (clrCntrl != null) {
             dialog = new javax.swing.JDialog();
+            dialog.setTitle("Display Settings");
             dialog.setContentPane(clrCntrl.doMakeContents());
             dialog.validate();
 

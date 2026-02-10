@@ -179,7 +179,7 @@ public class HyperToBroadBand extends Compute implements ActionListener {
     }
 
     public JComponent doMakeHyperSpectralSelectComponent(final String id) {
-        final JTextField wavenumbox = new JTextField(Float.toString(multiSpectDsp.getWaveNumber()), 5);
+        final JTextField wavenumbox = new JTextField(Float.toString(multiSpectDsp.getWaveNumber()), 8);
         wavenumbox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String tmp = wavenumbox.getText().trim();

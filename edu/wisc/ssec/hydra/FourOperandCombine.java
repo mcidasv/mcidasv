@@ -93,7 +93,7 @@ public class FourOperandCombine extends Compute {
     }
 
     public JComponent doMakeHyperSpectralSelectComponent(float init_wavenum, final String id) {
-        final JTextField wavenumbox = new JTextField(Float.toString(init_wavenum), 5);
+        final JTextField wavenumbox = new JTextField(Float.toString(init_wavenum), 8);
         final ActionListener doWavenumChange = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String tmp = wavenumbox.getText().trim();

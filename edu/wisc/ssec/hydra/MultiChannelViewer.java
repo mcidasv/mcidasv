@@ -337,6 +337,14 @@ public class MultiChannelViewer extends HydraDisplay {
         backGroundClr.add(white);
 
         spectMenu.add(backGroundClr);
+        JMenuItem yAxisRange = new JMenuItem("Y-Axis Range...");
+        yAxisRange.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showYAxisRangeDialog();
+            }
+        });
+        spectMenu.add(yAxisRange);
         settingsMenu.add(spectMenu);
 
 
@@ -580,7 +588,7 @@ public class MultiChannelViewer extends HydraDisplay {
     }
 
     public JComponent doMakeHyperSpectralSelectComponent() {
-        final JTextField wavenumbox = new JTextField(Float.toString(multiSpectDsp.getWaveNumber()), 5);
+        final JTextField wavenumbox = new JTextField(Float.toString(multiSpectDsp.getWaveNumber()), 8);
         final ActionListener doWavenumChange = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String tmp = wavenumbox.getText().trim();
@@ -640,6 +648,52 @@ public class MultiChannelViewer extends HydraDisplay {
         }
 
         return image;
+    }
+
+    private void showYAxisRangeDialog() {
+        float[] current = multiSpectDsp.getYmapRange();
+
+        JTextField minField = new JTextField(
+            Float.isNaN(current[0]) ? "" : Float.toString(current[0]), 8);
+        JTextField maxField = new JTextField(
+            Float.isNaN(current[1]) ? "" : Float.toString(current[1]), 8);
+
+        JComponent panel = new javax.swing.JPanel(new java.awt.GridLayout(2, 2, 6, 6));
+        panel.add(new javax.swing.JLabel("Y Min:"));
+        panel.add(minField);
+        panel.add(new javax.swing.JLabel("Y Max:"));
+        panel.add(maxField);
+
+        int result = javax.swing.JOptionPane.showConfirmDialog(
+            frame,
+            panel,
+            "Set Spectrum Y-Axis Range",
+            javax.swing.JOptionPane.OK_CANCEL_OPTION,
+            javax.swing.JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != javax.swing.JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        try {
+            float ymin = Float.parseFloat(minField.getText().trim());
+            float ymax = Float.parseFloat(maxField.getText().trim());
+
+            if (ymax <= ymin) {
+                throw new IllegalArgumentException("Max must be greater than Min");
+            }
+
+            multiSpectDsp.setYmapRange(ymin, ymax);
+
+        } catch (Exception ex) {
+            javax.swing.JOptionPane.showMessageDialog(
+                frame,
+                "Invalid Y-axis range.\n" + ex.getMessage(),
+                "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 }
 
@@ -848,4 +902,5 @@ class SelectorListener implements PropertyChangeListener {
         widget.updateOperandComp(index, str);
         operand.waveNumber = flt.floatValue();
     }
+
 }

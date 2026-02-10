@@ -240,6 +240,16 @@ public class MultiSpectralDisplay implements DisplayListener {
         return new float[]{(float) rng[0], (float) rng[1]};
     }
 
+    public void setYmapRange(float ymin, float ymax)
+            throws VisADException, RemoteException {
+
+        if (Float.isNaN(ymin) || Float.isNaN(ymax)) {
+            // reset to data-driven defaults
+            ymap.setRange(initialRangeY[0], initialRangeY[1]);
+        } else {
+            ymap.setRange(ymin, ymax);
+        }
+    }
 
     private void init(float initWaveNumber, float[] xMapRange, float[] yMapRange) throws VisADException, RemoteException {
 
