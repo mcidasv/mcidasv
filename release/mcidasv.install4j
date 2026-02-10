@@ -11,7 +11,7 @@
       <variable name="IDV_VERSION" value="5.7" />
       <variable name="sys.ext.timestampUrl" value="http://timestamp.digicert.com" />
       <variable name="WINDOWS_CERT_PATH" value="${compiler:BASEDIR}/signing/University of Wisconsin-Madison.pfx" />
-      <variable name="MACOS_CERT_PATH" value="${compiler:BASEDIR}/signing/UW-Madison Shared Apps Developer ID Application 20260204.p12" />
+      <variable name="MACOS_CERT_PATH" value="${compiler:BASEDIR}/signing/UW-Madison Shared Apps Developer ID Application.p12" />
       <variable name="BASEDIR" value="/home/mcidasv" description="When building custom installers, you'll probably need to change this value to the following:&#xA;/Users/jbeavers/work/install4j&#xA;&#xA;mcidasv@mug.ssec.wisc.edu:&#xA;/home/mcidasv" />
     </variables>
     <codeSigning macEnabled="true" macPkcs12File="${compiler:MACOS_CERT_PATH}" windowsEnabled="true" windowsPkcs12File="${compiler:WINDOWS_CERT_PATH}" macNotarize="true" appleId="jebeavers@wisc.edu">
