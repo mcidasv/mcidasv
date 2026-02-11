@@ -84,16 +84,28 @@ REM stuff in the above lines doesn't work.
 REM another annoyance is that if Skip isn't incremented by one for each SHIFT
 REM in the arg handlers, things will misbehave.
 
-(
 SETLOCAL ENABLEDELAYEDEXPANSION
-FOR %%I IN (%*) DO IF !Skip! LEQ 0 ( 
-        SET params=!params! %%I
-    ) ELSE SET /A Skip-=1
+SET params=
+SET prev_was_path_flag=0
+FOR %%I IN (%*) DO (
+    SET "skip_this=0"
+
+    REM Check if this is a flag we processed
+    IF "%%I"=="-userpath" SET "skip_this=1"
+    IF "%%I"=="-logpath" SET "skip_this=1"
+    IF "%%I"=="-tempuserpath" SET "skip_this=1"
+    IF "%%I"=="-guistart" SET "skip_this=1"
+
+    IF "!prev_was_path_flag!"=="1" (
+        SET "skip_this=1"
+        SET "prev_was_path_flag=0"
+    )
+    IF "%%I"=="-userpath" SET "prev_was_path_flag=1"
+    IF "%%I"=="-logpath" SET "prev_was_path_flag=1"
+
+    IF "!skip_this!"=="0" SET params=!params! %%I
 )
-(
-ENDLOCAL
-SET MCV_PARAMS=%params%
-)
+ENDLOCAL & SET MCV_PARAMS=%params%
 
 IF NOT "%MCV_USERPATH%"=="%USERPROFILE%\McIDAS-V" (
     SET MCV_LOGPATH="%MCV_USERPATH%\mcidasv.log"
