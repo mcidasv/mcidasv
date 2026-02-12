@@ -220,20 +220,25 @@ public class PACEDataSource extends DataSource {
                 pixDim = isV3 ? "pixels" : "ccd_pixels";
             }
 
+            // Get actual dimension names from the file for this variable
+            String[] arrayDims = metaDataHandle.getDimensionNames(productPath);
+            String[] lonDims   = metaDataHandle.getDimensionNames("geolocation_data/longitude");
+            String[] latDims   = metaDataHandle.getDimensionNames("geolocation_data/latitude");
+
             HashMap<String, Object> metadata = fillSwathMetadataTable(
-                    scanDim,
-                    pixDim,
+                    arrayDims[2],              // xtrack
+                    arrayDims[1],              // track
                     channelIndexNames[k],
-                    null,
+                    null,                      // FOV (PACE OCI has none)
                     productPath,
                     "reflectance",
-                    scanDim,
-                    pixDim,
+                    lonDims[1],                // geo xtrack
+                    lonDims[0],                // geo track
                     "geolocation_data/longitude",
                     "geolocation_data/latitude",
-                    null,
-                    null,
-                    null,
+                    arrayDims,
+                    lonDims,
+                    latDims,
                     unsigned,
                     unpack,
                     range_check_after_scaling,
