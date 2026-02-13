@@ -81,7 +81,7 @@ if [ "${USE_TEMPUSERPATH}" = "1" ]; then
   MCV_USERPATH=`mktemp -d 2>/dev/null || mktemp -d -t 'mcidasv'`
   echo "Using randomly generated userpath: ${MCV_USERPATH}"
   MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
-  MCV_PARAMS="${str// -tempuserpath/}"
+  MCV_PARAMS="${MCV_PARAMS// -tempuserpath/}"
 fi
 
 # Check for old style default userpath
