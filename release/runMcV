@@ -15,7 +15,7 @@ function get_realpath(){
     # 0 : Good.
     # 1 : Fail : no file/symlink broken/not regular file errors.
     # 2 : Fail : unspecified physical file path construction error.
-    # 3 : Fail : unspecified logical or physical directory construction error. 
+    # 3 : Fail : unspecified logical or physical directory construction error.
     [[ ! -f "$1" ]] && return 1 # Code 1.
     if [[ -z "$no_symlinks" ]]
     then
@@ -54,7 +54,7 @@ if [[ "$MCV_PARAMS" == *"-script"* ]]; then
   HAS_SCRIPT="1"
 fi
 
-# Check for -userpath parameter
+CLEANED_PARAMS=""
 while [ "$1" != "" ]; do
   if [ "$1" = "-userpath" ]; then
     MCV_USERPATH="$2"
@@ -68,9 +68,12 @@ while [ "$1" != "" ]; do
     USE_TEMPUSERPATH="1"
     shift
   else
+    CLEANED_PARAMS="${CLEANED_PARAMS} $1"
     shift
   fi
 done
+
+MCV_PARAMS="${CLEANED_PARAMS}"
 
 if [ "${MCV_USERPATH}" != "${DOCUMENT_DIRECTORY}/McIDAS-V" ]; then
   MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
@@ -81,7 +84,6 @@ if [ "${USE_TEMPUSERPATH}" = "1" ]; then
   MCV_USERPATH=`mktemp -d 2>/dev/null || mktemp -d -t 'mcidasv'`
   echo "Using randomly generated userpath: ${MCV_USERPATH}"
   MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
-  MCV_PARAMS="${MCV_PARAMS// -tempuserpath/}"
 fi
 
 # Check for old style default userpath
@@ -141,7 +143,7 @@ if [ ! -d "${MCV_USERPATH}" ]; then
   # toggle the welcome window
   SHOW_WELCOME="1"
 elif [ "${USE_TEMPUSERPATH}" = "1" ]; then
-  # temporary userpath will already exist, but we still need to show the 
+  # temporary userpath will already exist, but we still need to show the
   # welcome window?
   SHOW_WELCOME="1"
 fi
@@ -178,7 +180,7 @@ if [ -z "${HAS_ALPHA}" ]; then
   HEAP_SIZE="${HEAP_SIZE}M"
 fi
 
-# Point at McV's bundled JRE on OS X. 
+# Point at McV's bundled JRE on OS X.
 if [ `uname -s` = "Darwin" ]; then
   JAVA_HOME="$dirname/.install4j/jre.bundle/Contents/Home"
 fi
