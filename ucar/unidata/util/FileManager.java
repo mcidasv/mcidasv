@@ -1061,7 +1061,8 @@ public class FileManager {
         new PatternFileFilter(".+\\.kmz", "Google Earth KMZ Files (*.kmz)",
                               ".kmz");
 
-
+    public static final PatternFileFilter FILTER_TIFF =
+            new PatternFileFilter(".+\\.tif|.+\\.tiff", "GeoTIFF (*.tif)", ".tif");
 
 
     /** null string intrinsic */

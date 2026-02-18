@@ -1623,6 +1623,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                                                     FileManager.FILTER_ANIMATEDGIF,
                                                     FileManager.FILTER_ZIP,
                                                     FileManager.FILTER_KMZ,
+                                                    FileManager.FILTER_TIFF,
                                                     FILTER_ANIS);
             filename = FileManager.getWriteFile(filters, FileManager.SUFFIX_MP4, extra);
 //            writePositions = writePositionsCbx.isSelected();
