@@ -1082,7 +1082,6 @@ public class ImageUtils {
             }
         }
 
-        // A hack to make sure we aren't writing out an ARGB image to a jpg
         if (saveFile.toLowerCase().endsWith(".jpg")
                 || saveFile.toLowerCase().endsWith(".jpeg")) {
             if (ImageUtils.hasAlpha(image)) {
@@ -1092,6 +1091,17 @@ public class ImageUtils {
             }
         }
 
+        // McIDAS Inquiry #1806-3141: Added a hack for tiff files
+        if (saveFile.toLowerCase().endsWith(".tif")
+                || saveFile.toLowerCase().endsWith(".tiff")) {
+            renderedImage = ImageUtils.toBufferedImage(image,
+                    BufferedImage.TYPE_INT_RGB);
+            image = (Image) renderedImage;
+            if (iwparam.canWriteCompressed()) {
+                iwparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                iwparam.setCompressionType("LZW");
+            }
+        }
         if (renderedImage == null) {
             if (image instanceof RenderedImage) {
                 renderedImage = (RenderedImage) image;

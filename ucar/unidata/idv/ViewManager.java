@@ -6515,6 +6515,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
             if (bounds != null) {
                 filters.add(KmlDataSource.FILTER_KML);
+                filters.add(FileManager.FILTER_TIFF); // McIDAS Inquiry #1806-3141
             }
 
             String filename = FileManager.getWriteFile(filters,
