@@ -369,6 +369,40 @@ application/x-java-jnlp-file JNLP
           </tr>
       </table>
     </div>
+    <a name="ncdump" id="ncdump"></a>
+    <div class="faq-question">
+      <h4>Q. <a class="faq-question-link" href="DataFaq.html#ncdump">Why does the output of 'ncump -h' look different than what McIDAS-V shows?</a></h4>
+    </div>
+    <div class="faq-answer"><strong>A.</strong> When 'ncump -h' is run from a terminal, the raw contents of the NetCDF file exactly as they are stored on disk are viewed.  This includes the original variable definitions, attributes, and metadata without modification.
+        <p>In contrast, McIDAS-V does not open the NetCDF files in "raw" mode.  Instead, it uses the Unidata NetCDF-Java library (NetcdfDataset), which automatically applies a set of enhanements when a dataset is opened.  These enhancements make the data easier to interpret and visualize, but they can cause the metadata and values to appear different from what 'ncdump -h' reports.</p>
+        <p>Below are some of the notable differences:</p>
+        <ul>
+          <li>Convert Eunemerations - Enum variables are converted from numeric codes to their corresponding text strings.</li>
+            <ul>
+              <li>'ncdump -h' shows the numeric enum values</li>
+              <li>McIDAS-V may display the associated string labels instead</li>
+            </ul>
+          <li>Convert Unsigned Data - If a variable is stored as a signed integer but intended to represent unsigned values, McIDAS-V reinterprets the bit patterns as unsigned.</li>
+            <ul>
+              <li>'ncdump -h' may show negative numbers</li>
+              <li>McIDAS-V displays the correct unsigned values</li>
+            </ul>
+          <li>Apply Scale and Offset - If a variable contains 'scale_factor' and/or 'add_offset' attributes, McIDAS-V automatically applies these.</li>
+            <ul>
+              <li>'ncdump' shows the packed (stored) values</li>
+              <li>McIDAS-V shows the physically meaningful, unpacked values</li>
+            </ul>
+          <li>Convert Missing Values - Missing or fill values are automatically converted to NaN (Not a Number) for efficiency and consistency in calculations and display.</li>
+            <ul>
+              <li>'ncdump' shows the raw fill value (e.g., -9999)</li>
+              <li>McIDAS-V shows these as missing (NaN)</li>
+            </ul>
+          <li>Build Coordinate Systems - McIDAS-V automatically constructs coordinate systems using CF metadata and plug-in logic.</li>
+            <ul>
+              <li>'ncdump' simply lists coordinate variables and attributes</li>
+              <li>McIDAS-V organizes them into usable geolocation or projection information for mapping and visualization</li>
+            </ul>
+        </ul></div>
   </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
