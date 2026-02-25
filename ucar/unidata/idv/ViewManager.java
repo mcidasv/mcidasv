@@ -51,14 +51,7 @@ import ucar.unidata.data.gis.KmlDataSource;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ZSlider;
 import ucar.unidata.idv.publish.PublishManager;
-import ucar.unidata.idv.ui.BottomLegend;
-import ucar.unidata.idv.ui.IdvComponentGroup;
-import ucar.unidata.idv.ui.IdvComponentHolder;
-import ucar.unidata.idv.ui.IdvLegend;
-import ucar.unidata.idv.ui.IdvUIManager;
-import ucar.unidata.idv.ui.IdvWindow;
-import ucar.unidata.idv.ui.ImageSequenceGrabber;
-import ucar.unidata.idv.ui.SideLegend;
+import ucar.unidata.idv.ui.*;
 import ucar.unidata.java3d.LightInfo;
 import ucar.unidata.ui.Command;
 import ucar.unidata.ui.CommandManager;
@@ -205,6 +198,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
 import static ucar.unidata.idv.control.MapDisplayControl.DEFAULT_MAP_COLOR;
+import static ucar.unidata.ui.ImageUtils.isGeoTiffFile;
 
 /**
  * A wrapper around a {@link ucar.visad.display.DisplayMaster}.
@@ -6686,7 +6680,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         }
                     }
 
+                    if (ImageUtils.isGeoTiffFile(filename)) {
+                        logger.info("we got here? - 3141");
+                        ImageUtils.writeGeoTiffDumb(image, filename,
+                                bounds != null ? bounds.getMaxLat() : Double.NaN,
+                                bounds != null ? bounds.getMinLat() : Double.NaN,
+                                bounds != null ? bounds.getMinLon() : Double.NaN,
+                                bounds != null ? bounds.getMaxLon() : Double.NaN);
+                    } else {
+                        ImageUtils.writeImageToFile(image, filename, quality);
+                    }
+
                     ImageUtils.writeImageToFile(image, filename, quality);
+
                     getIdv().getPublishManager().publishContent(filename,
                             this, publishCbx);
                 }

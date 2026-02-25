@@ -29,6 +29,19 @@
 package ucar.unidata.ui;
 
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridCoverageFactory;
+
+import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
+
+
+import javax.imageio.*;
+
+import org.w3c.dom.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,19 +78,14 @@ import java.awt.image.ImageProducer;
 import java.awt.image.PixelGrabber;
 import java.awt.image.RGBImageFilter;
 import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ImageIcon;
@@ -1118,6 +1126,97 @@ public class ImageUtils {
         writer.dispose();
         ios.close();
     }
+
+    // McIDAS Inquiry #1806-3141
+    public static boolean isGeoTiffFile(String filename) {
+        logger.info("did we get here - 3141?");
+        if (filename == null) {
+            return false;
+        }
+        String lower = filename.toLowerCase();
+        return lower.endsWith(".tif") || lower.endsWith(".tiff");
+    }
+
+    public static void writeGeoTiff(Image image, String file,
+                                    double north, double south,
+                                    double west, double east) throws IOException {
+        BufferedImage bi = toBufferedImage(image);
+
+        try {
+            CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+
+            ReferencedEnvelope envelope = new ReferencedEnvelope(west, east, south, north, crs);
+
+            GridCoverageFactory factory = new GridCoverageFactory();
+            GridCoverage2D coverage = factory.create("coverage", bi, envelope);
+
+            GeoTiffWriter writer = new GeoTiffWriter(new File(file));
+            writer.write(coverage, null);
+            writer.dispose();
+
+            logger.info("Wrote GeoTIFF: " + file);
+        } catch (Exception e) {
+            throw new IOException("Failed to write GeoTIFF", e);
+        }
+    }
+
+
+    // McIDAS Inquiry #1806-3141
+    public static void writeGeoTiffDumb(Image image, String file,
+                                    double north, double south,
+                                    double west, double east) throws IOException {
+
+        BufferedImage bi = toBufferedImage(image);
+        File imageFile = new File(file);
+        ImageIO.write(bi, "tif", imageFile);
+        logger.info("insane attempt - 3141");
+
+        double width = bi.getWidth();
+        double height = bi.getHeight();
+
+        double pixelSizeX = (east - west) / width;
+        double pixelSizeY = (south - north) / height;
+        double originX = west + (pixelSizeX / 2.0);
+        double originY = north + (pixelSizeY / 2.0);
+
+        String worldFileContent = String.format(
+                "%.10f\n0.0000000000\n0.0000000000\n%.10f\n%.10f\n%.10f",
+                pixelSizeX, pixelSizeY, originX, originY
+        );
+
+        String tfwPath = file.substring(0, file.lastIndexOf('.')) + ".tfw";
+        try (PrintWriter out = new PrintWriter(new FileWriter(tfwPath))) {
+            out.println(worldFileContent);
+        }
+
+        logger.info("Wrote TIFF and sidecar World File: " + tfwPath);
+    }
+
+    private static void addTag(Element ifd, int number, String type, String values) {
+        Document doc = ifd.getOwnerDocument();
+        Element field = doc.createElement("TIFFField");
+        field.setAttribute("number", String.valueOf(number));
+        field.setAttribute("name", "GeoTag_" + number);
+
+        Element dataNode = doc.createElement("TIFF" + type + "s");
+        for (String v : values.split(",")) {
+            Element vNode = doc.createElement("TIFF" + type);
+            vNode.setAttribute("value", v.trim());
+            dataNode.appendChild(vNode);
+        }
+        field.appendChild(dataNode);
+        ifd.appendChild(field);
+    }
+
+    private static BufferedImage toBufferedImageForTiff(Image img) {
+        if (img instanceof BufferedImage) return (BufferedImage) img;
+        BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_3BYTE_BGR);
+        Graphics2D g2 = bi.createGraphics();
+        g2.drawImage(img, 0, 0, null);
+        g2.dispose();
+        return bi;
+    }
+
 
     /**
      * Is the file name an image

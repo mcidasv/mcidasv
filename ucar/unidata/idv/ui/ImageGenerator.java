@@ -5374,44 +5374,14 @@ public class ImageGenerator extends IdvManager {
                         ImageUtils.writeImageToFile(image, tmpImageFile,
                                 quality);
                         ImageWrapper imageWrapper =
-                            new ImageWrapper(tmpImageFile, null, bounds,
-                                             null);
+                                new ImageWrapper(tmpImageFile, null, bounds,
+                                        null);
                         imageWrapper.setProperties(imageProps);
                         new ImageSequenceGrabber(
-                            file, getIdv(), this, node,
-                            (List<ImageWrapper>) Misc.newList(imageWrapper),
-                            null, 1);
+                                file, getIdv(), this, node,
+                                (List<ImageWrapper>) Misc.newList(imageWrapper),
+                                null, 1);
                     }
-                } else if (isGeoTiffFile(file)) {
-                    // McIDAS Inquiry #1806-3141
-                    logger.trace("writing GeoTIFF image: {}", file);
-                    GeoLocationInfo bounds = null;
-                    if (viewManager != null) {
-                        bounds = viewManager.getVisibleGeoBounds();
-                        ImageSequenceGrabber.subsetBounds(bounds, imageProps);
-                    }
-                    double north = bounds != null
-                            ? bounds.getMaxLat()
-                            : (imageProps.containsKey(ATTR_NORTH)
-                            ? ((Number) imageProps.get(ATTR_NORTH)).doubleValue()
-                            : Double.NaN);
-                    double south = bounds != null
-                            ? bounds.getMinLat()
-                            : (imageProps.containsKey(ATTR_SOUTH)
-                            ? ((Number) imageProps.get(ATTR_SOUTH)).doubleValue()
-                            : Double.NaN);
-                    double west = bounds != null
-                            ? bounds.getMinLon()
-                            : (imageProps.containsKey(ATTR_WEST)
-                            ? ((Number) imageProps.get(ATTR_WEST)).doubleValue()
-                            : Double.NaN);
-                    double east = bounds != null
-                            ? bounds.getMaxLon()
-                            : (imageProps.containsKey(ATTR_EAST)
-                            ? ((Number) imageProps.get(ATTR_EAST)).doubleValue()
-                            : Double.NaN);
-                    writeGeoTiff(image, file, north, south, west, east);
-                    logger.trace("GeoTIFF write complete.");
                 } else {
                     logger.trace("another writeImageToFile call...");
                     ImageUtils.writeImageToFile(image, file, quality);
@@ -5421,53 +5391,6 @@ public class ImageGenerator extends IdvManager {
         }
         logger.trace("result: {}", image);
         return image;
-    }
-
-    // McIDAS Inquiry #1806-3141
-    private static boolean isGeoTiffFile(String filename) {
-        if (filename == null) {
-            return false;
-        }
-        String lower = filename.toLowerCase();
-        return lower.endsWith(".tif") || lower.endsWith(".tiff");
-    }
-
-
-    // McIDAS Inquiry #1806-3141
-    public static void writeGeoTiff(Image image, String file,
-                                    double north, double south,
-                                    double west, double east)
-            throws IOException {
-
-        BufferedImage bi;
-        if (image instanceof BufferedImage) {
-            bi = (BufferedImage) image;
-        } else {
-            bi = new BufferedImage(image.getWidth(null), image.getHeight(null),
-                    BufferedImage.TYPE_INT_RGB);
-            Graphics2D g2 = bi.createGraphics();
-            g2.drawImage(image, 0, 0, null);
-            g2.dispose();
-        }
-
-        boolean hasBounds = !Double.isNaN(north) && !Double.isNaN(south)
-                && !Double.isNaN(west) && !Double.isNaN(east);
-
-        ReferencedEnvelope envelope = hasBounds
-                ? new ReferencedEnvelope(west, east, south, north,
-                DefaultGeographicCRS.WGS84)
-                : new ReferencedEnvelope(-180, 180, -90, 90,
-                DefaultGeographicCRS.WGS84);
-
-        GridCoverage2D coverage =
-                new GridCoverageFactory().create("coverage", bi, envelope);
-
-        GeoTiffWriter writer = new GeoTiffWriter(new File(file));
-        try {
-            writer.write(coverage, null);
-        } finally {
-            writer.dispose();
-        }
     }
 
     /**
