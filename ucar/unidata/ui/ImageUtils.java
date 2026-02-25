@@ -29,17 +29,38 @@
 package ucar.unidata.ui;
 
 
+// --- Essential GeoTools API (Newer Versions) ---
+import org.geotools.api.parameter.ParameterValue;
+import org.geotools.api.parameter.ParameterValueGroup;
+import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.parameter.GeneralParameterValue;
+
+// --- Coverage & Logic ---
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
-
-import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.imageio.GeoToolsWriteParams;
+import org.geotools.gce.geotiff.GeoTiffReader;
+import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+
+// --- The IO specific classes ---
+import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.gce.geotiff.GeoTiffFormat;
+import org.geotools.util.factory.Hints;
+
+// --- Standard Java ---
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+
 
 
 import javax.imageio.*;
 
+import org.geotools.util.factory.Hints;
 import org.w3c.dom.*;
 
 import org.slf4j.Logger;
@@ -79,14 +100,12 @@ import java.awt.image.PixelGrabber;
 import java.awt.image.RGBImageFilter;
 import java.awt.image.RenderedImage;
 import java.io.*;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.tiff.*;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -1129,7 +1148,6 @@ public class ImageUtils {
 
     // McIDAS Inquiry #1806-3141
     public static boolean isGeoTiffFile(String filename) {
-        logger.info("did we get here - 3141?");
         if (filename == null) {
             return false;
         }
@@ -1137,29 +1155,37 @@ public class ImageUtils {
         return lower.endsWith(".tif") || lower.endsWith(".tiff");
     }
 
+    // McIDAS Inquiry #1806-3141
     public static void writeGeoTiff(Image image, String file,
                                     double north, double south,
-                                    double west, double east) throws IOException {
+                                    double west, double east) throws Exception {
+
+        System.setProperty("org.geotools.referencing.forceXY", "true");
+
         BufferedImage bi = toBufferedImage(image);
 
-        try {
-            CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
 
-            ReferencedEnvelope envelope = new ReferencedEnvelope(west, east, south, north, crs);
+        ReferencedEnvelope envelope = new ReferencedEnvelope(west, east, south, north, crs);
 
-            GridCoverageFactory factory = new GridCoverageFactory();
-            GridCoverage2D coverage = factory.create("coverage", bi, envelope);
+        GridCoverageFactory factory = new GridCoverageFactory();
+        GridCoverage2D coverage = factory.create("coverage", bi, envelope);
 
-            GeoTiffWriter writer = new GeoTiffWriter(new File(file));
-            writer.write(coverage, null);
-            writer.dispose();
+        System.out.println("CRS: " + coverage.getCoordinateReferenceSystem());
+        System.out.println("Envelope: " + coverage.getEnvelope());
 
-            logger.info("Wrote GeoTIFF: " + file);
-        } catch (Exception e) {
-            throw new IOException("Failed to write GeoTIFF", e);
-        }
+        GeoTiffWriter writer = new GeoTiffWriter(new File(file));
+
+        GeoTiffWriteParams params = new GeoTiffWriteParams();
+        params.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+        params.setCompressionType("LZW");
+
+        ParameterValue<GeoToolsWriteParams> value = AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.createValue();
+        value.setValue(params);
+
+        writer.write(coverage, new GeneralParameterValue[]{value});
+        writer.dispose();
     }
-
 
     // McIDAS Inquiry #1806-3141
     public static void writeGeoTiffDumb(Image image, String file,

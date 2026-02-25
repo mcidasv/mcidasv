@@ -6681,8 +6681,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     }
 
                     if (ImageUtils.isGeoTiffFile(filename)) {
-                        logger.info("we got here? - 3141");
-                        ImageUtils.writeGeoTiffDumb(image, filename,
+                        // McIDAS Inquiry #1806-3141
+                        ImageUtils.writeGeoTiff(image, filename,
                                 bounds != null ? bounds.getMaxLat() : Double.NaN,
                                 bounds != null ? bounds.getMinLat() : Double.NaN,
                                 bounds != null ? bounds.getMinLon() : Double.NaN,
@@ -6690,8 +6690,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     } else {
                         ImageUtils.writeImageToFile(image, filename, quality);
                     }
-
-                    ImageUtils.writeImageToFile(image, filename, quality);
 
                     getIdv().getPublishManager().publishContent(filename,
                             this, publishCbx);
