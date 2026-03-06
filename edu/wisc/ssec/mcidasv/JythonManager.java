@@ -32,6 +32,7 @@ import static ucar.unidata.util.GuiUtils.makeMenu;
 import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -254,6 +255,19 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         menuItem = new JMenuItem("Export...");
         menuItem.setToolTipText("Export Formulas");
         menuItem.addActionListener(e -> exportFormulas());
+        menuItems.add(menuItem);
+
+        menuItems.add(MENU_SEPARATOR);
+
+        menuItem = new JMenuItem("Shapefile to GeoJSON...");
+        menuItem.setToolTipText("Convert Shapefile to a GeoJSON file");
+        menuItem.addActionListener(e -> {
+            logger.info("did we do this?");
+            String filePath = ShapefileToGeoJSON.getShapeFile();
+            String jsonPath = filePath.replaceFirst("\\.shp$", ".json");
+            boolean a = ShapefileToGeoJSON.convert(filePath, jsonPath);
+            JOptionPane.showMessageDialog(null, "Saved as " + jsonPath);
+        });
         menuItems.add(menuItem);
 
         return menuItems;
