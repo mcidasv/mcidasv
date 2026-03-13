@@ -29,14 +29,12 @@
 package ucar.unidata.ui;
 
 
-// --- Essential GeoTools API (Newer Versions) ---
 import org.geotools.api.parameter.ParameterValue;
 import org.geotools.api.parameter.ParameterValueGroup;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.parameter.GeneralParameterValue;
 
-// --- Coverage & Logic ---
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -46,12 +44,9 @@ import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 
-// --- The IO specific classes ---
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.util.factory.Hints;
-
-// --- Standard Java ---
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
@@ -1186,63 +1181,6 @@ public class ImageUtils {
         writer.write(coverage, new GeneralParameterValue[]{value});
         writer.dispose();
     }
-
-    // McIDAS Inquiry #1806-3141
-    public static void writeGeoTiffDumb(Image image, String file,
-                                    double north, double south,
-                                    double west, double east) throws IOException {
-
-        BufferedImage bi = toBufferedImage(image);
-        File imageFile = new File(file);
-        ImageIO.write(bi, "tif", imageFile);
-        logger.info("insane attempt - 3141");
-
-        double width = bi.getWidth();
-        double height = bi.getHeight();
-
-        double pixelSizeX = (east - west) / width;
-        double pixelSizeY = (south - north) / height;
-        double originX = west + (pixelSizeX / 2.0);
-        double originY = north + (pixelSizeY / 2.0);
-
-        String worldFileContent = String.format(
-                "%.10f\n0.0000000000\n0.0000000000\n%.10f\n%.10f\n%.10f",
-                pixelSizeX, pixelSizeY, originX, originY
-        );
-
-        String tfwPath = file.substring(0, file.lastIndexOf('.')) + ".tfw";
-        try (PrintWriter out = new PrintWriter(new FileWriter(tfwPath))) {
-            out.println(worldFileContent);
-        }
-
-        logger.info("Wrote TIFF and sidecar World File: " + tfwPath);
-    }
-
-    private static void addTag(Element ifd, int number, String type, String values) {
-        Document doc = ifd.getOwnerDocument();
-        Element field = doc.createElement("TIFFField");
-        field.setAttribute("number", String.valueOf(number));
-        field.setAttribute("name", "GeoTag_" + number);
-
-        Element dataNode = doc.createElement("TIFF" + type + "s");
-        for (String v : values.split(",")) {
-            Element vNode = doc.createElement("TIFF" + type);
-            vNode.setAttribute("value", v.trim());
-            dataNode.appendChild(vNode);
-        }
-        field.appendChild(dataNode);
-        ifd.appendChild(field);
-    }
-
-    private static BufferedImage toBufferedImageForTiff(Image img) {
-        if (img instanceof BufferedImage) return (BufferedImage) img;
-        BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_3BYTE_BGR);
-        Graphics2D g2 = bi.createGraphics();
-        g2.drawImage(img, 0, 0, null);
-        g2.dispose();
-        return bi;
-    }
-
 
     /**
      * Is the file name an image
