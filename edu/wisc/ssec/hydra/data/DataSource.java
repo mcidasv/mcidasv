@@ -264,19 +264,28 @@ public abstract class DataSource {
             if (filename.contains("_npp_d")) {
                 int idx = filename.indexOf("_npp_d");
                 idx += 6;
-                String str = filename.substring(idx, idx + 16);
+                String str = filename.substring(idx, idx + 17); // grab full string including tenths
+                // Trim last digit (tenths of seconds)
+                str = str.substring(0, 15) + str.substring(16, 17); // OR simpler below
+                str = str.substring(0, 16); // just drop the last digit
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'_t'HHmmss");
                 datetime = sdf.parse(str);
             } else if (filename.contains("_j01_d")) {
                 int idx = filename.indexOf("_j01_d");
                 idx += 6;
-                String str = filename.substring(idx, idx + 16);
+                String str = filename.substring(idx, idx + 17); // grab full string including tenths
+                // Trim last digit (tenths of seconds)
+                str = str.substring(0, 15) + str.substring(16, 17); // OR simpler below
+                str = str.substring(0, 16); // just drop the last digit
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'_t'HHmmss");
                 datetime = sdf.parse(str);
             } else if (filename.contains("_j02_d")) {
                 int idx = filename.indexOf("_j02_d");
                 idx += 6;
-                String str = filename.substring(idx, idx + 16);
+                String str = filename.substring(idx, idx + 17); // grab full string including tenths
+                // Trim last digit (tenths of seconds)
+                str = str.substring(0, 15) + str.substring(16, 17); // OR simpler below
+                str = str.substring(0, 16); // just drop the last digit
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'_t'HHmmss");
                 datetime = sdf.parse(str);
             } else if (filename.startsWith("MOD14") || filename.startsWith("MYD14")) {

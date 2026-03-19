@@ -324,7 +324,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         new RubberBandBox(this, xmap, ymap);
 
         spectrumRef = new DataReferenceImpl("spectrumRef_" + Hydra.getUniqueID());
-        addRef(spectrumRef, Color.WHITE);
+        addRef(spectrumRef, Color.RED);
     }
 
 
@@ -644,10 +644,10 @@ public class MultiSpectralDisplay implements DisplayListener {
         master.setBackground(color);
         if (color.equals(Color.white)) {
             master.setForeground(Color.black);
-            updateRef(spectrumRef, Color.black);
+            //updateRef(spectrumRef, Color.black);
         } else if (color.equals(Color.black)) {
             master.setForeground(Color.white);
-            updateRef(spectrumRef, Color.white);
+            //updateRef(spectrumRef, Color.white);
         }
     }
 

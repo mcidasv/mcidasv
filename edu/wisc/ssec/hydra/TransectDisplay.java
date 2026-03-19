@@ -58,8 +58,11 @@ import javax.swing.JPanel;
 
 public class TransectDisplay extends HydraDisplay implements ActionListener {
 
-    float[] yRange = new float[2];      // current Y-axis range
-    float[] dataYrange = new float[2];  // full data min/max range
+    // Current ranges per variable
+    private HashMap<RealType, float[]> yRanges = new HashMap<>();
+    private HashMap<RealType, float[]> dataYRanges = new HashMap<>();
+
+    private ArrayList<Transect> transects = new ArrayList<>();
 
     DataReference transectDataRef = null;
     RealType rangeType = null;
@@ -80,12 +83,14 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
 
     private HashMap<Transect, DataReference> transectToDataRef = new HashMap();
     private HashMap<Transect, NumberFormat> transectToNumFmt = new HashMap();
+    private HashMap<RealType, ScalarMap> rangeTypeToMap = new HashMap<>();
 
     private int numTransects = 0;
 
     public TransectDisplay(Transect transect, Color color, Point loc) throws VisADException, RemoteException {
 
         transectDataRef = transect.getTransectDataRef();
+        transects.add(transect);
         FlatField data = (FlatField) transectDataRef.getData();
         FunctionType fncType = (FunctionType) data.getType();
 
@@ -232,10 +237,16 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
     }
 
     public void addTransect(Transect transect, Color color) throws VisADException, RemoteException {
+        transects.add(transect);
         FlatField dataTransect = (FlatField) transect.getTransectDataRef().getData();
         RealType rangeType = (RealType) ((FunctionType) dataTransect.getType()).getRange();
 
         addScalarMapForRangeType(rangeType);
+
+        // Update min/max for this rangeType across all transects
+        float[] minmax = computeMinMaxForRangeType(rangeType);
+        dataYRanges.put(rangeType, new float[]{minmax[0], minmax[1]});
+        yRanges.put(rangeType, new float[]{minmax[0], minmax[1]});
 
         color = getGraphColor(color);
         ConstantMap lineWidth = new ConstantMap(1.5, Display.LineWidth);
@@ -267,6 +278,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
 
         if (!hasMap) {
             ScalarMap map = new ScalarMap(rangeType, Display.YAxis);
+            rangeTypeToMap.put(rangeType, map);
 
             AxisScale yAxis = map.getAxisScale();
             yAxis.setColor(Color.black);
@@ -278,6 +290,11 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
 
             this.display.addMap(map);
             yAxisMaps.add(map);
+
+            // Compute initial min/max for this range type across all transects
+            float[] minmax = computeMinMaxForRangeType(rangeType);
+            dataYRanges.put(rangeType, new float[]{minmax[0], minmax[1]});
+            yRanges.put(rangeType, new float[]{minmax[0], minmax[1]});
         }
     }
 
@@ -285,6 +302,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         this.display.removeReference(transect.getTransectDataRef());
         this.display.removeReference(transectToDataRef.get(transect));
         transectToDataRef.remove(transect);
+        transects.add(transect);
 
         numTransects--;
 
@@ -317,87 +335,118 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
     public JMenuBar buildMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
+        // --- Tools Menu ---
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
         menuBar.add(toolsMenu);
 
         JMenu captureMenu = new JMenu("Capture");
         captureMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-        JMenuItem jpegItem = new JMenuItem("JPEG");
+        JMenuItem jpegItem = new JMenuItem("Image");
         jpegItem.addActionListener(this);
         jpegItem.setActionCommand("captureToJPEG");
         captureMenu.add(jpegItem);
 
         toolsMenu.add(captureMenu);
 
+        // --- Settings Menu ---
         JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 
-        JMenuItem axes = new JMenuItem("Axes");
-        axes.setActionCommand("Axes");
+        // --- Y-Axis Range Menu ---
+        JMenu yAxisMenu = new JMenu("Y-Axis Range");
 
-        try {
-            FlatField data = (FlatField) transectDataRef.getData();
-            float[][] vals = data.getFloats(false);
-            float minVal = Float.MAX_VALUE;
-            float maxVal = -Float.MAX_VALUE;
-            for (float v : vals[0]) {
-                if (!Float.isNaN(v)) {
-                    if (v < minVal) minVal = v;
-                    if (v > maxVal) maxVal = v;
-                }
-            }
-            dataYrange[0] = minVal;
-            dataYrange[1] = maxVal;
-            yRange[0] = minVal;
-            yRange[1] = maxVal;
-        } catch (Exception ex) {
-            dataYrange[0] = 0f;
-            dataYrange[1] = 1f;
-            yRange[0] = 0f;
-            yRange[1] = 1f;
-        }
+        yAxisMenu.addMenuListener(new javax.swing.event.MenuListener() {
+            @Override
+            public void menuSelected(javax.swing.event.MenuEvent e) {
+                yAxisMenu.removeAll(); // clear old items
 
-        // Y-Axis Range Menu Item
-        JMenuItem axesItem = new JMenuItem("Y-Axis Range...");
-        axesItem.setActionCommand("Axes");
-        axesItem.addActionListener(e -> {
-            if (!"Axes".equals(e.getActionCommand())) return;
+                for (ScalarMap map : yAxisMaps) {
+                    final ScalarMap yAxisMap = map;
+                    RealType type = (RealType) yAxisMap.getScalar();
+                    String name = type.getName();
 
-            JDialog dialog = new JDialog(frame, "Y-Axis Range", true);
-            dialog.setLocationRelativeTo(frame);
-
-            JPanel panel = new JPanel(new GridLayout(1, 1));
-
-            // RangeListener to update Y-axis
-            class Y implements RangeListener {
-                @Override
-                public void rangeChanged(float low, float high) {
-                    yRange[0] = low;
-                    yRange[1] = high;
-                    if (ymap != null) {
-                        try {
-                            ymap.setRange(low, high);
-                        } catch (VisADException | RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    JMenuItem item = new JMenuItem(name);
+                    item.addActionListener(ev -> openYAxisDialog(yAxisMap));
+                    yAxisMenu.add(item);
                 }
             }
 
-            // lowhigh is your existing helper for entering min/max
-            JPanel yPanel = new lowhigh(new Y(), "Y:", yRange[0], yRange[1], dataYrange[0], dataYrange[1]).panel;
-
-            panel.add(yPanel);
-            dialog.setContentPane(panel);
-            dialog.pack();
-            dialog.setVisible(true);
+            @Override public void menuDeselected(javax.swing.event.MenuEvent e) {}
+            @Override public void menuCanceled(javax.swing.event.MenuEvent e) {}
         });
 
-        settingsMenu.add(axesItem);
+        settingsMenu.add(yAxisMenu);
         menuBar.add(settingsMenu);
 
         return menuBar;
+    }
+
+    // --- Helper method to open Y-axis dialog ---
+    private void openYAxisDialog(ScalarMap map) {
+        RealType type = (RealType) map.getScalar();
+
+        // Lazily initialize ranges if missing
+        if (!dataYRanges.containsKey(type) || !yRanges.containsKey(type)) {
+            float[] minmax = computeMinMaxForRangeType(type);
+            dataYRanges.put(type, new float[]{minmax[0], minmax[1]});
+            yRanges.put(type, new float[]{minmax[0], minmax[1]});
+        }
+
+        float[] curRange = yRanges.get(type);
+        float[] fullRange = dataYRanges.get(type);
+
+        JDialog dialog = new JDialog(frame, "Y-Axis Range: " + type.getName(), true);
+        dialog.setLocationRelativeTo(frame);
+
+        lowhigh lh = new lowhigh(new RangeListener() {
+            @Override
+            public void rangeChanged(float low, float high) {
+                try {
+                    map.setRange(low, high);
+                    yRanges.put(type, new float[]{low, high});
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }, "Y:", curRange[0], curRange[1], fullRange[0], fullRange[1]);
+
+        dialog.setContentPane(lh.panel);
+        dialog.pack();
+        dialog.setVisible(true);
+    }
+
+    private float[] computeMinMaxForRangeType(RealType rangeType) {
+        float minVal = Float.MAX_VALUE;
+        float maxVal = -Float.MAX_VALUE;
+
+        for (Transect t : transects) {
+            try {
+                FlatField data = (FlatField) t.getTransectDataRef().getData();
+                RealType tRangeType = (RealType) ((FunctionType) data.getType()).getRange();
+
+                if (!rangeType.equals(tRangeType)) continue;
+
+                float[] vals = data.getFloats(false)[0];
+
+                for (float v : vals) {
+                    if (!Float.isNaN(v)) {
+                        if (v < minVal) minVal = v;
+                        if (v > maxVal) maxVal = v;
+                    }
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (minVal == Float.MAX_VALUE || maxVal == -Float.MAX_VALUE) {
+            minVal = 0f;
+            maxVal = 1f;
+        }
+
+        return new float[]{minVal, maxVal};
     }
 
     @Override

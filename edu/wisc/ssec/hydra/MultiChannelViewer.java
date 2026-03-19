@@ -249,18 +249,17 @@ public class MultiChannelViewer extends HydraDisplay {
 
         // get the tools JMenu
         JMenu tools = menuBar.getMenu(0);
+        JMenu captureMenu = null;
 
-        JMenuItem captureSpectrum = new JMenuItem("Capture Spectrum");
-        captureSpectrum.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String cmd = e.getActionCommand();
-                if (cmd.equals("captureSpectrum")) {
-                    DisplayCapture.capture(frame, multiSpectDsp.getDisplay(), "jpeg");
-                }
-            }
-        });
-        captureSpectrum.setActionCommand("captureSpectrum");
-        tools.add(captureSpectrum);
+        for (int i = 0; i < tools.getItemCount(); i++)
+            if (tools.getItem(i) instanceof JMenu && "Capture".equals(tools.getItem(i).getText()))
+                captureMenu = (JMenu) tools.getItem(i);
+
+        JMenuItem captureSpectrum = new JMenuItem("Spectrum");
+        captureSpectrum.addActionListener(e ->
+            DisplayCapture.capture(frame, multiSpectDsp.getDisplay(), "jpeg"));
+
+        captureMenu.add(captureSpectrum);
 
         JMenuItem fourChannelCombine = new JMenuItem("Four Channel Combine");
         fourChannelCombine.addActionListener(new ActionListener() {

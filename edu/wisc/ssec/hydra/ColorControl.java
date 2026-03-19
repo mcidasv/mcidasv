@@ -55,10 +55,10 @@ import visad.ScalarMapListener;
 import visad.VisADException;
 import visad.CellImpl;
 
-
+import ucar.unidata.ui.ImageUtils;
 import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.FileManager;
 import ucar.visad.display.DisplayMaster;
-
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -399,7 +399,7 @@ public class ColorControl implements DepictionControl, PropertyChangeListener {
         JPanel subPanel = new JPanel(new FlowLayout());
 
         JPanel redPanel = new JPanel(new FlowLayout());
-        redPanel.add(new JLabel("range:"));
+        redPanel.add(new JLabel("Range:"));
 
         lowTxtFld.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -462,12 +462,26 @@ public class ColorControl implements DepictionControl, PropertyChangeListener {
             }
         });
 
-        JButton saveB = new JButton("Save");
+        JButton saveB = new JButton("Save Histogram");
         redPanel.add(saveB);
         saveB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (frame != null) {
-                    DisplayCapture.capture(frame, histo.getDisplay(), "jpeg");
+                try {
+
+                    String filename = FileManager.getWriteFile(
+                        FileManager.FILTER_IMAGE,
+                        FileManager.SUFFIX_PNG
+                    );
+
+                    if (filename != null) {
+                        ImageUtils.writeImageToFile(
+                            histo.getDisplay().getComponent(),
+                            filename
+                        );
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });

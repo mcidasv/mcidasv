@@ -32,6 +32,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
@@ -41,6 +43,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.BoxLayout;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.Dimension;
 import java.awt.BorderLayout;
@@ -53,10 +56,20 @@ import java.awt.Insets;
 import java.awt.event.WindowEvent;
 import java.awt.event.ComponentEvent;
 
+import java.util.List;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
 import java.lang.Runnable;
+import java.io.File;
+
+import java.text.SimpleDateFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -545,22 +558,17 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
 
         JMenu captureMenu = new JMenu("Capture");
         captureMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-        JMenuItem jpegItem = new JMenuItem("JPEG");
+        JMenuItem jpegItem = new JMenuItem("Image");
         jpegItem.addActionListener(this);
-        jpegItem.setActionCommand("captureToJPEG");
+        jpegItem.setActionCommand("captureToImage");
         captureMenu.add(jpegItem);
 
-        JMenuItem pngItem = new JMenuItem("PNG");
-        jpegItem.addActionListener(this);
-        jpegItem.setActionCommand("captureToPNG");
-        captureMenu.add(pngItem);
+        JMenuItem kmzItem = new JMenuItem("KMZ");
+        kmzItem.addActionListener(this);
+        kmzItem.setActionCommand("captureToKMZ");
+        captureMenu.add(kmzItem);
 
-        JMenuItem kmlItem = new JMenuItem("KML");
-        kmlItem.addActionListener(this);
-        kmlItem.setActionCommand("captureToKML");
-        captureMenu.add(kmlItem);
-
-        JMenuItem ncdfItem = new JMenuItem("NCDF");
+        JMenuItem ncdfItem = new JMenuItem("NetCDF");
         ncdfItem.addActionListener(this);
         ncdfItem.setActionCommand("saveToNCDF");
         captureMenu.add(ncdfItem);
@@ -1158,14 +1166,30 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
                 exc.printStackTrace();
             }
         }
-        // TODO: combine jpeg,kml, others into a common widget
-        if (cmd.equals("captureToJPEG")) {
-            DisplayCapture.capture(frame, mapProjDsp, "jpeg");
+        // TODO: combine jpeg, kmz, others into a common widget
+        if (cmd.equals("captureToImage")) {
+
+            MapProjectionDisplay mpd = mapProjDsp;
+
+            if (mpd == null) {
+                JOptionPane.showMessageDialog(frame,
+                        "No map projection display available to capture.",
+                        "Capture Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                DisplayCapture.capture(frame, mpd, "jpg");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame,
+                        "Error saving image:\n" + ex.getMessage(),
+                        "Capture Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
-        if (cmd.equals("captureToPNG")) {
-            DisplayCapture.capture(frame, mapProjDsp, "png");
-        }
-        if (cmd.equals("captureToKML")) {
+        if (cmd.equals("captureToKMZ")) {
             final MapProjection lastMapProj = getMapProjection();
             try {
                 new DisplayCapture(frame, this);
@@ -1177,7 +1201,103 @@ public class ImageDisplay extends HydraDisplay implements ActionListener, Contro
         }
         if (cmd.equals("saveToNCDF")) {
             try {
-                Hydra.writeImage((FlatField) imageDsp.getData(), imageDepiction.getName(), imageDepiction.getDatasetInfo().datSrcInfo.dateTimeStamp);
+                Data data = imageDsp.getData();
+
+                // Get the user's home directory
+                String userHome = System.getProperty("user.home");
+                File outputDir = new File(userHome, "NetCDF");
+                if (!outputDir.exists()) {
+                    outputDir.mkdirs();
+                }
+
+                // Sanitize base filename (strip any path)
+                String origName = new File(imageDepiction.getName()).getName();
+
+                // Step 1: remove leading underscores
+                String base = origName.replaceAll("^_+", "");
+
+                // Step 1b: remove leading numeric prefix like "1_"
+                base = base.replaceAll("^\\d+_", "");
+
+                // Step 2: remove trailing "_18_0" (or similar patterns BEFORE Hydra adds _nc)
+                base = base.replaceAll("_\\d+_\\d+$", "");
+
+                // Step 3: sanitize remaining characters
+                String safeBaseName = base.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+                // Final cleanup: ensure no leading underscores remain
+                safeBaseName = safeBaseName.replaceAll("^_+", "");
+
+                List<String> writtenFiles = new ArrayList<>(); // accumulate filenames
+
+                if (data instanceof FlatField) {
+                    FlatField ff = (FlatField) data;
+
+                    System.out.println("FlatField type: " + ff.getType());
+                    int rangeDim = ff.getRangeDimension();
+                    System.out.println("Range dimension: " + rangeDim);
+
+                    if (rangeDim == 1) {
+                        // Single-band case
+                        File outFile = new File(outputDir, safeBaseName);
+                        String finalFile = Hydra.writeImage(
+                                ff,
+                                outFile.getAbsolutePath(),
+                                imageDepiction.getDatasetInfo().datSrcInfo.dateTimeStamp
+                        );
+
+                        writtenFiles.add(finalFile);
+                    } else {
+                        // Multi-band case
+                        float[][] samples = ff.getFloats(false);
+                        FunctionType ftype = (FunctionType) ff.getType();
+                        RealTupleType rangeTuple = (RealTupleType) ftype.getRange();
+                        Set domainSet = ff.getDomainSet();
+
+                        for (int i = 0; i < rangeDim; i++) {
+                            RealType bandType = (RealType) rangeTuple.getComponent(i);
+                            String bandNameRaw = bandType.getName();
+
+                            // Remove trailing "_18_0" or similar
+                            String bandName = bandNameRaw.replaceAll("_\\d+_\\d+$", "");
+
+                            // Optional: remove leading underscores just in case
+                            bandName = bandName.replaceAll("^_+", "");
+                            System.out.println("Writing band: " + bandName);
+
+                            FunctionType singleType = new FunctionType(ftype.getDomain(), bandType);
+                            FlatField band = new FlatField(singleType, domainSet);
+
+                            float[][] single = new float[1][samples[i].length];
+                            single[0] = samples[i];
+                            band.setSamples(single, false);
+
+                            File outFile = new File(outputDir, safeBaseName + "_" + bandName + ".nc");
+                            String finalFile = Hydra.writeImage(
+                                band,
+                                outFile.getAbsolutePath(),
+                                imageDepiction.getDatasetInfo().datSrcInfo.dateTimeStamp
+                            );
+                            writtenFiles.add(finalFile);
+                        }
+                    }
+                }
+
+                // Show popup with all written filenames
+                if (!writtenFiles.isEmpty()) {
+                    // Get the folder (assume all files are in the same folder)
+                    String folder = new File(writtenFiles.get(0)).getParent();
+    
+                    StringBuilder msg = new StringBuilder("NetCDF files written to " + folder + ":\n");
+    
+                    for (String f : writtenFiles) {
+                        // Append only the filename, not the full path
+                        msg.append(new File(f).getName()).append("\n");
+                    }
+    
+                    JOptionPane.showMessageDialog(null, msg.toString());
+                }
+
             } catch (Exception exc) {
                 exc.printStackTrace();
             }

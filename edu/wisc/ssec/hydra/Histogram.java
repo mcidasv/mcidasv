@@ -278,12 +278,17 @@ public class Histogram implements DisplayListener {
         display.addMap(xMap);
         display.addMap(yMap);
         xMap.setScaleEnable(true);
-        yMap.setScaleEnable(false);
+        yMap.setScaleEnable(true);
         xMap.setScalarName(xAxisName);
+        yMap.setScalarName("Count");
 
         AxisScale xAxis = xMap.getAxisScale();
         xAxis.setLabelSize(24);
         xAxis.setLabelAllTicks(true);
+
+        AxisScale yAxis = yMap.getAxisScale();
+        yAxis.setLabelSize(24);
+        yAxis.setLabelAllTicks(true);
 
         display.addReference(graphRef, new ConstantMap[]{new ConstantMap(cbHght, Display.YAxisOffset)});
 

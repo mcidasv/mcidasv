@@ -232,6 +232,9 @@ public class PreviewSelection {
 
         boxOutline = makeBoxOutline(xtrkStart, xtrkStop, xtrkSkip, trkStart, trkStop, trkSkip);
 
+        // Keep full granule as default selection - previously a small box was shown
+		// Now the green box covers the entire domain
+        /*
         //- preset to a sub-region at full-res, show the box
         if ((xtrkStop - xtrkStart) > 640) {
             xtrkStart = Math.floor(xtrkCoords[1] / 3);
@@ -239,6 +242,8 @@ public class PreviewSelection {
             xtrkStop = xtrkStart + 640;
             trkStop = trkStart + 640;
         }
+        */
+
         if (trkStop >= trkCoords[1]) trkStop = trkCoords[1] - 2; // in case we go too far
         // A terrible hack for GranuleAggregation problem
         trkStart += 1;

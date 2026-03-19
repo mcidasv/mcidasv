@@ -103,12 +103,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileSystemView;
 
 import ucar.ma2.Array;
+import ucar.nc2.Attribute;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.NetcdfFileWriter;
@@ -1725,90 +1727,162 @@ public class Hydra {
         return theta;
     }
 
-    public static void writeImage(FlatField image, String name, String dateTimeStamp) throws IOException, VisADException, InvalidRangeException {
-        FileSystemView fsv = FileSystemView.getFileSystemView();
-        File homeDir = fsv.getHomeDirectory();
-        dateTimeStamp = dateTimeStamp.replace(' ', 'T');
-        name = name.substring(2, name.length());
-        String filename = name + "_" + dateTimeStamp + ".nc";
-        filename = homeDir.getAbsolutePath() + "/" + filename;
-        NetcdfFileWriter writer = NetcdfFileWriter.createNew(NetcdfFileWriter.Version.netcdf3, filename, null);
+    // Returns a safe variable name for NetCDF
+    private static String makeVarName(String calibrationName, String wavelength) {
+        // Replace dot in wavelength with underscore
+        String safeWavelength = wavelength.replace('.', '_');  // 799.37396 → 799_37396
+        return calibrationName + "_" + safeWavelength;
+    }
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date time = null;
-        try {
-            time = format.parse(dateTimeStamp);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static String writeImage(FlatField image, String wavelength, String dateTimeStamp)
+            throws IOException, VisADException, InvalidRangeException {
+
+        System.out.println("writeImage() called");
+
+        // Get cross-platform home directory
+        String homeDir = System.getProperty("user.home");
+
+        if (dateTimeStamp == null) {
+            System.out.println("WARNING: dateTimeStamp is null, using fallback time");
+            dateTimeStamp = "1970-01-01T00:00";
         }
 
+        // Replace space with T and colons with - for filename
+        String tsForFile = dateTimeStamp.replace(' ', 'T').replace(':', '-');
+
+        // Determine filename for the filesystem (directly in home directory)
+        String baseName = new File(wavelength).getName();
+
+        // Remove .nc extension if present
+        baseName = baseName.replaceAll("\\.nc$", "");
+        String safeBaseNameForFile = baseName.replaceAll("[^a-zA-Z0-9]", "_"); // safe for filename
+        String filename = new File(homeDir, safeBaseNameForFile + "_" + tsForFile + ".nc").getAbsolutePath();
+        System.out.println("NetCDF will be written to: " + filename);
+
+        // Commenting out because this window now pops up at the end to better handle
+        // multi-banded netCDF output (e.g. RGB display)
+        // Show a popup to the user
+        //javax.swing.JOptionPane.showMessageDialog(
+        //        null,
+        //        "NetCDF written to:\n" + filename,
+        //        "File Written",
+        //        javax.swing.JOptionPane.INFORMATION_MESSAGE
+        //);
+
+        NetcdfFileWriter writer = NetcdfFileWriter.createNew(NetcdfFileWriter.Version.netcdf3, filename, null);
+
+        // Parse timestamp
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date time;
+        try {
+            time = format.parse(dateTimeStamp.replace(' ', 'T'));
+        } catch (Exception e) {
+            System.out.println("WARNING: Failed to parse timestamp: " + dateTimeStamp);
+            e.printStackTrace();
+            time = new Date();
+        }
+        System.out.println("Parsed time: " + time);
+
+        // ISO string for CF compliance
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String isoTime = isoFormat.format(time);
 
         Gridded2DSet domSet = (Gridded2DSet) image.getDomainSet();
         int[] lens = domSet.getLengths();
         int xLen = lens[0];
         int yLen = lens[1];
+        int totalPixels = xLen * yLen;
+        System.out.println("Image size: " + xLen + " x " + yLen);
+        System.out.println("Total pixels: " + totalPixels);
 
         float[] rngVals = (image.getFloats(false))[0];
 
         RealTupleType domain = ((FunctionType) image.getType()).getDomain();
         CoordinateSystem cs = domain.getCoordinateSystem();
+
         boolean geo = false;
         double satLon = Double.NaN;
         if (cs instanceof GEOSProjection) {
             geo = true;
             satLon = ((GEOSProjection) cs).getSatelliteNadirLongitude();
+            System.out.println("Detected GEOSProjection. Satellite lon = " + satLon);
         }
 
         SunRelativePosition calculator = new SunRelativePosition();
+        calculator.setDate(time);
 
-        float[] lons = new float[xLen * yLen];
-        float[] lats = new float[xLen * yLen];
-        float[] solzen = new float[xLen * yLen];
-        float[] solazm = new float[xLen * yLen];
+        float[] lons = new float[totalPixels];
+        float[] lats = new float[totalPixels];
+        float[] solzen = new float[totalPixels];
+        float[] solazm = new float[totalPixels];
 
         float[] satzen = null;
         float[] satazm = null;
         float[] phaseAng = null;
         if (geo) {
-            satzen = new float[xLen * yLen];
-            satazm = new float[xLen * yLen];
-            phaseAng = new float[xLen * yLen];
+            satzen = new float[totalPixels];
+            satazm = new float[totalPixels];
+            phaseAng = new float[totalPixels];
         }
 
-        int[] idx = new int[1];
-        for (int j = 0; j < yLen; j++) {
-            for (int i = 0; i < xLen; i++) {
-                int k = j * xLen + i;
-                idx[0] = k;
-                float[][] grdVal = domSet.indexToValue(idx);
+        System.out.println("Computing navigation arrays...");
+        int[] allIdx = new int[totalPixels];
+        for (int k = 0; k < totalPixels; k++) allIdx[k] = k;
 
-                float[][] lonlat = cs.toReference(grdVal);
-                lons[k] = lonlat[0][0];
-                lats[k] = lonlat[1][0];
-                calculator.setDate(time);
-                calculator.setCoordinate(lons[k], lats[k]);
-                solzen[k] = (float) calculator.getZenith();
-                solazm[k] = (float) calculator.getAzimuth();
+        float[][] grdVals = domSet.indexToValue(allIdx);
+        System.out.println("indexToValue complete");
 
-                if (geo) {
-                    satzen[k] = (float) geoSatZenithOnSphere(lons[k], lats[k], satLon);
-                    satazm[k] = (float) azimuthOnSphere(lons[k], lats[k], satLon, 0);
-                    double[] solV = azimElevToVec(-solazm[k], 90 - solzen[k]);
-                    double[] satV = azimElevToVec(-satazm[k], 90 - satzen[k]);
-                    phaseAng[k] = (float) getAngleBetweenVectors(solV, satV);
-                }
+        float[][] lonlat = cs.toReference(grdVals);
+        System.out.println("Coordinate transform complete");
+
+        for (int k = 0; k < totalPixels; k++) {
+            if (k % 100000 == 0) System.out.println("Processing pixel " + k + " / " + totalPixels);
+
+            lons[k] = lonlat[0][k];
+            lats[k] = lonlat[1][k];
+
+            calculator.setCoordinate(lons[k], lats[k]);
+            solzen[k] = (float) calculator.getZenith();
+            solazm[k] = (float) calculator.getAzimuth();
+
+            if (geo) {
+                satzen[k] = (float) geoSatZenithOnSphere(lons[k], lats[k], satLon);
+                satazm[k] = (float) azimuthOnSphere(lons[k], lats[k], satLon, 0);
+                double[] solV = azimElevToVec(-solazm[k], 90 - solzen[k]);
+                double[] satV = azimElevToVec(-satazm[k], 90 - satzen[k]);
+                phaseAng[k] = (float) getAngleBetweenVectors(solV, satV);
             }
         }
+        System.out.println("Navigation calculations finished");
 
+        // Define dimensions
         ucar.nc2.Dimension xDim = writer.addDimension(null, "x", xLen);
         ucar.nc2.Dimension yDim = writer.addDimension(null, "y", yLen);
-
-        List<ucar.nc2.Dimension> dims = new ArrayList();
+        List<ucar.nc2.Dimension> dims = new ArrayList<>();
         dims.add(yDim);
         dims.add(xDim);
 
-        Variable valVar = writer.addVariable(null, name, DataType.FLOAT, dims);
+        System.out.println("Creating NetCDF variables");
+
+        // Determine calibration name
+        RealType realType = (RealType) ((FunctionType) image.getType()).getRange();
+        String calibrationName;
+        String typeName = realType.getName();
+        if (typeName.contains("Reflectance")) {
+            calibrationName = "Reflectance";
+        } else if (typeName.contains("Radiance")) {
+            calibrationName = "Radiance";
+        } else if (typeName.contains("BrightnessTemp")) {
+            calibrationName = "BrightnessTemp";
+        } else {
+            calibrationName = "data";
+        }
+
+        //String varName = makeVarName(calibrationName, wavelength);  // e.g., "Reflectance_799_37396"
+        String varName = makeVarName(calibrationName, baseName);
+        Variable valVar = writer.addVariable(null, varName, DataType.FLOAT, dims);
         Variable lonVar = writer.addVariable(null, "longitude", DataType.FLOAT, dims);
         Variable latVar = writer.addVariable(null, "latitude", DataType.FLOAT, dims);
         Variable solzenVar = writer.addVariable(null, "solarZenith", DataType.FLOAT, dims);
@@ -1823,37 +1897,41 @@ public class Hydra {
             phaseAngVar = writer.addVariable(null, "phaseAngle", DataType.FLOAT, dims);
         }
 
+        // Numeric time variable
+        ucar.nc2.Dimension timeDim = writer.addDimension(null, "time", 1);
+        Variable timeVar = writer.addVariable(null, "time", DataType.DOUBLE, "time");
+        writer.addVariableAttribute(timeVar, new Attribute("units", "seconds since 1970-01-01T00:00:00Z"));
+        writer.addVariableAttribute(timeVar, new Attribute("standard_name", "time"));
+
+        // Global attributes
+        writer.addGroupAttribute(null, new Attribute("time_coverage_start", isoTime));
+        writer.addGroupAttribute(null, new Attribute("creation_time", isoFormat.format(new Date())));
+        writer.addGroupAttribute(null, new Attribute("source", "McIDAS-V HYDRA2 export"));
+
         writer.create();
 
-        Array data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, rngVals);
-        writer.write(valVar, data);
+        System.out.println("Writing data variables");
 
-        data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, lons);
-        writer.write(lonVar, data);
-
-        data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, lats);
-        writer.write(latVar, data);
-
-        data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, solzen);
-        writer.write(solzenVar, data);
-
-        data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, solazm);
-        writer.write(solazmVar, data);
+        writer.write(valVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, rngVals));
+        writer.write(lonVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, lons));
+        writer.write(latVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, lats));
+        writer.write(solzenVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, solzen));
+        writer.write(solazmVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, solazm));
 
         if (geo) {
-            data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, satzen);
-            writer.write(satzenVar, data);
-
-            data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, satazm);
-            writer.write(satazmVar, data);
-
-            data = Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, phaseAng);
-            writer.write(phaseAngVar, data);
+            writer.write(satzenVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, satzen));
+            writer.write(satazmVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, satazm));
+            writer.write(phaseAngVar, Array.factory(DataType.FLOAT, new int[]{yLen, xLen}, phaseAng));
         }
 
-        writer.close();
-    }
+        writer.write(timeVar, Array.factory(DataType.DOUBLE, new int[]{1}, new double[]{time.getTime() / 1000.0}));
 
+        System.out.println("Finished writing variables");
+        writer.close();
+        System.out.println("NetCDF write finished successfully");
+
+        return filename;
+    }
 
     /**
      * Locates sun terminator (if one exists) on each scan line of image

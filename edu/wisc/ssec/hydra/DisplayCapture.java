@@ -28,12 +28,15 @@
 
 package edu.wisc.ssec.hydra;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -46,7 +49,11 @@ import java.awt.GridLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import java.io.*;
 import java.io.File;
+import java.io.FileWriter;
+
+import java.nio.charset.StandardCharsets;
 
 import visad.VisADException;
 import visad.RealTupleType;
@@ -73,126 +80,204 @@ public class DisplayCapture {
     ImageDisplay imageDisplay;
     JDialog dialog;
 
-    public DisplayCapture(final JFrame parent, final ImageDisplay imageDisplay) throws VisADException, RemoteException {
+    public DisplayCapture(final JFrame parent, final ImageDisplay imageDisplay)
+            throws VisADException, RemoteException {
+
         this.imageDisplay = imageDisplay;
         this.mapProjDsp = (MapProjectionDisplay) imageDisplay.getDisplayMaster();
         this.imageDisplay.setProbeVisible(false);
 
-        dialog = new JDialog(parent, "KML capture");
-        dialog.setLocationRelativeTo(parent);
-        dialog.addWindowListener(new WindowAdapter() {
-                                     public void windowClosing(WindowEvent e) {
-                                         resetAfterKMLcaptureDone();
-                                     }
-                                 }
+        JFileChooser chooser = new JFileChooser();
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(
+            new javax.swing.filechooser.FileNameExtensionFilter("KMZ files (*.kmz)", "kmz")
         );
+        chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
 
-        lastMapProj = imageDisplay.getMapProjection();
-        imageDisplay.setDisplayLinking(false);
-        lastProjMatrix = imageDisplay.getProjectionMatrix();
+        int retVal = chooser.showSaveDialog(parent);
 
-        Rectangle2D bounds = mapProjDsp.getLatLonBox();
-        mapProjDsp.setMapProjection(new TrivialMapProjection(RealTupleType.SpatialEarth2DTuple, bounds));
+        if (retVal == JFileChooser.APPROVE_OPTION) {
+            File selected = chooser.getSelectedFile();
+            String path = selected.getAbsolutePath();
 
-        JPanel optPanel = new JPanel(new FlowLayout());
-        JCheckBox boundaryToggle = new JCheckBox("Map Boundaries", true);
-        boundaryToggle.addItemListener(new ItemListener() {
-                                           public void itemStateChanged(ItemEvent e) {
-                                               if (e.getStateChange() == ItemEvent.DESELECTED) {
-                                                   imageDisplay.toggleMapBoundaries(false);
-                                               } else {
-                                                   imageDisplay.toggleMapBoundaries(true);
-                                               }
-                                           }
-                                       }
-        );
-        optPanel.add(boundaryToggle);
-
-        JPanel actPanel = new JPanel(new FlowLayout());
-
-        final JDialog fcParent = dialog;
-        JButton saveButton = new JButton("Save");
-        saveButton.setActionCommand("Save");
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("Save")) {
-                    int retVal = fc.showSaveDialog(fcParent);
-                    if (retVal == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            saveKML(fc.getSelectedFile());
-                        } catch (VisADException exc) {
-                        } catch (RemoteException exc) {
-                        }
-                    }
-                }
+            if (!path.toLowerCase().endsWith(".kmz")) {
+                path += ".kmz";
             }
-        });
 
-        JButton closeButton = new JButton("Close");
-        closeButton.setActionCommand("Close");
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("Close")) {
-                    resetAfterKMLcaptureDone();
-                }
+            try {
+                saveKMZ(new File(path));
+            } catch (Exception exc) {
+                exc.printStackTrace();
+                JOptionPane.showMessageDialog(parent,
+                    "Error saving KMZ:\n" + exc.getMessage(),
+                    "KMZ Save Error",
+                    JOptionPane.ERROR_MESSAGE);
+                resetAfterKMLcaptureDone();
             }
-        });
 
-        actPanel.add(closeButton);
-        actPanel.add(saveButton);
-
-        JPanel panel = new JPanel(new GridLayout(2, 1));
-        panel.add(optPanel);
-        panel.add(actPanel);
-
-        dialog.setContentPane(panel);
-        dialog.getRootPane().setDefaultButton(saveButton);
-        dialog.validate();
-        dialog.setVisible(true);
-        dialog.setSize(dialog.getPreferredSize());
+        } else {
+            resetAfterKMLcaptureDone();
+        }
     }
 
     private void resetAfterKMLcaptureDone() {
-        imageDisplay.setMapProjection(lastMapProj);
-        imageDisplay.setProjectionMatrix(lastProjMatrix);
         imageDisplay.setDisplayLinking(true);
         imageDisplay.setProbeVisible(true);
-        imageDisplay.toggleMapBoundaries(true);
         dialog.setVisible(false);
     }
 
-    void saveKML(File file) throws VisADException, RemoteException {
-        String path = file.getAbsolutePath();
-        String kmlPath = path + ".kml";
-        if (!path.endsWith(".png")) {
-            path = path + ".png";
-        }
-        final String imagePath = path;
-        java.io.File tmpF = new java.io.File(imagePath);
-        String imageName = tmpF.getName();
+    void saveKMZ(File file) {
 
-        Rectangle2D screenBounds = mapProjDsp.getScreenBounds();
-        EarthLocation ul = mapProjDsp.screenToEarthLocation(0, 0);
-        EarthLocation lr = mapProjDsp.screenToEarthLocation((int) screenBounds.getWidth(), (int) screenBounds.getHeight());
-        double north = ul.getLatLonPoint().getLatitude().getValue();
-        double west = ul.getLatLonPoint().getLongitude().getValue();
-        double south = lr.getLatLonPoint().getLatitude().getValue();
-        double east = lr.getLatLonPoint().getLongitude().getValue();
-        Hydra.makeKML(south, north, west, east, kmlPath, imageName);
+        final String kmzPath = file.getAbsolutePath().toLowerCase().endsWith(".kmz")
+                ? file.getAbsolutePath()
+                : file.getAbsolutePath() + ".kmz";
 
-        captureDisplay(imagePath);
+        final File kmzFile = new File(kmzPath);
+        final File parentDir = kmzFile.getParentFile();
+        final String imagePath = kmzPath.substring(0, kmzPath.lastIndexOf(".")) + ".png";
+
+        final MapProjectionDisplay dsp = mapProjDsp;
+
+        captureDisplay(imagePath, dsp, () -> {
+
+            try {
+
+                BufferedImage fullImage = ImageIO.read(new File(imagePath));
+
+                int width = fullImage.getWidth();
+                int height = fullImage.getHeight();
+
+                final int TILES = 6;
+
+                int tileW = width / TILES;
+                int tileH = height / TILES;
+
+                File kmlTemp = new File(parentDir, "doc.kml");
+
+                try (BufferedWriter fw = new BufferedWriter(
+                        new OutputStreamWriter(
+                                new FileOutputStream(kmlTemp),
+                                StandardCharsets.UTF_8))) {
+
+                    fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    fw.write("<kml xmlns=\"http://www.opengis.net/kml/2.2\" ");
+                    fw.write("xmlns:gx=\"http://www.google.com/kml/ext/2.2\">\n");
+                    fw.write("<Document>\n");
+
+                    for (int row = 0; row < TILES; row++) {
+                        for (int col = 0; col < TILES; col++) {
+
+                            int x0 = col * tileW;
+                            int y0 = row * tileH;
+
+                            int x1 = (col == TILES - 1) ? width  : x0 + tileW;
+                            int y1 = (row == TILES - 1) ? height : y0 + tileH;
+
+                            BufferedImage tile =
+                                    fullImage.getSubimage(x0, y0, x1 - x0, y1 - y0);
+
+                            String tileName = "tile_" + row + "_" + col + ".png";
+
+                            File tileFile = new File(parentDir, tileName);
+
+                            ImageIO.write(tile, "png", tileFile);
+
+                            EarthLocation ul = dsp.screenToEarthLocation(x0, y0);
+                            EarthLocation ur = dsp.screenToEarthLocation(x1, y0);
+                            EarthLocation ll = dsp.screenToEarthLocation(x0, y1);
+                            EarthLocation lr = dsp.screenToEarthLocation(x1, y1);
+
+                            double latUL = ul.getLatLonPoint().getLatitude().getValue();
+                            double lonUL = normalizeLon(
+                                    ul.getLatLonPoint().getLongitude().getValue());
+
+                            double latUR = ur.getLatLonPoint().getLatitude().getValue();
+                            double lonUR = normalizeLon(
+                                    ur.getLatLonPoint().getLongitude().getValue());
+
+                            double latLL = ll.getLatLonPoint().getLatitude().getValue();
+                            double lonLL = normalizeLon(
+                                    ll.getLatLonPoint().getLongitude().getValue());
+
+                            double latLR = lr.getLatLonPoint().getLatitude().getValue();
+                            double lonLR = normalizeLon(
+                                    lr.getLatLonPoint().getLongitude().getValue());
+
+                            fw.write("<GroundOverlay>\n");
+                            fw.write("<Icon><href>" + tileName + "</href></Icon>\n");
+
+                            fw.write("<gx:LatLonQuad>\n");
+                            fw.write("<coordinates>\n");
+
+                            fw.write(lonLL + "," + latLL + "\n");
+                            fw.write(lonLR + "," + latLR + "\n");
+                            fw.write(lonUR + "," + latUR + "\n");
+                            fw.write(lonUL + "," + latUL + "\n");
+
+                            fw.write("</coordinates>\n");
+                            fw.write("</gx:LatLonQuad>\n");
+                            fw.write("</GroundOverlay>\n");
+                        }
+                    }
+
+                    fw.write("</Document>\n");
+                    fw.write("</kml>\n");
+                }
+
+                try (java.util.zip.ZipOutputStream zos =
+                        new java.util.zip.ZipOutputStream(
+                                new FileOutputStream(kmzFile))) {
+
+                    addToZip(kmlTemp, "doc.kml", zos);
+
+                    for (int row = 0; row < TILES; row++) {
+                        for (int col = 0; col < TILES; col++) {
+
+                            String tileName = "tile_" + row + "_" + col + ".png";
+
+                            File tileFile = new File(parentDir, tileName);
+
+                            addToZip(tileFile, tileName, zos);
+
+                            tileFile.delete();
+                        }
+                    }
+                }
+
+                kmlTemp.delete();
+                new File(imagePath).delete();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            resetAfterKMLcaptureDone();
+        });
     }
 
+    private void addToZip(File file, String entryName,
+                          java.util.zip.ZipOutputStream zos) throws IOException {
 
-    void captureDisplay(final String imagePath) {
-        final MapProjectionDisplay dsp = mapProjDsp;
-        Runnable captureImage = new Runnable() {
-            public void run() {
-                dsp.saveCurrentDisplay(new java.io.File(imagePath), true, true);
+        try (FileInputStream fis = new FileInputStream(file)) {
+
+            java.util.zip.ZipEntry entry = new java.util.zip.ZipEntry(entryName);
+            zos.putNextEntry(entry);
+
+            byte[] buffer = new byte[4096];
+            int len;
+
+            while ((len = fis.read(buffer)) > 0) {
+                zos.write(buffer, 0, len);
             }
-        };
-        Thread t = new Thread(captureImage);
-        t.start();
+
+            zos.closeEntry();
+        }
+    }
+
+    private double normalizeLon(double lon) {
+        if (lon > 180.0)  lon -= 360.0;
+        if (lon < -180.0) lon += 360.0;
+        return lon;
     }
 
     public void captureJPEG(JFrame frame) {
@@ -205,7 +290,7 @@ public class DisplayCapture {
             }
             String imagePath = path;
 
-            captureDisplay(imagePath);
+            captureDisplay(imagePath, mapProjDsp);
         }
     }
 
@@ -213,30 +298,44 @@ public class DisplayCapture {
         capture(frame, dsp.getDisplay(), suffix);
     }
 
-    public static void capture(JFrame frame, final LocalDisplay dsp, String suffix) {
-        JFileChooser fc = new JFileChooser();
-        int retVal = fc.showSaveDialog(frame);
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-            java.io.File file = fc.getSelectedFile();
-            String path = file.getAbsolutePath();
-            if (!path.endsWith(suffix)) {
-                path = path + suffix;
-            }
-            String imagePath = path;
+    public static void capture(JFrame frame, final LocalDisplay dsp, String defaultSuffix) {
 
-            captureDisplay(imagePath, dsp);
+        JFileChooser fc = new JFileChooser();
+        fc.setAcceptAllFileFilterUsed(false);
+
+        javax.swing.filechooser.FileNameExtensionFilter filter =
+            new javax.swing.filechooser.FileNameExtensionFilter(
+                "Image files (*.jpg, *.png, *.gif)", "jpg", "png", "gif");
+
+        fc.addChoosableFileFilter(filter);
+        fc.setFileFilter(filter);
+
+        int retVal = fc.showSaveDialog(frame);
+
+        if (retVal == JFileChooser.APPROVE_OPTION) {
+
+            java.io.File file = fc.getSelectedFile();
+            String path = file.getAbsolutePath().toLowerCase();
+
+            String suffix = "jpg"; // default
+
+            if (path.endsWith(".png")) {
+                suffix = "png";
+            } else if (path.endsWith(".gif")) {
+                suffix = "gif";
+            } else if (path.endsWith(".jpg") || path.endsWith(".jpeg")) {
+                suffix = "jpg";
+            } else {
+                // No extension typed → default to JPG
+                path = file.getAbsolutePath() + ".jpg";
+            }
+
+            captureDisplay(path, dsp);
         }
     }
 
     public static void captureDisplay(final String imagePath, final MapProjectionDisplay dsp) {
-        Runnable captureImage = new Runnable() {
-            public void run() {
-                // dsp.saveCurrentDisplay(new java.io.File(imagePath), true, true);
-                saveCurrentDisplay(dsp.getDisplay(), new java.io.File(imagePath), true, true, 1.0f);
-            }
-        };
-        Thread t = new Thread(captureImage);
-        t.start();
+        saveCurrentDisplay(dsp.getDisplay(), new java.io.File(imagePath), true, true, 1.0f);
     }
 
     public static void captureDisplay(final String imagePath, final LocalDisplay display) {
@@ -247,6 +346,28 @@ public class DisplayCapture {
         };
         Thread t = new Thread(captureImage);
         t.start();
+    }
+
+    void captureDisplay(final String imagePath, final MapProjectionDisplay dsp, Runnable after) {
+        new Thread(() -> {
+            try {
+                // saveCurrentDisplay blocks until the PNG is fully written
+                dsp.saveCurrentDisplay(new File(imagePath), true, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogUtil.logException("Problem saving PNG for KML", e);
+                JOptionPane.showMessageDialog(null,
+                        "Error saving PNG for KML:\n" + e.getMessage(),
+                        "PNG Save Error",
+                        JOptionPane.ERROR_MESSAGE);
+                resetAfterKMLcaptureDone();
+                return; // stop if PNG failed
+            }
+
+            if (after != null) {
+                after.run();
+            }
+        }).start();
     }
 
     /**
