@@ -31,7 +31,6 @@ public class ShapefileToGeoJSON {
             boolean firstFeature = true;
 
             while (shpStream.available() > 0) {
-                int recordNum = shpStream.readInt();
                 int length = shpStream.readInt() * 2;
                 byte[] data = new byte[length];
                 shpStream.readFully(data);
@@ -42,18 +41,48 @@ public class ShapefileToGeoJSON {
                     if (!firstFeature) writer.write(",");
                     firstFeature = false;
 
-                    writer.write("{\"type\": \"Feature\", \"geometry\": {\"type\": \"LineString\", \"coordinates\": [");
+                    boolean isPolygon = (type == 5);
+                    int numParts = bb.getInt(36);
                     int numPoints = bb.getInt(40);
-                    int coordStart = 44 + (bb.getInt(36) * 4);
+                    int coordStart = 44 + (numParts * 4);
 
-                    for (int i = 0; i < numPoints; i++) {
-                        double lon = bb.getDouble(coordStart + (i * 16));
-                        double lat = bb.getDouble(coordStart + (i * 16) + 8);
-                        writer.write("[" + lon + "," + lat + "]");
-                        if (i < numPoints - 1) writer.write(",");
+                    int[] parts = new int[numParts];
+                    for (int p = 0; p < numParts; p++) {
+                        parts[p] = bb.getInt(44 + p * 4);
                     }
-                    writer.write("]}, \"properties\": ");
 
+                    if (isPolygon) {
+                        boolean isMulti = numParts > 1;
+                        String geomType = isMulti ? "MultiPolygon" : "Polygon";
+                        writer.write("{\"type\": \"Feature\", \"geometry\": {\"type\": \"" + geomType + "\", \"coordinates\": [");
+
+                        for (int p = 0; p < numParts; p++) {
+                            if (p > 0) writer.write(",");
+                            int start = parts[p];
+                            int end = (p + 1 < numParts) ? parts[p + 1] : numPoints;
+
+                            if (isMulti) writer.write("[");
+                            writer.write("[");
+                            for (int i = start; i < end; i++) {
+                                double lon = bb.getDouble(coordStart + (i * 16));
+                                double lat = bb.getDouble(coordStart + (i * 16) + 8);
+                                if (i > start) writer.write(",");
+                                writer.write("[" + lon + "," + lat + "]");
+                            }
+                            writer.write("]");
+                            if (isMulti) writer.write("]");
+                        }
+                    } else {
+                        writer.write("{\"type\": \"Feature\", \"geometry\": {\"type\": \"LineString\", \"coordinates\": [");
+                        for (int i = 0; i < numPoints; i++) {
+                            double lon = bb.getDouble(coordStart + (i * 16));
+                            double lat = bb.getDouble(coordStart + (i * 16) + 8);
+                            if (i > 0) writer.write(",");
+                            writer.write("[" + lon + "," + lat + "]");
+                        }
+                    }
+
+                    writer.write("]}, \"properties\": ");
                     if (recordIdx < attributes.size()) {
                         writer.write(mapToJson(attributes.get(recordIdx)));
                     } else {
@@ -76,16 +105,20 @@ public class ShapefileToGeoJSON {
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] header = new byte[32];
             fis.read(header);
-            int numRecords = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).getInt(4);
-            short headerLength = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).getShort(8);
-            short recordLength = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).getShort(10);
+            ByteBuffer hb = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN);
+            int numRecords = hb.getInt(4);
+            short headerLength = hb.getShort(8);
+            short recordLength = hb.getShort(10);
 
             List<String> fieldNames = new ArrayList<>();
+            List<Integer> fieldWidths = new ArrayList<>();
+
             int bytesRead = 32;
             while (bytesRead < headerLength - 1) {
                 byte[] fieldBuf = new byte[32];
                 fis.read(fieldBuf);
                 fieldNames.add(new String(fieldBuf, 0, 11).trim());
+                fieldWidths.add(fieldBuf[16] & 0xFF);
                 bytesRead += 32;
             }
             fis.skip(1);
@@ -93,11 +126,12 @@ public class ShapefileToGeoJSON {
             for (int i = 0; i < numRecords; i++) {
                 byte[] recBuf = new byte[recordLength];
                 fis.read(recBuf);
-                Map<String, Object> row = new HashMap<>();
+                Map<String, Object> row = new LinkedHashMap<>();
                 int offset = 1;
-                for (String name : fieldNames) {
-                    row.put(name, new String(recBuf, offset, 10).trim());
-                    offset += 10;
+                for (int f = 0; f < fieldNames.size(); f++) {
+                    int width = fieldWidths.get(f);
+                    row.put(fieldNames.get(f), new String(recBuf, offset, width).trim());
+                    offset += width;
                 }
                 rows.add(row);
             }
