@@ -675,7 +675,7 @@ public class MyScatterDisplay extends HydraDisplay {
 
         JMenu captureMenu = new JMenu("Capture");
         captureMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-        JMenuItem jpegItem = new JMenuItem("JPEG");
+        JMenuItem jpegItem = new JMenuItem("Image");
         jpegItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String cmd = e.getActionCommand();
@@ -693,8 +693,8 @@ public class MyScatterDisplay extends HydraDisplay {
         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 
         JMenu backGroundClr = new JMenu("Background Color");
-        JRadioButtonMenuItem white = new JRadioButtonMenuItem("white", false);
-        JRadioButtonMenuItem black = new JRadioButtonMenuItem("black", true);
+        JRadioButtonMenuItem white = new JRadioButtonMenuItem("White", false);
+        JRadioButtonMenuItem black = new JRadioButtonMenuItem("Black", true);
         ButtonGroup bg = new ButtonGroup();
         bg.add(black);
         bg.add(white);

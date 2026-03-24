@@ -264,8 +264,8 @@ public class AtmSoundingViewer extends HydraDisplay {
         JMenu soundMenu = new JMenu("Sounding");
         soundMenu.getPopupMenu().setLightWeightPopupEnabled(false);
         JMenu backGroundClr = new JMenu("Background Color");
-        JRadioButtonMenuItem white = new JRadioButtonMenuItem("white", false);
-        JRadioButtonMenuItem black = new JRadioButtonMenuItem("black", true);
+        JRadioButtonMenuItem white = new JRadioButtonMenuItem("White", false);
+        JRadioButtonMenuItem black = new JRadioButtonMenuItem("Black", true);
         ButtonGroup bg = new ButtonGroup();
         bg.add(black);
         bg.add(white);

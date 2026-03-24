@@ -50,6 +50,8 @@ import javax.swing.JFrame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -85,6 +87,8 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
     private HashMap<Transect, NumberFormat> transectToNumFmt = new HashMap();
     private HashMap<RealType, ScalarMap> rangeTypeToMap = new HashMap<>();
 
+    private Color currentForegroundColor = Color.black;
+
     private int numTransects = 0;
 
     public TransectDisplay(Transect transect, Color color, Point loc) throws VisADException, RemoteException {
@@ -100,8 +104,6 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         display = new visad.java3d.DisplayImplJ3D("2D disp", new visad.java3d.TwoDDisplayRendererJ3D());
         display.getDisplayRenderer().getMouseBehavior().getMouseHelper().setFunctionMap(ucar.visad.display.DisplayMaster.defaultMouseFunctions);
         ((DisplayImpl) display).disableAction();
-        display.getDisplayRenderer().setBackgroundColor(new Color(0.92f, 0.92f, 0.92f)); // off-white
-        display.getDisplayRenderer().setForegroundColor(Color.black);
         ScalarMap xMapA = new ScalarMap(RealType.XAxis, Display.XAxis);
         ScalarMap yMapA = new ScalarMap(RealType.YAxis, Display.YAxis);
         xMapA.setRange(-2.5, 2.5);
@@ -144,7 +146,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
 
         AxisScale xAxis = xmap.getAxisScale();
         xAxis.setFont(font);
-        xAxis.setColor(Color.black);
+        //xAxis.setColor(Color.black);
         xAxis.setSnapToBox(true);
         xAxis.setLabelSize(Hydra.getFontSize());
         xmap.setScaleEnable(true);
@@ -152,7 +154,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
 
         AxisScale yAxis = ymap.getAxisScale();
         yAxis.setFont(font);
-        yAxis.setColor(Color.black);
+        //yAxis.setColor(Color.black);
         yAxis.setSnapToBox(true);
         yAxis.setLabelSize(Hydra.getFontSize());
         ymap.setScaleEnable(true);
@@ -184,6 +186,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         addValueLabel(transect, color);
 
         frame = Hydra.createAndShowFrameFromEDT("Transect Display", doMakeComponent(), buildMenuBar(), new Dimension(700, 350), loc);
+        setTransectBackground(Color.black);
         frame.toFront();
         frame.addWindowListener(this);
     }
@@ -281,7 +284,7 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
             rangeTypeToMap.put(rangeType, map);
 
             AxisScale yAxis = map.getAxisScale();
-            yAxis.setColor(Color.black);
+            yAxis.setColor(currentForegroundColor);
             yAxis.setLabelSize(24);
             yAxis.setSide(AxisScale.SECONDARY);
             if (yAxisMaps.size() < 2) {
@@ -353,6 +356,40 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 
+        // --- Background Color Menu ---
+        JMenu bgColorMenu = new JMenu("Background Color");
+
+        JRadioButtonMenuItem white = new JRadioButtonMenuItem("White", false);
+        JRadioButtonMenuItem black = new JRadioButtonMenuItem("Black", true);
+
+        ButtonGroup bgGroup = new ButtonGroup();
+        bgGroup.add(white);
+        bgGroup.add(black);
+
+        // --- White action ---
+        white.addActionListener(e -> {
+            try {
+                setTransectBackground(Color.white);
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+        });
+
+        // --- Black action ---
+        black.addActionListener(e -> {
+            try {
+                setTransectBackground(Color.black);
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+        });
+
+        bgColorMenu.add(black);
+        bgColorMenu.add(white);
+
+        // Add to Settings
+        settingsMenu.add(bgColorMenu);
+
         // --- Y-Axis Range Menu ---
         JMenu yAxisMenu = new JMenu("Y-Axis Range");
 
@@ -380,6 +417,32 @@ public class TransectDisplay extends HydraDisplay implements ActionListener {
         menuBar.add(settingsMenu);
 
         return menuBar;
+    }
+
+    private void setTransectBackground(Color color) {
+        try {
+            // Background
+            display.getDisplayRenderer().setBackgroundColor(
+                color.getRed() / 255f,
+                color.getGreen() / 255f,
+                color.getBlue() / 255f
+            );
+
+            // Decide foreground
+            currentForegroundColor = Color.black.equals(color) ? Color.white : Color.black;
+
+            display.getDisplayRenderer().setForegroundColor(currentForegroundColor);
+
+            // Update axis colors
+            for (ScalarMap map : yAxisMaps) {
+                map.getAxisScale().setColor(currentForegroundColor);
+            }
+
+            ((DisplayImpl) display).reDisplayAll();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // --- Helper method to open Y-axis dialog ---

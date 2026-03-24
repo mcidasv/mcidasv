@@ -305,8 +305,8 @@ public class MultiChannelViewer extends HydraDisplay {
         JMenu spectMenu = new JMenu("Spectrum");
         spectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
         JMenu backGroundClr = new JMenu("Background Color");
-        JRadioButtonMenuItem white = new JRadioButtonMenuItem("white", false);
-        JRadioButtonMenuItem black = new JRadioButtonMenuItem("black", true);
+        JRadioButtonMenuItem white = new JRadioButtonMenuItem("White", false);
+        JRadioButtonMenuItem black = new JRadioButtonMenuItem("Black", true);
         ButtonGroup bg = new ButtonGroup();
         bg.add(black);
         bg.add(white);
