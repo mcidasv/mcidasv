@@ -194,8 +194,15 @@ public class ColorScaleDialog implements ActionListener {
                 } else {
                     myInfo.setUnit(displayControl.getDisplayUnit());
                 }
-                displayControl.setColorScaleInfo(
-                    new ColorScaleInfo(getInfo()));
+                ColorScaleInfo infoCopy = new ColorScaleInfo(getInfo());
+
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    try {
+                        displayControl.setColorScaleInfo(infoCopy);
+                    } catch (Exception e) {
+                        LogUtil.logException("Setting color scale info (invokeLater)", e);
+                    }
+                });
             }
             return true;
         } catch (Exception exc) {
