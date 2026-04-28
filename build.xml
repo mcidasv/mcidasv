@@ -2154,7 +2154,7 @@
         <javac fork="true"
                srcdir="${release.dir}/install4j-custom-code"
                destdir="${dist.dir}/install4j-custom-code"
-               source="21"
+               source="11"
                deprecation="${deprecation.flag}"
                includeantruntime="false">
             <compilerarg value="-Xlint:-options" />
