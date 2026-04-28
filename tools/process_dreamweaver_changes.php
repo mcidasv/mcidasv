@@ -111,9 +111,9 @@ function StageModifiedFiles($filepaths) {
 }
 
 function CommitStagedChanges($inquiry, $message) {
-    global $AUTHOR;
+    global $DOC_AUTHOR;
     // print "git commit -m \"[$inquiry] $message\"\n";
-    `git commit --author="$AUTHOR" -m "[$inquiry] $message"`;
+    `git commit --author="$DOC_AUTHOR" -m "[$inquiry] $message"`;
 }
 
 function PushLocalCommits() {
@@ -195,7 +195,8 @@ function ParseGitStatus($ACTIVITY_DIR) {
     }
 }
 
-$AUTHOR = "Bob Carp <robert.carp@ssec.wisc.edu>"
+$DOC_AUTHOR = "Bob Carp <robert.carp@ssec.wisc.edu>";
+
 $EMAIL = "beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu,robert.carp@ssec.wisc.edu,jbeavers@ssec.wisc.edu";
 
 $DEBUG = false;
