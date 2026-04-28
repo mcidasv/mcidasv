@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="en"><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -49,12 +49,12 @@ McIDAS-V can be customized for yourself and your site in a variety of ways. McID
 Most of these resource files (with the exception of the chooser UI, help tips, data sources, displays and favorite bundle locations) are created through facilities provided by McIDAS-V (e.g., color table editor, formula editor, etc.).
 <p>By default McIDAS-V looks in four places for the resources it uses to configure itself. A user can enter the full path to the resource file, or use one of the four macros below which McIDAS-V will replace with the appropriate path:</p>
 <ul>
-  <li><em><strong>%USERPATH%</strong></em><strong> -</strong> This is the ~user/McIDAS-V directory that gets created for each user. While this path may be defined by the -userpath or -tempuserpath command line arguments, the default location varies by platform:</li>
+  <li><em><strong>%USERPATH%</strong></em><strong> -</strong> This is the ~user/McIDAS-V directory that gets created for each user. While this path may be defined by the -userpath or -tempuserpath command line arguments, the default location varies by platform:
   <ul>
-    <li>Windows -</strong> C:\Users\<em>username</em>\McIDAS-V</li>
-    <li>Linux -</strong> /home/<em>username</em>/McIDAS-V</li>
-    <li>OS X/macOS -</strong> /Users/<em>username</em>/Documents/McIDAS-V</li>
-  </ul>
+    <li><strong>Windows -</strong> C:\Users\<em>username</em>\McIDAS-V</li>
+    <li><strong>Linux -</strong> /home/<em>username</em>/McIDAS-V</li>
+    <li><strong>OS X/macOS -</strong> /Users/<em>username</em>/Documents/McIDAS-V</li>
+  </ul></li>
   <li><em><strong>%SITEPATH%</strong></em><strong> -</strong> This is the file directory or URL directory that can be defined as a command line argument -sitepath.  This path is used to allow administrators to specify site-specific configurations.</li>
   <li><em><strong>%IDVPATH%</strong></em><strong> -</strong> This is the file directory containing configuration files that McIDAS-V inherits from Unidata's IDV. Note that these files are primarily located within idv.jar, but in some situations may also be found in local-idv.jar. The path to the resources in both of the JAR files is /ucar/unidata/idv/resources.</li>
   <li><em><strong>%APPPATH%</strong></em><strong> -</strong> This is the path used for McIDAS-V configuration files.  These files will be in the /edu/wisc/ssec/mcidasv/resources path contained in mcidasv.jar.  This path is specified by the idv.resourcepath property found in /edu/wisc/ssec/mcidasv/resources/mcidasv.properties file.</li>

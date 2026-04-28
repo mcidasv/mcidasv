@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
 <!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -74,24 +74,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
     </tr>
   </table></div>
 <ul class="propertylist">
-  <li class="propertylistitem">There are a variety of keywords that can be passed through the keyword parameter of captureImage. Below is a list of these formatting keywords and options for each of them. See the second example below for an example of passing various formatting options through captureImage with a dictionary.</li>
+  <li class="propertylistitem">There are a variety of keywords that can be passed through the keyword parameter of captureImage. Below is a list of these formatting keywords and options for each of them. See the second example below for an example of passing various formatting options through captureImage with a dictionary.
   <ul class="propertylist">
-  <li class="propertylistitem"><strong>Clip -</strong> Clips the output image at a specific latitude/longitude location or at specific spacing into the image. By default, no clipping is done.</li>
-    <ul class="propertylist">
-      <li class="propertylistitem"><strong>north -</strong> Sets the north latitude to clip the image at.</li>
-      <li class="propertylistitem"><strong>south -</strong> Sets the south latitude to clip the image at.</li>
-      <li class="propertylistitem"><strong>east -</strong> Sets the east longitude to clip the image at.</li>
-      <li class="propertylistitem"><strong>west -</strong> Sets the west longitude to clip the image at.</li>
-      <li class="propertylistitem"><strong>space -</strong> Sets a pixel spacing in each direction to clip into the image.<br>Example: <em>space=-50</em><br>
+      <li class="propertylistitem"><strong>Clip -</strong> Clips the output image at a specific latitude/longitude location or at specific spacing into the image. By default, no clipping is done.
+        <ul class="propertylist">
+          <li class="propertylistitem"><strong>north -</strong> Sets the north latitude to clip the image at.</li>
+          <li class="propertylistitem"><strong>south -</strong> Sets the south latitude to clip the image at.</li>
+          <li class="propertylistitem"><strong>east -</strong> Sets the east longitude to clip the image at.</li>
+          <li class="propertylistitem"><strong>west -</strong> Sets the west longitude to clip the image at.</li>
+          <li class="propertylistitem"><strong>space -</strong> Sets a pixel spacing in each direction to clip into the image.<br>Example: <em>space=-50</em><br>
       Clips 50 pixels into the image in all four directions.</li>
-      <li class="propertylistitem"><strong>hSpace -</strong> Sets a pixel spacing in the vertical to clip into the image.<br>
-        Example: <em>hSpace=50</em><br>
-        Clips 50 pixels into the image in both vertical directions (top and bottom).</li>
-      <li class="propertylistitem"><strong>vSpace -</strong> Sets a pixel spacing in the horizontal to clip into the image.<br>
-        Example: <em>vSpace=20</em><br>
-        Clips 20 pixels into the image in both horizontal directions (left and right).</li>
-    </ul>
-  <li class="propertylistitem"><strong>Colorbar -</strong> Adds a colorbar to the output image. By default, no colorbar is added to the image.</li>
+          <li class="propertylistitem"><strong>hSpace -</strong> Sets a pixel spacing in the vertical to clip into the image.<br>
+            Example: <em>hSpace=50</em><br>
+            Clips 50 pixels into the image in both vertical directions (top and bottom).</li>
+          <li class="propertylistitem"><strong>vSpace -</strong> Sets a pixel spacing in the horizontal to clip into the image.<br>
+            Example: <em>vSpace=20</em><br>
+            Clips 20 pixels into the image in both horizontal directions (left and right).</li>
+        </ul></li>
+  <li class="propertylistitem"><strong>Colorbar -</strong> Adds a colorbar to the output image. By default, no colorbar is added to the image.
     <ul class="propertylist">
       <li class="propertylistitem"><strong>display -</strong> Sets the layer to add the colorbar for. This is the name given to the layer at createLayer.</li>
       <li class="propertylistitem"><strong>width -</strong> Sets the horizontal width of the colorbar in pixels.</li>
@@ -154,8 +154,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       </li>
       <li class="propertylistitem"><strong>lineColor -</strong> Sets the color of the lines on the colorbar, assuming<strong> showLines</strong> is set to true. Default=<strong>color</strong> or &quot;black&quot; if <strong>color</strong> has not been set.</li>
       <li class="propertylistitem"><strong>transparency -</strong> Includes any transparency used with the enhancement of the layer in the output image. Default=&quot;true&quot;.</li>
-    </ul>
-  <li class="propertylistitem"><strong>ImageOverlay -</strong> Adds an image, such as a logo, to the output image.</li>
+    </ul></li>
+  <li class="propertylistitem"><strong>ImageOverlay -</strong> Adds an image, such as a logo, to the output image.
     <ul class="propertylist">
       <li class="propertylistitem"><strong>image -</strong> Specifies the image to add to the output image. The full path to the image file must be specified. If this keyword isn't specified, then a McIDAS-V logo (<img src="../images/smallMcvLogo.gif" width="22" height="22" align="absmiddle" alt="Small McIDAS-V Logo">) will be used.</li>
       <li class="propertylistitem"><strong>place -</strong> Sets the location of the image along with x and y pixel offsets.  Valid options are:<br>
@@ -199,8 +199,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
   Example: <em>anchor="UM"</em><br>
   Sets the upper middle of the image to be centered at the <strong>place</strong> specified.</li>
       <li class="propertylistitem"><strong>transparency -</strong> Sets the transparency of the image. The valid values range from 0 to 1, 0 being completely opaque and 1 being 100% transparent. Default=0.</li>
-      </ul>
-  <li class="propertylistitem"><strong>Matte -</strong> Adds a matte to the output image.  By default, no matte is added to the image.</li>
+      </ul></li>
+  <li class="propertylistitem"><strong>Matte -</strong> Adds a matte to the output image.  By default, no matte is added to the image.
     <ul class="propertylist">
       <li class="propertylistitem"><strong>Background -</strong> Sets the background color of the matte.  Default="white"</li>
       <li class="propertylistitem"><strong>top -</strong> Sets the size of the matte on the top of the image. Default=0.<br>
@@ -224,16 +224,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <li class="propertylistitem"><strong>vSpace -</strong> Sets the size of the matte on the top and bottom of the image.<br>
       Example: <em>vspace=20</em><br>
       Adds a 20 pixel matte to the top and bottom of the image.</li>
-    </ul>
-  <li class="propertylistitem"><strong>Resize -</strong> Resizes the output image. By default, no resize is done to the output image, and the image will be the same size as the display window.</li>
+    </ul></li>
+  <li class="propertylistitem"><strong>Resize -</strong> Resizes the output image. By default, no resize is done to the output image, and the image will be the same size as the display window.
     <ul class="propertylist">
       <li class="propertylistitem"><strong>dimensions -</strong> Sets the size of the output image in either a pixel count or a percentage of the display window.<br>
       Example: <em>dimensions=("400","300")</em><br>
       Creates a 400x300 pixel image.<br>
       Example: <em>dimensions=("60%","80%")</em><br>
       Creates an image that is 60% in the x of the original display, and 80% in the y of the original display.</li>
-    </ul>
-  <li class="propertylistitem"><strong>TextOverlay -</strong> Adds text to the output image. By default, no text is added to the output image.</li>
+    </ul></li>
+  <li class="propertylistitem"><strong>TextOverlay -</strong> Adds text to the output image. By default, no text is added to the output image.
     <ul class="propertylist">
       <li class="propertylistitem"><strong>text -</strong> Sets the text string to add to the output image.<br>
       Example: <em>text="GOES East Image"</em><br>
@@ -283,9 +283,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <li class="propertylistitem"><strong>color -</strong> Sets the color of the text.</li>
       <li class="propertylistitem"><strong>background -</strong> Sets the background color for the text string.  By default, this is not defined and there is no background for the text.</li>
       <li class="propertylistitem"><strong>transparency -</strong> Sets the transparency of the text. The valid values range from 0 to 1, 0 being completely opaque and 1 being 100% transparent. Default=0.</li>
-    </ul>
+    </ul></li>
   <li class="propertylistitem"><strong>TransparentBackground -</strong> Sets the background of the image to be transparent in the output image. By default, the background is not transparent. To capture an image with a transparent background, specify <em>TransparentBackground()</em> in the <strong>formatting</strong> keyword of captureImage.</li>
-</ul></ul>
+</ul></ul></li>
 <div class="OneTabIndent">Remarks:</div>
 <div class="TwoTabIndent">If captureImage is used to save a panel that was created
   with openBundle, the sizes default to size of the display window when the bundle

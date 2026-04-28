@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="en"><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -94,7 +94,7 @@ item in the Main Display window. This opens the Formula Editor dialog window use
 <pre>   someProcedure(someValue(multiple=true))</pre>
 <p>In the advanced section you can enter a description of the formula, its group or category, and you can define what types of displays are applicable for the given formula (the default is to be able to use all displays).</p>
 <p>The group is used to display the formula in the Field Selector window and can be any alphanumeric text including spaces, numbers, and punctuation characters. Hyphens (&quot;-&quot;) define sub-categories.</p>
-<p>To save the formula, click on <img src="images/formula/AddFormulaButton.gif" alt="Add Formula button" width="105" height="26"align=absmiddle>. A new entry appears in the selector panel. By right clicking on the formula entry in the Field Selector window you can edit the formula. If you edit a <a href="NativeFormulas.html">native formula</a> and save it, the original formula will still be listed, but the modified formula will also be listed. To remove a formula, click on <img src="images/formula/RemoveFormulaButton.gif" alt="Remove Formula button" width="129" height="26"align=absmiddle> in the pull down menu. You can also right click on a formula and select Remove Formula.</p>
+<p>To save the formula, click on <img src="images/formula/AddFormulaButton.gif" alt="Add Formula button" width="105" height="26" align="absmiddle">. A new entry appears in the selector panel. By right clicking on the formula entry in the Field Selector window you can edit the formula. If you edit a <a href="NativeFormulas.html">native formula</a> and save it, the original formula will still be listed, but the modified formula will also be listed. To remove a formula, click on <img src="images/formula/RemoveFormulaButton.gif" alt="Remove Formula button" width="129" height="26" align="absmiddle"> in the pull down menu. You can also right click on a formula and select Remove Formula.</p>
 <p>For information about the <strong>Derived</strong> tab, see <a href="DerivedData.html">Derived Data</a>.</p>
 <div class="pagesubtitle">Different data sources and automatic navigation</div>
 <p>McIDAS-V hides much of the computational complexity. You can write a simple formula such as (CT*1.8 + 32.0) - dewptF, and McIDAS-V will automatically apply the calculation to every element in large 3D grids referred to as CT and dewptF. No loops over grid points are needed; and you don't need to know anything about how the grid is defined, mapped on the Earth, or the data format. You can even use different sources for the individual parameters. For example, CT can come from a NAM model output grid and dewptF from your own local weather model. The two grids don't need to have the same grid point locations nor the same areal coverage. The results are computed in the area of overlap on the grid points locations of the first grid. Interpolation is automatically applied where needed.
@@ -104,7 +104,7 @@ item in the Main Display window. This opens the Formula Editor dialog window use
 <div class="images"><img src="images/formula/FormulaParameterSelect.gif" alt="Image 2: Field Selector Window"><br>
 <span class="caption">Image 2: Field Selector Window</span></div>
 <p>Open the data source to see the names of parameters available. Click on the parameter
-needed for each variable. Then click <img src="images/Ok.gif" alt="OK button" width="51" height="26"align="absmiddle">. The result of the
+needed for each variable. Then click <img src="images/Ok.gif" alt="OK button" width="51" height="26" align="absmiddle">. The result of the
 formula is computed for every data point in the source, and the result shown
 in the Main Display window.</p>
 <p>Note that other windows may appear when evaluating a formula. For example, a Select Input window may be used if the formula prompts the user for a numerical value. This Select Input window may involve a combination of text fields or drop-down menus.</p>

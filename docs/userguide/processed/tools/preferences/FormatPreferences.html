@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
 <!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -37,8 +37,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   <p>Formats</p>
 </div>
 <ul class="propertylist">
-<a name="dateformat" id="dateformat"></a>
-<li class="propertylistitem"><strong>Date/Time Format -</strong> Sets the format used when McIDAS-V displays dates/times. The date format string uses
+<li class="propertylistitem"><a name="dateformat" id="dateformat"></a><strong>Date/Time Format -</strong> Sets the format used when McIDAS-V displays dates/times. The date format string uses
   the following symbols. Note, these symbols can be repeated to give different
   results. </li>
 <li class="propertylistitem">For example:
@@ -189,10 +188,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
         </blockquote>
         </blockquote>
 </li>
-<a name="timezone" id="timezone"></a>
-<li class="propertylistitem"><strong>Time Zone -</strong> Sets the time zone used by McIDAS-V. McIDAS-V will utilize this time zone for labeling the times of data, as well as for listing the time in the <a href="../../ui/StatusBar.html">status bar</a> in the Main Display window. This field defaults to GMT. Note that McIDAS-V must be restarted for a change in this field to take effect.</li>
-<a name="latlonformat" id="latlonformat"></a>
-<li class="propertylistitem"><strong>Lat/Lon Format</strong> - Sets the format used when McIDAS-V displays latitudes and longitudes. The following symbols are valid in the decimal formatting.
+<li class="propertylistitem"><a name="timezone" id="timezone"></a><strong>Time Zone -</strong> Sets the time zone used by McIDAS-V. McIDAS-V will utilize this time zone for labeling the times of data, as well as for listing the time in the <a href="../../ui/StatusBar.html">status bar</a> in the Main Display window. This field defaults to GMT. Note that McIDAS-V must be restarted for a change in this field to take effect.</li>
+<li class="propertylistitem"><a name="latlonformat" id="latlonformat"></a><strong>Lat/Lon Format</strong> - Sets the format used when McIDAS-V displays latitudes and longitudes. The following symbols are valid in the decimal formatting.
   <blockquote>
 <table width="457" border="1" style="margin:10px;">
   <tr>
@@ -265,8 +262,7 @@ the latitude and longitude values.
     <td>104.6E0</td>
   </tr>
 </table></blockquote></li>
-<a name="probeformat" id="probeformat"></a>
-<li class="propertylistitem"><strong>Probe Format -</strong> Sets the HTML template that is used
+<li class="propertylistitem"><a name="probeformat" id="probeformat"></a><strong>Probe Format -</strong> Sets the HTML template that is used
   to display data readouts in the data probe display. This HTML template can
   contain macros that are replaced with the probed values. Macros are:
    <blockquote><table width="300" border="1" style="margin:10px;">
@@ -287,33 +283,26 @@ the latitude and longitude values.
     <td>Original unit</td>
   </tr>
   </table></blockquote></li>
-<a name="distanceunit" id="distanceunit"></a>
-<li class="propertylistitem"><strong>Distance Unit -</strong> Sets the default unit that is used when displaying distances (e.g., in the Range
+<li class="propertylistitem"><a name="distanceunit" id="distanceunit"></a><strong>Distance Unit -</strong> Sets the default unit that is used when displaying distances (e.g., in the Range
 and Bearing Control).</li>
-<a name="numberstyle" id="numberstyle"></a>
-<li class="propertylistitem"><strong>Number Style -</strong> Sets the format for how numbers will be written with regards to the decimal symbol and digit grouping symbol (either a comma or a period). The default for this option is <strong>System Default</strong>, which means that your computer's preference will be used for the number style in McIDAS-V. If your computer's format differs from English, you can set <strong>Number Style</strong> to <strong>English/US</strong>. For example, <strong>English/US</strong> will write out the numerical value of one thousand as &quot;1,000.00&quot;. McIDAS-V must be restarted in order for a change to this preference to take effect.</li>
+<li class="propertylistitem"><a name="numberstyle" id="numberstyle"></a><strong>Number Style -</strong> Sets the format for how numbers will be written with regards to the decimal symbol and digit grouping symbol (either a comma or a period). The default for this option is <strong>System Default</strong>, which means that your computer's preference will be used for the number style in McIDAS-V. If your computer's format differs from English, you can set <strong>Number Style</strong> to <strong>English/US</strong>. For example, <strong>English/US</strong> will write out the numerical value of one thousand as &quot;1,000.00&quot;. McIDAS-V must be restarted in order for a change to this preference to take effect.</li>
 </ul>
 <div class="pagesubtitle">Data</div>
 <a name="samplingmode" id="samplingmode"></a>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Sampling Mode -</strong> Sets the sampling method used by data probes in McIDAS-V. Choose between a weighted average sampling or
   nearest neighbor.</li>
-<a name="pressuretoheight" id="pressuretoheight"></a>
-<li class="propertylistitem"><strong>Pressure to Height -</strong> Sets the type of algorithm
+<li class="propertylistitem"><a name="pressuretoheight" id="pressuretoheight"></a><strong>Pressure to Height -</strong> Sets the type of algorithm
   McIDAS-V uses for converting from pressure coordinates to height. See the <a href="../../DataFaq.html#pressure_to_height">FAQ</a> for
   more information on this option.</li>
-<a name="cachedatainmemory" id="cachedatainmemory"></a>
-<li class="propertylistitem"><strong>Cache Data in Memory -</strong> Attempts to cache data that McIDAS-V loads into memory for quicker data access. For more information, see <a href="../../misc/PerformanceTuning.html#cache">Data Caching</a>.</li>
-<a name="diskcachesize" id="diskcachesize"></a>
-<li class="propertylistitem"><strong>Disk Cache Size -</strong> Sets the maximum amount of disk space used when caching data. McIDAS-V will cache some datasets to disk to eliminate network latency.</li>
-<a name="maximagesize" id="maximagesize2"></a>
-<li class="propertylistitem"><strong>Max Image Size -</strong> Sets the maximum image
+<li class="propertylistitem"><a name="cachedatainmemory" id="cachedatainmemory"></a><strong>Cache Data in Memory -</strong> Attempts to cache data that McIDAS-V loads into memory for quicker data access. For more information, see <a href="../../misc/PerformanceTuning.html#cache">Data Caching</a>.</li>
+<li class="propertylistitem"><a name="diskcachesize" id="diskcachesize"></a><strong>Disk Cache Size -</strong> Sets the maximum amount of disk space used when caching data. McIDAS-V will cache some datasets to disk to eliminate network latency.</li>
+<li class="propertylistitem"><a name="maximagesize" id="maximagesize2"></a><strong>Max Image Size -</strong> Sets the maximum image
   size (in pixels) that is to be displayed. When this preference is set, the image
   display will adjust the Pixel Sampling to reduce the image to less than the
   preferred value. This allows for the initial display of large images without
   causing memory issues. A value of -1 in this field imposes no limit on the maximum image size.</li>
-<a name="gridthreshold" id="gridthreshold"></a>
-<li class="propertylistitem"><strong>Grid Threshold -</strong> Sets the size limit
+<li class="propertylistitem"><a name="gridthreshold" id="gridthreshold"></a><strong>Grid Threshold -</strong> Sets the size limit
   for holding grids in memory. Grids larger than this size will be cached to
   disk instead of held in memory during the McIDAS-V session. This allows loading
   large grids and long loops of grids without a major performance hit.

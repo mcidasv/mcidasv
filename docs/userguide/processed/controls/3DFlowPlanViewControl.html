@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="en"><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -52,24 +52,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/3DFlowPl
 <span class="caption">Image 1: 3D Volume Flow Display Controls</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show -</strong> Switches between displaying Vectors, Trajectories, and Streamlines.</li>
+  <li class="propertylistitem"><strong>Show -</strong> Switches between displaying Vectors, Trajectories, and Streamlines.
     <ul class="propertylist">
-    <li class="propertylistitem"><strong>Vectors -</strong> Displays vectors in the Main Display window.</li>
-      <ul class="propertylist">
+    <li class="propertylistitem"><strong>Vectors -</strong> Displays vectors in the Main Display window.
+<ul class="propertylist">
       <li class="propertylistitem"><strong>Size -</strong> Changes the length of the vectors.
       The Size box is an editable box where the user can enter a new size and press Enter,
-      or use the slider (<img src="../data/choosers/images/Slider.gif" alt="Slider icon to change vector size" width="18" height="12"align=absmiddle>) to
+      or use the slider (<img src="../data/choosers/images/Slider.gif" alt="Slider icon to change vector size" width="18" height="12" align="absmiddle">) to
     change the value.</li>
-      <li class="propertylistitem"><strong>Autosize -</strong> Controls the size of the vectors based on zoom level. If the checkbox is checked, the size of the vectors will change proportionally as the zoom level changes. When unchecked, the vectors will remain the same size regardless of zoom level.</li></ul>
-    <li class="propertylistitem"><strong>Trajectories -</strong> Displays trajectories in the Main Display window.</li>
+      <li class="propertylistitem"><strong>Autosize -</strong> Controls the size of the vectors based on zoom level. If the checkbox is checked, the size of the vectors will change proportionally as the zoom level changes. When unchecked, the vectors will remain the same size regardless of zoom level.</li></ul></li>
+    <li class="propertylistitem"><strong>Trajectories -</strong> Displays trajectories in the Main Display window.
       <ul class="propertylist">
       <li class="propertylistitem"><strong>Trajectory Form -</strong> Allows for selecting the type of trajectory used in the display. The options are Line, Cylinder, Ribbon, and Deform Ribbon.</li>
       <li class="propertylistitem"><strong>Length Offset -</strong> Sets the number of timesteps to include in each trajectory.</li>
       <li class="propertylistitem"><strong>Arrow -</strong>
     Adds an arrow head to the trajectories if the Line <strong>Trajectory Form</strong> is selected.</li>
     <li class="propertylistitem"><strong>Trajectory Start Level -</strong> Sets the vertical level where the trajectories will originate from. If 'All Levels' is selected then trajectories will originate from all levels. </li>
-     <li class="propertylistitem"><strong>Trajectory End Level -</strong> Sets the vertical level where the trajectories will end. If 'All Levels' is selected then trajectories will end at all levels. </li></ul>
-    <li class="propertylistitem"><strong>Streamlines -</strong> Displays streamlines in the Main Display window.</li>
+     <li class="propertylistitem"><strong>Trajectory End Level -</strong> Sets the vertical level where the trajectories will end. If 'All Levels' is selected then trajectories will end at all levels. </li></ul></li>
+    <li class="propertylistitem"><strong>Streamlines -</strong> Displays streamlines in the Main Display window.
       <ul class="propertylist">
       <li class="propertylistitem"><strong>Streamline Form -</strong> Allows for selecting the type of streamline used in the display. The options are Line, Cylinder, Ribbon, and Deform Ribbon.</li>
       <li class="propertylistitem"><strong>Length Offset -</strong> Sets the number of timesteps to include in each streamline.</li>
@@ -77,7 +77,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/3DFlowPl
         Adds an arrow head to the streamlines if the Line <strong>Streamline Form</strong> is selected.</li>
       <li class="propertylistitem"><strong>Smooth Factor -</strong> Allows for smoothing the display based on a smoothing factor entered in the text entry box.</li>
     <li class="propertylistitem"><strong>Streamline Start Level -</strong> Sets the vertical level where the streamlines will originate from. If 'All Levels' is selected then streamlines will originate from all levels. </li>
-    <li class="propertylistitem"><strong>Streamline End Level -</strong> Sets the vertical level where the streamlines will end. If 'All Levels' is selected then streamlines will end at all levels. </li></ul></ul>
+    <li class="propertylistitem"><strong>Streamline End Level -</strong> Sets the vertical level where the streamlines will end. If 'All Levels' is selected then streamlines will end at all levels. </li></ul></ul></li></li>
   <li class="propertylistitem"><strong>Arrow Scale -</strong> Sets the size of the arrows of the vectors or trajectories. </li>
   <li class="propertylistitem"><strong>XY Skip -</strong> Defines the number
     of grid points that are skipped to mitigate cluttering in the display in the x/y direction. A skip interval of 0 utilizes all grid points, 1 uses every other
@@ -86,7 +86,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/3DFlowPl
     of grid points that are skipped to mitigate cluttering in the display in the z direction. A skip interval of 0 utilizes all grid points, 1 uses every other
       grid point, 2 uses every third grid point, etc. This value can be modified by typing a value into the text field and pressing Enter or by using the slider button.</li>
   <li class="propertylistitem"><strong>Color -</strong> Changes the color of the vectors, streamlines, and trajectories in the display. Note that if the displayed field is derived from speed and direction fields (not u- and v-wind components), or colored by another parameter, the vectors or trajectories will be colored by the speed or the color-by field. In this case, the <strong>Color</strong> field will be <strong>Color Table</strong>, where the user can define the enhancement and enhancement range used for the display.</li>
-  <li class="propertylistitem"><strong>Line Width -</strong> Sets the line width (thickness) in the display. Click on the <img src="../ui/images/Slider16.gif" alt="Slider icon to change line width"align=absmiddle> or
+  <li class="propertylistitem"><strong>Line Width -</strong> Sets the line width (thickness) in the display. Click on the <img src="../ui/images/Slider16.gif" alt="Slider icon to change line width" align="absmiddle"> or
       put in a value and hit enter to change the value.</li>
   <!--<li class="propertylistitem"><strong>Smoothing -</strong> Smooths the grid. There are seven types of smoothing:        None, 5-point, 9-point, Gaussian Weighted, Cressman Weighted,   Circular Aperture, and Rectangular Aperture. The amount of smoothness        can be set for all except the 5 and 9-point smoothers. The higher   the amount, the smoother    the grid. For the Cressman, Circular and Rectangular aperture   smoothing types, the smoothing factor is the radius in grid spacing   units. This is not an option for the * Over Topography display types.</li>-->
 </ul>

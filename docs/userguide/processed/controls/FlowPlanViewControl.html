@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="en"><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -40,36 +40,36 @@ They are similar to the <a href="PlanViewControl.html">Plan View controls</a>. F
 <span class="caption">Image 1: Flow Displays Controls</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show</strong> - Switches between displaying Vectors, Streamlines, Trajectories, and Curly Vectors. Note that in order to use Trajectories or Curly Vectors, at least four timesteps must be displayed, otherwise, these <strong>Show</strong> modes will be inactive.</li>
+  <li class="propertylistitem"><strong>Show</strong> - Switches between displaying Vectors, Streamlines, Trajectories, and Curly Vectors. Note that in order to use Trajectories or Curly Vectors, at least four timesteps must be displayed, otherwise, these <strong>Show</strong> modes will be inactive.
     <ul class="propertylist">
-    <li class="propertylistitem"><strong>Vectors -</strong> Displays vectors in the Main Display window.</li>
+    <li class="propertylistitem"><strong>Vectors -</strong> Displays vectors in the Main Display window.
       <ul class="propertylist">
       <li class="propertylistitem"><strong>Size -</strong> Changes the length of the vectors.
       The Size box is an editable box where the user can enter a new size and press Enter,
-      or use the slider (<img src="../data/choosers/images/Slider.gif" alt="Slider icon to change vector size" width="18" height="12"align=absmiddle>) to
-    change the value.</li>
+      or use the slider (<img src="../data/choosers/images/Slider.gif" alt="Slider icon to change vector size" width="18" height="12" align="absmiddle">) to
+    change the value.</li></li>
       <li class="propertylistitem"><strong>Autosize -</strong> Controls the size of the vectors based on zoom level. If the checkbox is checked, the size of the vectors will change proportionally as the zoom level changes. When unchecked, the vectors will remain the same size regardless of zoom level.</li></ul>
-    <li class="propertylistitem"><strong>Streamlines -</strong> Displays streamlines in the Main Display window.</li>
+    <li class="propertylistitem"><strong>Streamlines -</strong> Displays streamlines in the Main Display window.
       <ul class="propertylist">
-      <li class="propertylistitem"><strong> Density -</strong> Changes the density of the streamlines on the display. More streamlines will be displayed as the slider is moved closer to 'High'.</li></ul>
-    <li class="propertylistitem"><strong>Trajectories -</strong> Displays trajectories in the Main Display window.</li>
+      <li class="propertylistitem"><strong> Density -</strong> Changes the density of the streamlines on the display. More streamlines will be displayed as the slider is moved closer to 'High'.</li></ul></li>
+    <li class="propertylistitem"><strong>Trajectories -</strong> Displays trajectories in the Main Display window.
       <ul class="propertylist">
       <li class="propertylistitem"><strong>Trajectory Form -</strong> Allows for selecting the type of trajectory used in the display. The options are Line, Cylinder, Ribbon, and Deform Ribbon.</li>
       <li class="propertylistitem"><strong>Length Offset -</strong> Sets the number of timesteps to include in each trajectory.</li>
       <li class="propertylistitem"><strong>Arrow -</strong>
-    Adds an arrow head to the trajectories if the Line <strong>Trajectory Form</strong> is selected.</li></ul>
-    <li class="propertylistitem"><strong>Curly Vectors -</strong> Displays curly vectors in the Main Display window. This option draws vectors that include multiple timesteps.</li>
+    Adds an arrow head to the trajectories if the Line <strong>Trajectory Form</strong> is selected.</li></ul></li>
+    <li class="propertylistitem"><strong>Curly Vectors -</strong> Displays curly vectors in the Main Display window. This option draws vectors that include multiple timesteps.
       <ul class="propertylist">
        <li class="propertylistitem"><strong>Vector Length -</strong> Sets the length, or number of timesteps included with each curly vector.</li></ul>
-    </ul>
+    </ul></li></li>
   <li class="propertylistitem"><strong>Arrow Scale -</strong> Sets the size of the arrows in the Main Display window for all of the <strong>Show</strong> modes.
   <li class="propertylistitem"><strong>Skip -</strong> Defines the number
     of grid points that are skipped to mitigate cluttering in the display. A skip interval of 0 utilizes all grid points, 1 uses every other
       grid point, 2 uses every third grid point, etc. This value can be modified by typing a value into the text field and pressing Enter or by using the slider button.</li>
-  <li class="propertylistitem"><strong>Range -</strong> Lists the current range of data for sizing the vectors. Click on the <strong>Edit</strong> (<img src="images/StreamlineEdit.gif" width="23" height="17" alt="RangeEdit"align="absmiddle">) icon
+  <li class="propertylistitem"><strong>Range -</strong> Lists the current range of data for sizing the vectors. Click on the <strong>Edit</strong> (<img src="images/StreamlineEdit.gif" width="23" height="17" alt="RangeEdit" align="absmiddle">) icon
       to change the range. This is an option for all of the Flow Displays displays.</li>
   <li class="propertylistitem"><strong>Color -</strong> Changes the color of the vectors, streamlines, and trajectories in the display. Note that if the displayed field is derived from speed and direction fields (not u- and v-wind components), or colored by another parameter, the vectors, streamlines, and trajectories will be colored by the speed or the color-by field. In this case, the <strong>Color</strong> field will be <strong>Color Table</strong>, where the user can define the enhancement and enhancement range used for the display.</li>
-  <li class="propertylistitem"><strong>Line Width -</strong> Sets the line width (thickness) in the display. Click on the <img src="../ui/images/Slider16.gif" alt="Slider icon to change line width"align=absmiddle> or
+  <li class="propertylistitem"><strong>Line Width -</strong> Sets the line width (thickness) in the display. Click on the <img src="../ui/images/Slider16.gif" alt="Slider icon to change line width" align="absmiddle"> or
       put in a value and hit enter to change the value.</li>
   <!--<li class="propertylistitem"><strong>Smoothing -</strong> Smooths the grid. There are seven types of smoothing:        None, 5-point, 9-point, Gaussian Weighted, Cressman Weighted,   Circular Aperture, and Rectangular Aperture. The amount of smoothness        can be set for all except the 5 and 9-point smoothers. The higher   the amount, the smoother    the grid. For the Cressman, Circular and Rectangular aperture   smoothing types, the smoothing factor is the radius in grid spacing   units. This is not an option for the * Over Topography display types.</li>-->
   <li class="propertylistitem"><strong>Levels -</strong> Lists the native grid levels. Click on one level value to reset the plan to that level. The plan level in use is shown in the data's native altitude units. The <strong>Levels</strong> box is editable. Click in the box, enter a value and hit return to apply the value.  Additionally, clicking the arrows to the right of the <strong>Levels</strong> box to switches levels, and clicking the <strong>Cycle</strong> checkbox animates vertically through all available levels. The<strong> Dwell</strong> value can be set via the text box or slider, in half second intervals, to control the speed of the level cycling.</li>

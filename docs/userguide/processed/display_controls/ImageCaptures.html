@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="en"><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -67,14 +67,14 @@ item in the Main Display window to open the Movie Capture window:</p>
 <div class="pagesubtitle">Properties</div>
 <p>Note: More information about these controls is found in the <a href="#create">Creating a Movie</a> section below.</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Capture -</strong></li>
+    <li class="propertylistitem"><strong>Capture -</strong>
     <ul class="propertylist">
-        <li class="propertylistitem"><img src="images/OneImage.gif" alt="One Image button" width="132" height="26"align=absmiddle> <strong> -</strong> Captures one image to create a movie. </li>
-<li class="propertylistitem"><img src="images/TimeAnimation.gif" alt="Time Animation button" width="132" height="26"align=absmiddle> <strong> -</strong> Captures a loop of images at the specified dwell rate through the Time Animation Controls.</li>
+        <li class="propertylistitem"><img src="images/OneImage.gif" alt="One Image button" width="132" height="26" align="absmiddle"> <strong> -</strong> Captures one image to create a movie. </li>
+<li class="propertylistitem"><img src="images/TimeAnimation.gif" alt="Time Animation button" width="132" height="26" align="absmiddle"> <strong> -</strong> Captures a loop of images at the specified dwell rate through the Time Animation Controls.</li>
 <li class="propertylistitem"><strong>Reset to start time -</strong> Resets the loop to the initial timestep before recording the video.</li>
-<li class="propertylistitem"> <img src="images/Automatically.gif" alt="Automatically button" width="132" height="26"align=absmiddle> <strong> -</strong> Creates a new frame in the movie every given number of seconds.</li>
-</ul>
-<li class="propertylistitem"><strong>What to capture -</strong></li>
+<li class="propertylistitem"> <img src="images/Automatically.gif" alt="Automatically button" width="132" height="26" align="absmiddle"> <strong> -</strong> Creates a new frame in the movie every given number of seconds.</li>
+</ul></li>
+<li class="propertylistitem"><strong>What to capture -</strong>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Current View -</strong> Captures only what is in the view screen of the Main Display window.</li>
 <li class="propertylistitem"><strong>All Views -</strong> Captures all of the panels in the Main Display window without including any legends or toolbar buttons.</li>
@@ -84,58 +84,58 @@ item in the Main Display window to open the Movie Capture window:</p>
 <li class="propertylistitem"><strong>Beep -</strong> Produces a beeping noise at the beginning of each frame captured in the movie.</li>
 <li class="propertylistitem"><strong>Background Transparent -</strong> Captures the movie with the background image transparent.</li>
 <li class="propertylistitem"><strong>Borders Visible -</strong> Adds a border around panels when capturing a movie with the All Views option. When enabled, borders the thickness specified in the dropdown and color specified in the swatch will be added around each panel.</li>
-</ul>
-<li class="propertylistitem"><strong>Image Files -</strong></li>
+</ul></li>
+<li class="propertylistitem"><strong>Image Files -</strong>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Save Files To -</strong> Allows you to individually save each image in your movie. To use this option, click the checkbox for <strong>Save Files To</strong> and specify a directory.</li>
 <li class="propertylistitem"><strong>Filename Template -</strong> Sets the naming structure for the images. This option is only available if you are saving the individual images in your movie with the <strong>Save Files To</strong> option. There are several ways you can customize the output, described in the section <a href="#filename">below</a>.</li>
-</ul>
-<li class="propertylistitem"><strong>Frames -</strong></li>
+</ul></li>
+<li class="propertylistitem"><strong>Frames -</strong>
 <ul class="propertylist">
     <li class="propertylistitem"><strong># frames -</strong> Displays the number of frames in the movie.</li>
-    <li class="propertylistitem"><img src="images/Preview.gif" alt="Preview button" width="80" height="26"align=absmiddle> <strong> -</strong> Opens a Movie Preview window, where you can see individual slides before saving the movie.</li>
-    <li class="propertylistitem"> <img src="images/DeleteAll.gif" alt="Delete All button" width="87" height="26"align=absmiddle> <strong> -</strong> Deletes every frame saved in the movie.</li>
-    <li class="propertylistitem"> <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> <strong> -</strong> Saves the movie to the specified location using the chosen format type.</li>
-</ul>
+    <li class="propertylistitem"><img src="images/Preview.gif" alt="Preview button" width="80" height="26" align="absmiddle"> <strong> -</strong> Opens a Movie Preview window, where you can see individual slides before saving the movie.</li>
+    <li class="propertylistitem"> <img src="images/DeleteAll.gif" alt="Delete All button" width="87" height="26" align="absmiddle"> <strong> -</strong> Deletes every frame saved in the movie.</li>
+    <li class="propertylistitem"> <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26" align="absmiddle"> <strong> -</strong> Saves the movie to the specified location using the chosen format type.</li>
+</ul></li>
 </ul>
 <div class="pagesubtitle"><a name="create" id="create"></a>Creating a Movie</div>
 <p>To make a movie, there are three steps: capturing the frames, previewing the frames, and creating the movie. McIDAS-V supports QuickTime movies, animated GIF and AVI files, MPEG-4, Compressed ZIP, Google Earth KMZ and AniS or FlAniS HTML file formats.</p>
 <ul class="propertylist">
-<li class="propertylistitem">To capture frames, in the <strong>Capture</strong> section of the Movie Capture window, do the following:</li>
+<li class="propertylistitem">To capture frames, in the <strong>Capture</strong> section of the Movie Capture window, do the following:
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Capture one image -</strong> Makes a single frame of the McIDAS-V display. Progressively change the display and capture one frame at a time to create a movie.</li>
 <li class="propertylistitem"><strong>Capture animation -</strong> Captures all frames in a display time sequence that you control with the usual <a href="../ui/Animation.html">Time Animation Controls</a>. Check <strong>Reset to start time</strong> to ensure you capture the entire animation sequence. The QuickTime animation capture starts on the first frame visible in McIDAS-V and goes to the end. This tool can be used to capture part of a loop.</li>
 <li class="propertylistitem"><strong>Capture automatically -</strong> Takes snapshots of the frames in McIDAS-V display while you make changes, such as changing the view point, zooming, rotating, etc. Click the button again to stop the snapshot. You can change the sampling rate of the snapshots with the <strong>Rate</strong> field.</li>
 <li class="propertylistitem">You can combine these three different methods of capture. The list of frames is additive.</li>
-</ul>
-<li class="propertylistitem"> You can <strong>Preview</strong> the movie by pressing the <img src="images/Preview.gif" alt="Preview button" width="80" height="26"align=absmiddle> button. This opens a Movie Preview window, where you can see the individual slides before saving the movie. The Movie Preview window also allows you to remove individual frames from the movie before saving it with the <img src="images/DeleteThisFrame.gif" alt="Delete this frame button" width="131" height="26"align=absmiddle> button.</li>
+</ul></li>
+<li class="propertylistitem"> You can <strong>Preview</strong> the movie by pressing the <img src="images/Preview.gif" alt="Preview button" width="80" height="26" align="absmiddle"> button. This opens a Movie Preview window, where you can see the individual slides before saving the movie. The Movie Preview window also allows you to remove individual frames from the movie before saving it with the <img src="images/DeleteThisFrame.gif" alt="Delete this frame button" width="131" height="26" align="absmiddle"> button.</li>
 <li class="propertylistitem"><a name="filename" id="filename"></a>If you want to save the individual intermediate files that are used to create the movie, check the <strong>Save Files To</strong> box and specify a directory and file name format. Otherwise, the intermediate files will be
-saved in a temporary directory and will be removed. You can use the following templates to customize the name of the output file:</li>
+saved in a temporary directory and will be removed. You can use the following templates to customize the name of the output file:
 <ul class="propertylist">
 <li class="propertylistitem"><strong>%count% -</strong> Represents the image counter.</li>
 <li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the lat/lon format section of the User Preferences window's <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab. You can also specify a <a href="http://download.oracle.com/javase/tutorial/i18n/format/decimalFormat.html" target="_blank">Java DecimalFormat</a>, e.g., %count:000% outputs three-digit counts with leading zeros (001, 002, etc.).</li>
 <li class="propertylistitem"><strong>%time% -</strong> Represents the animation time in the default format.</li>
 <li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the User Preferences window's <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab.</li>
-</ul>
-<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26" align="absmiddle"> button. This opens a Save window several options to customize the animation:</li>
+</ul></li>
+<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26" align="absmiddle"> button. This opens a Save window several options to customize the animation:
     <ul>
 <li class="propertylistitem"><strong>Frames per second -</strong> Sets the speed that the animation will play.  A value of 1 shows 1 frame per second, whereas 2 will play faster at a rate of 2 frames per second.  For mp4 format, any fractional value will be rounded up to the nearest whole number.</li>
 <li class="propertylistitem"><strong>End Frame Pause -</strong> Sets the time (in seconds) that the last frame of the animation will remain visible before ending or restarting the animation. This option is applicable to animated GIFs.</li>
 <li class="propertylistitem"><strong>Use 'global' GIF color palette -</strong> Sets the color scheme to be used for the frames of the animation. This option is applicable for animated GIF movies, and it is enabled by default. Animated GIFs are limited to 256 colors, and this option uses the same 256 colors for every frame in the loop when the setting is enabled. Enabling this option allows for certain display settings such as a color scale to remain constant throughout the loop. If this option is disabled, then each frame uses it's own color palette, so one color may represent one value in one frame, and the same color may represent a different value in the next frame. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display.</li>
 <li class="propertylistitem"><strong>File Name -</strong> Sets the name and location to save the animation to.</li>
-<li class="propertylistitem"><strong>Files of Type -</strong> Sets the animation format to use.  There are several available options, including:</li>
+<li class="propertylistitem"><strong>Files of Type -</strong> Sets the animation format to use.  There are several available options, including:
 <ul>
     <li class="propertylistitem">MPEG-4 files (*.mp4)</li>
-    <li class="propertylistitem">QuickTime files (*.mov)</li>
+    <li class="propertylistitem">QuickTime files (*.mov)
     <ul>
     <li class="propertylistitem">Please note that the default media player on many platforms likely won't properly play QuickTime (*.mov) movies produced by McIDAS-V.  While some players will work, it is suggested to use *.mp4 format for maximum support across different media players.</li>
-    </ul>
+    </ul></li>
     <li class="propertylistitem">AVI files (*.avi)</li>
     <li class="propertylistitem">Animated GIF (*.gif)</li>
     <li class="propertylistitem">Compressed Zip (*.zip)</li>
     <li class="propertylistitem">Google Earth KMZ Files (*.kmz)</li>
     <li class="propertylistitem">AniS or FlAniS HTML File (*.html)</li></ul>
-    </ul>
+    </ul></li></li>
 </ul>
 <div class="pagesubtitle"><a name="movieplayback" id="movieplayback"></a>Playing QuickTime Movies</div>
     <p>McIDAS-V supports displaying certain types of QuickTime movies (including

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="en"><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -65,18 +65,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/LayerCon
 <p>The <strong>File</strong> menu has these common choices:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Remove Display -</strong> Removes the display.</li>
-  <li class="propertylistitem"><strong>Save -</strong> Saves the state of the display.</li>
+  <li class="propertylistitem"><strong>Save -</strong> Saves the state of the display.
     <ul class="propertylist">
-      <li class="propertylistitemfirst"><strong>Save Data in Cache -</strong> Saves  the current data of the display in a Cache Data Source as a new field. The user will be prompted for the name of the field. This can be used in a variety of ways:</li>
+      <li class="propertylistitemfirst"><strong>Save Data in Cache -</strong> Saves  the current data of the display in a Cache Data Source as a new field. The user will be prompted for the name of the field. This can be used in a variety of ways:
 <ul class="propertylist">
             <li class="propertylistitem">After calculating a complex formula, selecting operands for the formula, etc., to create the data in a display a user can save the formula and the data that was calculated. Then new displays can be created from that formula without having to reselect the operands and recalculate the final data.</li>
             <li class="propertylistitem">The Web Map Server (WMS) display allows for the capturing of the image and then making use of it in formulas and in other displays. For example, the image can be draped over topography.</li>
-          </ul>
+          </ul></li>
       <li class="propertylistitem"><strong>Export Displayed Data to NetCDF -</strong> Saves the data in the NetCDF (*.nc) format.</li>
       <li class="propertylistitem"><strong>Save As Parameter Defaults -</strong> Saves  the current display state for the parameter as the default for that parameter in the future. See the <a href="../tools/ParameterDefaultsEditor.html">Parameter Defaults Editor</a> page for more information.</li>
         <li class="propertylistitem"><a name="template" id="template"></a><strong>Save Display as Favorite -</strong> Saves the current display state (without the data) as a display template. This is an easy way to apply what is essentially parameter defaults to a variety of different fields. For example, if a display is created that uses Color-Shaded Plan View, an enhancement range of 0 - 90, the gray scale enhancement, and shade colors, this can be saved as a favorite display. This menu item opens a Save As Favorite window, where a user can enter a category as well as a name. The category is used to determine what directory the bundle will be stored in and is not used directly in McIDAS-V. The name field sets the name of the display template, which will be seen in the Displays panel of the Field Selector. Now, a user can select a different field, the display template, and click Create Display. This will display the field that was selected by the user, but everything in the Layer Controls comes from the display template.</li>
       <li class="propertylistitem"><strong>Save Display as Bundle -</strong> Saves the current application state as a <a href="../Bundles.html">bundle</a>.</li>
-    </ul>
+	  </ul></li></li>
   <li class="propertylistitem"><strong>Reload Data -</strong> Reloads the data for this display.</li>
 </ul>
 <p><a name="edit" id="edit"></a>The <strong>Edit</strong> menu has these common choices:</p>
@@ -93,15 +93,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/LayerCon
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Visible -</strong> Toggles visibility. When selected, the parameter will be displayed in the Main Display window.</li>
   <li class="propertylistitem"><strong>Lock Visibility -</strong> Toggles the visibility lock (see <a href="../ui/DisplayVisibility.html">cycling visibilities</a>).</li>
-  <a name="bringtofront" id="bringtofront"></a>
-  <li class="propertylistitem"><strong>Bring To Front -</strong> Selects which display is on top if one display is showing at the same level in 3D as another (e.g., satellite and radar images in the same display).</li>
+  <li class="propertylistitem"><a name="bringtofront" id="bringtofront"></a><strong>Bring To Front -</strong> Selects which display is on top if one display is showing at the same level in 3D as another (e.g., satellite and radar images in the same display).</li>
   <li class="propertylistitem"><strong>Show View Window -</strong> Brings the Main Display window to the front.</li>
-         <li class="propertylistitem"><strong>Times -</strong></li>
+         <li class="propertylistitem"><strong>Times -</strong>
       <ul class="propertylist">
   <li class="propertylistitem"><strong>Use Times in Animation -</strong> Loops the data when the layers have a time associated with them by adding the <a href="../ui/Animation.html">Time Animation Widget</a> to the Main Display window.</li>
   <li class="propertylistitem"><strong>Drive Times with this Display -</strong> Sets the layer as the time driver.  For more information, see <a href="../misc/TimeMatching.html">Time Matching</a>.</li>
   <li class="propertylistitem"><strong>Uses Time Driver Times -</strong> Sets the times of the layer to match the time driver times, assuming a time driver has been set. Note that the layer must be reloaded via <strong>File -> Reload Data</strong> after using this option. For more information, see <a href="../misc/TimeMatching.html">Time Matching</a>.</li>
-      </ul>
+      </ul></li>
   <li class="propertylistitem"><strong>Display List -</strong> Displays the parameter information at the bottom of the Main Display window and allows for  setting the color of the text.</li>
   <li class="propertylistitem"><strong>Center on Display -</strong> Re-centers the display in the Main Display window without changing the zoom level if the display has been translated from its original position.</li>
   <li class="propertylistitem"><strong>Undock from Data Explorer -</strong> Unattaches the<strong> Layer Controls</strong> tab from the Data Explorer by making it its own window. This can be brought back to the Data Explorer by selecting <strong>View-&gt;Dock</strong>.</li>

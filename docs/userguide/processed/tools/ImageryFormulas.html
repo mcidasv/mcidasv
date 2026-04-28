@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
 <!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -152,7 +152,7 @@ of the latitudes at each point.</li>
 <div class="pagesubtitle">ABI Functions<a name="abiFunctions" id="abiFunctions"></a></div>
 <p>The following describes each formula included in the ABI (Advanced Baseline Imager - GOES-16 through GOES-19) Functions section of McIDAS-V. These formulas create displays of various RGB and channel difference products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> ABI Functions tree. For specifics about the usage of each of these products (except ABI True Color RGB), see the <a href="https://rammb2.cira.colostate.edu/training/visit/quick_reference/#tab17">CIRA VISIT Quick Guides</a>.</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Differences</strong></li>
+    <li class="propertylistitem"><strong>Differences</strong>
     <ul class="propertylist">
         <li class="propertylistitem"><strong>ABI Night Fog Difference (Band 13 Temperature, Band 7 Temperature) -</strong> Identifies clouds made up of water droplets at night.
     <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
@@ -316,9 +316,9 @@ of the latitudes at each point.</li>
    </td>
    </tr>
 </table></li>
-        </ul></ul>
+        </ul></li></ul>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>RGBs</strong></li>
+    <li class="propertylistitem"><strong>RGBs</strong>
     <ul class="propertylist">
 <li class="propertylistitem"><strong>ABI Airmass RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
   <table id="miscformulas7" cellpadding="0" cellspacing="0" border="1">
@@ -1047,7 +1047,7 @@ of the latitudes at each point.</li>
         </td>
       </tr>
   </table>
-</li></ul>
+</li></ul></li>
     </ul>
     <ul class="propertylist">
 <li class="propertylistitem"><strong>ABI Rad To Temp Bands 7-16 (Data) -</strong> Converts ABI L1b netCDF radiance data (bands 7 through 16) to temperature.
@@ -2617,7 +2617,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 <div class="pagesubtitle">JPSS Functions - VIIRS EDR<a name="viirsEdr" id="viirsEdr"></a></div>
 <p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) EDR (Environmental Data Record)  section of McIDAS-V. These formulas, designed to work with imagery EDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -&gt; JPSS Functions -&gt; VIIRS EDR tree.&nbsp; Note that several of these formulas also have a Rayleigh corrected version that can be found under Imagery -&gt; JPSS Functions -&gt; VIIRS EDR Rayleigh Corrected.&nbsp; These formulas have an&nbsp;asterisk next to them in the list below.
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Indices</strong></li>
+    <li class="propertylistitem"><strong>Indices</strong>
     <ul class="propertylist">
         <li class="propertylistitem"><strong>VIIRS EDR Burn Area Index (BAI) (SVI01 Reflectance, SVI02 Reflectance)* - </strong>The Burn Area Index (BAI) is an index to help identify areas of land that have been affected by fire.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
@@ -2771,8 +2771,8 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-    </ul>
-    <li class="propertylistitem"><strong>RGBs</strong></li>
+    </ul></li>
+    <li class="propertylistitem"><strong>RGBs</strong>
     <ul class="propertylist">
         <li class="propertylistitem"><strong>VIIRS EDR Ash RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
   <table id="miscformulas60" cellpadding="0" cellspacing="0" border="1">
@@ -3457,13 +3457,13 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-    </ul>
+    </ul></li>
 
 </ul>
 <div class="pagesubtitle">JPSS Functions - VIIRS SDR<a name="viirsSdr" id="viirsSdr"></a></div>
 <p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) SDR (Sensor Data Record)  section of McIDAS-V. These formulas, designed to work with imagery SDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. All of the RGB and channel combination functions use Swath To Grid to remap the data to a gridded projection and remove bowtie deletion lines. Other than Swath To Grid, these are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -&gt; JPSS Functions -&gt; VIIRS SDR tree. Note that several of these formulas also have a Rayleigh corrected version that can be found under Imagery -&gt; JPSS Functions -&gt; VIIRS SDR Rayleigh Corrected. These formulas have an asterisk next to them in the list below.
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Indices</strong></li>
+    <li class="propertylistitem"><strong>Indices</strong>
     <ul class="propertylist">
         <li class="propertylistitem"><strong>VIIRS SDR Burn Area Index (BAI) (SVI01 Reflectance, SVI02 Reflectance)* - </strong>The Burn Area Index (BAI) is an index to help identify areas of land that have been affected by fire.
           <table id="miscformulas72" cellpadding="0" cellspacing="0" border="1">
@@ -3617,8 +3617,8 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-    </ul>
-<li class="propertylistitem"><strong>RGBs</strong></li>
+    </ul></li>
+<li class="propertylistitem"><strong>RGBs</strong>
     <ul class="propertylist">
         <li class="propertylistitem"><strong>VIIRS SDR Ash RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
   <table id="miscformulas79" cellpadding="0" cellspacing="0" border="1">
@@ -4310,7 +4310,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-    </ul>
+    </ul></li>
 <li class="propertylistitem"><strong>Swath To Grid - Bowtie Removal (field, resolution_in_meters, mode) - </strong>Remaps SDR data into a gridded projection and removes bowtie deletion lines.
   <table id="miscformulas78" cellpadding="0" cellspacing="0" border="1">
     <tr>

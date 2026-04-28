@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
 <!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -48,8 +48,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/TimeMatching
 </ul>
 <div class="pagesubtitle">Methods of Matching the Time Driver</div>
 <ul class="propertylist">
-<p>Note that it is only possible to match time driver times if a time driver has already been set in the session. Most data sources that support time matching have the options listed below. However, not all data sources have the option of matching the time driver in all three tabs. For example, with the Gridded Data data source, there is no option to match time driver times in the <strong>Data Sources</strong> tab of the Data Explorer.</p>
-<p></p>
+  <li class="propertlistitem">Note that it is only possible to match time driver times if a time driver has already been set in the session. Most data sources that support time matching have the options listed below. However, not all data sources have the option of matching the time driver in all three tabs. For example, with the Gridded Data data source, there is no option to match time driver times in the <strong>Data Sources</strong> tab of the Data Explorer.</li>
   <li class="propertylistitem"><strong>Data Sources -</strong> In the <strong>Data Sources</strong> tab of the Data Explorer, at the bottom of the <strong>Times</strong> panel, choose the <strong>Match Time Driver</strong> checkbox. This will gray-out the <strong>Times</strong> panel, and clicking <strong>Add Source</strong> will add times for the layer that are closest to the time driver times.</li>
   <li class="propertylistitem"><strong>Field Selector -</strong> If the <strong>Data Sources</strong> method above wasn't used, in the <strong>Times</strong> tab of the <strong>Field Selector</strong>, use the dropdown menu to choose <strong>Match Time Driver</strong>.  Once Create Display is clicked, the only times of data that will display are those that match closest to the time driver times.</li>
   <li class="propertylistitem"><strong>Layer Controls -</strong> If the <strong>Data Sources</strong> or <strong>Field Selector</strong> methods above weren't used, after creating the display use the <strong>View-&gt;Times-&gt;Uses Time Driver Times</strong> menu item in the <strong>Layer Controls</strong>. After this option is chosen, the data must be reloaded. To do this, use the <strong>File-&gt;Reload Data</strong> menu item in the <strong>Layer Controls</strong>. Once this is done, the data will reload, and only use the times that match closest to the time driver times. If setting a CSV file to match the time driver, the <strong>Layer Controls</strong> menu item is the only way to do so.</li>
