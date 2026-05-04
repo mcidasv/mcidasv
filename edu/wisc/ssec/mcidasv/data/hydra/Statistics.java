@@ -55,6 +55,7 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.TupleType;
 import visad.VisADException;
+import visad.python.JPythonMethods;
 
 /**
  * Used to obtain various commonly used statistics for VisAD 
@@ -106,6 +107,8 @@ public class Statistics {
     MathType statType;
     
     PearsonsCorrelation pCorrelation = null;
+
+    private static final String FLAG_NO_NAV = "NO_NAV";
     
     public Statistics(FlatField fltFld) throws VisADException {
         rngVals = fltFld.getValues(false);
@@ -457,16 +460,41 @@ public class Statistics {
         
         return buf.toString();
     }
+
+    private static class DescribeConfig {
+            EnumSet<DescribeParams> params;
+            boolean useOffEarth = true; // default = current behavior
+        }
     
-    private static EnumSet<DescribeParams> parseParams(List<String> ps) {
-        Set<DescribeParams> params = Collections.emptySet();
+        private static DescribeConfig parseParams(List<String> ps) {
+        DescribeConfig config = new DescribeConfig();
+
+        Set<DescribeParams> paramSet = Collections.emptySet();
+
         if (ps != null) {
-            params = new HashSet<>(ps.size());
+            paramSet = new HashSet<>(ps.size());
+
             for (String p : ps) {
-                params.add(DescribeParams.valueOf(p.toUpperCase()));
+                String up = p.toUpperCase();
+
+                // --- behavior flag ---
+                if (FLAG_NO_NAV.equals(up)) {
+                    config.useOffEarth = false;
+                    continue;
+                }
+
+                // --- statistical params ---
+                paramSet.add(DescribeParams.valueOf(up));
             }
         }
-        return EnumSet.copyOf(params);
+
+        if (paramSet.isEmpty()) {
+            config.params = EnumSet.allOf(DescribeParams.class);
+        } else {
+            config.params = EnumSet.copyOf(paramSet);
+        }
+
+        return config;
     }
     
     public static class Description {
@@ -474,25 +502,35 @@ public class Statistics {
         private final FlatField field;
         
         private final EnumSet<DescribeParams> params;
+        private final boolean useOffEarth;
         
         public Description(FlatField field, List<String> params) {
             this.field = field;
-            if ((params == null) || params.isEmpty()) {
-                this.params = EnumSet.allOf(DescribeParams.class);
-            } else {
-                this.params = parseParams(params);
-            }
+
+            DescribeConfig cfg = parseParams(params);
+
+            this.params = cfg.params;
+            this.useOffEarth = cfg.useOffEarth;
         }
         
         public String makeDescription()
             throws VisADException, RemoteException {
             StringBuilder sb = new StringBuilder(1024);
-            Statistics s = new Statistics(field);
+            FlatField workingField = field;
+
+            if (!useOffEarth) {
+                workingField = JPythonMethods.setMissingNoNavigation(field);
+            }
+
+            Statistics s = new Statistics(workingField);
+            int originalGood = new Statistics(field).getNumGoodPoints()[0];
+            int filteredGood = s.getNumGoodPoints()[0];
+            int navMasked = originalGood - filteredGood;			
             double max = ((Real) s.max()).getValue();
             double min = ((Real) s.min()).getValue();
             double q1 = ((Real) s.percentile(25.0)).getValue();
             double q3 = ((Real) s.percentile(75.0)).getValue();
-            double[] modes = StatUtils.mode(field.getValues(false)[0]);
+            double[] modes = StatUtils.mode(workingField.getValues(false)[0]);
             
             StringBuilder tmp = new StringBuilder(128);
             for (int i = 0; i < modes.length; i++) {
@@ -506,64 +544,67 @@ public class Statistics {
             char endl = '\n';
             if (params.contains(DescribeParams.HISTOGRAM)) {
                 temp = sparkline(field, s);
-                sb.append("Histogram :  ").append(temp).append(endl);
+                sb.append("Histogram   :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.LENGTH)) {
                 temp = String.format("%d", s.numPoints());
-                sb.append("Length    :  ").append(temp).append(endl);
+                sb.append("Length      :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.MIN)) {
                 temp = fmtMe(((Real) s.min()).getValue());
-                sb.append("Min       :  ").append(temp).append(endl);
+                sb.append("Min         :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.MAX)) {
                 temp = fmtMe(((Real) s.max()).getValue());
-                sb.append("Max       :  ").append(temp).append(endl);
+                sb.append("Max         :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.RANGE)) {
                 temp = fmtMe(max - min);
-                sb.append("Range     :  ").append(temp).append(endl);
+                sb.append("Range       :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.Q1)) {
-                sb.append("Q1        :  ").append(fmtMe(q1)).append(endl);
+                sb.append("Q1          :  ").append(fmtMe(q1)).append(endl);
             }
             if (params.contains(DescribeParams.Q2)) {
                 temp = fmtMe(((Real) s.percentile(50.0)).getValue());
-                sb.append("Q2        :  ").append(temp).append(endl);
+                sb.append("Q2          :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.Q3)) {
-                sb.append("Q3        :  ").append(fmtMe(q3)).append(endl);
+                sb.append("Q3          :  ").append(fmtMe(q3)).append(endl);
             }
             if (params.contains(DescribeParams.IQR)) {
                 temp = fmtMe(q3 - q1);
-                sb.append("IQR       :  ").append(temp).append(endl);
+                sb.append("IQR         :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.MEAN)) {
                 temp = fmtMe(((Real) s.mean()).getValue());
-                sb.append("Mean      :  ").append(temp).append(endl);
+                sb.append("Mean        :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.MODE)) {
-                sb.append("Mode      :  ").append(tmp).append(endl);
+                sb.append("Mode        :  ").append(tmp).append(endl);
             }
             if (params.contains(DescribeParams.KURTOSIS)) {
                 temp = fmtMe(((Real) s.kurtosis()).getValue());
-                sb.append("Kurtosis  :  ").append(temp).append(endl);
+                sb.append("Kurtosis    :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.SKEWNESS)) {
                 temp = fmtMe(((Real) s.skewness()).getValue());
-                sb.append("Skewness  :  ").append(temp).append(endl);
+                sb.append("Skewness    :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.STDDEV)) {
                 temp = fmtMe(((Real) s.standardDeviation()).getValue());
-                sb.append("Std Dev   :  ").append(temp).append(endl);
+                sb.append("Std Dev     :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.VARIANCE)) {
                 temp = fmtMe(((Real) s.variance()).getValue());
-                sb.append("Variance  :  ").append(temp).append(endl);
+                sb.append("Variance    :  ").append(temp).append(endl);
             }
             if (params.contains(DescribeParams.GOODPTS)) {
                 temp = String.format("%d", s.getNumGoodPoints()[0]);
-                sb.append("# Good Pts:  ").append(temp).append(endl);
+                sb.append("# Good Pts  :  ").append(temp).append(endl);
+            }
+            if (!useOffEarth) {
+                sb.append("# Nav Masked:  ").append(navMasked).append('\n');
             }
             return sb.toString();
         }
