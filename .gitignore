@@ -1,4 +1,4 @@
-# standard gitignore things for a java project
+# standard gitignore things for a Java project
 *.class
 *.log
 
