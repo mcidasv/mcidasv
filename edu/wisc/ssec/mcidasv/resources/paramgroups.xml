@@ -784,6 +784,7 @@
     <params p1="wind_speed" p2="wind_dir"/>
     <params p1="model_speed" p2="model_dir"/>
     <params p1="GFS_Model_WSPD" p2="GFS_Model_WDIR"/>
+    <params p1="SPEED" p2="DIR"/>
   </paramgroup>
   <paramgroup description="CLAVRx Cloud Type RGB" name="CLAVRx_RGB_CloudType">
     <params p1="refl_1_38um_nom" p2="refl_0_65um_nom" p3="refl_1_60um_nom"/>
@@ -815,6 +816,7 @@
     <params p1="x_wind_ml" p2="y_wind_ml"/>
     <params p1="x_wind_pl" p2="y_wind_pl"/>
     <params p1="x_wind_z" p2="y_wind_z"/>
+    <params p1="u_wind_gfs" p2="v_wind_gfs"/>
   </paramgroup>
   <paramgroup description="" name="u_and_v">
     <params p1="u-component_of_wind_altitude_above_msl_ens" p2="v-component_of_wind_altitude_above_msl_ens"/>
@@ -842,6 +844,7 @@
     <params p1="x_wind_ml" p2="y_wind_ml"/>
     <params p1="x_wind_pl" p2="y_wind_pl"/>
     <params p1="x_wind_z" p2="y_wind_z"/>
+    <params p1="u_wind_gfs" p2="v_wind_gfs"/>
   </paramgroup>
   <paramgroup description="" name="u_v_w">
     <params p1="U" p2="V" p3="W"/>

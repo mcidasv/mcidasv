@@ -76,7 +76,8 @@
      BT_6\.75um,
      BT_10\.8um,
      map_data/BT_6\.75um,
-     map_data/BT_10\.8um"/>
+     map_data/BT_10\.8um,
+     brightness_temp_ch*.*"/>
   
   <alias 
      name="Refl"
@@ -221,7 +222,10 @@
      SFX_T2M_SEA,
      SFX_T2M_TEB,
      SFX_T2M_WAT,
-     t2m"/>
+     t2m,
+     air_temp_gfs,
+     GDAS_2mTAir,
+     TSurf"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -290,7 +294,8 @@
      SFX_X002HU2M_P,
      SFX_HU2M_SEA,
      SFX_HU2M_TEB,
-     WRF relative humidity"/>
+     WRF relative humidity,
+     GDAS_2mRelHum"/>
   <alias
      name="Z"
      label="Z"
@@ -389,7 +394,9 @@
      Neutral_wind_at_10_m_u-component_surface,
      VAR_10U,
      VAR_100U,
-     u10"/>
+     u10,
+     u-component_of_wind_pressure_weightedMean,
+     u_wind_gfs"/>
   <alias
      name="V"
      label="V component of wind"
@@ -481,7 +488,9 @@
      Neutral_wind_at_10_m_v-component_surface,
      VAR_10V,
      VAR_100V,
-     v10"/>
+     v10,
+     v-component_of_wind_pressure_weightedMean,
+     v_wind_gfs"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -592,7 +601,8 @@
      Mean_sea_level_pressure_surface,
      Surface_pressure_surface,
      WRF MSLP,
-     msl"/>
+     msl,
+     SurfPres"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
