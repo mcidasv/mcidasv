@@ -455,6 +455,7 @@
     <params p1="328_Band19_TEMP" p2="328_Band20_TEMP" p3="328_Band21_TEMP"/>
     <params p1="329_Band19_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M14" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
+    <params p1="brightness_temp_chM14" p2="brightness_temp_chM15" p3="brightness_temp_chM16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Fire Temperature RGB" name="JPSS_EDR_RGB_FireTemperature">
     <params p1="VIIRS-M12-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M11-MOD-EDR_All/Reflectance" p3="VIIRS-M10-MOD-EDR_All/Reflectance"/>
@@ -496,6 +497,7 @@
     <params p1="329_Band17_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M12" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
     <params p1="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M12" p2="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M15" p3="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data_Fields/BrightnessTemperature_M16"/>
+    <params p1="brightness_temp_chM12" p2="brightness_temp_chM15" p3="brightness_temp_chM16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR True Color RGB" name="JPSS_EDR_RGB_TrueColor">
     <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M4-MOD-EDR_All/Reflectance" p3="VIIRS-M3-MOD-EDR_All/Reflectance"/>
@@ -556,6 +558,7 @@
     <params p1="328_Band19_TEMP" p2="328_Band20_TEMP" p3="328_Band21_TEMP"/>
     <params p1="329_Band19_TEMP" p2="329_Band20_TEMP" p3="329_Band21_TEMP"/>
     <params p1="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M14" p2="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M15" p3="HDFEOS/GRIDS/VIIRS_*.*BrightTemp_M16"/>
+    <params p1="brightness_temp_chM14" p2="brightness_temp_chM15" p3="brightness_temp_chM16"/>
   </paramgroup>
   <paramgroup description="JPSS EDR Day Cloud Phase Distinction M RGB" name="JPSS_EDR_RGB_DayCloudPhaseDistinctionM">
     <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M10-MOD-EDR_All/Reflectance" p3="VIIRS-M15-MOD-EDR_All/BrightnessTemperature"/>
