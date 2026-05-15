@@ -658,7 +658,9 @@
       label="Normalized Difference Vegetation Index"
       aliases="HDFEOS/GRIDS/VIIRS_Grid_*.*/Data_Fields/*.*_EVI*.*,
       HDFEOS/GRIDS/VIIRS_Grid_*.*/Data_Fields/*.*_NDVI,
-      viirs_sdr_rc_ndvi" />
+      viirs_sdr_rc_ndvi,
+      ndvi,
+      evi" />
   
   <alias
       name="CAPE2"
