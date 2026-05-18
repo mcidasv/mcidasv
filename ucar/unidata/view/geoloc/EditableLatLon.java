@@ -166,9 +166,19 @@ public class EditableLatLon extends ProjectionImpl {
      */
     public ProjectionImpl constructCopy() {
         EditableLatLon result = new EditableLatLon(this.getName(), this.getDefaultMapArea());
-        result.setDefaultMapArea(this.defaultMapArea);
+
         result.setName(this.name);
         result.earth = this.earth;
+
+        // copy editable fields so they are retained when editing projection
+        result.setUpperLeftLatitude(this.latitude0);
+        result.setUpperLeftLongitude(this.longitude0);
+        result.setLowerRightLatitude(this.latitude1);
+        result.setLowerRightLongitude(this.longitude1);
+
+        result.setCenterLon(this.centerLon);
+
+        result.setDefaultMapArea(this.defaultMapArea);
 
         return result;
     }
@@ -196,7 +206,7 @@ public class EditableLatLon extends ProjectionImpl {
         this.earth = earth;
         this.defaultMapArea = new ProjectionRect(-90, -45, 90, 45);
         this.addParameter("latitude0", latitude0);
-        this.addParameter("longitude1", longitude0);
+        this.addParameter("longitude0", longitude0);
         this.addParameter("latitude1", latitude1);
         this.addParameter("longitude1", longitude1);
 
@@ -212,7 +222,7 @@ public class EditableLatLon extends ProjectionImpl {
         this.earth = EarthEllipsoid.DEFAULT;
         this.defaultMapArea = new ProjectionRect(-90, -45, 90, 45);
         this.addParameter("latitude0", latitude0);
-        this.addParameter("longitude1", longitude0);
+        this.addParameter("longitude0", longitude0);
         this.addParameter("latitude1", latitude1);
         this.addParameter("longitude1", longitude1);
 
@@ -229,7 +239,7 @@ public class EditableLatLon extends ProjectionImpl {
         this.earth = EarthEllipsoid.DEFAULT;
         this.defaultMapArea = defaultMapArea;
         this.addParameter("latitude0", latitude0);
-        this.addParameter("longitude1", longitude0);
+        this.addParameter("longitude0", longitude0);
         this.addParameter("latitude1", latitude1);
         this.addParameter("longitude1", longitude1);
 
