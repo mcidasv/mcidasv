@@ -1316,24 +1316,48 @@ public class ProjectionManager implements ActionListener {
             for (int i = 0; i < projClass.paramList.size(); i++) {
                 ProjectionParam pp =
                     (ProjectionParam) projClass.paramList.get(i);
-                // fetch the value from the projection object
+
                 try {
-                    String   valstr = pp.getTextField().getText();
+                    String valstr = pp.getTextField().getText();
                     fix.add(valstr);
-                    Double   valdub = Double.valueOf(valstr);
-                    Object[] args   = { valdub };
+
+                    Double valdub = Double.valueOf(valstr);
+                    Object[] args = { valdub };
+
                     if (debugBeans) {
                         System.out.println(
                             "Projection setProjFromDialog invoke writer on "
                             + pp);
                     }
+
                     pp.writer.invoke(proj, args);
+
                 } catch (Exception ee) {
-                    System.err.println(
-                        "ProjectionManager: setProjParams failed "
-                        + " invoking write " + pp.name + " class "
-                        + projClass);
-                    continue;
+
+                    Throwable cause = ee.getCause();
+
+                    if (cause instanceof IllegalArgumentException) {
+
+                        JOptionPane.showMessageDialog(
+                            this,
+                            cause.getMessage(),
+                            "Invalid Projection Value",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+
+                    } else {
+
+                        JOptionPane.showMessageDialog(
+                            this,
+                            "Invalid value for " + pp.name,
+                            "Projection Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+
+                        ee.printStackTrace();
+                    }
+
+                    return fix;
                 }
             }
 

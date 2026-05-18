@@ -113,7 +113,7 @@ public class EditableLatLon extends ProjectionImpl {
      * @param latitude0
      */
     public void setUpperLeftLatitude(double latitude0) {
-        this.latitude0 = latitude0;
+        this.latitude0 = validateLatitude(latitude0);
         resize();
     }
 
@@ -122,7 +122,7 @@ public class EditableLatLon extends ProjectionImpl {
      * @param latitude1
      */
     public void setLowerRightLatitude(double latitude1) {
-        this.latitude1 = latitude1;
+        this.latitude1 = validateLatitude(latitude1);
         resize();
     }
 
@@ -131,7 +131,7 @@ public class EditableLatLon extends ProjectionImpl {
      * @param longitude0
      */
     public void setUpperLeftLongitude(double longitude0) {
-        this.longitude0 = longitude0;
+        this.longitude0 = validateLongitude(longitude0);
         resize();
     }
 
@@ -140,7 +140,7 @@ public class EditableLatLon extends ProjectionImpl {
      * @param longitude1
      */
     public void setLowerRightLongitude(double longitude1) {
-        this.longitude1 = longitude1;
+        this.longitude1 = validateLongitude(longitude1);
         resize();
     }
 
@@ -181,6 +181,24 @@ public class EditableLatLon extends ProjectionImpl {
         result.setDefaultMapArea(this.defaultMapArea);
 
         return result;
+    }
+
+    private double validateLatitude(double lat) {
+        if (lat < -90.0 || lat > 90.0) {
+            throw new IllegalArgumentException(
+                "Latitude must be between -90 and 90"
+            );
+        }
+        return lat;
+    }
+
+    private double validateLongitude(double lon) {
+        if (lon < -180.0 || lon > 180.0) {
+            throw new IllegalArgumentException(
+                "Longitude must be between -180 and 180"
+            );
+        }
+        return lon;
     }
 
     /**
