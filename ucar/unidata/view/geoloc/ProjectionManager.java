@@ -127,25 +127,16 @@ public class ProjectionManager implements ActionListener {
      */
     public static List getDefaultProjections() {
         if (defaultProjections.size() == 0) {
-            defaultProjections.add(
-                    "ucar.unidata.geoloc.projection.LatLonProjection");
-            defaultProjections.add(
-                "ucar.unidata.view.geoloc.EditableLatLon"); // McIDAS Inquiry #934-3141
-            defaultProjections.add(
-                "ucar.unidata.geoloc.projection.LambertConformal");
-            defaultProjections.add(
-                "ucar.unidata.geoloc.projection.TransverseMercator");
-            defaultProjections.add(
-                "ucar.unidata.geoloc.projection.Stereographic");
+            defaultProjections.add("ucar.unidata.geoloc.projection.AlbersEqualArea");
+            defaultProjections.add("ucar.unidata.view.geoloc.EditableLatLon"); // Manually placed under 'A'
+            defaultProjections.add("ucar.unidata.geoloc.projection.LambertAzimuthalEqualArea");
+            defaultProjections.add("ucar.unidata.geoloc.projection.LambertConformal");
+            defaultProjections.add("ucar.unidata.geoloc.projection.LatLonProjection");
             defaultProjections.add("ucar.unidata.geoloc.projection.Mercator");
-            defaultProjections.add(
-                "ucar.unidata.geoloc.projection.AlbersEqualArea");
-            defaultProjections.add(
-                "ucar.unidata.geoloc.projection.LambertAzimuthalEqualArea");
-            defaultProjections.add(
-                "ucar.unidata.geoloc.projection.Orthographic");
-            defaultProjections.add(
-                "ucar.unidata.geoloc.projection.VerticalPerspectiveView");
+            defaultProjections.add("ucar.unidata.geoloc.projection.Orthographic");
+            defaultProjections.add("ucar.unidata.geoloc.projection.Stereographic");
+            defaultProjections.add("ucar.unidata.geoloc.projection.TransverseMercator");
+            defaultProjections.add("ucar.unidata.geoloc.projection.VerticalPerspectiveView");
         }
         return defaultProjections;
     }
@@ -733,6 +724,10 @@ public class ProjectionManager implements ActionListener {
         return newDialog;
     }
 
+    private boolean isPreviewSupported(ProjectionImpl proj) {
+        return !(proj instanceof LatLonProjection);
+    }
+
     /**
      * Set the working projection.
      *
@@ -801,6 +796,9 @@ public class ProjectionManager implements ActionListener {
         /** border for panel */
         private Border standardBorder = new EtchedBorder();
 
+        /** preview button */
+        private JButton previewButton;
+
         /**
          * Create a new projection editor
          *
@@ -811,6 +809,7 @@ public class ProjectionManager implements ActionListener {
             super(parent, true, "Define/Edit Projection");
             makeUI();
             setLocation(100, 100);
+            setSize(650, 350);
         }
 
         /**
@@ -823,6 +822,7 @@ public class ProjectionManager implements ActionListener {
             super(parent, true, "Define/Edit Projection");
             makeUI();
             setLocation(100, 100);
+            setSize(650, 350);
         }
 
         /**
@@ -835,6 +835,7 @@ public class ProjectionManager implements ActionListener {
             super(parent, true, "Define/Edit Projection");
             makeUI();
             setLocation(100, 100);
+            setSize(650, 350);
         }
 
 
@@ -953,7 +954,7 @@ public class ProjectionManager implements ActionListener {
             // the bottom button panel
             JPanel  buttPanel     = new JPanel();
             JButton acceptButton  = new JButton("Save");
-            JButton previewButton = new JButton("Preview");
+            previewButton         = new JButton("Preview");
             JButton cancelButton  = new JButton("Cancel");
             buttPanel.add(acceptButton, null);
             buttPanel.add(previewButton, null);
@@ -967,15 +968,28 @@ public class ProjectionManager implements ActionListener {
             //enable event listeners when we're done constructing the UI
             projClassCB.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+
                     ProjectionClass selectClass =
                         (ProjectionClass) projClassCB.getSelectedItem();
-                    setProjection(selectClass.makeDefaultProjection());
+
+                    ProjectionImpl proj =
+                        selectClass.makeDefaultProjection();
+
+                    setProjection(proj);
+
+                    boolean showPreview =
+                        !(proj instanceof LatLonProjection);
+
+                    previewButton.setVisible(showPreview);
+
                 }
             });
 
             acceptButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    preview();
+                    if (isPreviewSupported(editProjection)) {
+                        preview();
+                    }
                     accept();
                 }
             });
@@ -1005,7 +1019,12 @@ public class ProjectionManager implements ActionListener {
             }
 
             setProjectionClass(pc, proj);
+            previewButton.setVisible(!(proj instanceof LatLonProjection));
             npEditControl.setProjectionImpl(proj);
+
+            previewButton.setVisible(
+                !(proj instanceof LatLonProjection));
+
             startingName = new String(proj.getName());
         }
 
