@@ -987,9 +987,12 @@ public class ProjectionManager implements ActionListener {
 
             acceptButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    if (isPreviewSupported(editProjection)) {
-                        preview();
+                    ProjectionClass projClass = findProjectionClass(editProjection);
+
+                    if (projClass != null) {
+                        setProjFromDialog(projClass, editProjection);
                     }
+
                     accept();
                 }
             });
@@ -1103,53 +1106,66 @@ public class ProjectionManager implements ActionListener {
 
         private void accept() {
             ProjectionClass projClass = findProjectionClass(editProjection);
-            if (null == projClass) {
+
+            if (projClass == null) {
                 System.out.println(
-                    "Projection Manager accept: findProjectionClass failed"
-                    + editProjection);
+                    "Projection Manager accept: findProjectionClass failed "
+                    + editProjection
+                );
                 return;
             }
-            if ((nameTF.getText()==null || nameTF.getText().isEmpty()) ||
-                    ((editProjection.getName()==null) || editProjection.getName().isEmpty())){
+
+            // validate name
+            if (nameTF.getText() == null
+                    || nameTF.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(
-                        this,
-                        "The name cannot be blank");
+                    this,
+                    "The name cannot be blank"
+                );
                 return;
-            } else {
-                setProjFromDialog(projClass, editProjection);
             }
-                ProjectionRect mapArea = mapEditPanel.getSelectedRegion();
+
+            // push UI values into projection
+            setProjFromDialog(projClass, editProjection);
+
+            // EditableLatLon needs a projection refresh so the
+            // entered lat/lon bounds become the real map area.
+            // Other projections must NOT do this or their
+            // selected region gets reset to full domain.
+            if (editProjection instanceof EditableLatLon) {
+                npEditControl.setProjectionImpl(editProjection);
+            }
+
+            // use selected region if available
+            ProjectionRect mapArea = mapEditPanel.getSelectedRegion();
+
+            // otherwise fall back to full displayed area
             if (mapArea == null) {
                 mapArea = mapEditPanel.getMapArea();
             }
-            editProjection.setDefaultMapArea(mapArea);
 
-            if (debug) {
-                System.out.println("Projection Manager accept bb ="
-                                   + editProjection.getDefaultMapArea());
+            // save map area
+            if (mapArea != null) {
+                editProjection.setDefaultMapArea(
+                    new ProjectionRect(mapArea)
+                );
             }
+
+            // create final projection copy
             ProjectionImpl newProj =
-                (ProjectionImpl) editProjection.constructCopy();  // use a copy
+                (ProjectionImpl) editProjection.constructCopy();
 
-            if (viewDialog != null) {
-                //                if ( !viewDialog.checkSaveOK(startingName,
-                //                                             newProj.getName())) {
-                //                    return;
-                //                }
-            }
-
+            // update table
             if (ProjectionManager.this.contains(newProj.getName())) {
-                if(newProj.getName()==null || newProj.getName().isEmpty()){
-                    JOptionPane.showMessageDialog(this, "The name cannot be blank");
-                } else {
-                    projTable.replaceProjection(newProj);
-                }
+                projTable.replaceProjection(newProj);
             } else {
                 projTable.addProjection(newProj);
             }
 
-            // set new projection to working projection and exit this Dialog
+            // activate projection
             setWorkingProjection(newProj);
+
+            // close dialog
             NewProjectionDialog.this.setVisible(false);
         }
 
