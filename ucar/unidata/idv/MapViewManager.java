@@ -2923,42 +2923,69 @@ public class MapViewManager extends NavigatedViewManager {
 
     public void makeCustomProjectionManager() {
         JFrame frame = new JFrame("Custom Viewpoint");
-        frame.setSize(550, 170);
-        Dimension size = new Dimension(180, 30);
+        frame.setSize(600, 180);
+        JTextField nameField = new JTextField(20);
 
         // Top: instructions/err msgs, Mid: Input, Bottom: Buttons
         String styleStr = "\"font-family:verdana;color:black;font-size:12px\">";
         String htmlStart = "<html><p style=";
         JPanel outerPanel = new JPanel(new BorderLayout());
-        JPanel midPanel = new JPanel(new FlowLayout());
+        JPanel midPanel = new JPanel(new GridBagLayout());
         JPanel botPanel = new JPanel(new FlowLayout());
         JPanel topPanel = new JPanel(new FlowLayout());
         JPanel namePanel = new JPanel(new FlowLayout());
         String initStr = "Provide Upper Left and Lower Right Latitude and Longitude";
-        //JLabel topLabel = new JLabel();
         JLabel nameLabel = new JLabel("Name of viewpoint:" );
-        JTextField nameField = new JTextField();
-        nameField.setPreferredSize(size);
-        //topLabel.setText(htmlStart + styleStr + initStr);
         namePanel.add(nameLabel);
         namePanel.add(nameField);
-        //topPanel.add(topLabel);
         topPanel.add(namePanel, BorderLayout.CENTER);
         outerPanel.add(topPanel, BorderLayout.NORTH);
         outerPanel.add(botPanel, BorderLayout.SOUTH);
         outerPanel.add(midPanel, BorderLayout.CENTER);
 
-        ArrayList<JTextField> fields = new ArrayList<>();
-        size = new Dimension(90, 30);
-        String[] labels = {"Lat0", "Lon0", "Lat1", "Lon1"};
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(4, 4, 4, 4);
+        gbc.anchor = GridBagConstraints.WEST;
 
-        for (int i = 0; i < 4; i++) {
-            midPanel.add(new JLabel(labels[i]));
-            JTextField textField = new JTextField();
-            textField.setPreferredSize(size);
-            fields.add(textField);
-            midPanel.add(textField);
-        }
+        ArrayList<JTextField> fields = new ArrayList<>();
+
+        // Row 1 - Lower Right
+        gbc.gridy = 0;
+
+        gbc.gridx = 0;
+        midPanel.add(new JLabel("Lower Right Latitude:"), gbc);
+
+        gbc.gridx = 1;
+        JTextField lrLatFld = new JTextField(10);
+        fields.add(lrLatFld);
+        midPanel.add(lrLatFld, gbc);
+
+        gbc.gridx = 2;
+        midPanel.add(new JLabel("Lower Right Longitude:"), gbc);
+
+        gbc.gridx = 3;
+        JTextField lrLonFld = new JTextField(10);
+        fields.add(lrLonFld);
+        midPanel.add(lrLonFld, gbc);
+
+        // Row 2 - Upper Left
+        gbc.gridy = 1;
+
+        gbc.gridx = 0;
+        midPanel.add(new JLabel("Upper Left Latitude:"), gbc);
+
+        gbc.gridx = 1;
+        JTextField ulLatFld = new JTextField(10);
+        fields.add(ulLatFld);
+        midPanel.add(ulLatFld, gbc);
+
+        gbc.gridx = 2;
+        midPanel.add(new JLabel("Upper Left Longitude:"), gbc);
+
+        gbc.gridx = 3;
+        JTextField ulLonFld = new JTextField(10);
+        fields.add(ulLonFld);
+        midPanel.add(ulLonFld, gbc);
 
         // Two options for UI, Cancel or Submit
         JButton cancel = new JButton("Cancel");
