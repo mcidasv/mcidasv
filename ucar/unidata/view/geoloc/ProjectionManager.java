@@ -128,7 +128,7 @@ public class ProjectionManager implements ActionListener {
     public static List getDefaultProjections() {
         if (defaultProjections.size() == 0) {
             defaultProjections.add("ucar.unidata.geoloc.projection.AlbersEqualArea");
-            defaultProjections.add("ucar.unidata.view.geoloc.EditableLatLon"); // Manually placed under 'A'
+            defaultProjections.add("ucar.unidata.view.geoloc.EditableLatLon");
             defaultProjections.add("ucar.unidata.geoloc.projection.LambertAzimuthalEqualArea");
             defaultProjections.add("ucar.unidata.geoloc.projection.LambertConformal");
             defaultProjections.add("ucar.unidata.geoloc.projection.LatLonProjection");
@@ -724,7 +724,8 @@ public class ProjectionManager implements ActionListener {
     }
 
     private boolean isPreviewSupported(ProjectionImpl proj) {
-        return !(proj instanceof LatLonProjection);
+        return !(proj instanceof LatLonProjection)
+               || (proj instanceof EditableLatLon);
     }
 
     /**
@@ -811,6 +812,7 @@ public class ProjectionManager implements ActionListener {
             super(parent, true, "Define/Edit Projection");
             makeUI();
             setLocation(100, 100);
+            setSize(650, 350);
             setSize(800, 400);
         }
 
@@ -824,6 +826,7 @@ public class ProjectionManager implements ActionListener {
             super(parent, true, "Define/Edit Projection");
             makeUI();
             setLocation(100, 100);
+            setSize(650, 350);
             setSize(800, 400);
         }
 
@@ -965,7 +968,7 @@ public class ProjectionManager implements ActionListener {
             mapSide.setBorder(mapBorder);
             mapSide.add(toolbar, BorderLayout.NORTH);
             mapSide.add(mapEditPanel, BorderLayout.CENTER);
-            // mainPanel.add(mapSide, BorderLayout.WEST);
+            mainPanel.add(mapSide, BorderLayout.WEST);
 
             // the projection parameters
 
@@ -1044,11 +1047,7 @@ public class ProjectionManager implements ActionListener {
 
                     setProjection(proj);
 
-                    boolean showPreview =
-                        !(proj instanceof LatLonProjection);
-
-                    previewButton.setVisible(showPreview);
-
+                    previewButton.setVisible(isPreviewSupported(proj));
                 }
             });
 
@@ -1089,13 +1088,10 @@ public class ProjectionManager implements ActionListener {
             }
 
             setProjectionClass(pc, proj);
-            previewButton.setVisible(!(proj instanceof LatLonProjection));
+            previewButton.setVisible(isPreviewSupported(proj));
             npEditControl.setProjectionImpl(proj);
 
             lastSelectedRegion = mapEditPanel.getSelectedRegion();
-
-            previewButton.setVisible(
-                !(proj instanceof LatLonProjection));
 
             startingName = new String(proj.getName());
         }
