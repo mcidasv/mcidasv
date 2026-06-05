@@ -188,6 +188,15 @@ public class DataBrowser extends HydraDisplay implements ActionListener, TreeSel
         frame = Hydra.createAndShowFrame(title, guiPanel, menuBar, new Dimension(568, 360));
         frame.addWindowListener(this);
         frameLoc = frame.getLocation();
+        frame.setVisible(true);
+
+        if (frame.getState() == Frame.ICONIFIED) {
+            frame.setState(Frame.NORMAL);
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            frame.toFront();
+        });
     }
 
     public JComponent buildGUI() {

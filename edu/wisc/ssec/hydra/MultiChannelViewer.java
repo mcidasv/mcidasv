@@ -434,7 +434,7 @@ public class MultiChannelViewer extends HydraDisplay {
         );
 
         Point pt = getFrame().getLocation();
-        frame.setLocation(pt.x, pt.y - 60);
+        frame.setLocation(pt.x, pt.y + 60);
     }
 
     public void doHyperToBroadBand() {
@@ -544,7 +544,7 @@ public class MultiChannelViewer extends HydraDisplay {
         );
 
         Point pt = getFrame().getLocation();
-        frame.setLocation(pt.x, pt.y - 60);
+        frame.setLocation(pt.x, pt.y + 60);
     }
 
 

@@ -30,6 +30,7 @@ package edu.wisc.ssec.hydra;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.JTextArea;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -76,7 +77,7 @@ public class RGBComposite extends Compute {
         gui.add(makeActionComponent());
         SelectionAdapter.addSelectionListenerToAll(this);
 
-        Dimension windowSize = new Dimension(475, 85);
+        Dimension windowSize = new Dimension(500, 120);
         JFrame frame = Hydra.createAndShowFrame(title, gui, windowSize);
         frame.setLocation(x, y);
         final Compute compute = this;
@@ -88,6 +89,13 @@ public class RGBComposite extends Compute {
     }
 
     public JComponent buildGUI() {
+        JTextArea textPanel = new JTextArea(
+        "  Select items in the HYDRA Control Window for the Red, Green, and Blue components");
+        textPanel.setEditable(false);
+        textPanel.setCursor(null);
+        textPanel.setOpaque(false);
+        textPanel.setFocusable(false);
+
         LineBorder blackBorder = new LineBorder(Color.black);
         LineBorder redBorder = new LineBorder(Color.red);
         LineBorder greenBorder = new LineBorder(Color.green);
@@ -99,12 +107,16 @@ public class RGBComposite extends Compute {
         borders = new LineBorder[]{redBorder, greenBorder, blueBorder};
         borders3 = new LineBorder[]{redBorder3, greenBorder3, blueBorder3};
 
-        JPanel panel = new JPanel(new FlowLayout());
-//        JPanel panel = new JPanel();
-//        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
+        panel.add(textPanel);
 
-        final String[] compNames = {"                      ", "                      ", "                      "};
+        JPanel labelPanel = new JPanel(new FlowLayout());
+
+        final String[] compNames = {"                                       ",
+                                    "                                       ",
+                                    "                                       "};
         colorComponents = new JLabel[compNames.length];
 
         for (int k = 0; k < colorComponents.length; k++) {
@@ -123,9 +135,10 @@ public class RGBComposite extends Compute {
                                        }
                                    }
             );
-            panel.add(label);
+            labelPanel.add(label);
         }
         colorComponents[activeIndex].setBorder(borders3[activeIndex]);
+        panel.add(labelPanel);
 
         return panel;
     }
