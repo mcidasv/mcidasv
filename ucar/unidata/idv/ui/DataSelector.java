@@ -585,6 +585,36 @@ public class DataSelector extends DataSourceHolder {
         /** Is search field shown */
         private boolean showingSearchFld = false;
 
+        /** Used for Display search */
+        public void displaySearchBtnPressed() {
+            CardLayout cardLayout =
+                (CardLayout) displaySearchFldPanel.getLayout();
+            if (!showingDisplaySearchFld) {
+                cardLayout.show(displaySearchFldPanel, "field");
+                displaySearchFld.requestFocus();
+                displaySearchBtn.setIcon(cancelIcon);
+            } else {
+                displaySearchBtn.setIcon(searchIcon);
+                cardLayout.show(displaySearchFldPanel, "empty");
+            }
+            showingDisplaySearchFld = !showingDisplaySearchFld;
+        }
+
+        /** holds display search field */
+        private JPanel displaySearchFldPanel;
+
+        /** display search field */
+        private JTextField displaySearchFld;
+
+        /** display search button */
+        private JButton displaySearchBtn;
+
+        /** Is display search field shown */
+        private boolean showingDisplaySearchFld = false;
+
+        private List<TreePath> displaySearchMatches = new ArrayList<>();
+        private int displaySearchIndex = -1;
+        private String lastDisplaySearch = "";
 
         /** The data source */
         DataSource dataSource;
@@ -749,9 +779,43 @@ public class DataSelector extends DataSourceHolder {
                 contents = GuiUtils.hsplit(left, right, 0.5);
                 //            contents = GuiUtils.hsplit(GuiUtils.inset(left,5), GuiUtils.inset(right,5), 0.5);
             } else {
-                right = GuiUtils.topCenter(makeLabel("Displays    "),
-                                           GuiUtils.inset(dcd.getContents(),
-                                               4));
+                displaySearchFldPanel = new JPanel(new CardLayout());
+                displaySearchFld = new JTextField("", 7);
+                displaySearchFld.setToolTipText(
+                    "<html>" + Msg.msg("Enter a search term") + "<br>"
+                    + Msg.msg("Press return to repeat search") + "<br>"
+                    + Msg.msg("Escape to close") + "</html>");
+
+                displaySearchFld.addKeyListener(new KeyAdapter() {
+                    public void keyReleased(KeyEvent e) {
+
+                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                            displaySearchBtnPressed();
+                        } else {
+                            doDisplaySearch();
+                        }
+                    }
+                });
+                displaySearchBtn =
+                    GuiUtils.makeImageButton("/auxdata/ui/icons/Search16.gif",
+                                             this, "displaySearchBtnPressed");
+
+                displaySearchBtn.setToolTipText("Search for a display type by name");
+                displaySearchBtn.setFocusPainted(false);
+                GuiUtils.makeMouseOverBorder(displaySearchBtn);
+
+                JPanel displaySearchPanel =
+                    GuiUtils.centerRight(displaySearchFldPanel, displaySearchBtn);
+
+                // show field area (mirrors Fields search)
+                displaySearchFldPanel.add("empty", new JLabel(" "));
+                displaySearchFldPanel.add("field", displaySearchFld);
+
+                right = GuiUtils.topCenter(
+                            GuiUtils.leftRight(makeLabel("Displays"),
+                                               displaySearchPanel),
+                            GuiUtils.inset(dcd.getContents(), 4));
+
                 contents = GuiUtils.hsplit(left, right, 0.5);
             }
             if ( !dataSelector.horizontalOrientation) {
@@ -999,6 +1063,81 @@ public class DataSelector extends DataSourceHolder {
             return result;
         }
 
+        private void doDisplaySearch() {
+
+            String text = displaySearchFld.getText().trim().toLowerCase();
+
+            if (text.length() == 0) {
+                displaySearchMatches.clear();
+                displaySearchIndex = -1;
+                lastDisplaySearch = "";
+                displaySearchFld.setBackground(Color.white);
+                return;
+            }
+
+            JTree tree = dcd.controlTree;
+
+            //
+            // Rebuild match list if search text changed
+            //
+            if (!text.equals(lastDisplaySearch)) {
+
+                displaySearchMatches.clear();
+                displaySearchIndex = -1;
+                lastDisplaySearch = text;
+
+                DefaultMutableTreeNode root =
+                    (DefaultMutableTreeNode) tree.getModel().getRoot();
+
+                Enumeration nodes = root.depthFirstEnumeration();
+
+                while (nodes.hasMoreElements()) {
+
+                    DefaultMutableTreeNode node =
+                        (DefaultMutableTreeNode) nodes.nextElement();
+
+                    Object obj = node.getUserObject();
+
+                    if (obj == null) {
+                        continue;
+                    }
+
+                    String label = obj.toString().toLowerCase();
+
+                    if (label.contains(text)) {
+                        displaySearchMatches.add(
+                            new TreePath(node.getPath()));
+                    }
+                }
+            }
+
+            //
+            // No matches found
+            //
+            if (displaySearchMatches.isEmpty()) {
+                displaySearchFld.setBackground(COLOR_BADSEARCH);
+                Toolkit.getDefaultToolkit().beep();
+                return;
+            }
+
+            //
+            // Advance to next match
+            //
+            displaySearchIndex++;
+
+            if (displaySearchIndex >= displaySearchMatches.size()) {
+                displaySearchIndex = 0;
+            }
+
+            TreePath path =
+                (TreePath) displaySearchMatches.get(displaySearchIndex);
+
+            tree.expandPath(path);
+            tree.setSelectionPath(path);
+            tree.scrollPathToVisible(path);
+
+            displaySearchFld.setBackground(Color.white);
+        }
     }
 
 
