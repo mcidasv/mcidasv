@@ -288,6 +288,9 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
     /** _more_ */
     public static Cursor paintCursor;
 
+    /** Readout padding for editor */
+    private static final int EDGE_PADDING = 20;
+
 
     /**
      * Create me
@@ -587,7 +590,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
                     GuiUtils.hbox(
                         setColorFromChooserCbx,
                         GuiUtils.wrap(
-				      colorSwatch)), GuiUtils.label("Color Space:",colorSpaceCbx)), colorChooser);
+				      colorSwatch)), GuiUtils.label("Color Space:   ",colorSpaceCbx)), colorChooser);
 
 
         JPanel contents = GuiUtils.inset(
@@ -2817,7 +2820,15 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
             double fraction = 1 - (tmpAlpha / 255.0d);
             int intPercent = (int) (fraction * 100 + 0.5);
             value = value + ", Transp= " + intPercent + "%";
-            g.drawString(value, lineX, lineHeight + MARGIN_V + box.height);
+            int textWidth = fm.stringWidth(value);
+            int textX = lineX - textWidth / 2;
+            int leftLimit  = MARGIN_H + EDGE_PADDING;
+            int rightLimit = bounds.width - MARGIN_H - EDGE_PADDING - textWidth;
+
+            textX = Math.max(leftLimit, textX);
+            textX = Math.min(rightLimit, textX);
+
+            g.drawString(value, textX, lineHeight + MARGIN_V + box.height);
         }
 
     }
