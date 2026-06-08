@@ -3042,6 +3042,14 @@ public class MapViewManager extends NavigatedViewManager {
                     return;
                 }
 
+                if ((fLatUL == fLatLR) || (fLonUL == fLonLR)) {
+                    JOptionPane.showMessageDialog(null,
+                            "Latitude and Longitude corner point values must be unique",
+                            "Invalid Viewpoint",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 double[] pt1 = new double[2];
                 double[] pt2 = new double[2];
                 for (int i = 0; i < 2; i++) {
