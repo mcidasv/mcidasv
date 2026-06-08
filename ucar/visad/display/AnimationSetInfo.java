@@ -106,6 +106,9 @@ public class AnimationSetInfo {
     /** How often do we poll */
     private double pollMinutes = 5.0;
 
+    /** Disable data refresh */
+    private boolean disableDataRefresh = false;
+
     /** Minutes to round to */
     private double roundTo = 1.0;
 
@@ -139,6 +142,7 @@ public class AnimationSetInfo {
         this.endFixedTime       = that.endFixedTime;
         this.baseTimes          = that.baseTimes;
         this.isTimeDriver       = that.isTimeDriver;
+        this.disableDataRefresh = that.disableDataRefresh;
     }
 
 
@@ -396,7 +400,23 @@ public class AnimationSetInfo {
     }
 
 
+    /**
+     * Set whether data refresh is disabled.
+     *
+     * @param value true to disable refresh
+     */
+    public void setDisableDataRefresh(boolean value) {
+        disableDataRefresh = value;
+    }
 
+    /**
+     * Get whether data refresh is disabled.
+     *
+     * @return true if refresh is disabled
+     */
+    public boolean getDisableDataRefresh() {
+        return disableDataRefresh;
+    }
 
 
     /**

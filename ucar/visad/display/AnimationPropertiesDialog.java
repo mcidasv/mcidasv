@@ -631,6 +631,8 @@ public class AnimationPropertiesDialog extends JDialog implements ActionListener
         // McIDAS Inquiry #3137-3141
         comps.add(addTo(GuiUtils.rLabel("Disable data refresh:"), pollList));
         rfrCBox = new JCheckBox();
+        rfrCBox.setSelected(
+            animationWidget.getAnimationSetInfo().getDisableDataRefresh());
         rfrCBox.setToolTipText("When checked, the display will not update through time");
         comps.add(GuiUtils.left(addTo(rfrCBox, pollList)));
 
@@ -916,6 +918,7 @@ public class AnimationPropertiesDialog extends JDialog implements ActionListener
             aniSet.setRoundTo(roundToField.getTime());
             aniSet.setStartMode(startMode);
             aniSet.setEndMode(endMode);
+            aniSet.setDisableDataRefresh(rfrCBox.isSelected());
         } catch (NumberFormatException nfe) {
             LogUtil.userErrorMessage("Bad value:" + intervalText);
             return false;
