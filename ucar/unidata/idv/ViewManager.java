@@ -1473,8 +1473,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         // McIDAS Inquiry #2850-3141 
         globeBGImage = new JButton("Use Background Image");
-        // funny fix for request 2
-        if (getDisplayInfos().size() > 0) colorPanel.add(globeBGImage);
+        // Background images are only supported for map/globe displays.
+        // Do not show this option for layer-specific or non-map view managers.
+        if (this instanceof MapViewManager) {
+            colorPanel.add(globeBGImage);
+        }
         globeBGImage.addActionListener(ae -> getIdv().doMakeBackgroundImage());
         colorPanel.setBorder(BorderFactory.createTitledBorder("Colors & Background Images"));
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false,
