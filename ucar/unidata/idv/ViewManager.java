@@ -1478,7 +1478,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (this instanceof MapViewManager) {
             colorPanel.add(globeBGImage);
         }
-        globeBGImage.addActionListener(ae -> getIdv().doMakeBackgroundImage());
+        // Add background image to the panel associated with the Properties window.
+        // The image can only be added to the active panel.  This ensures that the
+        // correct panel is active prior to the background map being added.
+        globeBGImage.addActionListener(ae -> {
+            getIdv().getVMManager().setLastActiveViewManager(ViewManager.this);
+            getIdv().doMakeBackgroundImage();
+        });
         colorPanel.setBorder(BorderFactory.createTitledBorder("Colors & Background Images"));
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false,
                                         false);
