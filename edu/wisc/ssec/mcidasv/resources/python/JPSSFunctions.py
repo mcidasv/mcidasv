@@ -372,9 +372,9 @@ def VIIRSSnowmeltRGB(M10, M8, M5):
 # VIIRS SDR Sea Spray RGB
 def VIIRSSeaSprayRGB(I1, I2, I4, I5):
     # https://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Sea_Spray_RGB_Quick_Guide_v2.pdf
-    # red = I4 (3.74um) - I5 (11.45); 0C to 10C rescaled to 0 to 255; gamma 1.0
-    # grn = I2 (0.865um);             1% to 20% reflectance rescaled to 0 to 255; gamma 0.6
-    # blu = I1 (0.64um);              2% to 25% reflectance rescaled to 0 to 255; gamma 0.6
+    # red = I4 (3.74um) - I5 (11.45um); 0C to 10C rescaled to 0 to 255; gamma 1.0
+    # grn = I2 (0.865um);               1% to 20% reflectance rescaled to 0 to 255; gamma 0.6
+    # blu = I1 (0.64um);                2% to 25% reflectance rescaled to 0 to 255; gamma 0.6
 
     inI1 = I1
     I1 = unpackage(I1)
@@ -450,9 +450,9 @@ def VIIRSDaySnowFogMRGB(M7, M10, M12, M15):
 # VIIRS SDR Day Snow-Fog I-Band RGB
 def VIIRSDaySnowFogIRGB(I2, I3, I4, I5):
     # https://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DaySnowFogRGB_final_v2.pdf
-    # red = I2 (0.865um);         0 - 100 reflectance rescaled to 0 to 255; gamma 1.7
-    # grn = I3 (1.61um);          0 - 70 reflectance rescaled to 0 to 255; gamma 1.7
-    # blu = I4-I5 (3.74um-11.45); 0C - 30C rescaled to 0 to 255; gamma 1.7
+    # red = I2 (0.865um);           0 - 100 reflectance rescaled to 0 to 255; gamma 1.7
+    # grn = I3 (1.61um);            0 - 70 reflectance rescaled to 0 to 255; gamma 1.7
+    # blu = I4-I5 (3.74um-11.45um); 0C - 30C rescaled to 0 to 255; gamma 1.7
     
     inI2 = I2
     I2 = unpackage(I2)
@@ -1158,23 +1158,18 @@ def VIIRSEDRTrueColorRGBRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SA
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM5 = M5
-    M5 = unpackage(M5)
-    inM4 = M4
-    M4 = unpackage(M4)
-    inM3 = M3
-    M3 = unpackage(M3)
-    inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
-    inSAT_ZA = SAT_ZA
     SAT_ZA = unpackage(SAT_ZA)
-    inSOL_AA = SOL_AA
     SOL_AA = unpackage(SOL_AA)
-    inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M5 = RGBCompositeControl.correctRayleighVisible(M5, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
-    M4 = RGBCompositeControl.correctRayleighVisible(M4, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
-    M3 = RGBCompositeControl.correctRayleighVisible(M3, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+    # Extract the single FlatField sample
+    m5 = RGBCompositeControl.correctRayleighVisible(M5.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
+    m4 = RGBCompositeControl.correctRayleighVisible(M4.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
+    m3 = RGBCompositeControl.correctRayleighVisible(M3.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+    # Put corrected samples back into the original time container
+    M5.setSample(0, m5)
+    M4.setSample(0, m4)
+    M3.setSample(0, m3)
     red = rescale(M5, 0, 1, 0, 255)
     grn = rescale(M4, 0, 1, 0, 255)
     blu = rescale(M3, 0, 1, 0, 255)
@@ -1624,9 +1619,9 @@ def VIIRSEdrSeaSprayRGBRayleighCorrected(I1, I2, I4, I5, SOL_ZA, SAT_ZA, SOL_AA,
 # VIIRS SDR Sea Spray RGB Rayleigh Corrected
 def VIIRSSdrSeaSprayRGBRayleighCorrected(I1, I2, I4, I5, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # https://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Sea_Spray_RGB_Quick_Guide_v2.pdf
-    # red = I4 (3.74um) - I5 (11.45); 0C to 10C rescaled to 0 to 255; gamma 1.0
-    # grn = I2 (0.865um);             1 to 20 reflectance rescaled to 0 to 255; gamma 0.6
-    # blu = I1 (0.64um);              2 to 25 reflectance rescaled to 0 to 255; gamma 0.6
+    # red = I4 (3.74um) - I5 (11.45um); 0C to 10C rescaled to 0 to 255; gamma 1.0
+    # grn = I2 (0.865um);               1 to 20 reflectance rescaled to 0 to 255; gamma 0.6
+    # blu = I1 (0.64um);                2 to 25 reflectance rescaled to 0 to 255; gamma 0.6
     # SOL_ZA = Solar Zenith Angle
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
@@ -1863,9 +1858,9 @@ def VIIRSEdrDaySnowFogIRGBRayleighCorrected(I2, I3, I4, I5, SOL_ZA, SAT_ZA, SOL_
 # VIIRS SDR Day Snow-Fog I-Band RGB Rayleigh Corrected
 def VIIRSEdrDaySnowFogIRGBRayleighCorrected(I2, I3, I4, I5, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # https://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DaySnowFogRGB_final_v2.pdf
-    # red = I2 (0.865um);         0 to 100 reflectance rescaled to 0 to 255; gamma 1.7
-    # grn = I3 (1.61um);          0 to 70 reflectance rescaled to 0 to 255; gamma 1.7
-    # blu = I4-I5 (3.74um-11.45); 0C to 30C rescaled to 0 to 255; gamma 1.7
+    # red = I2 (0.865um);           0 to 100 reflectance rescaled to 0 to 255; gamma 1.7
+    # grn = I3 (1.61um);            0 to 70 reflectance rescaled to 0 to 255; gamma 1.7
+    # blu = I4-I5 (3.74um-11.45um); 0C to 30C rescaled to 0 to 255; gamma 1.7
     # SOL_ZA = Solar Zenith Angle
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
@@ -1902,10 +1897,6 @@ def VIIRSEdrNDVIRayleighCorrected(I1, I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI2 = I2
-    I2 = unpackage(I2)
-    inI1 = I1
-    I1 = unpackage(I1)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -1914,8 +1905,12 @@ def VIIRSEdrNDVIRayleighCorrected(I1, I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    I1 = RGBCompositeControl.correctRayleighVisible(I1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Extract the single FlatField sample
+    i1 = RGBCompositeControl.correctRayleighVisible(I1.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    i2 = RGBCompositeControl.correctRayleighVisible(I2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Put corrected samples back into the original time container
+    I1.setSample(0, i1)
+    I2.setSample(0, i2)
     return (I2-I1)/(I1+I2)
 
 # VIIRS SDR NDVI Rayleigh Corrected
@@ -1926,24 +1921,32 @@ def VIIRSSdrNDVIRayleighCorrected(I1, I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI1 = I1
-    I1 = unpackage(I1)
-    inI2 = I2
-    I2 = unpackage(I2)
-    inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
-    inSAT_ZA = SAT_ZA
     SAT_ZA = unpackage(SAT_ZA)
-    inSOL_AA = SOL_AA
     SOL_AA = unpackage(SOL_AA)
-    inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd375 = makeGrid(I1, 375)
-    I1 = RGBCompositeControl.correctRayleighVisible(I1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
-    I1 = MultiSpectralDataSource.swathToGrid(grd375, I1, 1.0)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
-    I2 = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
-    return (I2-I1)/(I1+I2)
+    
+    timeSet = I1.getDomainSet()
+    
+    # ---- swath ----
+    i1 = RGBCompositeControl.correctRayleighVisible(I1.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    i2 = RGBCompositeControl.correctRayleighVisible(I2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    
+    grd375 = makeGrid(i1, 375)
+    
+    I1 = MultiSpectralDataSource.swathToGrid(grd375, i1, 1.0)
+    I2 = MultiSpectralDataSource.swathToGrid(grd375, i2, 1.0)
+    
+    # ---- NDVI ----
+    ndvi = (I2-I1)/(I1+I2)
+    
+    # ---- RESTORE TIME ----
+    ftype = FunctionType(RealType.Time, ndvi.getType())
+
+    out = FieldImpl(ftype, timeSet)
+    out.setSample(0, ndvi)
+
+    return out
 
 # VIIRS EDR NDSI Rayleigh Corrected
 def VIIRSEdrNDSIRayleighCorrected(I1, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -1968,29 +1971,38 @@ def VIIRSEdrNDSIRayleighCorrected(I1, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
 
 # VIIRS SDR NDSI Rayleigh Corrected
 def VIIRSSdrNDSIRayleighCorrected(I1, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
-    # I1 = 0.64um;  visible Reflectance
-    # I2 = 0.865um; near IR Reflectance
+    # I1 = 0.64um; visible Reflectance
+    # I3 = 1.61um; shortwave IR Reflectance
     # SOL_ZA = Solar Zenith Angle
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI1 = I1
-    I1 = unpackage(I1)
-    inI3 = I3
-    I3 = unpackage(I3)
-    inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
-    inSAT_ZA = SAT_ZA
     SAT_ZA = unpackage(SAT_ZA)
-    inSOL_AA = SOL_AA
     SOL_AA = unpackage(SOL_AA)
-    inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd375 = makeGrid(I1, 375)
-    I1 = RGBCompositeControl.correctRayleighVisible(I1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
-    I1 = MultiSpectralDataSource.swathToGrid(grd375, I1, 1.0)
-    I3 = MultiSpectralDataSource.swathToGrid(grd375, I3, 1.0)
-    return (I1-I3)/(I1+I3)
+    
+    timeSet = I1.getDomainSet()
+    
+    # ---- swath ----
+    i1 = RGBCompositeControl.correctRayleighVisible(I1.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    i3 = I3.getSample(0)
+    
+    grd375 = makeGrid(i1, 375)
+    
+    i1 = MultiSpectralDataSource.swathToGrid(grd375, i1, 1.0)
+    i3 = MultiSpectralDataSource.swathToGrid(grd375, i3, 1.0)
+    
+    # ---- NDSI ----
+    ndsi = (i1-i3)/(i1+i3)
+    
+    # ---- RESTORE TIME ----
+    ftype = FunctionType(RealType.Time, ndsi.getType())
+
+    out = FieldImpl(ftype, timeSet)
+    out.setSample(0, ndsi)
+
+    return out
 
 # VIIRS EDR Burn Area Index Rayleigh Corrected
 def VIIRSEdrBAIRayleighCorrected(I1, I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2000,10 +2012,6 @@ def VIIRSEdrBAIRayleighCorrected(I1, I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI2 = I2
-    I2 = unpackage(I2)
-    inI1 = I1
-    I1 = unpackage(I1)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2012,8 +2020,12 @@ def VIIRSEdrBAIRayleighCorrected(I1, I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    I1 = RGBCompositeControl.correctRayleighVisible(I1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Extract the single FlatField sample
+    i1 = RGBCompositeControl.correctRayleighVisible(I1.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    i2 = RGBCompositeControl.correctRayleighVisible(I2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Put corrected samples back into the original time container
+    I1.setSample(0, i1)
+    I2.setSample(0, i2)
     return 1/((0.1 - I2)**2 + (0.06 - I1)**2)
 
 # VIIRS SDR Burn Area Index Rayleigh Corrected
@@ -2024,24 +2036,32 @@ def VIIRSSdrBAIRayleighCorrected(I1, I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI1 = I1
-    I1 = unpackage(I1)
-    inI2 = I2
-    I2 = unpackage(I2)
-    inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
-    inSAT_ZA = SAT_ZA
     SAT_ZA = unpackage(SAT_ZA)
-    inSOL_AA = SOL_AA
     SOL_AA = unpackage(SOL_AA)
-    inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd375 = makeGrid(I1, 375)
-    I1 = RGBCompositeControl.correctRayleighVisible(I1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
-    I1 = MultiSpectralDataSource.swathToGrid(grd375, I1, 1.0)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
-    I2 = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
-    return 1/((0.1 - I2)**2 + (0.06 - I1)**2)
+    
+    timeSet = I1.getDomainSet()
+    
+    # ---- swath ----
+    i1 = RGBCompositeControl.correctRayleighVisible(I1.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    i2 = RGBCompositeControl.correctRayleighVisible(I2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    
+    grd375 = makeGrid(i1, 375)
+    
+    I1 = MultiSpectralDataSource.swathToGrid(grd375, i1, 1.0)
+    I2 = MultiSpectralDataSource.swathToGrid(grd375, i2, 1.0)
+    
+    # ---- BAI ----
+    bai = 1/((0.1 - I2)**2 + (0.06 - I1)**2)
+    
+    # ---- RESTORE TIME ----
+    ftype = FunctionType(RealType.Time, bai.getType())
+
+    out = FieldImpl(ftype, timeSet)
+    out.setSample(0, bai)
+
+    return out
 
 # VIIRS EDR Normalized Burn Ratio Rayleigh Corrected
 def VIIRSEdrNBRRayleighCorrected(I2, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2066,29 +2086,38 @@ def VIIRSEdrNBRRayleighCorrected(I2, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
 
 # VIIRS SDR Normalized Burn Ratio Rayleigh Corrected
 def VIIRSSdrNBRRayleighCorrected(I2, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
-    # I1 = 0.64um;  visible Reflectance
     # I2 = 0.865um; near IR Reflectance
+    # I3 = 1.61um; shortwave IR Reflectance
     # SOL_ZA = Solar Zenith Angle
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI2 = I2
-    I2 = unpackage(I2)
-    inI3 = I3
-    I3 = unpackage(I3)
-    inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
-    inSAT_ZA = SAT_ZA
     SAT_ZA = unpackage(SAT_ZA)
-    inSOL_AA = SOL_AA
     SOL_AA = unpackage(SOL_AA)
-    inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd375 = makeGrid(I2, 375)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
-    I2 = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
-    I3 = MultiSpectralDataSource.swathToGrid(grd375, I3, 1.0)
-    return (I2-I3) / (I2+I3)
+    
+    timeSet = I2.getDomainSet()
+    
+    # ---- swath ----
+    i2 = RGBCompositeControl.correctRayleighVisible(I2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    i3 = I3.getSample(0)
+    
+    grd375 = makeGrid(i2, 375)
+    
+    i2 = MultiSpectralDataSource.swathToGrid(grd375, i2, 1.0)
+    i3 = MultiSpectralDataSource.swathToGrid(grd375, i3, 1.0)
+    
+    # ---- NBR ----
+    nbr = (i2-i3) / (i2+i3)
+    
+    # ---- RESTORE TIME ----
+    ftype = FunctionType(RealType.Time, nbr.getType())
+
+    out = FieldImpl(ftype, timeSet)
+    out.setSample(0, nbr)
+
+    return out
 
 # VIIRS EDR VARI Rayleigh Corrected
 def VIIRSEdrVARIRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2101,12 +2130,6 @@ def VIIRSEdrVARIRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM5 = M5
-    M5 = unpackage(M5)
-    inM4 = M4
-    M4 = unpackage(M4)
-    inM3 = M3
-    M3 = unpackage(M3)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2115,9 +2138,14 @@ def VIIRSEdrVARIRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M5 = RGBCompositeControl.correctRayleighVisible(M5, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
-    M4 = RGBCompositeControl.correctRayleighVisible(M4, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
-    M3 = RGBCompositeControl.correctRayleighVisible(M3, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+    # Extract the single FlatField sample
+    m5 = RGBCompositeControl.correctRayleighVisible(M5.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
+    m4 = RGBCompositeControl.correctRayleighVisible(M4.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
+    m3 = RGBCompositeControl.correctRayleighVisible(M3.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+    # Put corrected samples back into the original time container
+    M5.setSample(0, m5)
+    M4.setSample(0, m4)
+    M3.setSample(0, m3)
     return (M4 - M5) / (M4 + M5 - M3)
 
 # VIIRS SDR VARI Rayleigh Corrected
@@ -2131,28 +2159,34 @@ def VIIRSSdrVARIRayleighCorrected(M5, M4, M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM5 = M5
-    M5 = unpackage(M5)
-    inM4 = M4
-    M4 = unpackage(M4)
-    inM3 = M3
-    M3 = unpackage(M3)
-    inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
-    inSAT_ZA = SAT_ZA
     SAT_ZA = unpackage(SAT_ZA)
-    inSOL_AA = SOL_AA
     SOL_AA = unpackage(SOL_AA)
-    inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M5, 750)
-    M5 = RGBCompositeControl.correctRayleighVisible(M5, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
-    M5 = MultiSpectralDataSource.swathToGrid(grd750, M5, 1.0)
-    M4 = RGBCompositeControl.correctRayleighVisible(M4, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
-    M4 = MultiSpectralDataSource.swathToGrid(grd750, M4, 1.0)
-    M3 = RGBCompositeControl.correctRayleighVisible(M3, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
-    M3 = MultiSpectralDataSource.swathToGrid(grd750, M3, 1.0)
-    return (M4 - M5) / (M4 + M5 - M3)
+
+    timeSet = M5.getDomainSet()
+
+    # ---- swath ----
+    m5 = RGBCompositeControl.correctRayleighVisible(M5.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
+    m4 = RGBCompositeControl.correctRayleighVisible(M4.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
+    m3 = RGBCompositeControl.correctRayleighVisible(M3.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+
+    grd = makeGrid(m5, 750)
+
+    m5 = MultiSpectralDataSource.swathToGrid(grd, m5, 1.0)
+    m4 = MultiSpectralDataSource.swathToGrid(grd, m4, 1.0)
+    m3 = MultiSpectralDataSource.swathToGrid(grd, m3, 1.0)
+
+    # ---- VARI ----
+    vari = (m4 - m5) / (m4 + m5 - m3)
+
+    # ---- RESTORE TIME ----
+    ftype = FunctionType(RealType.Time, vari.getType())
+
+    out = FieldImpl(ftype, timeSet)
+    out.setSample(0, vari)
+
+    return out
 
 # VIIRS EDR Normalized Difference Built-up Index Rayleigh Corrected
 def VIIRSEdrNDBIRayleighCorrected(I2, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2183,23 +2217,32 @@ def VIIRSSdrNDBIRayleighCorrected(I2, I3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI2 = I2
-    I2 = unpackage(I2)
-    inI3 = I3
-    I3 = unpackage(I3)
-    inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
-    inSAT_ZA = SAT_ZA
     SAT_ZA = unpackage(SAT_ZA)
-    inSOL_AA = SOL_AA
     SOL_AA = unpackage(SOL_AA)
-    inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd375 = makeGrid(I2, 375)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
-    I2 = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
-    I3 = MultiSpectralDataSource.swathToGrid(grd375, I3, 1.0)
-    return (I3-I2) / (I3+I2)
+    
+    timeSet = I2.getDomainSet()
+    
+    # ---- swath ----
+    i2 = RGBCompositeControl.correctRayleighVisible(I2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    i3 = I3.getSample(0)
+    
+    grd375 = makeGrid(i2, 375)
+    
+    i2 = MultiSpectralDataSource.swathToGrid(grd375, i2, 1.0)
+    i3 = MultiSpectralDataSource.swathToGrid(grd375, i3, 1.0)
+    
+    # ---- NDBI ----
+    ndbi = (i3-i2) / (i3+i2)
+    
+    # ---- RESTORE TIME ----
+    ftype = FunctionType(RealType.Time, ndbi.getType())
+
+    out = FieldImpl(ftype, timeSet)
+    out.setSample(0, ndbi)
+
+    return out
 
 # VIIRS EDR M1 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectM1(M1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2208,8 +2251,6 @@ def VIIRSEDRCorrectM1(M1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM1 = M1
-    M1 = unpackage(M1)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2218,7 +2259,10 @@ def VIIRSEDRCorrectM1(M1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M1 = RGBCompositeControl.correctRayleighVisible(M1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.412, 1013.25)
+    # Extract the single FlatField sample
+    m1 = RGBCompositeControl.correctRayleighVisible(M1.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.412, 1013.25)
+    # Put corrected samples back into the original time container
+    M1.setSample(0, m1)
     return M1
 
 # VIIRS SDR M1 Reflectance Rayleigh Corrected
@@ -2228,8 +2272,6 @@ def VIIRSSDRCorrectM1(M1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM1 = M1
-    M1 = unpackage(M1)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2238,10 +2280,17 @@ def VIIRSSDRCorrectM1(M1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M1, 750)
-    M1 = RGBCompositeControl.correctRayleighVisible(M1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.412, 1013.25)
-    M1 = MultiSpectralDataSource.swathToGrid(grd750, M1, 1.0)
-    return M1
+    # extract swath
+    m1 = M1.getSample(0)
+    m1 = RGBCompositeControl.correctRayleighVisible(m1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.412, 1013.25)
+    grd750 = makeGrid(m1, 750)
+    m1 = MultiSpectralDataSource.swathToGrid(grd750, m1, 1.0)
+    # rebuild time container properly
+    timeSet = M1.getDomainSet()
+    newType = FunctionType(RealType.Time, m1.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, m1)
+    return outField
 
 # VIIRS EDR M2 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectM2(M2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2250,8 +2299,6 @@ def VIIRSEDRCorrectM2(M2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM2 = M2
-    M2 = unpackage(M2)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2260,7 +2307,10 @@ def VIIRSEDRCorrectM2(M2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M2 = RGBCompositeControl.correctRayleighVisible(M2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.445, 1013.25)
+    # Extract the single FlatField sample
+    m2 = RGBCompositeControl.correctRayleighVisible(M2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.445, 1013.25)
+    # Put corrected samples back into the original time container
+    M2.setSample(0, m2)
     return M2
 
 # VIIRS SDR M2 Reflectance Rayleigh Corrected
@@ -2270,8 +2320,6 @@ def VIIRSSDRCorrectM2(M2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM2 = M2
-    M2 = unpackage(M2)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2280,10 +2328,17 @@ def VIIRSSDRCorrectM2(M2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M2, 750)
-    M2 = RGBCompositeControl.correctRayleighVisible(M2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.445, 1013.25)
-    M2 = MultiSpectralDataSource.swathToGrid(grd750, M2, 1.0)
-    return M2
+    # extract swath
+    m2 = M2.getSample(0)
+    m2 = RGBCompositeControl.correctRayleighVisible(m2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.445, 1013.25)
+    grd750 = makeGrid(m2, 750)
+    m2 = MultiSpectralDataSource.swathToGrid(grd750, m2, 1.0)
+    # rebuild time container properly
+    timeSet = M2.getDomainSet()
+    newType = FunctionType(RealType.Time, m2.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, m2)
+    return outField
 
 # VIIRS EDR M3 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectM3(M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2292,8 +2347,6 @@ def VIIRSEDRCorrectM3(M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM3 = M3
-    M3 = unpackage(M3)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2302,7 +2355,10 @@ def VIIRSEDRCorrectM3(M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M3 = RGBCompositeControl.correctRayleighVisible(M3, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+    # Extract the single FlatField sample
+    m3 = RGBCompositeControl.correctRayleighVisible(M3.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+    # Put corrected samples back into the original time container
+    M3.setSample(0, m3)
     return M3
 
 # VIIRS SDR M3 Reflectance Rayleigh Corrected
@@ -2312,8 +2368,6 @@ def VIIRSSDRCorrectM3(M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM3 = M3
-    M3 = unpackage(M3)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2322,10 +2376,17 @@ def VIIRSSDRCorrectM3(M3, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M3, 750)
-    M3 = RGBCompositeControl.correctRayleighVisible(M3, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
-    M3 = MultiSpectralDataSource.swathToGrid(grd750, M3, 1.0)
-    return M3
+    # extract swath
+    m3 = M3.getSample(0)
+    m3 = RGBCompositeControl.correctRayleighVisible(m3, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.488, 1013.25)
+    grd750 = makeGrid(m3, 750)
+    m3 = MultiSpectralDataSource.swathToGrid(grd750, m3, 1.0)
+    # rebuild time container properly
+    timeSet = M3.getDomainSet()
+    newType = FunctionType(RealType.Time, m3.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, m3)
+    return outField
 
 # VIIRS EDR M4 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectM4(M4, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2334,8 +2395,6 @@ def VIIRSEDRCorrectM4(M4, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM4 = M2
-    M4 = unpackage(M4)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2344,7 +2403,10 @@ def VIIRSEDRCorrectM4(M4, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M4 = RGBCompositeControl.correctRayleighVisible(M4, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
+    # Extract the single FlatField sample
+    m4 = RGBCompositeControl.correctRayleighVisible(M4.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
+    # Put corrected samples back into the original time container
+    M4.setSample(0, m4)
     return M4
 
 # VIIRS SDR M4 Reflectance Rayleigh Corrected
@@ -2354,8 +2416,6 @@ def VIIRSSDRCorrectM4(M4, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM4 = M4
-    M4 = unpackage(M4)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2364,10 +2424,17 @@ def VIIRSSDRCorrectM4(M4, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M4, 750)
-    M4 = RGBCompositeControl.correctRayleighVisible(M4, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
-    M4 = MultiSpectralDataSource.swathToGrid(grd750, M4, 1.0)
-    return M4
+    # extract swath
+    m4 = M4.getSample(0)
+    m4 = RGBCompositeControl.correctRayleighVisible(m4, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.555, 1013.25)
+    grd750 = makeGrid(m4, 750)
+    m4 = MultiSpectralDataSource.swathToGrid(grd750, m4, 1.0)
+    # rebuild time container properly
+    timeSet = M4.getDomainSet()
+    newType = FunctionType(RealType.Time, m4.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, m4)
+    return outField
 
 # VIIRS EDR M5 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectM5(M5, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2376,8 +2443,6 @@ def VIIRSEDRCorrectM5(M5, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM5 = M5
-    M5 = unpackage(M5)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2386,7 +2451,10 @@ def VIIRSEDRCorrectM5(M5, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M5 = RGBCompositeControl.correctRayleighVisible(M5, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
+    # Extract the single FlatField sample
+    m5 = RGBCompositeControl.correctRayleighVisible(M5.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
+    # Put corrected samples back into the original time container
+    M5.setSample(0, m5)
     return M5
 
 # VIIRS SDR M5 Reflectance Rayleigh Corrected
@@ -2396,8 +2464,6 @@ def VIIRSSDRCorrectM5(M5, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM5 = M5
-    M5 = unpackage(M5)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2406,10 +2472,17 @@ def VIIRSSDRCorrectM5(M5, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M5, 750)
-    M5 = RGBCompositeControl.correctRayleighVisible(M5, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
-    M5 = MultiSpectralDataSource.swathToGrid(grd750, M5, 1.0)
-    return M5
+    # extract swath
+    m5 = M5.getSample(0)
+    m5 = RGBCompositeControl.correctRayleighVisible(m5, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.672, 1013.25)
+    grd750 = makeGrid(m5, 750)
+    m5 = MultiSpectralDataSource.swathToGrid(grd750, m5, 1.0)
+    # rebuild time container properly
+    timeSet = M5.getDomainSet()
+    newType = FunctionType(RealType.Time, m5.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, m5)
+    return outField
 
 # VIIRS EDR M6 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectM6(M6, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2418,8 +2491,6 @@ def VIIRSEDRCorrectM6(M6, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM6 = M6
-    M6 = unpackage(M6)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2428,7 +2499,10 @@ def VIIRSEDRCorrectM6(M6, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M6 = RGBCompositeControl.correctRayleighVisible(M6, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.746, 1013.25)
+    # Extract the single FlatField sample
+    m6 = RGBCompositeControl.correctRayleighVisible(M6.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.746, 1013.25)
+    # Put corrected samples back into the original time container
+    M6.setSample(0, m6)
     return M6
 
 # VIIRS SDR M6 Reflectance Rayleigh Corrected
@@ -2438,8 +2512,6 @@ def VIIRSSDRCorrectM6(M6, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM6 = M6
-    M6 = unpackage(M6)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2448,10 +2520,17 @@ def VIIRSSDRCorrectM6(M6, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M6, 750)
-    M6 = RGBCompositeControl.correctRayleighVisible(M6, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.746, 1013.25)
-    M6 = MultiSpectralDataSource.swathToGrid(grd750, M6, 1.0)
-    return M6
+    # extract swath
+    m6 = M6.getSample(0)
+    m6 = RGBCompositeControl.correctRayleighVisible(m6, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.746, 1013.25)
+    grd750 = makeGrid(m6, 750)
+    m6 = MultiSpectralDataSource.swathToGrid(grd750, m6, 1.0)
+    # rebuild time container properly
+    timeSet = M6.getDomainSet()
+    newType = FunctionType(RealType.Time, m6.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, m6)
+    return outField
 
 # VIIRS EDR M7 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectM7(M7, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2460,8 +2539,6 @@ def VIIRSEDRCorrectM7(M7, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM7 = M7
-    M7 = unpackage(M7)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2470,7 +2547,10 @@ def VIIRSEDRCorrectM7(M7, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    M7 = RGBCompositeControl.correctRayleighVisible(M7, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Extract the single FlatField sample
+    m7 = RGBCompositeControl.correctRayleighVisible(M7.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Put corrected samples back into the original time container
+    M7.setSample(0, m7)
     return M7
 
 # VIIRS SDR M7 Reflectance Rayleigh Corrected
@@ -2480,8 +2560,6 @@ def VIIRSSDRCorrectM7(M7, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inM7 = M7
-    M7 = unpackage(M7)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2490,10 +2568,17 @@ def VIIRSSDRCorrectM7(M7, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd750 = makeGrid(M7, 750)
-    M7 = RGBCompositeControl.correctRayleighVisible(M7, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
-    M7 = MultiSpectralDataSource.swathToGrid(grd750, M7, 1.0)
-    return M7
+    # extract swath
+    m7 = M7.getSample(0)
+    m7 = RGBCompositeControl.correctRayleighVisible(m7, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    grd750 = makeGrid(m7, 750)
+    m7 = MultiSpectralDataSource.swathToGrid(grd750, m7, 1.0)
+    # rebuild time container properly
+    timeSet = M7.getDomainSet()
+    newType = FunctionType(RealType.Time, m7.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, m7)
+    return outField
 
 # VIIRS EDR I1 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectI1(I1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2502,8 +2587,6 @@ def VIIRSEDRCorrectI1(I1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI1 = I1
-    I1 = unpackage(I1)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2512,7 +2595,10 @@ def VIIRSEDRCorrectI1(I1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    I1 = RGBCompositeControl.correctRayleighVisible(I1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    # Extract the single FlatField sample
+    i1 = RGBCompositeControl.correctRayleighVisible(I1.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    # Put corrected samples back into the original time container
+    I1.setSample(0, i1)
     return I1
 
 # VIIRS SDR I1 Reflectance Rayleigh Corrected
@@ -2522,8 +2608,6 @@ def VIIRSSDRCorrectI1(I1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI1 = I1
-    I1 = unpackage(I1)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2532,10 +2616,19 @@ def VIIRSSDRCorrectI1(I1, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd375 = makeGrid(I1, 375)
-    I1 = RGBCompositeControl.correctRayleighVisible(I1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
-    I1 = MultiSpectralDataSource.swathToGrid(grd375, I1, 1.0)
-    return I1
+    
+    # extract swath
+    i1 = I1.getSample(0)
+    i1 = RGBCompositeControl.correctRayleighVisible(i1, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.64, 1013.25)
+    grd375 = makeGrid(i1, 375)
+    i1 = MultiSpectralDataSource.swathToGrid(grd375, i1, 1.0)
+    
+    # rebuild time container properly
+    timeSet = I1.getDomainSet()
+    newType = FunctionType(RealType.Time, i1.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, i1)
+    return outField
 
 # VIIRS EDR I2 Reflectance Rayleigh Corrected
 def VIIRSEDRCorrectI2(I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
@@ -2544,8 +2637,6 @@ def VIIRSEDRCorrectI2(I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI2 = I2
-    I2 = unpackage(I2)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2554,7 +2645,10 @@ def VIIRSEDRCorrectI2(I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Extract the single FlatField sample
+    i2 = RGBCompositeControl.correctRayleighVisible(I2.getSample(0), SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    # Put corrected samples back into the original time container
+    I2.setSample(0, i2)
     return I2
 
 # VIIRS SDR I2 Reflectance Rayleigh Corrected
@@ -2564,8 +2658,6 @@ def VIIRSSDRCorrectI2(I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     # SAT_ZA = Satellite Zenith Angle
     # SOL_AA = Solar Azimuth Angle
     # SAT_AA = Satellite Azimuth Angle
-    inI2 = I2
-    I2 = unpackage(I2)
     inSOL_ZA = SOL_ZA
     SOL_ZA = unpackage(SOL_ZA)
     inSAT_ZA = SAT_ZA
@@ -2574,7 +2666,16 @@ def VIIRSSDRCorrectI2(I2, SOL_ZA, SAT_ZA, SOL_AA, SAT_AA):
     SOL_AA = unpackage(SOL_AA)
     inSAT_AA = SAT_AA
     SAT_AA = unpackage(SAT_AA)
-    grd375 = makeGrid(I2, 375)
-    I2 = RGBCompositeControl.correctRayleighVisible(I2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
-    I2 = MultiSpectralDataSource.swathToGrid(grd375, I2, 1.0)
-    return I2
+    
+    # extract swath
+    i2 = I2.getSample(0)
+    i2 = RGBCompositeControl.correctRayleighVisible(i2, SAT_ZA, SOL_ZA, SAT_AA, SOL_AA, 0.865, 1013.25)
+    grd375 = makeGrid(i2, 375)
+    i2 = MultiSpectralDataSource.swathToGrid(grd375, i2, 1.0)
+    
+    # rebuild time container properly
+    timeSet = I2.getDomainSet()
+    newType = FunctionType(RealType.Time, i2.getType())
+    outField = FieldImpl(newType, timeSet)
+    outField.setSample(0, i2)
+    return outField

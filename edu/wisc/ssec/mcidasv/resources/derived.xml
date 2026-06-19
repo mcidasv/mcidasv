@@ -5947,7 +5947,7 @@
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR Rayleigh Corrected-RGBs"/>
             <category value="display:rgbcomposite"/>
-            <category value="display:imagesequence"/>
+            <category value="display:imagecontroloverz"/>
             <category value="display:imagecontrol"/>
         </categories>
         <operands categories="">
