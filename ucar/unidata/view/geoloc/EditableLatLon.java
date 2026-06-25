@@ -72,9 +72,34 @@ public class EditableLatLon extends LatLonProjection {
     /**
      * Resize ProjectionRect based on the params
      */
+	private boolean suspendResize = false;
+
     private void resize() {
-        // McIDAS Inquiry #934-3141: Bug1 from Request 5
-        this.defaultMapArea = new ProjectionRect(longitude0, latitude0, longitude1, latitude1);
+        if (suspendResize) {
+            return;
+        }
+
+        double x0 = longitude0;
+        double x1 = longitude1;
+
+        // detect dateline crossing
+        boolean crossesDateline = Math.abs(x1 - x0) > 180;
+
+        if (crossesDateline) {
+            // convert negative side into continuous space
+            if (x0 < 0) x0 += 360;
+            if (x1 < 0) x1 += 360;
+        }
+
+        double minX = Math.min(x0, x1);
+        double maxX = Math.max(x0, x1);
+
+        this.defaultMapArea =
+            new ProjectionRect(minX, latitude0, maxX, latitude1);
+    }
+
+    private double normalizeLon(double lon) {
+        return ((lon + 180) % 360 + 360) % 360 - 180;
     }
 
     /**
@@ -123,7 +148,7 @@ public class EditableLatLon extends LatLonProjection {
      * @param latitude1
      */
     public void setLowerRightLatitude(double latitude1) {
-        this.latitude1 = validateLatitude(latitude1);
+        this.latitude1 = latitude1;
         resize();
     }
 
@@ -132,7 +157,7 @@ public class EditableLatLon extends LatLonProjection {
      * @param longitude0
      */
     public void setUpperLeftLongitude(double longitude0) {
-        this.longitude0 = validateLongitude(longitude0);
+        this.longitude0 = longitude0;
         resize();
     }
 
@@ -194,11 +219,6 @@ public class EditableLatLon extends LatLonProjection {
     }
 
     private double validateLongitude(double lon) {
-        if (lon < -180.0 || lon > 180.0) {
-            throw new IllegalArgumentException(
-                "Longitude must be between -180 and 180"
-            );
-        }
         return lon;
     }
 

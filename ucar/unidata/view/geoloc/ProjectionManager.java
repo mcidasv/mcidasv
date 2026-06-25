@@ -858,9 +858,18 @@ public class ProjectionManager implements ActionListener {
             }
         }
 
+        private double normalizeLon(double lon) {
+            return ((lon + 180) % 360 + 360) % 360 - 180;
+        }
+
+        private double displayLon(double lon) {
+            lon = normalizeLon(lon);
+            return lon;
+        }
+
         /**
          * Used to apply bounding box corner point lat/lon values to the
-		 * applicable text fields when creating an Editable Lat/Lon projection
+         * applicable text fields when creating an Editable Lat/Lon projection
          */
         private void syncEditableLatLonFieldsFromSelection() {
 
@@ -869,28 +878,30 @@ public class ProjectionManager implements ActionListener {
             }
 
             ProjectionRect r = mapEditPanel.getSelectedRegion();
-
             if (r == null) {
                 return;
             }
 
-            double minLon = r.getMinX();
-            double maxLon = r.getMaxX();
+            // EditableLatLon case:
+            // In this projection ONLY: X=lon, Y=lat
 
             double minLat = r.getMinY();
             double maxLat = r.getMaxY();
+            double minLon = r.getMinX();
+            double maxLon = r.getMaxX();
+
+            // normalize longitudes
+            minLon = normalizeLon(minLon);
+            maxLon = normalizeLon(maxLon);
 
             ProjectionClass projClass = findProjectionClass(editProjection);
-
             if (projClass == null) {
                 return;
             }
 
-            for (int i = 0; i < projClass.paramList.size(); i++) {
+            for (Object obj : projClass.paramList) {
 
-                ProjectionParam pp =
-                    (ProjectionParam) projClass.paramList.get(i);
-
+                ProjectionParam pp = (ProjectionParam) obj;
                 String name = pp.name;
 
                 if (name.equals("upperLeftLatitude")) {
@@ -1053,12 +1064,6 @@ public class ProjectionManager implements ActionListener {
 
             acceptButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    ProjectionClass projClass = findProjectionClass(editProjection);
-
-                    if (projClass != null) {
-                        setProjFromDialog(projClass, editProjection);
-                    }
-                    preview();
                     accept();
                 }
             });
