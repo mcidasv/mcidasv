@@ -92,6 +92,8 @@ public class LatLonLabelData {
     /** use360 flag */
     private boolean use360 = false;
 
+    /** use degree symbol flag */
+    private boolean useDeg = true;
 
     /**
      * Default ctor
@@ -202,6 +204,7 @@ public class LatLonLabelData {
         this.useSphere     = that.useSphere;
         this.labelFormat   = that.labelFormat;
         this.use360        = that.use360;
+        this.useDeg        = that.useDeg;
     }
 
 
@@ -247,6 +250,7 @@ public class LatLonLabelData {
         myLatLonLabels.setSphere(useSphere);
         myLatLonLabels.setLabelFormat(labelFormat);
         myLatLonLabels.setUse360(use360);
+        myLatLonLabels.setDegUse(useDeg);
         return myLatLonLabels;
     }
 
@@ -638,6 +642,25 @@ public class LatLonLabelData {
      */
     public boolean getUse360() {
         return use360;
+    }
+
+    /**
+     * Set the useDeg property.
+     *
+     * @param value The new value for useDeg
+     */
+    public void setUseDeg(boolean value) {
+        useDeg = value;
+        stateChanged();
+    }
+
+    /**
+     * Get the useDeg property.
+     *
+     * @return The useDeg
+     */
+    public boolean getUseDeg() {
+        return useDeg;
     }
 
 }

@@ -280,37 +280,45 @@ public class LatLonLabelPanel extends JPanel {
         formatSelector.setSelectedItem(latLonLabelData.getLabelFormat());
         ignoreEvents = false;
 
-        try {
-            useDegCbx = new JCheckBox("Use degree symbol (°)",
-                    latLonLabelData.getLatLonLabels().getDegUse());
-            useDegCbx.setToolTipText("Add degree symbol to labels");
-            useDegCbx.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        boolean selected = useDegCbx.isSelected();
+        useDegCbx = new JCheckBox("Use degree symbol (°)",
+               latLonLabelData.getUseDeg());
+        useDegCbx.setToolTipText("Add degree symbol to labels");
 
-                        latLonLabelData.getLatLonLabels().setDegUse(selected);
-                        latLonLabelData.setFont(fontSelector.getFont());
+        useDegCbx.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    boolean selected = useDegCbx.isSelected();
 
-                        MapDisplayControl mdc =
-                                ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl();
-                        LatLonLabelPanel latPanel = mdc.getLatLabelPanel();
-                        LatLonLabelPanel lonPanel = mdc.getLonLabelPanel();
+                    // Update this panel's persistent state
+                    latLonLabelData.setUseDeg(selected);
 
-                        latPanel.getLatLonLabelData().getLatLonLabels().setDegUse(selected);
-                        lonPanel.getLatLonLabelData().getLatLonLabels().setDegUse(selected);
+                    // Update the display object
+                    latLonLabelData.getLatLonLabels().setDegUse(selected);
+                    latLonLabelData.setFont(fontSelector.getFont());
 
-                        latPanel.getLatLonLabelData().setFont(latPanel.fontSelector.getFont());
-                        lonPanel.getLatLonLabelData().setFont(lonPanel.fontSelector.getFont());
+                    MapDisplayControl mdc =
+                            ((MapDisplayControl.LatLonLabelState) latLonLabelData)
+                                    .getMapDisplayControl();
 
-                    } catch (VisADException | RemoteException ex) {;}
+                    LatLonLabelPanel latPanel = mdc.getLatLabelPanel();
+                    LatLonLabelPanel lonPanel = mdc.getLonLabelPanel();
+
+                    // Keep both data objects in sync for bundle persistence
+                    latPanel.getLatLonLabelData().setUseDeg(selected);
+                    lonPanel.getLatLonLabelData().setUseDeg(selected);
+
+                    // Update both display objects immediately
+                    latPanel.getLatLonLabelData().getLatLonLabels().setDegUse(selected);
+                    lonPanel.getLatLonLabelData().getLatLonLabels().setDegUse(selected);
+
+                    latPanel.getLatLonLabelData().setFont(latPanel.fontSelector.getFont());
+                    lonPanel.getLatLonLabelData().setFont(lonPanel.fontSelector.getFont());
+
+                } catch (VisADException | RemoteException ex) {
+                    ex.printStackTrace();
                 }
-            });
-
-        } catch (VisADException | RemoteException e) {
-            useDegCbx = new JCheckBox("°", false);
-            useDegCbx.setToolTipText("Add degree symbol to labels");
-        }
+            }
+        });
 
         use360Cbx    = new JCheckBox("0-360", latLonLabelData.getUse360());
         use360Cbx.setToolTipText(
@@ -407,6 +415,7 @@ public class LatLonLabelPanel extends JPanel {
             }
             formatSelector.setSelectedItem(lld.getLabelFormat());
             use360Cbx.setSelected(lld.getUse360());
+            useDegCbx.setSelected(lld.getUseDeg());
             ignoreEvents = false;
         }
 
