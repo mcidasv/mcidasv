@@ -867,13 +867,6 @@ public class TimesChooser extends IdvChooser {
         absoluteTimes = newAbsoluteTimes;
         pushIgnore();
         getTimesList().setListData(new Vector(absoluteTimes));
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                getTimesList().revalidate();
-                getTimesList().repaint();
-            }
-        });
         getTimesList().ensureIndexIsVisible(absoluteTimes.size() - 1);
         setSelectedAbsoluteTimes(new ArrayList());
         if (usingTimeline) {
@@ -946,6 +939,13 @@ public class TimesChooser extends IdvChooser {
                 logException("Setting times", exc);
             }
         }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                //getTimesList().revalidate();
+                getTimesList().repaint();
+            }
+        });
         popIgnore();
     }
 
