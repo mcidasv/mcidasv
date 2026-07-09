@@ -114,8 +114,7 @@ public class AddeServerInfo extends Object {
     String[] list = l;
     if (list == null) {
       list = new String[] {
-                "adde.ucar.edu",
-                "atm.ucar.edu"
+                "adde.ucar.edu"
     		 };
     }
     serverList = new String[list.length];
