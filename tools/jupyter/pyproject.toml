@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcidasv-jupyter"
+version = "0.1.0"
+description = "Drive McIDAS-V scripting from Jupyter notebooks"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = ["ipython>=7.0"]
+
+[project.optional-dependencies]
+# Only needed on a headless Linux host (no $DISPLAY); also install Xvfb.
+headless = ["pyvirtualdisplay>=3.0"]
+# Needed to run the CPython-integration sample notebooks (1x_*).
+examples = ["numpy", "scipy", "matplotlib", "pandas", "scikit-learn", "scikit-image"]
+
+[tool.setuptools]
+packages = ["mcidasv_jupyter"]

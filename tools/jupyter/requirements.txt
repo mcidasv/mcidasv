@@ -1,0 +1,5 @@
+# Prefer:  pip install -e .            (see pyproject.toml)
+#          pip install -e '.[examples]'  to run the sample notebooks
+#          pip install -e '.[headless]'  on headless Linux (also needs Xvfb)
+ipython>=7.0
+notebook>=6.0
