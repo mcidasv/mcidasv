@@ -185,11 +185,11 @@ public abstract class DataSource {
             if (filename.contains("02FSN")) {
                 desc = "VIIRS+MODIS";
             }
-        } else if (filename.startsWith("SCRIS_npp") || filename.startsWith("GCRSO-SCRIS_npp") || filename.startsWith("GCRSO-SCRIF_npp")) {
+        } else if (filename.startsWith("SCRIS_npp") || filename.startsWith("GCRSO-SCRIS_npp") || filename.startsWith("GCRSO-SCRIF_npp") || filename.startsWith("SCRIF_npp")) {
             desc = "CrIS SDR";
-        } else if (filename.startsWith("SCRIS_j01") || filename.startsWith("GCRSO-SCRIS_j01") || filename.startsWith("GCRSO-SCRIF_j01")) {
+        } else if (filename.startsWith("SCRIS_j01") || filename.startsWith("GCRSO-SCRIS_j01") || filename.startsWith("GCRSO-SCRIF_j01") || filename.startsWith("SCRIF_j01")) {
             desc = "CrIS SDR";
-        } else if (filename.startsWith("SCRIS_j02") || filename.startsWith("GCRSO-SCRIS_j02") || filename.startsWith("GCRSO-SCRIF_j02")) {
+        } else if (filename.startsWith("SCRIS_j02") || filename.startsWith("GCRSO-SCRIS_j02") || filename.startsWith("GCRSO-SCRIF_j02") || filename.startsWith("SCRIF_j02")) {
             desc = "CrIS SDR";
         } else if (filename.startsWith("SNDR.SNPP.CRIS") || filename.startsWith("SNDR.J1.CRIS") || filename.startsWith("SNDR.J2.CRIS")) {
             desc = "CrIS_SNDR";

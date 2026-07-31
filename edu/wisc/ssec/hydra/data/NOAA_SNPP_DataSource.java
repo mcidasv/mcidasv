@@ -122,7 +122,7 @@ public class NOAA_SNPP_DataSource extends DataSource {
             String fname = files[i].getName();
             if (fname.startsWith("SATMS_") || fname.startsWith("GATMO-SATMS_") ||
                     fname.startsWith("SCRIS") || fname.startsWith("GCRSO-SCRIS_") ||
-                    fname.startsWith("GCRSO-SCRIF")) {
+                    fname.startsWith("SCRIF") || fname.startsWith("GCRSO-SCRIF_")) {
                 dataList.add(files[i]);
             }
         }
@@ -145,6 +145,12 @@ public class NOAA_SNPP_DataSource extends DataSource {
         } else if (name.startsWith("SCRIS_j01")) {
             prefix = "GCRSO_j01";
         } else if (name.startsWith("SCRIS_j02")) {
+            prefix = "GCRSO_j02";
+        } else if (name.startsWith("SCRIF_npp")) {
+            prefix = "GCRSO_npp";
+        } else if (name.startsWith("SCRIF_j01")) {
+            prefix = "GCRSO_j01";
+        } else if (name.startsWith("SCRIF_j02")) {
             prefix = "GCRSO_j02";
         } else if (name.startsWith("GATMO-SATMS")) {
             prefix = null;
@@ -198,7 +204,7 @@ public class NOAA_SNPP_DataSource extends DataSource {
     public boolean canUnderstand(File[] files) {
         if (files[0].getName().startsWith("SATMS_") || files[0].getName().startsWith("GATMO") ||
                 files[0].getName().startsWith("SCRIS") || files[0].getName().startsWith("GCRSO") ||
-                files[0].getName().startsWith("GCRSO-SCRIF")) {
+                files[0].getName().startsWith("SCRIF") || files[0].getName().startsWith("GCRSO")) {
             return true;
         }
         return false;
