@@ -279,7 +279,7 @@ public class VIIRSDataSource extends DataSource {
         if (cntrWvln == 0) {
             return null;
         } else {
-            return "(" + cntrWvln + ")";
+            return "(" + cntrWvln + "um)";
         }
 
     }

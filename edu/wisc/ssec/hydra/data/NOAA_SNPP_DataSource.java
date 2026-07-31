@@ -381,7 +381,7 @@ public class NOAA_SNPP_DataSource extends DataSource {
             spectTable.put("array_name", productPath);
             spectTable.put("product_name", "CrIS_SDR");
             spectTable.put(SpectrumAdapter.channelIndex_name, "dim3");
-            spectTable.put(SpectrumAdapter.channelType, "channel_number");
+            spectTable.put(SpectrumAdapter.channelType, "Wavenumber");
             spectTable.put(SpectrumAdapter.channels_name, "Channel");
             spectTable.put(SpectrumAdapter.x_dim_name, "dim1");
             spectTable.put(SpectrumAdapter.y_dim_name, "dim0");
