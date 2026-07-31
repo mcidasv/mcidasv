@@ -155,6 +155,8 @@ public class Hydra {
     String sourceDescription = null;
     String fldName = null;
 
+    private static Hydra staticInstance = null;
+
     JFrame selectFrame = null;
 
     JComponent actionComponent = null;
@@ -202,10 +204,12 @@ public class Hydra {
     public static HashMap<Integer, Selection> dataSourceIdToSelector = new HashMap();
 
     public Hydra() {
+        staticInstance = this;
     }
 
     public Hydra(DataBrowser dataBrowser) {
         this.dataBrowser = dataBrowser;
+        staticInstance = this;
     }
 
     public void dataSourceSelected(File dir) {
@@ -1742,10 +1746,89 @@ public class Hydra {
         // Get cross-platform home directory
         String homeDir = System.getProperty("user.home");
 
+        // --- FIXED MULTI-FILE METADATA TIME PRESERVATION FIX ---
         if (dateTimeStamp == null) {
-            System.out.println("WARNING: dateTimeStamp is null, using fallback time");
-            dateTimeStamp = "1970-01-01T00:00";
+            System.out.println("WARNING: dateTimeStamp is null, recovering correct data source context...");
+
+            int matchedSourceId = -1;
+
+            // 1. Look through the displayable image registry to find this exact FlatField
+            if (displayableToImage != null && !displayableToImage.isEmpty()) {
+                for (java.util.Map.Entry<HydraRGBDisplayable, FlatField> entry : displayableToImage.entrySet()) {
+                    FlatField swathField = entry.getValue();
+                    // Direct reference or sample equality check to isolate the exact dataset
+                    if (swathField == image || (swathField != null && swathField.getDomainSet().equals(image.getDomainSet()))) {
+                        HydraRGBDisplayable disp = entry.getKey();
+                        // Strip the data source tracking ID out of the description metadata
+                        if (disp != null && disp.getName() != null) {
+                            System.out.println("Found matching displayable: " + disp.getName());
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // 2. Fallback: Search the Selection context map to see which window is actively processing
+            if (matchedSourceId == -1 && dataSourceIdToSelector != null) {
+                for (java.util.Map.Entry<Integer, Selection> entry : dataSourceIdToSelector.entrySet()) {
+                    Selection sel = entry.getValue();
+                    if (sel != null && sel.getSelectedDataChoice() != null) {
+                        // If the formula or wavelength context maps to this selection window
+                        if (wavelength != null && wavelength.contains(sel.getSelectedName())) {
+                            matchedSourceId = entry.getKey();
+                            System.out.println("Matched source via active UI Selection ID: " + matchedSourceId);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 3. Fallback: Check if the wavelength metadata maps to the active data source choices
+            if (matchedSourceId == -1 && dataSourceMap != null) {
+                for (DataSource ds : dataSourceMap.values()) {
+                    if (ds != null && ds.getDataChoices() != null) {
+                        for (Object choiceObj : ds.getDataChoices()) {
+                            if (choiceObj instanceof DataChoice) {
+                                DataChoice dc = (DataChoice) choiceObj;
+                                if (wavelength != null && dc.getName() != null && wavelength.contains(dc.getName())) {
+                                    matchedSourceId = ds.getDataSourceId();
+                                    System.out.println("Matched source via direct DataChoice string: " + matchedSourceId);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (matchedSourceId != -1) break;
+                }
+            }
+
+            // 4. Extract the correct timestamp using our matched source identifier
+            if (matchedSourceId != -1 && dataSourceMap.get(matchedSourceId) != null) {
+                dateTimeStamp = dataSourceMap.get(matchedSourceId).getDateTimeStamp();
+                System.out.println("SUCCESS: Isolated exact matching file timestamp: " + dateTimeStamp);
+            } else {
+                // If identity cannot be determined, look for the newest added file in the session
+                DataSource newestSource = null;
+                for (DataSource ds : dataSourceMap.values()) {
+                    if (ds != null && ds.getDateTimeStamp() != null) {
+                        if (newestSource == null || ds.getDataSourceId() > newestSource.getDataSourceId()) {
+                            newestSource = ds;
+                        }
+                    }
+                }
+                if (newestSource != null) {
+                    dateTimeStamp = newestSource.getDateTimeStamp();
+                    System.out.println("FALLBACK: Defaulting to newest session data source timestamp: " + dateTimeStamp);
+                }
+            }
+
+            // Hard baseline fallback
+            if (dateTimeStamp == null) {
+                System.out.println("WARNING: No tracking context matched, reverting to default fallback");
+                dateTimeStamp = "1970-01-01T00:00";
+            }
         }
+        // --- END OF FIXED MULTI-FILE METADATA TIME PRESERVATION FIX ---
 
         // Replace space with T and colons with - for filename
         String tsForFile = dateTimeStamp.replace(' ', 'T').replace(':', '-');
@@ -2064,4 +2147,12 @@ public class Hydra {
 
         return leftIdx + 1;
     }
+
+    public static String getSessionDateTimeStamp() {
+        if (staticInstance != null && staticInstance.dateTimeStamp != null) {
+            return staticInstance.dateTimeStamp;
+        }
+        return null;
+    }
+
 }
