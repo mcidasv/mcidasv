@@ -776,8 +776,29 @@ public class ScatterDisplay extends DisplayControlImpl {
      * Reset the state of all scatter display selections.
      */
     public void resetAllScatterSelectors() {
+        int originalActiveIdx = 0;
+        boolean originalSelectByCurve = getSelectByCurve(); // Save user's current drawing shape mode
+        
         for (int i = 0; i < n_selectors; i++) {
-            resetScatterSelector(i);
+            if (selectorToggleButtons[i] != null) {
+                if (selectorToggleButtons[i].isSelected()) originalActiveIdx = i;
+                
+                // 1. Force Box mode active and clear the box shape
+                selectByCurve = false;
+                selectorToggleButtons[i].doClick();
+                resetScatterSelector(i);
+                
+                // 2. Force Curve mode active and clear the curve shape
+                selectByCurve = true;
+                selectorToggleButtons[i].doClick();
+                resetScatterSelector(i);
+            }
+        }
+        
+        // Restore original UI states completely
+        selectByCurve = originalSelectByCurve;
+        if (selectorToggleButtons[originalActiveIdx] != null) {
+            selectorToggleButtons[originalActiveIdx].doClick();
         }
     }
 
