@@ -137,7 +137,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     public static final String URL_SOURCE = "URL";
 
     // Provide a default URL
-    private static final String DEFAULT_URL = "https://celestrak.com/NORAD/elements/weather.txt";
+    private static final String DEFAULT_URL = "https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=tle";
 
     /**
      * Property for the tle server name key.
