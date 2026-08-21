@@ -53,9 +53,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Da
     <li>Stddev - Standard deviation</li>
     <li>Variance</li>
     <li>Goodpts - Number of good points</li>
+    <li># Nav Masked - Number of data points not included in the output.&nbsp; This is only included if 'NO_NAV' is specified by the user (see below).&nbsp;</li>
   </ul>
   <p>Multiple data objects can be passed through describe() at once, separated by commas (example: <em>describe(imageryIR,imageryVIS)</em>).</p>
   <p>Users may select to output only certain statistical parameters for their data. When doing this, the first parameter(s) passed through describe() should be the data objects, and the last parameters should be the statistical parameters to output. These statistical parameters are included in the list above, and they should be entered as strings and quoted (see example 2 above).</p>
+  <p>By default, off-Earth (unnavigated) pixels are included in the statistical output.  These pixels may have a data value of 0 that will be included in the statistical output.  To include only navigated pixels in the statistical output, include 'NO_NAV' in the command (example: <em>print(describe(data, 'NO_NAV')</em>.  When this is done, an additional value will be output by the describe() command called "# Nav Masked" that will print out how many pixels were excluded from the analysis.</p>
 </div>
 <p><strong><a name="findUnits" id="findUnits"></a>findUnits -</strong> Returns the units of a data object</p>
 <div class="OneTabIndent">Usage: <em>findUnits(myData)</em></div>
