@@ -85,7 +85,7 @@ public class GoToAddressWindow extends JFrame {
     private static final Logger logger = LoggerFactory.getLogger(GoToAddressWindow.class);
 
     /** {@link #addressComboBox} tool tip. */
-    public static final String ADDRESS_TOOL_TIP = "<html>Examples:<br>12345 Oak Street, My Town, My State<br>Or: My Town, My State<br>Or: 80303 (zip code)<br>Or: latitude longitude</html>";
+    public static final String ADDRESS_TOOL_TIP = "<html>Examples:<br>12345 Oak Street, My Town, My State<br>Or: My Town, My State<br>Or: 80303 (zip code)<br>Or: latitude longitude<br>Or: Place (e.g. North Penn High School)</html>";
 
     /** {@link #addressComboBox} label. */
     public static final String ADDRESS_LABEL = "Address: ";
@@ -215,6 +215,8 @@ public class GoToAddressWindow extends JFrame {
                 handleEditEvent();
             }
         });
+
+        addressComboBox.setPreferredSize(new java.awt.Dimension(200, addressComboBox.getPreferredSize().height));
 
         JComponent contents = GuiUtils.label(ADDRESS_LABEL, addressComboBox);
         contents = LayoutUtil.inset(contents, 5);

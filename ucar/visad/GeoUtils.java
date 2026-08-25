@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.util.GuiUtils;
@@ -41,6 +42,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.xml.XmlUtil;
 
 import visad.LinearLatLonSet;
 import visad.Real;
@@ -227,42 +229,69 @@ public class GeoUtils {
                 return llp;
             }
 
+            // 1. Declare variables at the top of the block
+            String latString = null;
+            String lonString = null;
 
-            String latString      = null;
-            String lonString      = null;
-            String encodedAddress = StringUtil.replace(address, " ", "%20");
+            // 2. Initial coordinate check ("40 -70", "40, -70", "40/70")
+            String cleanAddr = address.replaceAll("[,/]+", " ");
+            String[] tokens = cleanAddr.split("\\s+");
 
-            //Try it as lat/lon
-            if ((latString == null) || (lonString == null)) {
-                String tmp = address;
-
-                // allow for "lat,lon" form as well..
-                while (tmp.indexOf(",") >= 0) {
-                    tmp = StringUtil.replace(address, ",", " ");
-                }
-
-                while (tmp.indexOf("  ") >= 0) {
-                    tmp = StringUtil.replace(tmp, "  ", " ");
-                }
-
-                List toks = StringUtil.split(tmp, " ");
-                if ((toks != null) && (toks.size() == 2)) {
-                    try {
-                        double latValue =
-                            Misc.decodeLatLon((String) toks.get(0));
-                        double lonValue =
-                            Misc.decodeLatLon((String) toks.get(1));
-                        if ( !Double.isNaN(latValue)
-                                && !Double.isNaN(lonValue)) {
-                            latString = "" + latValue;
-                            lonString = "" + lonValue;
-                        }
-
-                    } catch (NumberFormatException nfe) {
-                        //ignore
+            if (tokens.length == 2) {
+                try {
+                    double lat = Double.parseDouble(tokens[0]);
+                    double lon = Double.parseDouble(tokens[1]);
+                    if (lat >= -90.0 && lat <= 90.0 && lon >= -180.0 && lon <= 180.0) {
+                        latString = String.valueOf(lat);
+                        lonString = String.valueOf(lon);
                     }
+                } catch (NumberFormatException ignored) {
+                    // Not raw coordinates, proceed to Nominatim
                 }
             }
+
+            // 3. Web geocoder (only runs if coordinates weren't parsed above)
+            if ((latString == null) || (lonString == null)) {
+                String searchInput = address;
+
+                // Force 5-digit US ZIP codes to default to the US
+                if (searchInput.matches("^\\d{5}$")) {
+                    searchInput += ", USA";
+                }
+
+                String result = "";
+                try {
+                    String tmp = java.net.URLEncoder.encode(searchInput, "UTF-8");
+                    String urlString = "https://nominatim.openstreetmap.org/search?format=xml&q=" + tmp;
+
+                    java.net.URL url = java.net.URI.create(urlString).toURL();
+                    java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+
+                    conn.setRequestProperty("User-Agent", "McIDAS-V/GeoUtils");
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(5000);
+
+                    result = IOUtil.readContents(conn.getInputStream());
+
+                    if ((master != null) && (master[0] != timestamp)) {
+                        return null;
+                    }
+
+                    Element root = XmlUtil.getRoot(result);
+                    Element placeNode = XmlUtil.findDescendant(root, "place");
+
+                    if (placeNode != null) {
+                        latString = XmlUtil.getAttribute(placeNode, "lat");
+                        lonString = XmlUtil.getAttribute(placeNode, "lon");
+                    }
+                } catch (Exception exc) {
+                    logger.debug("Geocoding failed for address: " + address, exc);
+                }
+            }
+
+            // 4. Reuse existing cleanAddr/tokens without re-declaring types
+            cleanAddr = address.trim().replaceAll("[,]+", " ");
+            tokens = cleanAddr.split("\\s+");
 
             String result = null;
             if ((latString == null) || (lonString == null)) {
@@ -285,8 +314,6 @@ public class GeoUtils {
                     lonString = node.get("lon").asText("NaN");
                 } catch (Exception exc) {}
             }
-
-
 
 
             /**
