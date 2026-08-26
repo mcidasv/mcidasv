@@ -218,4 +218,109 @@
 	  label="Time-Latitude (Contours)" displaycategory="Hovmoller"
 	   properties="windowVisible=true;showAsContours=true;averageDimension=0;">
   </control>
+
+  <!-- RMC Aug 2026 - Override IDV display types to add GP as topography -->
+  <control
+     id="imagedisplayoverz"
+     categories="IMAGE-*-*"
+     class="ucar.unidata.idv.control.ImagePlanViewControl"
+     label="Image Display Over Topography"
+     icon="/ucar/unidata/idv/images/planview.png"
+     code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+     displaycategory="Imagery"
+     properties="windowVisible=true;multipleIsTopography=true">
+     <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+  </control>
+  <control
+    id="flowoverz" 
+    categories="*-flowvector-*" 
+    class="ucar.unidata.idv.control.FlowPlanViewControl" 
+    description="Flow vectors over topography" 
+    label="Vectors Over Topography" 
+    doeslevels="true"
+    code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+    displaycategory="3D Surface"
+    properties="multipleIsTopography=true" />
+  <control
+    id="planviewflow111"
+    categories="*-flowvector-*"
+    class="ucar.unidata.idv.control.FlowPlanViewControl"
+    label="Vector Colored by Speed Over Topography"
+    doeslevels="true"
+    code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+    displaycategory="3D Surface"
+    properties="vectors=true;useSpeedForColor=true;multipleIsTopography=true">
+    <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+  </control>
+  <control
+    id="barbsoverz" 
+    categories="*-flowvector-*" 
+    class="ucar.unidata.idv.control.FlowPlanViewControl" 
+    label="Wind Barbs Over Topography" 
+    doeslevels="true"
+    code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+    displaycategory="3D Surface"
+    properties="multipleIsTopography=true;windbarbs=true" />
+  <control
+    id="barbsoverz11"
+    categories="*-flowvector-*"
+    class="ucar.unidata.idv.control.FlowPlanViewControl"
+    label="Wind Barbs Colored by Speed Over Topography"
+    doeslevels="true"
+    code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+    displaycategory="3D Surface"
+    properties="multipleIsTopography=true;windbarbs=true;useSpeedForColor=true" />
+  <control
+    id="streamlinesoverz" 
+    categories="*-flowvector-*" 
+    class="ucar.unidata.idv.control.FlowPlanViewControl" 
+    label="Streamlines Over Topography" 
+    doeslevels="true"
+    code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+    displaycategory="3D Surface"
+    properties="streamlines=true;multipleIsTopography=true" />
+  <control
+     id="planviewcontouroverz"
+     categories="GRID-2D-*;GRID-3D-*"
+     class="ucar.unidata.idv.control.ContourPlanViewControl"
+     doeslevels="true"
+     icon="/ucar/unidata/idv/images/planview.png"
+     label="Contours Over Topography"
+     code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+     displaycategory="3D Surface"
+     properties="multipleIsTopography=true">
+    <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+    </control>
+  <control
+     id="planviewcontourfilledoverz"
+     categories="GRID-2D-*;GRID-3D-*"
+     class="ucar.unidata.idv.control.ContourPlanViewControl"
+     label="Color-Filled Contours Over Topography"
+     doeslevels="true"
+     code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+     displaycategory="3D Surface"
+     properties="colorFill=true;multipleIsTopography=true">
+    <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+    </control>
+  <control
+     id="planviewcoloroverz"
+     categories="GRID-2D-*;GRID-3D-*"
+     class="ucar.unidata.idv.control.ColorPlanViewControl"
+     doeslevels="true"
+     label="Color-Shaded Image Over Topography"
+     code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+     displaycategory="3D Surface"
+     properties="smoothed=false;multipleIsTopography=true">
+    <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+    </control>
+  <control
+     id="imagecontroloverz"
+     categories="RGBIMAGE"
+     class="ucar.unidata.idv.control.ImageControl"
+     label="3 Color (RGB) Image over topography"
+     code="DerivedGridFactory.create2DTopography(D1, Topography[categories=param:ALTITUDE;param:Elevation;param:Z;param:GP])"
+     displaycategory="Imagery"
+     properties="multipleIsTopography=true">
+    <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+    </control>
 </controls>

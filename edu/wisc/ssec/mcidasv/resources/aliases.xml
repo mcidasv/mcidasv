@@ -107,7 +107,31 @@
      .*.Absolute_vorticity_isobaric"/>
   
   <!-- temp fix for inq 1129.  remove once Geopotential_isobaric alias is in IDV's aliases.xml -->
-  <alias aliases="Geopotential,Geopotential_isobaric" label="Geopotential" name="GP"/>
+  <!-- RMC Aug 2026 - Add more aliases so Over Topography formulas can access these variables -->
+  <alias 
+    name="GP"
+    label="Geopotential"
+    aliases="Geopotential,
+    Geopotential_height_adiabatic_condensation_lifted,
+    Geopotential_height_cloud_base,
+    Geopotential_height_cloud_ceiling,
+    Geopotential_height_cloud_tops,
+    Geopotential_height_convective_cloud_top,
+    Geopotential_height_equilibrium,
+    Geopotential_height_highest_tropospheric_freezing,
+    Geopotential_height_HTFL,
+    Geopotential_height_hybrid,
+    Geopotential_height_lowest_level_of_the_wet_bulb_zero,
+    Geopotential_height_maximum_wind,
+    Geopotential_height_planetary_boundary,
+    Geopotential_height_potential_vorticity_surface,
+    Geopotential_height_tropopause,
+    Geopotential_height_zeroDegC_isotherm,
+    Geopotential_isobaric,
+    ICAO_Standard_Atmosphere_Reference_Height_maximum_wind,
+    ICAO_Standard_Atmosphere_Reference_Height_tropopause,
+    Planetary_Boundary_Layer_Height_surface,
+    Planetary_boundary_layer_height_surface"/>
 
   <!-- mjh inq1759 -->
   <alias
