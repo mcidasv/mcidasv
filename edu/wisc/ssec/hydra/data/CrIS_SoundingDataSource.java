@@ -91,6 +91,17 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataTA);
 
+        SwathSoundingData dataDP = buildAdapter(reader, "View", "Scan", "Level", "vertPressLevel", vals, "Dewpnt", "Dewpoint", "View", "Scan",
+                new String[]{"Level", "Scan", "View"},
+                "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
+                null, "missing_value", "CrIS_RTV");
+        subset = dataDP.getDefaultSubset();
+        dataSel = new MultiDimensionSubset(subset);
+        dataChoice = new DataChoice(this, "Dewpnt", null);
+        dataChoice.setDataSelection(dataSel);
+        myDataChoices.add(dataChoice);
+        mySoundingDatas.add(dataDP);
+
         SwathSoundingData dataWV = buildAdapter(reader, "View", "Scan", "Level", "vertPressLevel", vals, "H2OMMR", "WV", "View", "Scan",
                 new String[]{"Level", "Scan", "View"},
                 "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
@@ -102,6 +113,18 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataWV);
+
+        SwathSoundingData dataRH = buildAdapter(reader, "View", "Scan", "Level", "vertPressLevel", vals, "RelHum", "RH", "View", "Scan",
+                new String[]{"Level", "Scan", "View"},
+                "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
+                null, "missing_value", "CrIS_RTV");
+        dataRH.setDataRange(new float[]{0, 100});
+        subset = dataRH.getDefaultSubset();
+        dataSel = new MultiDimensionSubset(subset);
+        dataChoice = new DataChoice(this, "RH", null);
+        dataChoice.setDataSelection(dataSel);
+        myDataChoices.add(dataChoice);
+        mySoundingDatas.add(dataRH);
 
         SwathSoundingData dataO3 = buildAdapter(reader, "View", "Scan", "Level", "vertPressLevel", vals, "O3VMR", "O3", "View", "Scan",
                 new String[]{"Level", "Scan", "View"},
@@ -116,7 +139,6 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
         mySoundingDatas.add(dataO3);
 
         SwathSoundingData dataCTT = buildAdapter(reader, "View", "Scan", "Level", "vertPressLevel", vals, "CTT", "CTT", "View", "Scan",
-
                 new String[]{"Scan", "View"},
                 "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
                 null, "missing_value", "CrIS_RTV");
@@ -151,6 +173,7 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataCOT);
+
     }
 
     public SwathSoundingData buildAdapter(MultiDimensionReader reader, String xtrack, String track, String levelIndex, String levelsName, float[] levelValues,
@@ -206,7 +229,7 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
 
     @Override
     public boolean canUnderstand(File[] files) {
-        if (files[0].getName().startsWith("CrIS") && files[0].getName().contains("atm_prof_rtv")) {
+        if ((files[0].getName().startsWith("CrIS") || files[0].getName().startsWith("CrIF")) && files[0].getName().contains("atm_prof_rtv")) {
             return true;
         } else {
             return false;
