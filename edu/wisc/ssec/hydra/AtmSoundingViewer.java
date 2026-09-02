@@ -229,8 +229,8 @@ public class AtmSoundingViewer extends HydraDisplay {
         });
         paramMenu.add(tempItem);
 
-        JMenuItem wvItem = new JMenuItem("WaterVapor");
-        wvItem.addActionListener(new ActionListener() {
+        JMenuItem dpItem = new JMenuItem("Dewpoint");
+        dpItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     AtmSoundingViewer mcv = new AtmSoundingViewer((DataChoice) dataChoices.get(1), sourceDescription, dateTimeStamp, -1, dataSourceId);
@@ -241,13 +241,41 @@ public class AtmSoundingViewer extends HydraDisplay {
                 }
             }
         });
+        paramMenu.add(dpItem);
+
+        JMenuItem wvItem = new JMenuItem("Water Vapor");
+        wvItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    AtmSoundingViewer mcv = new AtmSoundingViewer((DataChoice) dataChoices.get(2), sourceDescription, dateTimeStamp, -1, dataSourceId);
+                    // TODO: this sucks
+                    mcv.setDataChoices(dataChoices);
+                } catch (Exception exc) {
+                    exc.printStackTrace();
+                }
+            }
+        });
         paramMenu.add(wvItem);
+
+        JMenuItem rhItem = new JMenuItem("Relative Humidity");
+        rhItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    AtmSoundingViewer mcv = new AtmSoundingViewer((DataChoice) dataChoices.get(3), sourceDescription, dateTimeStamp, -1, dataSourceId);
+                    // TODO: this sucks
+                    mcv.setDataChoices(dataChoices);
+                } catch (Exception exc) {
+                    exc.printStackTrace();
+                }
+            }
+        });
+        paramMenu.add(rhItem);
 
         JMenuItem o3Item = new JMenuItem("Ozone");
         o3Item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    AtmSoundingViewer mcv = new AtmSoundingViewer((DataChoice) dataChoices.get(2), sourceDescription, dateTimeStamp, -1, dataSourceId);
+                    AtmSoundingViewer mcv = new AtmSoundingViewer((DataChoice) dataChoices.get(4), sourceDescription, dateTimeStamp, -1, dataSourceId);
                     // TODO: this sucks
                     mcv.setDataChoices(dataChoices);
                 } catch (Exception exc) {

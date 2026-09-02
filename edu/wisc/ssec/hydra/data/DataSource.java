@@ -457,6 +457,12 @@ public abstract class DataSource {
                 if (idx < 0) {
                     idx = filename.lastIndexOf("G17_s");
                 }
+                if (idx < 0) {
+                    idx = filename.lastIndexOf("G18_s");
+                }
+                if (idx < 0) {
+                    idx = filename.lastIndexOf("G19_s");
+                }
                 idx += 5;
                 String yyyyDDDHHmm = filename.substring(idx, idx + 11);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyDDDHHmm");

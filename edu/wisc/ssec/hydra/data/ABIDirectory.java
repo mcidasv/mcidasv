@@ -105,6 +105,10 @@ public class ABIDirectory extends GEOSDirectory {
             description = "GOES-16 ABI";
         } else if (fname.contains("_G17_s")) {
             description = "GOES-17 ABI";
+        } else if (fname.contains("_G18_s")) {
+            description = "GOES-18 ABI";
+        } else if (fname.contains("_G19_s")) {
+            description = "GOES-19 ABI";
         }
 
         init(files);

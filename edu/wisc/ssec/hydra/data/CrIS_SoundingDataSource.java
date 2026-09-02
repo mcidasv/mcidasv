@@ -86,7 +86,7 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
                 null, "missing_value", "CrIS_RTV");
         HashMap subset = dataTA.getDefaultSubset();
         DataSelection dataSel = new MultiDimensionSubset(subset);
-        DataChoice dataChoice = new DataChoice(this, "Temp", null);
+        DataChoice dataChoice = new DataChoice(this, "Temperature", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataTA);
@@ -97,7 +97,7 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
                 null, "missing_value", "CrIS_RTV");
         subset = dataDP.getDefaultSubset();
         dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "Dewpnt", null);
+        dataChoice = new DataChoice(this, "Dewpoint", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataDP);
@@ -109,7 +109,7 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
         dataWV.setDataRange(new float[]{0, 20});
         subset = dataWV.getDefaultSubset();
         dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "WV", null);
+        dataChoice = new DataChoice(this, "Water Vapor", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataWV);
@@ -121,7 +121,7 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
         dataRH.setDataRange(new float[]{0, 100});
         subset = dataRH.getDefaultSubset();
         dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "RH", null);
+        dataChoice = new DataChoice(this, "Relative Humidity", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataRH);
@@ -130,10 +130,10 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
                 new String[]{"Level", "Scan", "View"},
                 "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
                 null, "missing_value", "CrIS_RTV");
-        dataO3.setDataRange(new float[]{0, 20});
+        dataO3.setDataRange(new float[]{0, 10});
         subset = dataO3.getDefaultSubset();
         dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "O3", null);
+        dataChoice = new DataChoice(this, "Ozone", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataO3);
@@ -142,10 +142,10 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
                 new String[]{"Scan", "View"},
                 "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
                 null, "missing_value", "CrIS_RTV");
-        dataCTT.setDataRange(new float[]{0, 20});
+        dataCTT.setDataRange(new float[]{180, 300});
         subset = dataCTT.getDefaultSubset();
         dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "CTT", null);
+        dataChoice = new DataChoice(this, "Cloud Top Temperature", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataCTT);
@@ -154,10 +154,10 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
                 new String[]{"Scan", "View"},
                 "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
                 null, "missing_value", "CrIS_RTV");
-        dataCTP.setDataRange(new float[]{0, 20});
+        dataCTP.setDataRange(new float[]{10, 1000});
         subset = dataCTT.getDefaultSubset();
         dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "CTP", null);
+        dataChoice = new DataChoice(this, "Cloud Top Pressure", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataCTP);
@@ -166,10 +166,10 @@ public class CrIS_SoundingDataSource extends AtmSoundingDataSource {
                 new String[]{"Scan", "View"},
                 "Longitude", "Latitude", new String[]{"Scan", "View"}, new String[]{"Scan", "View"},
                 null, "missing_value", "CrIS_RTV");
-        dataCOT.setDataRange(new float[]{0, 20});
+        dataCOT.setDataRange(new float[]{0, 5});
         subset = dataCOT.getDefaultSubset();
         dataSel = new MultiDimensionSubset(subset);
-        dataChoice = new DataChoice(this, "COT", null);
+        dataChoice = new DataChoice(this, "Cloud Optical Thickness", null);
         dataChoice.setDataSelection(dataSel);
         myDataChoices.add(dataChoice);
         mySoundingDatas.add(dataCOT);
