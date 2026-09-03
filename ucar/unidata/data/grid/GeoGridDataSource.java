@@ -2657,6 +2657,29 @@ public class GeoGridDataSource extends GridDataSource {
         }
         try {
             times = DataUtil.makeDateTimes(timeAxis);
+
+            // --- START FIX: Override midpoint time with time_coverage_start in Field Selector ---
+            if (dataset != null && dataset.getNetcdfDataset() != null) {
+                Attribute startAttr = dataset.getNetcdfDataset().findGlobalAttribute("time_coverage_start");
+                if (startAttr != null && startAttr.isString()) {
+                    String timeStr = startAttr.getStringValue().replaceAll("\\.[0-9]+", "");
+                    try {
+                        CalendarDateTime startTime = new CalendarDateTime(
+                            DateTime.createDateTime(timeStr, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+                        );
+                        if (times != null && !times.isEmpty()) {
+                            // For single time-step ABI files, replace index 0 with the start time
+                            if (times.size() == 1) {
+                                times.set(0, startTime);
+                            }
+                        }
+                    } catch (VisADException ve) {
+                        System.err.println("Failed to parse time_coverage_start in GeoGridDataSource: " + timeStr);
+                    }
+                }
+            }
+            // --- END FIX ---
+
             gcsVsTime.put(timeAxis, times);
         } catch (Exception e) {
             System.out.println("getGeoGridTimes() " + e);
