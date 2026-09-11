@@ -2658,27 +2658,33 @@ public class GeoGridDataSource extends GridDataSource {
         try {
             times = DataUtil.makeDateTimes(timeAxis);
 
-            // --- START FIX: Override midpoint time with time_coverage_start in Field Selector ---
+            // Override with time_coverage_start ONLY if the timeAxis is synthetic 
+            // (i.e. there is no real "time" coordinate variable in the netCDF file)
             if (dataset != null && dataset.getNetcdfDataset() != null) {
-                Attribute startAttr = dataset.getNetcdfDataset().findGlobalAttribute("time_coverage_start");
-                if (startAttr != null && startAttr.isString()) {
-                    String timeStr = startAttr.getStringValue().replaceAll("\\.[0-9]+", "");
-                    try {
-                        CalendarDateTime startTime = new CalendarDateTime(
-                            DateTime.createDateTime(timeStr, "yyyy-MM-dd'T'HH:mm:ss'Z'")
-                        );
-                        if (times != null && !times.isEmpty()) {
-                            // For single time-step ABI files, replace index 0 with the start time
-                            if (times.size() == 1) {
-                                times.set(0, startTime);
+                NetcdfDataset nc = dataset.getNetcdfDataset();
+                Variable timeVar = nc.findVariable("time");
+
+                boolean hasTrueTimeVar = (timeVar != null && timeVar.isCoordinateVariable());
+
+                if (!hasTrueTimeVar) {
+                    Attribute startAttr = nc.findGlobalAttribute("time_coverage_start");
+                    if (startAttr != null && startAttr.isString()) {
+                        String timeStr = startAttr.getStringValue().replaceAll("\\.[0-9]+", "");
+                        try {
+                            CalendarDateTime startTime = new CalendarDateTime(
+                                DateTime.createDateTime(timeStr, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+                            );
+                            if (times != null && !times.isEmpty()) {
+                                if (times.size() == 1) {
+                                    times.set(0, startTime);
+                                }
                             }
+                        } catch (VisADException ve) {
+                            System.err.println("Failed to parse time_coverage_start in GeoGridDataSource: " + timeStr);
                         }
-                    } catch (VisADException ve) {
-                        System.err.println("Failed to parse time_coverage_start in GeoGridDataSource: " + timeStr);
                     }
                 }
             }
-            // --- END FIX ---
 
             gcsVsTime.put(timeAxis, times);
         } catch (Exception e) {

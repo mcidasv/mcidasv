@@ -1879,65 +1879,57 @@ public class GeoGridAdapter {
     private CalendarDateTime getBaseTime() throws VisADException {
         CalendarDateTime time = null;
         if (ncFile != null) {
-            // 1. Check for "time_coverage_start" global attribute first (GOES-R / ABI)
-            Attribute timeAttr = ncFile.findGlobalAttribute("time_coverage_start");
-            if (timeAttr != null && timeAttr.isString()) {
-                String timeStr = timeAttr.getStringValue();
-                // Remove fractional seconds if VisAD DateTime parsing requires it
-                timeStr = timeStr.replaceAll("\\.[0-9]+", "");
-                try {
-                    return new CalendarDateTime(
-                            DateTime.createDateTime(timeStr, "yyyy-MM-dd'T'HH:mm:ss'Z'")
-                    );
-                } catch (VisADException e) {
-                    System.err.println(
-                            "time_coverage_start attribute exists, but DateTime parsing failed");
-                    System.err.println("timeStr: " + timeStr);
-                }
+// 1. Check for standard NetCDF coordinate variables first ('time', 'base_time', etc.)
+            Variable timeVar = ncFile.findVariable("time");
+            if (timeVar == null) {
+                timeVar = ncFile.findVariable("base_time");
             }
 
-            // 2. RMC Inq 2944 Nov 2020 - Check for NUCAPS SPoRT EDRs "start_time"
-            timeAttr = ncFile.findGlobalAttribute("start_time");
+            if (timeVar != null && timeVar.isCoordinateVariable()) {
+                try {
+                    // Use NetCDF-Java's time coordinate axis parsing to avoid VisAD floating-point MJD precision loss
+                    CoordinateAxis1DTime tAxis = geoGrid.getCoordinateSystem().getTimeAxis1D();
+                    if (tAxis != null && tAxis.getSize() > 0) {
+                        return new CalendarDateTime(tAxis.getCalendarDate(0));
+                    }
+                    return new CalendarDateTime(
+                        new DateTime(makeReal(timeVar, RealType.Time)));
+                } catch (Exception ve) {}
+            }
+
+            // 2. Fall back to "time_coverage_start" global attribute (ABI / synthetic time axis)
+            DateTime dt = getStartCoverageTime();
+            if (dt != null) {
+                return new CalendarDateTime(dt);
+            }
+
+            // 3. RMC Inq 2944 Nov 2020 - Check for NUCAPS SPoRT EDRs "start_time"
+            Attribute timeAttr = ncFile.findGlobalAttribute("start_time");
             if (timeAttr != null && timeAttr.isString()) {
                 String timeStr = timeAttr.getStringValue();
                 try {
                     return new CalendarDateTime(
-                            DateTime.createDateTime(timeStr,
-                                    "yyyy/MM/dd' 'HH:mm")
+                            DateTime.createDateTime(timeStr, "yyyy/MM/dd' 'HH:mm")
                     );
                 } catch (VisADException e) {
-                    System.err.println(
-                            "start_time attribute exists, but DateTime parsing failed");
-                    System.err.println("timeStr: " + timeStr);
+                    System.err.println("start_time attribute exists, but DateTime parsing failed: " + timeStr);
                 }
             }
             // End Inq 2944
 
-            // 3. RMC Inq 2562 Jan 2021 - Get time for Himawari-8 netCDF GEOCAT files
+            // 4. RMC Inq 2562 Jan 2021 - Get time for Himawari-8 netCDF GEOCAT files
             timeAttr = ncFile.findGlobalAttribute("Image_Date_Time");
             if (timeAttr != null && timeAttr.isString()) {
                 String timeStr = timeAttr.getStringValue();
                 try {
                     return new CalendarDateTime(
-                            DateTime.createDateTime(timeStr,
-                                    "yyyy-MM-dd'T'HH:mm:ss'Z'")
+                            DateTime.createDateTime(timeStr, "yyyy-MM-dd'T'HH:mm:ss'Z'")
                     );
                 } catch (VisADException e) {
-                    System.err.println(
-                            "Image_Date_Time attribute exists, but DateTime parsing failed");
-                    System.err.println("timeStr: " + timeStr);
+                    System.err.println("Image_Date_Time attribute exists, but DateTime parsing failed: " + timeStr);
                 }
             }
             // End Inq 2562
-
-            // 4. Fall back to standard NetCDF coordinate variable ('base_time' or synthesized 'time')
-            Variable timeVar = ncFile.findVariable("base_time");
-            if (timeVar != null) {
-                try {
-                    time = new CalendarDateTime(
-                        new DateTime(makeReal(timeVar, RealType.Time)));
-                } catch (VisADException ve) {}
-            }
         }
         return time;
     }
