@@ -131,7 +131,10 @@
     ICAO_Standard_Atmosphere_Reference_Height_maximum_wind,
     ICAO_Standard_Atmosphere_Reference_Height_tropopause,
     Planetary_Boundary_Layer_Height_surface,
-    Planetary_boundary_layer_height_surface"/>
+    Planetary_boundary_layer_height_surface,
+    Geopotential_height_lowest_level_water_layer,
+    Geopotential_height_highest_level_water_layer,
+    Geopotential_height_Analysis_surface"/>
 
   <!-- mjh inq1759 -->
   <alias
