@@ -249,6 +249,18 @@
   <satellite name="METOP-A" width="2200"/>
   <satellite name="METOP-B" width="2200"/>
   <satellite name="METOP-C" width="2200"/>
+  <satellite name="METOP-SGA1" width="2670"/>
+  <satellite name="METOP-SG-A1" width="2670"/>
+  <satellite name="METOP-SGA2" width="2670"/>
+  <satellite name="METOP-SG-A2" width="2670"/>
+  <satellite name="METOP-SGA3" width="2670"/>
+  <satellite name="METOP-SG-A3" width="2670"/>
+  <satellite name="METOP-SGB1" width="1700"/>
+  <satellite name="METOP-SG-B1" width="1700"/>
+  <satellite name="METOP-SGB2" width="1700"/>
+  <satellite name="METOP-SG-B2" width="1700"/>
+  <satellite name="METOP-SGB3" width="1700"/>
+  <satellite name="METOP-SG-B3" width="1700"/>
   <satellite name="METEOSAT-8 (MSG-1)" width=""/>
   <satellite name="METEOSAT-9 (MSG-2)" width=""/>
   <satellite name="METEOSAT-10 (MSG-3)" width=""/>
