@@ -224,7 +224,7 @@
     <!-- Which warnings to show, use javac -X for help -->
     <property name="xlint" value="deprecation" />
 
-    <!-- Javadoc options -->
+    <!-- Javadoc options. -->
     <property name="javadoc.level" value="private" />
     
     <!-- Maximum number of errors javadoc should report.
