@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 
-<!-- $Id$ -->
 <project name="mcidasv" default="info" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
     <!-- Directory definitions -->
