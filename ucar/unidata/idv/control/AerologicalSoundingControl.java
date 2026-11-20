@@ -55,6 +55,7 @@ import ucar.unidata.view.sounding.ParcelMode;
 import ucar.unidata.view.sounding.PseudoAdiabaticDisplayable;
 import ucar.unidata.view.sounding.RealEvaluatorCell;
 import ucar.unidata.view.sounding.Sounding;
+import ucar.unidata.view.sounding.SoundingSet;
 
 import ucar.visad.UtcDate;
 import ucar.visad.VisADMath;
@@ -84,7 +85,9 @@ import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.IntConsumer;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -229,6 +232,18 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
 
     /** winds as U and V? */
     private boolean haveUAndVWinds = false;
+
+    /** Default line width of the temperature and dew-point profiles. */
+    private static final int DEFAULT_PROFILE_LINE_WIDTH = 3;
+
+    /** Largest selectable line width for the profiles. */
+    private static final int MAX_PROFILE_LINE_WIDTH = 10;
+
+    /** Line width of the temperature profile. */
+    private int temperatureLineWidth = DEFAULT_PROFILE_LINE_WIDTH;
+
+    /** Line width of the dew-point profile. */
+    private int dewPointLineWidth = DEFAULT_PROFILE_LINE_WIDTH;
 
     /** show winds as U and V? */
     private boolean showUAndVWinds = false;
@@ -1047,6 +1062,8 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
             aeroDisplay.setProfileVisible(i, false);
         }
         aeroDisplay.setProfileVisible(currIndex, true);
+        // newly added profiles start out at the default width
+        applyProfileLineWidths();
 
 
         if (haveWinds) {
@@ -1417,6 +1434,18 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
         });
         spacingBox.setSelectedItem(windBarbSpacing);
 
+        JComboBox<Integer> tempWidthBox =
+            makeLineWidthBox(temperatureLineWidth,
+                             "Line Width of the Temperature Profile",
+                             this::setTemperatureLineWidth);
+        JComboBox<Integer> dewWidthBox =
+            makeLineWidthBox(dewPointLineWidth,
+                             "Line Width of the Dew-Point Profile",
+                             this::setDewPointLineWidth);
+        Component profileWidths = GuiUtils.left(GuiUtils.hbox(new Component[] {
+            new JLabel("T"), tempWidthBox, new JLabel("  Td"), dewWidthBox
+        }, 4));
+
 
         JCheckBox showBox = new JCheckBox(getSpatialLociLabel(),
                                           spatialLociVisible);
@@ -1447,9 +1476,10 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
 
         GuiUtils.tmpInsets = new Insets(4, 4, 4, 4);
         Component comboBoxes = GuiUtils.doLayout(new Component[] {
-            GuiUtils.rLabel("Parcel mode:"), parcelModeBox, GuiUtils.filler(),
-            GuiUtils.rLabel("Wind spacing:"), spacingBox,
+            GuiUtils.rLabel("Parcel Mode:"), parcelModeBox, GuiUtils.filler(),
+            GuiUtils.rLabel("Wind Spacing:"), spacingBox,
             GuiUtils.lLabel("(hPa)"),
+            GuiUtils.rLabel("Profile width:"), profileWidths, GuiUtils.filler(),
             GuiUtils.rLabel("Consecutive Profiles:"), pairProfilesBox, GuiUtils.filler()
         }, 3,              //3 columns
            GuiUtils.WT_N,  //Don't expand the grid horizontally
@@ -1822,6 +1852,135 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
             windBarbSpacing = newSpacing;
         } catch (Exception e) {
             LogUtil.printMessage("setWindBarbSpacing got " + e.toString());
+        }
+    }
+
+    /**
+     * Make a combo box for choosing the line width of a profile.
+     *
+     * @param current Line width to select initially.
+     * @param toolTip Tool tip for the combo box.
+     * @param setter Called with the newly selected line width.
+     *
+     * @return Combo box listing the valid line widths.
+     */
+    private JComboBox<Integer> makeLineWidthBox(int current, String toolTip,
+                                                IntConsumer setter) {
+        Integer[] widths = new Integer[MAX_PROFILE_LINE_WIDTH];
+        for (int i = 0; i < widths.length; i++) {
+            widths[i] = Integer.valueOf(i + 1);
+        }
+        final JComboBox<Integer> box = new JComboBox<>(widths);
+        box.setToolTipText(toolTip);
+        box.setSelectedItem(Integer.valueOf(current));
+        box.addActionListener(e -> {
+            Integer width = (Integer) box.getSelectedItem();
+            if (width != null) {
+                setter.accept(width.intValue());
+            }
+        });
+        return box;
+    }
+
+    /**
+     * Get the line width of the temperature profile.
+     *
+     * @return Line width of the temperature profile.
+     */
+    public int getTemperatureLineWidth() {
+        return temperatureLineWidth;
+    }
+
+    /**
+     * Set the line width of the temperature profile.
+     *
+     * @param width Line width; values outside of
+     *              {@code 1..MAX_PROFILE_LINE_WIDTH} are clamped.
+     */
+    public void setTemperatureLineWidth(int width) {
+        temperatureLineWidth = clampLineWidth(width);
+        updateProfileLineWidths();
+    }
+
+    /**
+     * Get the line width of the dew-point profile.
+     *
+     * @return Line width of the dew-point profile.
+     */
+    public int getDewPointLineWidth() {
+        return dewPointLineWidth;
+    }
+
+    /**
+     * Set the line width of the dew-point profile.
+     *
+     * @param width Line width; values outside of
+     *              {@code 1..MAX_PROFILE_LINE_WIDTH} are clamped.
+     */
+    public void setDewPointLineWidth(int width) {
+        dewPointLineWidth = clampLineWidth(width);
+        updateProfileLineWidths();
+    }
+
+    /**
+     * Limit a line width to the selectable range.
+     *
+     * @param width Requested line width.
+     *
+     * @return {@code width} limited to {@code 1..MAX_PROFILE_LINE_WIDTH}.
+     */
+    private static int clampLineWidth(int width) {
+        return Math.max(1, Math.min(MAX_PROFILE_LINE_WIDTH, width));
+    }
+
+    /**
+     * Apply the current line widths, logging rather than propagating any
+     * failure.
+     */
+    private void updateProfileLineWidths() {
+        try {
+            applyProfileLineWidths();
+        } catch (Exception e) {
+            logException("Setting profile line width", e);
+        }
+    }
+
+    /**
+     * Apply the current line widths to the temperature and dew-point
+     * profiles of every sounding in the aerological display.
+     *
+     * @throws RemoteException Java RMI failure.
+     * @throws VisADException VisAD failure.
+     */
+    private void applyProfileLineWidths()
+            throws VisADException, RemoteException {
+        if (aeroDisplay == null) {
+            return;
+        }
+        for (Displayable displayable : aeroDisplay.getDisplayables()) {
+            if ( !(displayable instanceof SoundingSet)) {
+                continue;
+            }
+            Iterator<?> soundings = ((SoundingSet) displayable).iterator();
+            while (soundings.hasNext()) {
+                Object sounding = soundings.next();
+                if ( !(sounding instanceof Sounding)) {
+                    continue;
+                }
+                Iterator<?> profiles = ((Sounding) sounding).iterator();
+                while (profiles.hasNext()) {
+                    // fully qualified: this file already imports the
+                    // function types that share these simple names
+                    Object profile = profiles.next();
+                    if (profile instanceof ucar.unidata.view.sounding.AirTemperatureProfile) {
+                        ((Displayable) profile).setLineWidth(
+                            temperatureLineWidth);
+                    } else if (profile instanceof ucar.unidata.view.sounding.DewPointProfile) {
+                        ((Displayable) profile).setLineWidth(
+                            dewPointLineWidth);
+                    }
+                }
+            }
         }
     }
 
