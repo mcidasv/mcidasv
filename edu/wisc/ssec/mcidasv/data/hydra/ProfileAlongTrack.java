@@ -39,8 +39,6 @@ import visad.RealType;
 import visad.RealTupleType;
 import visad.Linear1DSet;
 import visad.Linear2DSet;
-import visad.Gridded2DSet;
-import visad.SampledSet;
 import visad.Unit;
 import visad.FunctionType;
 import visad.VisADException;

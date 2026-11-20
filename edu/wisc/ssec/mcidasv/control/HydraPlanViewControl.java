@@ -29,15 +29,12 @@
 package edu.wisc.ssec.mcidasv.control;
 
 
-import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.grid.GridUtil;
 
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.control.ImagePlanViewControl;
 
 import ucar.unidata.ui.colortable.ColorTableManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.ColorTable;
 

@@ -30,8 +30,6 @@ package ucar.unidata.idv.chooser.adde;
 
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
-import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
-import edu.wisc.ssec.mcidasv.chooser.TLEFileChooser;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +38,6 @@ import org.w3c.dom.Element;
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.point.AddePointDataSource;
-import ucar.unidata.idv.chooser.FileChooser;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.ui.symbol.StationModel;
@@ -48,7 +45,6 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.UtcDate;
 
 import visad.DateTime;
@@ -56,15 +52,12 @@ import visad.VisADException;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.FileChooserUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

@@ -67,14 +67,10 @@ import org.python.core.PyJavaType;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyObjectDerived;
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
-import org.python.core.PyTuple;
 import org.python.util.InteractiveConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ucar.unidata.util.StringUtil;
 
 // TODO(jon): Console should become an interface. there is no reason people 
 //            should have to deal with the UI stuff when they only want to use

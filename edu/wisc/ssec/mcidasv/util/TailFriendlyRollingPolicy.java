@@ -33,7 +33,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.concurrent.Future;
 
 import ch.qos.logback.core.rolling.RolloverFailure;

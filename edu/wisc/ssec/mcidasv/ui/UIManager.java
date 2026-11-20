@@ -54,7 +54,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -3152,7 +3151,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
             } else if (fieldType.equals(FIELDTYPE_BOOLEAN)) {
                 field = new JCheckBox("", ((dflt != null)
-                    ? new Boolean(
+                    ? Boolean.valueOf(
                     dflt.toString()).booleanValue()
                     : true));
             } else if (fieldType.equals(FIELDTYPE_CHOICE)) {

@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -40,7 +39,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
@@ -56,7 +54,6 @@ import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
-import ucar.unidata.util.Resource;
 import ucar.unidata.util.StringUtil;
 
 /**

@@ -37,10 +37,8 @@ import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;

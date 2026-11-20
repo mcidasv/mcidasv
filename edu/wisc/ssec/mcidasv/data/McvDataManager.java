@@ -44,7 +44,6 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 
 import edu.wisc.ssec.mcidasv.control.HydraControl;
-import edu.wisc.ssec.mcidasv.control.MultiSpectralControl;
 
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 

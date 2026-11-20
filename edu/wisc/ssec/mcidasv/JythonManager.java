@@ -31,10 +31,6 @@ import static edu.wisc.ssec.mcidasv.McIdasPreferenceManager.PROP_HIQ_FONT_RENDER
 import static ucar.unidata.util.GuiUtils.makeMenu;
 import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,11 +48,8 @@ import ucar.unidata.data.DescriptorDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.ImageGenerator;
 import ucar.unidata.idv.ui.JythonShell;
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.Misc;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Overrides the IDV's {@link ucar.unidata.idv.JythonManager JythonManager} to 

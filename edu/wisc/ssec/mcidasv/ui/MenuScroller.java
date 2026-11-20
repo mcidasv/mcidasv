@@ -38,7 +38,6 @@ import java.awt.Rectangle;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Arrays;
-import java.util.EventListener;
 import java.util.Objects;
 
 import javax.swing.Icon;

@@ -33,17 +33,13 @@ import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 //import edu.wisc.ssec.mcidasv.data.hydra.DataToDisplayCoordinateSystem;
 
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.visad.display.Displayable;
 import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
 
 import visad.*;
 import visad.bom.*;
 import visad.georef.MapProjection;
 
 import java.rmi.RemoteException;
-
-import java.awt.event.InputEvent;
 
 
 public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {

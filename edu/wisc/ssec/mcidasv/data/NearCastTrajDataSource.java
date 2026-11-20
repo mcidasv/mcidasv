@@ -38,7 +38,6 @@ import visad.Gridded3DSet;
 import visad.Gridded1DDoubleSet;
 import visad.Gridded1DSet;
 import visad.Set;
-import visad.UnionSet;
 import visad.RealTupleType;
 import visad.RealType;
 import visad.FlatField;
@@ -47,7 +46,6 @@ import visad.Integer1DSet;
 import visad.FunctionType;
 import visad.CoordinateSystem;
 import visad.VisADException;
-import visad.DateTime;
 import visad.data.units.Parser;
 import visad.data.units.ParseException;
 
@@ -60,7 +58,6 @@ import ucar.unidata.util.Range;
 
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataDataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataCategory;

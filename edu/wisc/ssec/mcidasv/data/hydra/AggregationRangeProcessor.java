@@ -29,7 +29,6 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

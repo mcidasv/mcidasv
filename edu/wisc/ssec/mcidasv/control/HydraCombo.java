@@ -38,7 +38,6 @@ import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,6 @@ import javax.swing.border.LineBorder;
 
 import org.python.core.PyObject;
 
-import ucar.unidata.ui.LatLonLabelPanel;
 import visad.ConstantMap;
 import visad.Data;
 import visad.VisADException;

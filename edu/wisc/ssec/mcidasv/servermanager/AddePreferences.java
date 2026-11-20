@@ -33,8 +33,6 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -56,7 +54,6 @@ import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.xml.PreferenceManager;
-import ucar.unidata.xml.XmlObjectStore;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;

@@ -52,8 +52,6 @@ import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ucar.unidata.idv.chooser.IdvChooser;
-
 import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
 import static ucar.unidata.idv.chooser.IdvChooser.PREF_DEFAULTDIR;
 

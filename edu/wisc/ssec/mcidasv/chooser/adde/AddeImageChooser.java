@@ -2193,7 +2193,7 @@ public class AddeImageChooser extends AddeChooser implements
             } else if (prop.equals(PROP_MAG)) {
                 String[] pair = getPair(value);
                 if (pair != null) {
-                    setMagSliders(Integer.parseInt(pair[0]), new Integer(
+                    setMagSliders(Integer.parseInt(pair[0]), Integer.valueOf(
                             pair[1]).intValue());
                 } else {
                     setMagSliders(DEFAULT_MAG, DEFAULT_MAG);
@@ -2356,7 +2356,7 @@ public class AddeImageChooser extends AddeChooser implements
         if (sensorToBandToName == null) {
             return "Band: " + band;
         }
-        Hashtable bandToName = (Hashtable) sensorToBandToName.get(new Integer(
+        Hashtable bandToName = (Hashtable) sensorToBandToName.get(Integer.valueOf(
                 ad.getSensorID()));
         String name = null;
         Integer bandInteger = Integer.valueOf(band);

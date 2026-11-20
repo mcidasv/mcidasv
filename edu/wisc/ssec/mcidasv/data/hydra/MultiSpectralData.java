@@ -30,8 +30,6 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;

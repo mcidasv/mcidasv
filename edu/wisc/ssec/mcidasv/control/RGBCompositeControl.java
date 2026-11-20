@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.LogUtil;
@@ -52,7 +51,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Iterator;

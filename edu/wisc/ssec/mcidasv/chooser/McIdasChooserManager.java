@@ -42,7 +42,6 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.ui.TreePanel;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.xml.XmlResourceCollection;

@@ -69,7 +69,6 @@ import visad.VisADGeometryArray;
 import visad.georef.EarthLocationTuple;
 import visad.georef.MapProjection;
 
-import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.util.MakeToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

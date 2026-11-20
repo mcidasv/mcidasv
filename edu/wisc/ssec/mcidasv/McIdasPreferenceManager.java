@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
@@ -90,7 +89,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -101,7 +99,6 @@ import javax.swing.event.ListSelectionListener;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import edu.wisc.ssec.mcidasv.util.GetMem;
 
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;

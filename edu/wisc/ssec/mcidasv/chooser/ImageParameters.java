@@ -29,41 +29,13 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
-import edu.wisc.ssec.mcidasv.ResourceManager;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.*;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import ucar.unidata.data.imagery.AddeImageDescriptor;
-import ucar.unidata.ui.XmlTree;
-import ucar.unidata.ui.imagery.ImageSelector;
-
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.NamedThing;
-import ucar.unidata.util.PreferenceList;
-
-import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
 
 
 public class ImageParameters extends NamedThing {

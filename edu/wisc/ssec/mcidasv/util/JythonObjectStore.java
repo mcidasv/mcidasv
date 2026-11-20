@@ -31,10 +31,6 @@ package edu.wisc.ssec.mcidasv.util;
 import static java.util.Objects.requireNonNull;
 
 import org.python.core.Py;
-import org.python.core.PyDictProxy;
-import org.python.core.PyDictionary;
-import org.python.core.PyDictionaryDerived;
-import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
 import ucar.unidata.idv.IdvObjectStore;
@@ -42,8 +38,6 @@ import ucar.unidata.idv.IdvObjectStore;
 import edu.wisc.ssec.mcidasv.McIDASV;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

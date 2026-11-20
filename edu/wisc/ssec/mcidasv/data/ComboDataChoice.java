@@ -28,11 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import ucar.unidata.util.LogUtil;
-
-
-import ucar.unidata.util.Misc;
-import ucar.unidata.xml.XmlUtil;
 
 import ucar.unidata.data.*;
 
@@ -43,11 +38,8 @@ import visad.georef.*;
 
 import java.rmi.RemoteException;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 
 /**

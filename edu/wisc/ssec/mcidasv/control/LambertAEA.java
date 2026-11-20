@@ -37,7 +37,6 @@ import visad.SI;
 import visad.Unit;
 import java.awt.geom.Rectangle2D;
 import visad.VisADException;
-import java.rmi.RemoteException;
 
 
 public class LambertAEA extends MapProjection {

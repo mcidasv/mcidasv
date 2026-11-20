@@ -27,13 +27,11 @@
  */
 
 package edu.wisc.ssec.mcidasv.data.hydra;
-import java.util.HashMap;
 import java.util.Map;
 
 import ucar.ma2.DataType;
 import visad.Set;
 import visad.RealTupleType;
-import visad.RealType;
 import visad.Gridded3DSet;
 import visad.GriddedSet;
 import visad.Gridded3DDoubleSet;

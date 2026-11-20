@@ -394,10 +394,10 @@ public class FrameDirectory {
         int int2 = navInt/0x10000&0xff;
         int int3 = navInt/0x100&0xff;
         int int4 = navInt&0xff;
-        String char1 = new Character((char)int1).toString();
-        String char2 = new Character((char)int2).toString();
-        String char3 = new Character((char)int3).toString();
-        String char4 = new Character((char)int4).toString();
+        String char1 = Character.valueOf((char)int1).toString();
+        String char2 = Character.valueOf((char)int2).toString();
+        String char3 = Character.valueOf((char)int3).toString();
+        String char4 = Character.valueOf((char)int4).toString();
         String returnString = char1 + char2 + char3 + char4;
         return returnString;
     }
