@@ -31,6 +31,7 @@ package ucar.unidata.idv.control;
 
 import ucar.unidata.collab.Sharable;
 
+import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.GeoLocationInfo;
@@ -45,6 +46,7 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 
+import ucar.unidata.util.ObjectListener;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.GeoUtils;
 import ucar.visad.Util;
@@ -56,6 +58,7 @@ import ucar.visad.display.LineDrawing;
 import ucar.visad.display.LineProbe;
 import ucar.visad.display.SelectorDisplayable;
 import ucar.visad.functiontypes.AirTemperatureProfile;
+import ucar.visad.quantities.AirPressure;
 import ucar.visad.quantities.Altitude;
 
 import visad.*;
@@ -64,7 +67,7 @@ import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
-
+import visad.util.DataUtility;
 
 
 import java.awt.Component;
@@ -80,9 +83,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 
 
 /**
@@ -439,36 +440,141 @@ public class GriddedSoundingControl extends AerologicalSoundingControl {
         }
 
         try {
-            LatLonPoint   llp    = null;
-            RealTupleType rttype = (RealTupleType) pos.getType();
-
-            if (rttype.equals(RealTupleType.SpatialCartesian2DTuple)
-                    || rttype.equals(RealTupleType.SpatialCartesian3DTuple)) {
-                llp = latLon(pos);
-            } else if (rttype.equals(RealTupleType.SpatialEarth2DTuple)
-                       || rttype.equals(RealTupleType.SpatialEarth3DTuple)) {
-                Real[] reals = pos.getRealComponents();
-
-                llp = new LatLonTuple(reals[1], reals[0]);
-            } else if (rttype.equals(RealTupleType.LatitudeLongitudeTuple)
-                       || rttype.equals(
-                           RealTupleType.LatitudeLongitudeAltitude)) {
-                Real[] reals = pos.getRealComponents();
-
-                llp = new LatLonTuple(reals[0], reals[1]);
-            } else {
-                throw new IllegalArgumentException(
-                    "Can't convert position to navigable point");
-            }
-
-            if (llp != null) {
-                dataNode.setLocation(llp);  // invokes super.setLocation(llp)
+            LatLonPoint llp = toLatLonPoint(pos);
+            synchronized (this) {
+                if (llp != null) {
+                    dataNode.setLocation(llp);  // invokes super.setLocation(llp)
+                    updateExtraParameters(llp);
+                }
             }
         } catch (Exception ex) {
             logException("probeMoved", ex);
         }
     }
 
+    /**
+     * Converts a probe position to a latitude/longitude point.
+     *
+     * @param pos                       The probe position.
+     * @return                          The corresponding point.
+     * @throws VisADException           if a VisAD failure occurs.
+     * @throws RemoteException          if a Java RMI failure occurs.
+     * @throws IllegalArgumentException if the position can't be converted.
+     */
+    private LatLonPoint toLatLonPoint(RealTuple pos)
+            throws VisADException, RemoteException {
+        RealTupleType rttype = (RealTupleType) pos.getType();
+
+        if (rttype.equals(RealTupleType.SpatialCartesian2DTuple)
+                || rttype.equals(RealTupleType.SpatialCartesian3DTuple)) {
+            return latLon(pos);
+        } else if (rttype.equals(RealTupleType.SpatialEarth2DTuple)
+                   || rttype.equals(RealTupleType.SpatialEarth3DTuple)) {
+            Real[] reals = pos.getRealComponents();
+
+            return new LatLonTuple(reals[1], reals[0]);
+        } else if (rttype.equals(RealTupleType.LatitudeLongitudeTuple)
+                   || rttype.equals(
+                       RealTupleType.LatitudeLongitudeAltitude)) {
+            Real[] reals = pos.getRealComponents();
+
+            return new LatLonTuple(reals[0], reals[1]);
+        }
+        throw new IllegalArgumentException(
+            "Can't convert position to navigable point");
+    }
+
+    /**
+     * Updates the sounding table columns of the extra parameters for a
+     * location.  The extra parameters are all of the data choices after the
+     * first one, which is the sounding itself.
+     *
+     * @param llp              The location of the soundings.
+     * @throws VisADException  if a VisAD failure occurs.
+     * @throws RemoteException if a Java RMI failure occurs.
+     */
+    private void updateExtraParameters(LatLonPoint llp)
+            throws VisADException, RemoteException {
+        List<DataChoice> dcs = getDataChoices();
+        for (int i = 1; i < dcs.size(); i++) {
+            DataInstance inst = doMakeDataInstance(dcs.get(i));
+            Field[] p = getOutputProfiles((FieldImpl) inst.getData(), llp);
+            setSoundingsAdd(p, i - 1);
+        }
+    }
+
+    /**
+     * Makes the profiles of an extra parameter at a location, one for each
+     * time of the parameter.
+     *
+     * @param param            The parameter's grid.
+     * @param llp              The location of the profiles.
+     * @return                 The profiles.
+     * @throws VisADException  if a VisAD failure occurs.
+     * @throws RemoteException if a Java RMI failure occurs.
+     */
+    Field[] getOutputProfiles(FieldImpl param, LatLonPoint llp)
+            throws VisADException, RemoteException {
+        int     timeCount = param.getLength();
+        Field   grid3d;
+        Field[] pPros;
+        if (GridUtil.hasEnsemble(param)) {
+            FieldImpl sample = (FieldImpl) param.getSample(0);
+            grid3d = (Field) sample.getSample(0, false);
+            pPros  = new FlatField[timeCount
+                                   * sample.getDomainSet().getLength()];
+        } else {
+            grid3d = (Field) param.getSample(0);
+            pPros  = new FlatField[timeCount];
+        }
+        FunctionType type = new FunctionType(AirPressure.getRealTupleType(),
+                                DataUtility.getRangeType(grid3d));
+        Grid3DSoundingDataNode.ProfileMaker pMaker =
+            new Grid3DSoundingDataNode.ProfileMaker(type,
+                (Gridded3DSet) grid3d.getDomainSet(),
+                grid3d.getDefaultRangeUnits()[0]);
+        Set outDom = pMaker.getOutDom();
+
+        // one profile per time; extract them all at once, not per time
+        FieldImpl profiles = GridUtil.getProfileAtLatLonPoint(param, llp,
+                                 Data.NEAREST_NEIGHBOR);
+        for (int i = 0; i < timeCount; i++) {
+            float[][] values = ((Field) profiles.getSample(i)).getFloats();
+            if (values != null) {
+                Unit[] units =
+                    ((Field) param.getSample(i)).getDefaultRangeUnits();
+                pPros[i] = makeProfile(values[0], type, outDom, units);
+            }
+        }
+
+        return pPros;
+    }
+
+    /**
+     * Makes the profile of an extra parameter.
+     *
+     * @param values           The values of the profile.
+     * @param funcType         The type of the profile.
+     * @param outDom           The domain (pressures) of the profile.
+     * @param rangeUnits       The units of the values.
+     * @return                 The profile.
+     * @throws VisADException  if a VisAD failure occurs.
+     * @throws RemoteException if a Java RMI failure occurs.
+     */
+    Field makeProfile(float[] values, FunctionType funcType, Set outDom, Unit[] rangeUnits)
+            throws VisADException, RemoteException {
+
+        FlatField field = new FlatField(funcType, outDom,
+                (CoordinateSystem[]) null,
+                (Set[]) null, rangeUnits);
+
+        field.setSamples(new float[][] {
+                values
+        });
+
+        return field;
+
+    }
 
     /**
      * Provides support for receiving output from a {@link SoundingDataNode}.
@@ -887,6 +993,168 @@ public class GriddedSoundingControl extends AerologicalSoundingControl {
     public boolean hasMapProjection() {
 
         return true;
+
+    }
+
+    /** Categories of the fields that can be added to the sounding table. */
+    private static final List EXTRA_PARAMETER_CATEGORIES =
+        DataCategory.parseCategories("GRID-3D-*");
+
+    /**
+     * Get the label of the menu item that adds a parameter.
+     *
+     * @return The label.
+     */
+    protected String getChangeParameterLabel() {
+        return "Add Parameter to Table...";
+    }
+
+    /**
+     * Popup the dialog for choosing a parameter to add to the sounding
+     * table.  Any 3D grid can be added, not only the sounding fields that
+     * this control can be created from.
+     *
+     * @param dialogMessage message for the dialog
+     * @param from   the component that it is on
+     * @param multiples can handle multiple selections
+     */
+    protected void popupDataDialog(String dialogMessage, Component from,
+                                   boolean multiples) {
+        popupDataDialog(dialogMessage, from, multiples,
+                        EXTRA_PARAMETER_CATEGORIES);
+    }
+
+    /**
+     * Add the "Parameters" menu, for adding and removing sounding table
+     * parameters, to the View menu.
+     *
+     * @param menus List of menu items
+     * @param forMenuBar Is this for the menu in the window's menu bar or
+     *                   for a popup menu in the legend
+     */
+    protected void getViewMenuItems(List menus, boolean forMenuBar) {
+        super.getViewMenuItems(menus, forMenuBar);
+
+        if (forMenuBar) {
+            menus.add(GuiUtils.MENU_SEPARATOR);
+            List paramItems = new ArrayList();
+
+            paramItems.add(doMakeChangeParameterMenuItem());
+            List choices = getDataChoices();
+            for (int i = 1; i < choices.size(); i++) {
+                paramItems.addAll(getParameterMenuItems(i));
+            }
+            menus.add(GuiUtils.makeMenu("Parameters", paramItems));
+        }
+
+    }
+
+    /**
+     * Make the menu items for an extra parameter.
+     *
+     * @param row Index of the parameter's data choice.
+     * @return The menu items.
+     */
+    private List getParameterMenuItems(final int row) {
+        List  items     = new ArrayList();
+        JMenu paramMenu = new JMenu("Parameter: " + getFieldName(row));
+        items.add(paramMenu);
+
+        // Remove this parameter
+        JMenuItem jmi = new JMenuItem("Remove");
+        paramMenu.add(jmi);
+        jmi.addActionListener(new ObjectListener(Integer.valueOf(row)) {
+            public void actionPerformed(
+                    ActionEvent ev) {
+                removeField(
+                        ((Integer) theObject).intValue());
+            }
+        });
+
+        return items;
+
+    }
+
+    /**
+     * Add the newly chosen parameters to the sounding table.  Unlike the
+     * superclass, this adds to the data of this control instead of
+     * replacing it.
+     *
+     * @param newChoices List of new {@link DataChoice}-s
+     *
+     * @throws VisADException  if a VisAD failure occurs.
+     * @throws RemoteException if a Java RMI failure occurs.
+     */
+    protected void addNewData(List newChoices) throws VisADException, RemoteException {
+        processNewData(newChoices);
+        doShare(SHARE_CHOICES, newChoices);
+        parameterAdded();
+    }
+
+    /**
+     * Load the data of the newly chosen parameters and append them to the
+     * data choices of this control.
+     *
+     * @param newChoices List of new {@link DataChoice}-s
+     *
+     * @throws VisADException  if a VisAD failure occurs.
+     * @throws RemoteException if a Java RMI failure occurs.
+     */
+    protected void processNewData(List newChoices)
+            throws VisADException, RemoteException {
+
+        showWaitCursor();
+        for (int i = 0; i < newChoices.size(); i++) {
+            DataChoice dc = (DataChoice) newChoices.get(i);
+            // creating the instance loads the data and checks it is a grid
+            new GridDataInstance(dc, getDataSelection(),
+                                 getRequestProperties());
+        }
+        showNormalCursor();
+        appendDataChoices(newChoices);
+        resetData();
+    }
+
+    /**
+     * Show the extra parameters in the sounding table for the current probe
+     * position.
+     */
+    private void parameterAdded() {
+        try {
+            updateExtraParameters(toLatLonPoint(getPosition()));
+        } catch (Exception e) {
+            logException("Adding parameter to sounding table", e);
+        }
+    }
+
+    /**
+     * Get the name of a parameter.
+     *
+     * @param row Index of the parameter's data choice.
+     * @return The name.
+     */
+    String getFieldName(int row) {
+        List dcs = getDataChoices();
+        return ((DataChoice)(dcs.get(row))).getName();
+    }
+
+    /**
+     * Remove an extra parameter from the sounding table.
+     *
+     * @param row Index of the parameter's data choice.
+     */
+    private void removeField(int row) {
+        List dcs = getDataChoices();
+        if (row < 0 || row > (dcs.size() -1)) {
+            return;
+        }
+        removeDataChoice(((DataChoice)(dcs.get(row))));
+
+        try {
+            setSoundingsRemove(row);
+        } catch (Exception e) {
+            logException("Removing parameter from sounding table", e);
+        }
 
     }
 }
