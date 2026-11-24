@@ -332,7 +332,7 @@ public class GriddedSoundingControl extends AerologicalSoundingControl {
      * @return  get the label text for the spatial location label.
      */
     protected String getSpatialLociLabel() {
-        return "Grid points";
+        return "Grid Points";
     }
 
 
@@ -1036,7 +1036,6 @@ public class GriddedSoundingControl extends AerologicalSoundingControl {
         super.getViewMenuItems(menus, forMenuBar);
 
         if (forMenuBar) {
-            menus.add(GuiUtils.MENU_SEPARATOR);
             List paramItems = new ArrayList();
 
             paramItems.add(doMakeChangeParameterMenuItem());
@@ -1044,7 +1043,7 @@ public class GriddedSoundingControl extends AerologicalSoundingControl {
             for (int i = 1; i < choices.size(); i++) {
                 paramItems.addAll(getParameterMenuItems(i));
             }
-            menus.add(GuiUtils.makeMenu("Parameters", paramItems));
+            menus.add(GuiUtils.makeMenu("Table", paramItems));
         }
 
     }

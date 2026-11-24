@@ -1573,7 +1573,7 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
             GuiUtils.rLabel("Parcel Mode:"), parcelModeBox, GuiUtils.filler(),
             GuiUtils.rLabel("Wind Spacing:"), spacingBox,
             GuiUtils.lLabel("(hPa)"),
-            GuiUtils.rLabel("Profile width:"), profileWidths, GuiUtils.filler(),
+            GuiUtils.rLabel("Profile Width:"), profileWidths, GuiUtils.filler(),
             GuiUtils.rLabel("Consecutive Profiles:"), pairProfilesBox, GuiUtils.filler()
         }, 3,              //3 columns
            GuiUtils.WT_N,  //Don't expand the grid horizontally
